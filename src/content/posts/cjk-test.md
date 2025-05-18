@@ -1,12 +1,12 @@
 ---
-title: CJK edge case for test
+title: PS
 published: 2025-05-04
 updated: 2025-05-04
 description: 'CJK Test'
 image: ''
-tags: [C#, テスト, 技术, Fuwari]
-category: '技术'
-draft: true 
+tags: ["Adobe PS"]
+category: 'PS'
+draft: false 
 ---
 
 CJK Test
