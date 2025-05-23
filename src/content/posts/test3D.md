@@ -1,6 +1,6 @@
 ---
 title: 萌新如何学习3d建模
-published: 2025-09-19
+published: 2025-09-18
 description: “要开始学习了，要加油呀！”
 image: ""
 tags: ["心路历程"]
