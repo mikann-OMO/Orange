@@ -173,15 +173,35 @@ Adobe是企业名称。PS是其旗下的一款专业的图像处理软件。
 
 这些图标存在于左侧工具栏中，是我们重要的抠图工具。当然，这些工具只能简单的进行抠图，想要更高级的抠图，我们还需要学习一些高级技巧。后面会总结一些修图技巧的教程~(ゝω・´★)
 
-- <div style="display: flex; align-items: center;">
-    <div style="display: flex;">
+- <div class="image-text-container">
+    <div class="image-group">
         <img src="https://mikann-1359996823.cos.ap-beijing.myqcloud.com/pic/b4a0d4dd766e45bfa0b45bba01f29216.png" alt="图片1" style="margin-right: 10px;">
         <img src="https://mikann-1359996823.cos.ap-beijing.myqcloud.com/pic/aae9a40c8ebfb48bb42dc45b23f1e143.png" alt="图片2" style="margin-right: 10px;">
         <img src="https://mikann-1359996823.cos.ap-beijing.myqcloud.com/pic/a4a839c3f1c9c58aa50b937be7ef3016.png" alt="图片3">
     </div>
-    <div style="margin-left: 20px;">这三个图标分别是：矩形选框工具、套索工具、钢笔工具
-    </div>
+    <div class="text-description">这三个图标分别是：矩形选框工具、套索工具、钢笔工具</div>
 </div>
+<style>
+    .image-text-container {
+        display: flex;
+        align-items: center;
+    }
+    .image-group {
+        display: flex;
+    }
+    .text-description {
+        margin-left: 20px;
+    }
+    @media (max-width: 768px) {
+        .image-text-container {
+            flex-direction: column;
+        }
+        .text-description {
+            margin-left: 0;
+            margin-top: 20px;
+        }
+    }
+</style>
 
 除了使用工具抠图，我们还可以进行选区抠图，这种抠图方式更加灵活，而且可以进行一些高级操作。
 
@@ -190,6 +210,7 @@ Adobe是企业名称。PS是其旗下的一款专业的图像处理软件。
 o( ❛ᴗ❛ )o值得注意的是，钢笔工具的使用需要我们多加练习，具体使用方法可以在网络上搜索视频教程。
 
 --
+
 
 
 - 
