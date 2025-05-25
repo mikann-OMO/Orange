@@ -72,7 +72,9 @@ Adobe是企业名称。PS是其旗下的一款专业的图像处理软件。
 
  ## 三、ps绘图会用到哪些功能？
 
-*下面将对界面上绘图会使用的图标以及windows快捷键做一些简单介绍——* ∠( ᐛ 」∠)_
+### 绘图篇
+
+*下面是对绘图会使用到的基础功能做的一些总结分享——* ∠( ᐛ 」∠)_
 
 - <div style="display: flex; align-items: center; gap: 10px;">
     <img src="https://mikann-1359996823.cos.ap-beijing.myqcloud.com/pic/b077adfdc245d853a80b0dc8e073abd2.png" alt="画笔工具图片">
@@ -127,5 +129,67 @@ Adobe是企业名称。PS是其旗下的一款专业的图像处理软件。
 
 - `CTRL + G` ：在当前图层设置图层组
 
+- 
+
+- `CTRl +` ：屏幕放大
+
+- `CTRL -` ：屏幕缩小
+
+- `CTRL + 0` ：还原屏幕大小
+
+- `ALT + 鼠标滚轮` ：屏幕放大缩小
+
+- `空格键 + 鼠标左键` ： （抓手）移动屏幕
+
+
 
  （以上展示的是win系统的快捷键，mac系统的快捷键可能会有些许不同，请自行搜索。熟练的使用快捷键可以更好的提升我们的工作效率~*使用快捷键时请使用英文输入法喔~*）
+
+
+ ### 附加篇
+
+- <div style="display: flex; align-items: center;">
+    <img src="https://mikann-1359996823.cos.ap-beijing.myqcloud.com/pic/687c7db6d793078b2cc25d67888036e2.png" alt="描述图片的文字" style="margin-right: 10px;">
+    <span>当你不小心把工作区弄得乱七八糟时，点击这个小图标右侧的箭头可以复位基本功能，还可以在这里自定义工作区。</span>
+</div>
+
+- 若想导入参考图并悬浮于工作区，请再次从ps中打开文件参考图，接着在画布上方标签页悬停鼠标，左键拖动即可。
+
+- 使用画笔工具时，按住`SHIFT`可以绘制直线。
+
+- 当图标右下角出现一个类似于三角形的符号时，说明该工具还具有扩展功能，右键该图标即可查看该工具的其他功能。
+
+------
+
+## 四、ps修图会用到哪些功能？
+
+*下面是对修图会使用到的基础功能做的一些总结分享——* ∠( ᐛ 」∠)_
+
+### 修图篇
+
+修图学的第一大要就是**抠图**
+
+- ![](https://mikann-1359996823.cos.ap-beijing.myqcloud.com/pic/710e7fdfee26d9d8d6f641b5cd69fe0e.png)
+
+这些图标存在于左侧工具栏中，是我们重要的抠图工具。当然，这些工具只能简单的进行抠图，想要更高级的抠图，我们还需要学习一些高级技巧。后面会总结一些修图技巧的教程~(ゝω・´★)
+
+- <div style="display: flex; align-items: center;">
+    <div style="display: flex;">
+        <img src="https://mikann-1359996823.cos.ap-beijing.myqcloud.com/pic/b4a0d4dd766e45bfa0b45bba01f29216.png" alt="图片1" style="margin-right: 10px;">
+        <img src="https://mikann-1359996823.cos.ap-beijing.myqcloud.com/pic/aae9a40c8ebfb48bb42dc45b23f1e143.png" alt="图片2" style="margin-right: 10px;">
+        <img src="https://mikann-1359996823.cos.ap-beijing.myqcloud.com/pic/a4a839c3f1c9c58aa50b937be7ef3016.png" alt="图片3">
+    </div>
+    <div style="margin-left: 20px;">这三个图标分别是：矩形选框工具、套索工具、钢笔工具
+    </div>
+</div>
+
+除了使用工具抠图，我们还可以进行选区抠图，这种抠图方式更加灵活，而且可以进行一些高级操作。
+
+**操作流程**：进行选区后，你可以点击键盘上写着BackSpace的按键（Delete键）对选区里的内容进行删除。如果你是想删除选区外的内容，可以用快捷键`CTRL + SHIFT + I`进行反选，再操作删除。
+
+o( ❛ᴗ❛ )o值得注意的是，钢笔工具的使用需要我们多加练习，具体使用方法可以在网络上搜索视频教程。
+
+--
+
+
+- 
