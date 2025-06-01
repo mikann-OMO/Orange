@@ -1,6 +1,6 @@
 ---
 title: AI
-published: 2025-05-04
+published: 2025-06-01
 description: “从0开始的AI基础教学”
 image: ""
 tags:
