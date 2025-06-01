@@ -293,6 +293,8 @@ Adobe是企业名称。PS是其旗下的一款专业的图像处理软件。
 
 ![](https://mikann-1359996823.cos.ap-beijing.myqcloud.com/pic/d86e1d069c056ee156b0434eda6cb64f.gif)
 
+------
+
 ## ②画笔的新建与导入
 
 ### 新建
@@ -305,6 +307,8 @@ Adobe是企业名称。PS是其旗下的一款专业的图像处理软件。
 
 ![](https://mikann-1359996823.cos.ap-beijing.myqcloud.com/pic/%E5%BA%8F%E5%88%97%2001_1.gif)
 
+------
+
 ### 导入
 - 选中画笔工具，一定要选中！！！
 
@@ -313,6 +317,8 @@ Adobe是企业名称。PS是其旗下的一款专业的图像处理软件。
 画笔格式为`.abr`，笔刷可从网上找到免费资源，也可从常见购物平台付费购买~
 
 ![](https://mikann-1359996823.cos.ap-beijing.myqcloud.com/pic/%E5%BA%8F%E5%88%97%2002.gif)
+
+------
 
 ## ③吸管吸取外部颜色
 
