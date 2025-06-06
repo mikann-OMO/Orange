@@ -131,4 +131,38 @@ const jsonLd = {
         </a>
     </div>
 
+    <Icon name="material-symbols:chevron-right-rounded" class="text-[2rem] text-[var(--primary)]" />
+</div>}
+</a>
+</div>
+
+<!-- giscus评论 -->
+<div style="margin-top: 20px;"></div>
+<script src="https://giscus.app/client.js"
+        data-repo="mikann-OMO/comments"
+        data-repo-id="R_kgDOO3ArSw"
+        data-category="[在此输入分类名]"
+        data-category-id="[在此输入分类 ID]"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
+
+</MainGridLayout>
+
+<style is:global>
+#post-container :nth-child(1) { animation-delay: calc(var(--content-delay) + 0ms) }
+#post-container :nth-child(2) { animation-delay: calc(var(--content-delay) + 50ms) }
+#post-container :nth-child(3) { animation-delay: calc(var(--content-delay) + 100ms) }
+#post-container :nth-child(4) { animation-delay: calc(var(--content-delay) + 175ms) }
+#post-container :nth-child(5) { animation-delay: calc(var(--content-delay) + 250ms) }
+#post-container :nth-child(6) { animation-delay: calc(var(--content-delay) + 325ms) } 
+</style>
+
 </MainGridLayout>
