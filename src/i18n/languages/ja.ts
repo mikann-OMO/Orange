@@ -1,7 +1,6 @@
 import Key from "../i18nKey";
 import type { Translation } from "../translation";
 
-// 为了满足 Translation 类型要求，添加 [Key.friends] 属性
 export const ja: Translation = {
 	[Key.home]: "ホーム",
 	[Key.about]: "概要",
@@ -36,5 +35,4 @@ export const ja: Translation = {
 	[Key.author]: "作者",
 	[Key.publishedAt]: "公開日",
 	[Key.license]: "ライセンス",
-	[Key.friends]: "友達",
 };
