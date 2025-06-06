@@ -22,3 +22,11 @@ const postsCollection = defineCollection({
 export const collections = {
 	posts: postsCollection,
 };
+
+// 删除重复的 LinkPreset 定义
+export enum LinkPreset {
+	Home = 0,
+	Archive = 1,
+	About = 2,
+	Friends = 3,
+}

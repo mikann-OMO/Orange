@@ -1,10 +1,11 @@
 import Key from "../i18nKey";
 import type { Translation } from "../translation";
 
+// 为了满足 Translation 类型要求，添加 [Key.friends] 属性
 export const ja: Translation = {
-	[Key.home]: "Home",
-	[Key.about]: "About",
-	[Key.archive]: "Archive",
+	[Key.home]: "ホーム",
+	[Key.about]: "概要",
+	[Key.archive]: "アーカイブ", // 修改为日文
 	[Key.search]: "検索",
 
 	[Key.tags]: "タグ",
@@ -35,4 +36,5 @@ export const ja: Translation = {
 	[Key.author]: "作者",
 	[Key.publishedAt]: "公開日",
 	[Key.license]: "ライセンス",
+	[Key.friends]: "友達",
 };

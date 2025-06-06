@@ -35,9 +35,9 @@ export function getCategoryUrl(category: string): string {
 	if (trimmedCategory === i18n(i18nKey.uncategorized))
 		return url("/archive/category/uncategorized/");
 
-	return url(
-		`/archive/category/${encodeURIComponent(trimmedCategory).replace(/%20/g, "+")}/`,
-	);
+	// 使用 encodePathSegment 保持一致性
+	const encodedCategory = encodePathSegment(trimmedCategory);
+	return url(`/archive/category/${encodedCategory}/`);
 }
 
 export function getDir(path: string): string {

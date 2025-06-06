@@ -7,7 +7,7 @@ import type {
 import { LinkPreset } from "./types/config";
 
 export const siteConfig: SiteConfig = {
-	title: "mikann-OWQ的博客",
+	title: "mikann_OMO的博客",
 	subtitle: "",
 	lang: "zh_CN", // 'en', 'zh_CN', 'zh_TW', 'ja', 'ko', 'es', 'th'
 	themeColor: {
@@ -43,18 +43,13 @@ export const navBarConfig: NavBarConfig = {
 		LinkPreset.Home,
 		LinkPreset.Archive,
 		LinkPreset.About,
-
-		{
-			name: "开往",
-			url: "https://www.travellings.cn/go.html", // Internal links should not include the base path, as it is automatically added
-			external: true, // Show an external link icon and will open in a new tab
-		},
+		LinkPreset.Friends,
 	],
 };
 
 export const profileConfig: ProfileConfig = {
 	avatar: "assets/images/chika.jpg", // Relative to the /src directory. Relative to the /public directory if it starts with '/'
-	name: "mikann-OWQ",
+	name: "mikann_OMO",
 	bio: "这个人不是很精彩呢",
 	links: [
 		{
@@ -67,12 +62,12 @@ export const profileConfig: ProfileConfig = {
 		{
 			name: "Steam",
 			icon: "fa6-brands:steam",
-			url: "https://store.steampowered.com",
+			url: "https://steamcommunity.com/profiles/76561199748933792",
 		},
 		{
 			name: "GitHub",
 			icon: "fa6-brands:github",
-			url: "https://github.com/saicaca/fuwari",
+			url: "https://github.com/mikann-OMO",
 		},
 	],
 };

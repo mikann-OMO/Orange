@@ -34,10 +34,12 @@ export type Favicon = {
 	sizes?: string;
 };
 
+// biome-ignore lint/style/useEnumInitializers: <explanation>
 export enum LinkPreset {
 	Home = 0,
 	Archive = 1,
 	About = 2,
+	Friends,
 }
 
 export type NavBarLink = {
