@@ -2,6 +2,7 @@
 
 import MainGridLayout from "../layouts/MainGridLayout.astro";
 
+import type { Image } from "astro:assets";
 import { getEntry } from "astro:content";
 import { render } from "astro:content";
 import Markdown from "@components/misc/Markdown.astro";
@@ -50,7 +51,7 @@ const items = [
 
 	{
 		title: "溪午的博客",
-		imgurl: "https://www.xiwuqaq.me/_astro/avatar.B24N4CPn_Z10xJVE.webp",
+		image: "https://www.xiwuqaq.me/_astro/avatar.B24N4CPn_Z10xJVE.webp",
 		desc: "愿不再遗憾所有",
 		siteurl: "https://www.xiwuqaq.me",
 		tags: [""],
