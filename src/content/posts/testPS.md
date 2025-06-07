@@ -2,7 +2,7 @@
 title: PS
 published: 2025-05-20
 description: “从0开始的PS基础教学”
-image: ''
+image: ""
 tags: ["Photoshop"]
 category: Adobe
 draft: false 
@@ -332,10 +332,25 @@ Adobe是企业名称。PS是其旗下的一款专业的图像处理软件。
 
 ## ④快速填充人物底色
 
-- 第一步：通常我们的线稿不会完美封闭，因此我们需要对线稿进行封闭操作。
-  
-- 第二步：添加一个空白图层，油漆桶勾选（）对人物背景进行填充，在反选这个色块，添加一个图层对人物进行填充，这样就好啦
+通常我们的线稿不会完美封闭，因此我们需要对线稿进行封闭操作，在进行填充。
 
+- 第1步：复制线稿主体，将复制的线稿高斯模糊。**滤镜→模糊→高斯模糊**
+
+  （这一步是为了让线稿更加闭合，模糊度酌情调节）
+
+  ![](https://mikann-1359996823.cos.ap-beijing.myqcloud.com/pic/%E7%AC%AC%E4%B8%80%E6%AD%A5.gif)
+
+- 第2步：添加一个空白图层，选中油漆桶后:勾选所有图层，调节容差，填充主体物的负形
+
+  （如图所示，不同的容差指有不同的效果）
+
+  ![](https://mikann-1359996823.cos.ap-beijing.myqcloud.com/pic/%E7%AC%AC%E4%BA%8C%E6%AD%A5.gif)
+
+- 第3步：接着`CTRL + 单击缩略图`再`CTRL + shift + I`反选，添加空白图层，点击填充，把底色放在线稿下面方便视图
+
+  （这里注意**油漆桶设置**取消勾选所有图层）
+
+![](https://mikann-1359996823.cos.ap-beijing.myqcloud.com/pic/%E7%AC%AC%E4%B8%89%E6%AD%A5.gif)
 
 ------
 
