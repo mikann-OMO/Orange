@@ -1,9 +1,9 @@
 ---
 title: Adobe 精选免费教程
-published: 2025-06-06
+published: 2025-05-20
 description: “市面上教程花里胡哨的，有些教程根本就不实用，这里整理了一些自用的教程链接，希望对你有帮助~”
 image: ""
-tags: ["分享"]
+tags: ["链接分享"]
 category: Adobe
 draft: false 
 
