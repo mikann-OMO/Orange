@@ -1,9 +1,9 @@
 ---
 title: Adobe 软件常用快捷键
-published: 2025-05-20
+published: 2025-05-18
 description: “关于adobe软件的常用快捷键整理”
 image: ""
-tags: ["快捷键"]
+tags: ["快捷键","2d"]
 category: Adobe
 draft: false 
 
