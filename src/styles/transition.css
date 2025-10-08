@@ -1,9 +1,10 @@
 /* Page transition animations with Swup */
+/* 移除页面切换的过渡效果 */
 html.is-changing .transition-swup-fade {
-    @apply transition-all duration-200
+    @apply transition-none duration-0
 }
 html.is-animating .transition-swup-fade {
-    @apply opacity-0 translate-y-4
+    @apply opacity-100 translate-y-0
 }
 
 /* Fade-in animations for components */

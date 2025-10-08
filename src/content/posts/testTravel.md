@@ -8,6 +8,70 @@ category: New world
 draft: false 
 
 ---
+<div class="title-navigation" style="display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0; justify-content: center;">
+  <a href="#intro" class="btn-navigation" style="text-decoration: none; padding: 6px 12px; border-radius: 6px; color: var(--primary); background-color: transparent; border: 1px solid var(--primary); transition: all 0.3s ease; font-weight: 500; font-size: 14px;">
+    前言
+  </a>
+  <a href="#nanjing" class="btn-navigation" style="text-decoration: none; padding: 6px 12px; border-radius: 6px; color: var(--primary); background-color: transparent; border: 1px solid var(--primary); transition: all 0.3s ease; font-weight: 500; font-size: 14px;">
+    南京站
+  </a>
+  <a href="#suzhou" class="btn-navigation" style="text-decoration: none; padding: 6px 12px; border-radius: 6px; color: var(--primary); background-color: transparent; border: 1px solid var(--primary); transition: all 0.3s ease; font-weight: 500; font-size: 14px;">
+    苏州站
+  </a>
+  <a href="#guangzhou" class="btn-navigation" style="text-decoration: none; padding: 6px 12px; border-radius: 6px; color: var(--primary); background-color: transparent; border: 1px solid var(--primary); transition: all 0.3s ease; font-weight: 500; font-size: 14px;">
+    广州站
+  </a>
+  <a href="#summer" class="btn-navigation" style="text-decoration: none; padding: 6px 12px; border-radius: 6px; color: var(--primary); background-color: transparent; border: 1px solid var(--primary); transition: all 0.3s ease; font-weight: 500; font-size: 14px;">
+    暑假特别篇
+  </a>
+</div>
+
+<style>
+  .btn-navigation:hover {
+    background-color: var(--primary) !important;
+    color: white !important;
+    transform: translateY(-2px);
+  }
+  .btn-navigation:active {
+    transform: translateY(0);
+  }
+  
+  /* 回到顶部按钮样式 */
+  .top-button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+  }
+  .top-button-container button {
+    transition: all 0.3s ease;
+    opacity: 0.7;
+  }
+  .top-button-container button:hover {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+  .top-button-container button:active {
+    transform: translateY(0);
+  }
+  
+  /* 响应式设计 */
+  @media (max-width: 768px) {
+    .title-navigation {
+      flex-direction: column;
+      align-items: center;
+    }
+    .btn-navigation {
+      width: 100%;
+      max-width: 200px;
+      text-align: center;
+    }
+  }
+</style>
+
+<a id="intro"></a>
+
+---
+
 > ## 新生？（前言？）
 
 终于离开了窒息的集训生活，闯进可以掌控自由的世界。我自然像只好奇猫一样，想探寻这世界的其他角落。
@@ -45,7 +109,9 @@ draft: false
 
 ------
 
+<a id="nanjing"></a>
 > ## 南京站24.10.18
+<span class="top-button-container"><button aria-label="Back to Top" class="btn-card h-10 w-10 rounded-full" onclick="window.scroll({ top: 0, behavior: 'smooth' });"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[var(--primary)]"><path d="m18 15-6-6-6 6"/></svg></button></span>
 
 终于也是开始写关于旅行了。大一上半学期，我的第一站是南京。为什么呢？当然是因为它近啊！二十多块钱的高铁费，不到半个小时就到了，简直就是家门口！又是知名城市，简直就是板上钉钉，首选之王！
 
@@ -329,7 +395,9 @@ draft: false
 
 ------
 
+<a id="suzhou"></a>
 > ## 苏州站25.01.04
+<span class="top-button-container"><button aria-label="Back to Top" class="btn-card h-10 w-10 rounded-full" onclick="window.scroll({ top: 0, behavior: 'smooth' });"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[var(--primary)]"><path d="m18 15-6-6-6 6"/></svg></button></span>
 
 这一站，里我第二次见了网友，其实还是更喜欢一个人逛，不过这个网友真的是认识很久了，还是选择见一面。出去玩的行程大部分都是他带着的，可以看得出来他真的很认真的安排了这次出行，也很紧张我的态度。他跟我说他都是问过他朋友，然后提前踩过点的。确实是很用心了，我内心挺感动的，但是不表现出来。我这个人还是挺别扭的哈哈哈。不过第二天我是自己逛的，果然还是想给自己留空间。
 
@@ -615,7 +683,9 @@ draft: false
 
 ---
 
+<a id="guangzhou"></a>
 > ## 广州站2025.05.01
+<span class="top-button-container"><button aria-label="Back to Top" class="btn-card h-10 w-10 rounded-full" onclick="window.scroll({ top: 0, behavior: 'smooth' });"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[var(--primary)]"><path d="m18 15-6-6-6 6"/></svg></button></span>
 
 去广州也是见了三个网友，真的是但凡出趟远门都要见网友（扶额）。但是见网友这种事真的是顺道，并不是为了见谁才去那个地方。我还是很喜欢一个人在陌生的城市只是纯逛的。
 
@@ -930,7 +1000,9 @@ draft: false
     </script>
 </div>
 
+<a id="summer"></a>
 > ## 暑假特别篇（25.8.3上海&南京）
+<span class="top-button-container"><button aria-label="Back to Top" class="btn-card h-10 w-10 rounded-full" onclick="window.scroll({ top: 0, behavior: 'smooth' });"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[var(--primary)]"><path d="m18 15-6-6-6 6"/></svg></button></span>
 
 这里主要是跟家人去旅行了，也是人生第一次带家人去旅行，我做了很多攻略希望家人能玩的开心，但实际上只是一路狂走，体验感似乎并不是很好。然后上海的人还特别多，害，我个人体验感也不是很好来着。就简单说一下去了哪里吧。呃，去了豫园，外滩，明珠塔附近，还有好几个商场，还遇到了明星线下活动，但是我不感兴趣所以就走了，还去了上海百联，二次元浓度最高的地方，确实厉害，一整栋楼的谷店，在这里我还发现怎么大家都特别喜欢坐地上?其余就是随便逛啦没什么好说的。
 
@@ -1207,3 +1279,5 @@ draft: false
       }
     </script>
 </div>
+
+---

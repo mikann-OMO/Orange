@@ -1,0 +1,96 @@
+---
+---
+<div id="preloader" class="fixed inset-0 z-[9999] bg-[var(--page-bg)] flex items-center justify-center transition-opacity duration-1000">
+  <div class="preloader-content text-center">
+    <p id="preloader-text" class="text-[clamp(1rem,3vw,1.5rem)] font-medium transition-opacity duration-1000">
+      你了解的都是我想让你了解的，你看见的也只是我想让你看见的，你爱上的只是表象
+    </p>
+  </div>
+</div>
+
+<script is:inline>
+  // 确保预加载器在页面加载前就可见
+  document.addEventListener('DOMContentLoaded', () => {
+    const preloader = document.getElementById('preloader');
+    const preloaderText = document.getElementById('preloader-text');
+    
+    if (preloader && preloaderText) {
+      // 强制显示预加载器
+      preloader.style.opacity = '1';
+      preloaderText.style.opacity = '1';
+      preloader.style.pointerEvents = 'auto';
+      
+      // 等待页面完全加载
+      window.addEventListener('load', () => {
+        // 页面加载完成后延迟开始文字渐变消失
+        setTimeout(() => {
+          preloaderText.style.opacity = '0';
+          
+          // 文字消失后再让整个预加载器消失
+          setTimeout(() => {
+            preloader.style.opacity = '0';
+            
+            // 动画结束后隐藏预加载器
+            setTimeout(() => {
+              preloader.style.display = 'none';
+              preloader.style.pointerEvents = 'none';
+            }, 1000);
+          }, 1000);
+        }, 500); // 加载完成后延迟显示时间
+      });
+    }
+  });
+</script>
+
+<style is:global>
+  /* 确保预加载器在最顶层 */
+  #preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--page-bg);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1s ease-in-out;
+  }
+  
+  /* 预加载器内容样式 */
+  .preloader-content {
+    max-width: 90%;
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  /* 文字样式 */
+  #preloader-text {
+    font-family: inherit;
+    color: var(--deep-text);
+    line-height: 1.8;
+    margin: 0;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  }
+  
+  /* 深色模式下的文字颜色 */
+  :root.dark #preloader-text {
+    color: rgba(255,255,255,0.9);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  }
+  
+  /* 确保在页面未完全加载时预加载器可见 */
+  @media (prefers-reduced-motion: no-preference) {
+    #preloader {
+      transition-duration: 1.2s;
+    }
+    #preloader-text {
+      transition-duration: 1.2s;
+    }
+  }
+</style>
