@@ -1,7 +1,7 @@
 ---
 title: —C4D—现阶段学习内容①
 published: 2025-09-19
-description: “关于美少女学习C4D的心路之旅”
+description: “关于美少女初学C4D干的三件事”
 image: ""
 tags: ["C4D"]
 category: Studying
