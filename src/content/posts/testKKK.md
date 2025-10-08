@@ -11,7 +11,7 @@ draft: false
 
 <div id="top"></div>
 
-<div class="title-navigation" style="display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0; justify-content: center;">
+<div class="title-navigation" style="display: flex; flex-wrap: wrap; gap: 20px; margin: 20px 0; justify-content: center;">
   <a href="#ps-section" class="btn-navigation" style="text-decoration: none; padding: 6px 12px; border-radius: 6px; color: var(--primary); background-color: transparent; border: 1px solid var(--primary); transition: all 0.3s ease; font-weight: 500; font-size: 14px;">
     跳转到 PS 快捷键
   </a>
