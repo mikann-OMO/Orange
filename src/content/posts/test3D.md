@@ -3,7 +3,7 @@ title: 3D建模软件初认识
 published: 2025-09-18
 description: “关于3D领域应用、软件选型、下载建议”
 image: ""
-tags: ["萌新","3d"]
+tags: ["3D"]
 category: Beginner
 draft: false 
 
@@ -98,3 +98,30 @@ draft: false
 总之，按行业挑主软件，把“建模+贴图+渲染+脚本”打通，再配AI生成提速，就能同时满足大厂流程与小微接单需求。*(我问ai是这么跟我说的(›´ω`‹ ))*
 
 ---
+
+【在6分钟内告诉你所有3D软件的介绍】 https://www.bilibili.com/video/BV1Xe411d71k/?share_source=copy_web&vd_source=0160ad3ba70bd037b7b2c8660bd6c92b
+
+很多视频博主会分享下载安装包，只能说注意鉴别，大部分都是骗人的，不如自己几块钱网购安装包和视频教程安心，花小钱办大事。像这种视频的评论区多翻翻也能学到很多技巧和注意事项，建议多看看。
+
+---
+教程分享（有简单的有复杂的，是我认为比较有用的，以后可能会更新）
+
+【【Maya教程】100集（全）别再到处找了！从零开始学Maya软件基础（新手入门实用版Maya2025教程）】 https://www.bilibili.com/video/BV16W2SYYEDJ/?share_source=copy_web&vd_source=0160ad3ba70bd037b7b2c8660bd6c92b
+
+【Maya零基础入门案例，20分钟学会制作卡通花朵！maya布线卡线 上色渲染详细教学】 https://www.bilibili.com/video/BV1cZ421h79j/?share_source=copy_web&vd_source=0160ad3ba70bd037b7b2c8660bd6c92b
+
+【Maya教学：如何给模型展UV和贴图？】 https://www.bilibili.com/video/BV1QJ411T7TS/?share_source=copy_web&vd_source=0160ad3ba70bd037b7b2c8660bd6c92b
+
+【【maya建模】最完整的人物布线教程-身体部分】 https://www.bilibili.com/video/BV1wG411S7aW/?share_source=copy_web&vd_source=0160ad3ba70bd037b7b2c8660bd6c92b
+
+【【maya】动漫脸型模型制作】 https://www.bilibili.com/video/BV1fJ41157vt/?share_source=copy_web&vd_source=0160ad3ba70bd037b7b2c8660bd6c92b
+
+【【maya】创建动漫风格头发】 https://www.bilibili.com/video/BV1KJ411L7Uo/?share_source=copy_web&vd_source=0160ad3ba70bd037b7b2c8660bd6c92b
+
+【maya利用曲线放样做裙子、袖子】 https://www.bilibili.com/video/BV1QV4y1m7nR/?share_source=copy_web&vd_source=0160ad3ba70bd037b7b2c8660bd6c92b
+
+【MAYA绑定教学：裙子】 https://www.bilibili.com/video/BV1sL6dYrEX8/?share_source=copy_web&vd_source=0160ad3ba70bd037b7b2c8660bd6c92b
+
+【【b站最全Maya骨骼绑定】maya骨骼绑定控制器表情设置】 https://www.bilibili.com/video/BV1o84y1h7gj/?share_source=copy_web&vd_source=0160ad3ba70bd037b7b2c8660bd6c92b
+
+【【MAYA教程】全网最细MAYA毛绒材质做法！ | Labubu案例】 https://www.bilibili.com/video/BV1UhtHeuEDf/?share_source=copy_web&vd_source=0160ad3ba70bd037b7b2c8660bd6c92b

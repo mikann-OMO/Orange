@@ -1,132 +1,127 @@
 ---
-title: Adobe 软件常用快捷键
-published: 2025-05-18
-description: “关于adobe软件的常用快捷键整理”
+title: Adobe软件全家桶指南
+published: 2025-05-19
+description: "关于Adobe软件应用领域、软件功能、下载安装建议"
 image: ""
-tags: ["快捷键","2d"]
-category: Adobe
-draft: false 
+tags: ["Adobe"]
+category: Beginner
+draft: true 
 
 ---
 
-# 快捷键
+- # **Adobe软件适用于哪些领域？都有些什么软件？这个软件跟你当下的学习内容适配吗？**
 
-## 常用快捷键
+>Adobe是创意设计领域的行业标准，其软件覆盖了平面设计、图像处理、视频编辑、音频制作、网页开发、UI/UX设计等多个领域。不同的Adobe软件有不同的核心功能和适用场景。以下按领域梳理最常用的Adobe软件、核心功能及学习入口，帮助你快速选择适合自己的软件。
 
-- `CTRL + Z ` ：撤销
+---
 
-- `CTRL + SHIFT + Z ` ：重做  （这里可能会与搜狗输入法的快捷键冲突，在设置中可以找到修改快捷键）
+## 一、平面设计 & 图像处理  
+| 软件 | 核心能力 | 代表用户 | 学习入口 |
+|---|---|---|---|
+| **Adobe Photoshop** | 图像编辑、合成、修图、数字绘画；图层系统、蒙版、滤镜 | 摄影师、设计师、修图师、插画师 | 图层操作+选区+滤镜+钢笔工具 |
+| **Adobe Illustrator** | 矢量图形设计、图标、插图、排版；钢笔工具、路径、渐变 | 品牌设计师、UI设计师、插画师 | 钢笔工具+路径查找器+布尔运算 |
+| **Adobe InDesign** | 专业排版、书籍、杂志、海报设计；主页、样式、交互 | 出版设计师、印刷设计师、内容创作者 | 主页+样式面板+文本框架 |
 
-- `CTRL + C` ：复制
+---
 
-- `CTRL + V` ：粘贴  `CTRL + SHIFT + V` ：原位粘贴
+## 二、视频编辑 & 动态设计  
+| 软件 | 核心能力 | 代表用户 | 学习入口 |
+|---|---|---|---|
+| **Adobe Premiere Pro** | 视频剪辑、调色、音频处理；时间轴、多轨道编辑 | 视频剪辑师、内容创作者、影视后期 | 时间轴操作+转场+调色+导出设置 |
+| **Adobe After Effects** | 动态图形、视觉特效、动画合成；图层系统、表达式 | 动画师、特效师、UI动效设计师 | 预合成+表达式+粒子系统+跟踪 |
+| **Adobe Character Animator** | 实时角色动画、表情捕捉；自动口型同步、肢体追踪 | 动画师、内容创作者、教育工作者 | 角色设置+行为面板+触发器 |
 
-- `CTRL + S` ：保存  `CTRL + SHIFT + S` ：另存为
+---
 
-- `CTRL + O` ：打开文件
+## 三、音频制作 & 音效设计  
+| 软件 | 核心能力 | 代表用户 | 学习入口 |
+|---|---|---|---|
+| **Adobe Audition** | 音频录制、编辑、混音、母带处理；频谱频率分析 | 播客创作者、音频工程师、视频后期 | 多轨混音+效果器+噪声消除 |
 
-- `CTRL + N` ：新建文件
+---
 
+## 四、网页开发 & UI/UX设计  
+| 软件 | 核心能力 | 代表用户 | 学习入口 |
+|---|---|---|---|
+| **Adobe XD** | UI/UX设计、原型制作、交互设计；组件库、响应式设计 | UI设计师、UX设计师、产品经理 | 画板+组件+交互原型+共享审阅 |
+| **Adobe Dreamweaver** | 网页设计、代码编辑；实时预览、响应式布局 | 网页设计师、前端开发人员 | HTML/CSS编辑+响应式设计+FTP |
 
-- `[` `]` :画笔&橡皮的 放大 和 缩小
+---
 
-- `SHIFT + F6` ：羽化（选区后才可用羽化功能）
+## 五、3D & AR创意工具  
+| 软件 | 核心能力 | 代表用户 | 学习入口 |
+|---|---|---|---|
+| **Adobe Dimension** | 3D场景合成、产品渲染；材质、光照、视角 | 产品设计师、营销创意人员 | 模型导入+材质应用+场景设置 |
+| **Adobe Substance 3D Suite** | 3D材质创建、纹理绘制、模型雕刻；程序化材质 | 游戏美术、影视特效、产品设计师 | Substance Painter+Sampler+Designer |
 
-- `CTRL + Y` ：校验颜色（校验屏幕颜色和印刷颜色）
+---
 
-- `CTRL + R` ：显示标尺
+## Adobe全家桶版本对比  
+ **Creative Cloud 全部应用**：包含20+款创意应用，适合专业工作室和全能设计师，月费约￥888  
+ **摄影计划**：Photoshop+Lightroom+Lightroom Classic，适合摄影师，月费约￥88  
+ **单应用计划**：仅选择一款常用软件，适合个人创作者，月费约￥388  
+ **学生/教师版**：全部应用半价，适合学生和教育工作者，月费约￥444  
 
-- `CTRL + T` ：自由变换 （选中后点击鼠标右键有扩展内容）
+---
 
-- `CTRL + SHIFT + I` ：反选选区
+- # **Adobe软件在哪里下载？应该选择什么版本？下载安装遇到问题怎么办？**
 
-- `CTRL + D` ：取消选择
+下载失败乃是常事，多找几个渠道下载，或者实在不行花点米网购远程下载啦。确实有些破解软件在下载过程中时很麻烦呢，跟着教程慢慢来嘛。当然，还会出现，好不容易下载成功，软件出现各种各样的问题，软件某些功能用不了，闪退，无法打开，用了一阵子破解失效的情况。这个时候你可以选择，重新找个安装包下载，购买远程下载服务，如果不死心可以根据问题在网上搜索相关解决方案。办法总比困难多嘛~
 
-- `CTRL + A` ：全选
+---
 
+>## 软件在哪里下载？
 
-- `ALT + delete` ：填充前景色
+正版软件可以在Adobe官网直接订阅下载。破解版本通常通过以下渠道传播：B站有"绿化版"安装教程，公众号会推送"免费资源"，专业课程老师可能会分享网盘链接，一些论坛或社区的资深用户也会分享安装包，甚至有人在淘宝、闲鱼等平台低价出售安装服务。
 
-- `ALT + CTRL` ：填充后景色
+---
 
-- `X` ：前景色与后景色交换
+>## 应该选择什么版本？
 
-## 关于图层
+安装包优先选择绿色一键安装版。软件版本选择应根据电脑配置：如果电脑配置较高，建议选择最新版本以获得最新功能；如果配置一般，推荐选择2-3年前的稳定版本以保证流畅运行。*（版本号通常是"年份.主版本号.次版本号"，例如2024.1.0）*
 
-- `CTRL + SHIFT + N` ：新建图层
+---
+>## 下载安装遇到问题怎么办？
 
-- `CTRl + J` ：复制当前图层
+下载失败是常见情况，建议多尝试几个来源，或考虑购买正版服务。破解版安装过程中可能会遇到各种问题，如序列号无效、安装程序无响应、破解补丁无法运行等。遇到这些情况，可以：尝试重新下载安装包、查找更详细的安装教程、在网上搜索具体错误代码的解决方案，或考虑升级电脑硬件以支持最新版本。（adobe软件一般不会出什么问题的哈）
 
-- `CTRL + E` ：向下合并图层
+---
 
-- `CTRL + SHIFT + E` ：合并可见图层
+- # 学习路线（AI推荐）  
+1. 先选"主方向"：  
+    平面设计→Photoshop+Illustrator+InDesign  
+    视频创作→Premiere Pro+After Effects+Audition  
+    UI/UX设计→Figma/XD+Photoshop+Illustrator  
+2. 掌握：基础操作→核心功能→插件扩展→行业流程  
+3. 结合AI工具（如Adobe Firefly）提升效率，用20%时间完成80%基础工作  
 
-- `CTRL + G` ：在当前图层设置图层组  `CTRL + SHIFT + G` ：解除当前图层组
+---
+ 
+总之，根据自己的学习方向选择对应的Adobe软件，重点掌握核心功能，再结合AI工具提升效率，就能快速入门并应用到实际项目中。*(我问AI是这么跟我说的(›´ω`‹ ))*
 
+---
 
-## 关于屏幕
+【【Adobe全家桶都是干嘛的？】10分钟搞懂60个Adobe 软件的用处！】 https://www.bilibili.com/video/BV1ch411m7SS/?share_source=copy_web&vd_source=0160ad3ba70bd037b7b2c8660bd6c92b
 
-- `CTRl +` ：屏幕放大
+很多视频博主会分享下载安装包，只能说注意鉴别，大部分都是骗人的，不如自己几块钱网购安装包和视频教程安心，花小钱办大事。像这种视频的评论区多翻翻也能学到很多技巧和注意事项，建议多看看。
 
-- `CTRL -` ：屏幕缩小
+---
+教程分享（有简单的有复杂的，是我认为比较有用的，以后可能会更新）
 
-- `CTRL + 0` ：还原屏幕大小
+【【PS抠图】新手必学！三种抠图方法让你完美扣出99%的图片！！！】 https://www.bilibili.com/video/BV1ob4y1h7Kj/?share_source=copy_web&vd_source=0160ad3ba70bd037b7b2c8660bd6c92b
 
-- `ALT + 鼠标滚轮` ：屏幕放大缩小
+【用PS将人物P直】 https://www.bilibili.com/video/BV1pH4y1Y75w/?share_source=copy_web&vd_source=0160ad3ba70bd037b7b2c8660bd6c92b
 
-- `空格键 + 鼠标左键` ： （抓手）移动屏幕
+【【PS教程】色阶讲解 一个视频解答你对色阶的所有迷惑】 https://www.bilibili.com/video/BV1aT4y1g7Z5/?share_source=copy_web&vd_source=0160ad3ba70bd037b7b2c8660bd6c92b
 
-## 关于图像
+【【教程】如何用Photoshop快速实现优质的像素画风格化】 https://www.bilibili.com/video/BV1fb411b7ww/?share_source=copy_web&vd_source=0160ad3ba70bd037b7b2c8660bd6c92b
 
-- `CTRL + L` ：调整→色阶
+【PS智能对象到底有什么用？很多人存在几个误区，知识点总结【设计原来如此】】 https://www.bilibili.com/video/BV1Qj411f7VF/?share_source=copy_web&vd_source=0160ad3ba70bd037b7b2c8660bd6c92b
 
-- `CTRL + M` ：调整→曲线
+【Ps消失点功能，增加透视效果，设计小技巧就这么进入了大脑 #PS小技巧 #ps小白教程 #设计教程】 https://www.bilibili.com/video/BV1zCkgYkEUn/?share_source=copy_web&vd_source=0160ad3ba70bd037b7b2c8660bd6c92b
 
-- `CTRL + I` ：调整→反向
+【ps给图片添加真实灯光效果】 https://www.bilibili.com/video/BV1KPiiYCE14/?share_source=copy_web&vd_source=0160ad3ba70bd037b7b2c8660bd6c92b
 
-- `CTRL + SHIFT + U` ：调整→去色
+【【AE教程】拿捏了！拿捏鸭鸭MG动画来了！纯AE制作，100%学会】 https://www.bilibili.com/video/BV1na411R7oZ/?share_source=copy_web&vd_source=0160ad3ba70bd037b7b2c8660bd6c92b
 
-- `CTRL + SHIFT + X` ：液化
-
-
-
-
-------
-
- 以上展示的是win系统的快捷键，mac系统的快捷键可能会有些许不同，请自行搜索。熟练的使用快捷键可以更好的提升我们的工作效率~*使用快捷键时请使用英文输入法喔~*
-
-
-------
-
- ### 小tips~♡
-
-- <div style="display: flex; align-items: center;">
-    <img src="https://mikann-1359996823.cos.ap-beijing.myqcloud.com/pic/687c7db6d793078b2cc25d67888036e2.png" alt="描述图片的文字" style="margin-right: 10px;">
-    <span>当不小心把工作区弄得乱七八糟时，点击这个小图标可以复位基本功能，还可以在这里自定义工作区。</span>
-</div>
-
-- <div style="display: flex; align-items: center; gap: 10px;">
-    <img src="https://mikann-1359996823.cos.ap-beijing.myqcloud.com/pic/8ad5b3190671f62d7c993d78e0074258.png" alt="相关图片">
-    <span>处理图像出错时，可撤销到之前任意状态，也能恢复已撤销操作，免重复繁琐步骤。如果你关闭了ps文件后重新打开，历史记录栏将不会保留之前的记录。历史记录栏的内容仅在当前会话中有效。</span>
-</div>
-
-- <div style="display: flex; align-items: center; gap: 10px;">
-    <img src="https://mikann-1359996823.cos.ap-beijing.myqcloud.com/pic/a13385791d606d802aafabf8abe72e37.jpg" alt="帮助功能图片">
-    <span>当知晓所需工具或功能的名称，却在软件界面中找不到时，不妨借助这个帮助功能，它能帮助快速精准地定位到目标工具或功能。 </span>
-  </div>
-
-- px 和 ppi 以及 RGB 和 出血 简单说明
-
-<details>
-<summary>点击展开</summary>
-
- | **分类**     | **术语** | **说明**                          | **用途**                |
-|--------------|---------|----------------------------------|-------------------------|
-| **单位**     | px      | 图像最小单位                     | 决定图像大小            |
-|              | dpi     | 每英寸墨点数                    | 印刷精度（常用300）     |
-|              | ppi     | 每英寸像素数                    | 屏幕清晰度（常用72）    |
-| **颜色**     | RGB     | 红绿蓝混合色                    | 屏幕显示                |
-|              | CMYK    | 青品黄黑混合色                  | 印刷输出                |
-| **印刷**     | 出血    | 设计超出裁切线3mm               | 防止裁切误差            |
-
-</details>
+---

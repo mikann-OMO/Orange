@@ -1,23 +1,72 @@
 ---
 import type { GetStaticPaths } from "astro";
-import PostPage from "../components/PostPage.astro";
-import Pagination from "../components/control/Pagination.astro";
 import { PAGE_SIZE } from "../constants/constants";
-import MainGridLayout from "../layouts/MainGridLayout.astro";
 import { getSortedPosts } from "../utils/content-utils";
 
+// This function is needed for static generation
 export const getStaticPaths = (async ({ paginate }) => {
 	const allBlogPosts = await getSortedPosts();
 	return paginate(allBlogPosts, { pageSize: PAGE_SIZE });
 }) satisfies GetStaticPaths;
-// https://github.com/withastro/astro/issues/6507#issuecomment-1489916992
 
 const { page } = Astro.props;
-
-const len = page.data.length;
 ---
 
-<MainGridLayout>
-    <PostPage page={page}></PostPage>
-    <Pagination class="mx-auto onload-animation" page={page} style={`animation-delay: calc(var(--content-delay) + ${(len)*50}ms)`}></Pagination>
-</MainGridLayout>
+<!-- 使用元标签重定向到个人主页 -->
+<head>
+	<meta charset="UTF-8">
+	<style>
+		.typewriter-container {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			min-height: 100vh;
+			background-color: oklch(0.16 0.014 30);
+			cursor: pointer;
+			user-select: none;
+		}
+		.typewriter-text {
+			font-size: 20px;
+			color: white;
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			text-align: center;
+			max-width: 80%;
+			line-height: 1.8;
+			opacity: 1;
+			transition: opacity 0.8s ease-out;
+		}
+		.typewriter-text.fade-out {
+			opacity: 0;
+		}
+	</style>
+</head>
+
+<!-- 当重定向失败时显示的内容 -->
+<div class="typewriter-container">
+	<p class="typewriter-text" id="fade-text">
+		你了解的都是我想让你了解的，你看见的也只是我想让你看见的，你爱上的只是表象...
+	</p>
+</div>
+
+<script>
+	document.addEventListener('DOMContentLoaded', () => {
+		const content = document.getElementById('fade-text');
+		const container = document.querySelector('.typewriter-container');
+
+		// 添加点击任意位置跳转功能
+		container.addEventListener('click', () => {
+			window.location.href = '/about/';
+		});
+
+		// 页面加载后停留1秒，然后文字逐渐消失
+		setTimeout(() => {
+			// 应用淡出动画
+			content.classList.add('fade-out');
+			
+			// 淡出动画完成后跳转
+			setTimeout(() => {
+				window.location.href = '/about/';
+			}, 800); // 与CSS中的transition时间保持一致
+		}, 1234); // 停留1秒
+	});
+</script>
