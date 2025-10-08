@@ -32,7 +32,19 @@ export async function getStaticPaths() {
 			},
 		}));
 
-	return [...standardPaths, ...nonEncodedCJKPaths];
+	// Add paths for categories with spaces (non-encoded spaces)
+	const spacePaths = categories
+		.filter((category) => category.name.includes(' '))
+		.map((category) => ({
+			params: {
+				category: category.name.trim(), // Keep spaces as is
+			},
+			props: {
+				decodedCategory: category.name.trim(),
+			},
+		}));
+
+	return [...standardPaths, ...nonEncodedCJKPaths, ...spacePaths];
 }
 
 const { decodedCategory } = Astro.props;

@@ -42,6 +42,10 @@ export const navBarConfig: NavBarConfig = {
 	links: [
 		LinkPreset.Home,
 		LinkPreset.Archive,
+		{
+			name: "作品",
+			url: "/portfolio/",
+		},
 		LinkPreset.Friends,
 	],
 };
