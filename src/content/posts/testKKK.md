@@ -1,7 +1,7 @@
 ---
 title: 常用快捷键
 published: 2025-05-18
-description: “女大自用”
+description: "女大自用"
 image: ""
 tags: []
 category: Beginner
@@ -9,14 +9,46 @@ draft: false
 
 ---
 
-<div style="position: sticky; top: 0; z-index: 100; background-color: transparent; backdrop-filter: blur(5px); padding: 10px 0; margin-bottom: 20px;">
-  <div style="display: flex; gap: 10px; overflow-x: auto; padding: 5px 0; scrollbar-width: none;">
-    <a href="#ps-section" style="flex-shrink: 0; background-color: transparent; color: #333; text-decoration: none; padding: 8px 15px; border-radius: 20px; font-size: 14px; font-weight: 500; transition: all 0.2s; white-space: nowrap;">跳转到 PS 快捷键</a>
-      <a href="#c4d-section" style="flex-shrink: 0; background-color: transparent; color: #333; text-decoration: none; padding: 8px 15px; border-radius: 20px; font-size: 14px; font-weight: 500; transition: all 0.2s; white-space: nowrap;">跳转到 C4D 快捷键</a>
-  </div>
+<div id="top"></div>
+
+<div class="title-navigation" style="display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0; justify-content: center;">
+  <a href="#ps-section" class="btn-navigation" style="text-decoration: none; padding: 6px 12px; border-radius: 6px; color: var(--primary); background-color: transparent; border: 1px solid var(--primary); transition: all 0.3s ease; font-weight: 500; font-size: 14px;">
+    跳转到 PS 快捷键
+  </a>
+  <a href="#c4d-section" class="btn-navigation" style="text-decoration: none; padding: 6px 12px; border-radius: 6px; color: var(--primary); background-color: transparent; border: 1px solid var(--primary); transition: all 0.3s ease; font-weight: 500; font-size: 14px;">
+    跳转到 C4D 快捷键
+  </a>
 </div>
 
-# PS <a id="ps-section"></a>
+<style>
+  .btn-navigation:hover {
+    background-color: var(--primary) !important;
+    color: white !important;
+    transform: translateY(-2px);
+  }
+  .btn-navigation:active {
+    transform: translateY(0);
+  }
+  
+  /* 响应式设计 */
+  @media (max-width: 768px) {
+    .title-navigation {
+      flex-direction: column;
+      align-items: center;
+    }
+    .btn-navigation {
+      width: 100%;
+      max-width: 200px;
+      text-align: center;
+    }
+  }
+</style>
+
+# PS <a id="ps-section"></a> <a href="#top" style="display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; background-color: var(--primary); color: white; text-decoration: none; margin-left: 10px; transition: all 0.3s ease;">
+  <svg style="width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 15L12 9L6 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</a>
 
 ## 常用快捷键
 
@@ -138,7 +170,11 @@ draft: false
 
 </details>
 
-# C4D <a id="c4d-section"></a>
+# C4D <a id="c4d-section"></a> <a href="#top" style="display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; background-color: var(--primary); color: white; text-decoration: none; margin-left: 10px; transition: all 0.3s ease;">
+  <svg style="width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 15L12 9L6 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</a>
 
 ## 基础操作
 

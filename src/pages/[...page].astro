@@ -1,16 +1,16 @@
 ---
-import type { GetStaticPaths } from "astro";
-import { PAGE_SIZE } from "../constants/constants";
-import { getSortedPosts } from "../utils/content-utils";
-import Layout from "../layouts/Layout.astro";
-import MainGridLayout from "../layouts/MainGridLayout.astro";
-import PostCard from "../components/PostCard.astro";
-import PostMetadata from "../components/PostMeta.astro";
 import { getEntry } from "astro:content";
 import { render } from "astro:content";
 import Markdown from "@components/misc/Markdown.astro";
+import type { GetStaticPaths } from "astro";
+import PostCard from "../components/PostCard.astro";
+import PostMetadata from "../components/PostMeta.astro";
+import { PAGE_SIZE } from "../constants/constants";
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
+import Layout from "../layouts/Layout.astro";
+import MainGridLayout from "../layouts/MainGridLayout.astro";
+import { getSortedPosts } from "../utils/content-utils";
 import { getPostUrlBySlug } from "../utils/url-utils";
 
 // This function is needed for static generation
@@ -98,58 +98,6 @@ const recentPosts = latestPosts.slice(0, 3);
 					crossorigin="anonymous"
 					async>
 			</script>
-			{page.data.length === 0 ? (
-				<p class="text-center text-gray-500 dark:text-gray-400 mt-10">
-					暂无文章
-				</p>
-			) : (
-				<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-					{page.data.map((post) => (
-						<PostCard 
-							entry={post} 
-							title={post.data.title}
-							url={`/posts/${post.slug}/`}
-							published={new Date(post.data.published)}
-							updated={post.data.updated ? new Date(post.data.updated) : undefined}
-							tags={post.data.tags || []}
-							category={post.data.category}
-							image={post.data.image || ''}
-							description={post.data.description}
-							draft={post.data.draft || false}
-							style={''}
-							key={post.id} 
-						/>
-					))}
-				</div>
-			)}
-			
-			{/* 分页导航 */}
-			{page.url.next || page.url.prev ? (
-				<nav class="flex justify-center mt-12 mb-8" aria-label="分页导航">
-					<ul class="flex space-x-2">
-						{page.url.prev && (
-							<li>
-								<a
-									class="px-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
-									href={page.url.prev}
-								>
-									上一页
-								</a>
-							</li>
-						)}
-						{page.url.next && (
-							<li>
-								<a
-									class="px-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
-									href={page.url.next}
-								>
-									下一页
-								</a>
-							</li>
-						)}
-					</ul>
-				</nav>
-			) : null}
 		</div>
 	</MainGridLayout>
 </Layout>
