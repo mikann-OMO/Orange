@@ -45,26 +45,10 @@ const coverWidth = "28%";
 const { remarkPluginFrontmatter } = await entry.render();
 ---
 <!-- 现代化文章卡片 -->
-<div class:list={["group flex flex-col w-full rounded-[var(--radius-large)] overflow-hidden relative arknights-card hover:border-[var(--primary)]/70 hover:shadow-[0_8px_24px_rgba(0,0,0,0.15)] transition-all duration-300 hover:-translate-y-1", className]} style={style}>
+<div class:list={["group flex flex-col md:flex-row w-full rounded-[var(--radius-large)] overflow-hidden relative arknights-card hover:border-[var(--primary)]/70 hover:shadow-[0_8px_24px_rgba(0,0,0,0.15)] transition-all duration-300 hover:-translate-y-1", className]} style={style}>
     <a href={url} aria-label={title} class="absolute inset-0 z-10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"></a>
     <!-- 顶部装饰条 -->
     <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] scale-x-0 transition-transform duration-500 delay-300 origin-left group-hover:scale-x-100 z-20"></div>
-    
-    <!-- 封面图片 - 顶部，移动端占满宽度 -->
-    {hasCover && <div class="w-full p-4 pt-4 pb-0 relative">
-        <div class="opacity-0 animate-fade-in-up" style={`animation-delay: calc(var(--content-delay) + ${delay + 50}ms); animation-fill-mode: forwards;`}>
-            <!-- 移动端封面图片样式 - 自适应宽度，固定高度 -->
-            <div class="w-full h-[180px] rounded-[var(--radius-large)] overflow-hidden shadow-md transition-all duration-300">
-                <ImageWrapper 
-                    src={image} 
-                    basePath={path.join("content/posts/", getDir(entry.id))} 
-                    alt="Cover Image of the Post" 
-                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
-                    position="center"
-                />
-            </div>
-        </div>
-    </div>}
     
     <!-- 内容区域 -->
     <div class="flex-1 p-4">
@@ -101,6 +85,22 @@ const { remarkPluginFrontmatter } = await entry.render();
             </div>
         </div>
     </div>
+    
+    <!-- 封面图片 - 右侧，180px×180px，与上下右保持相等距离 -->
+    {hasCover && <div class="flex-shrink-0 flex items-center justify-center p-4 pt-4 pb-4 pr-4 pl-0 md:pt-4 md:pb-4 md:pr-4 md:pl-0">
+        <div class="opacity-0 animate-fade-in-up" style={`animation-delay: calc(var(--content-delay) + ${delay + 50}ms); animation-fill-mode: forwards;`}>
+            <!-- 桌面端封面图片样式 - 固定尺寸180px×180px，放在右侧 -->
+            <div class="w-full md:w-[180px] h-[180px] rounded-[var(--radius-large)] overflow-hidden shadow-md transition-all duration-300">
+                <ImageWrapper 
+                    src={image} 
+                    basePath={path.join("content/posts/", getDir(entry.id))} 
+                    alt="Cover Image of the Post" 
+                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                    position="center"
+                />
+            </div>
+        </div>
+    </div>}
 </div>
 <div class="transition border-t-[1px] border-dashed mx-6 border-black/10 dark:border-white/[0.15] last:border-t-0 md:hidden"></div>
 

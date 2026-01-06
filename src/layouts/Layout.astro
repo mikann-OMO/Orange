@@ -290,42 +290,58 @@ import { siteConfig } from '../config';
 const bannerEnabled = !!document.getElementById('banner-wrapper');
 
 // Set up click outside to close functionality for panels
-function setClickOutsideToClose(panelId: string, ignoreIds: string[]) {
-	document.addEventListener("click", event => {
-		const panel = document.getElementById(panelId);
-		if (!panel) return;
-		
-		const target = event.target as Node;
-		if (!(target instanceof Node)) return;
+// Optimized: Single event listener for all panels
+const panelConfigs = {
+	"display-setting": ["display-setting", "display-settings-switch"],
+	"nav-menu-panel": ["nav-menu-panel", "nav-menu-switch"],
+	"search-panel": ["search-panel", "search-bar", "search-switch"]
+};
+
+// Cache DOM elements for better performance
+const cachedElements: { [key: string]: HTMLElement | null } = {};
+
+function getCachedElement(id: string): HTMLElement | null {
+	if (!cachedElements[id]) {
+		cachedElements[id] = document.getElementById(id);
+	}
+	return cachedElements[id];
+}
+
+document.addEventListener("click", (event) => {
+	const target = event.target as Node;
+	if (!(target instanceof Node)) return;
+	
+	// Check all panels
+	for (const [panelId, ignoreIds] of Object.entries(panelConfigs)) {
+		const panel = getCachedElement(panelId);
+		if (!panel) continue;
 		
 		// Check if click is inside any ignored elements
+		let isInsideIgnored = false;
 		for (const ignoreId of ignoreIds) {
-			const ignoreElement = document.getElementById(ignoreId);
+			const ignoreElement = getCachedElement(ignoreId);
 			if (ignoreElement && (ignoreElement === target || ignoreElement.contains(target))) {
-				return;
+				isInsideIgnored = true;
+				break;
 			}
 		}
 		
-		panel.classList.add("float-panel-closed");
-	});
-}
-
-// Initialize click outside listeners
-setClickOutsideToClose("display-setting", ["display-setting", "display-settings-switch"]);
-setClickOutsideToClose("nav-menu-panel", ["nav-menu-panel", "nav-menu-switch"]);
-setClickOutsideToClose("search-panel", ["search-panel", "search-bar", "search-switch"]);
-
-// Add click event listener for nav menu switch
-document.addEventListener("DOMContentLoaded", () => {
-    const navMenuSwitch = document.getElementById("nav-menu-switch");
-    const navMenuPanel = document.getElementById("nav-menu-panel");
-    
-    if (navMenuSwitch && navMenuPanel) {
-        navMenuSwitch.addEventListener("click", () => {
-            navMenuPanel.classList.toggle("float-panel-closed");
-        });
-    }
+		if (!isInsideIgnored) {
+			panel.classList.add("float-panel-closed");
+		}
+	}
 });
+
+// Add click event listener for nav menu switch - Optimized with caching
+const navMenuSwitch = getCachedElement("nav-menu-switch");
+const navMenuPanel = getCachedElement("nav-menu-panel");
+
+if (navMenuSwitch && navMenuPanel) {
+    navMenuSwitch.addEventListener("click", (e) => {
+        e.stopPropagation(); // Prevent immediate closing by click outside listener
+        navMenuPanel.classList.toggle("float-panel-closed");
+    }, { passive: true });
+}
 
 // Load theme from storage
 function loadTheme() {

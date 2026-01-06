@@ -8,7 +8,8 @@ const OPTIMIZATION_CONFIG = {
 	quality: 80,
 	maxWidth: 1920,
 	formats: ["webp", "avif"],
-	overwrite: false, // 不覆盖原文件
+	overwrite: true, // 覆盖原文件以确保最新优化
+	responsiveSizes: [320, 640, 768, 1024, 1280, 1536, 1920], // 生成响应式尺寸
 };
 
 // 要处理的图片格式
@@ -38,46 +39,108 @@ async function getAllImages() {
 async function optimizeImage(filePath) {
 	try {
 		console.log(`正在优化: ${filePath}`);
+		const fs = await import("fs/promises");
 
-		// 读取图片
-		const image = sharp(filePath);
-		const metadata = await image.metadata();
+		// 读取图片数据到缓冲区
+		const imageBuffer = await fs.readFile(filePath);
+		const metadata = await sharp(imageBuffer).metadata();
 
-		// 计算优化后的尺寸
-		let width = metadata.width || 0;
-		let height = metadata.height || 0;
+		// 计算优化后的基准尺寸
+		let baseWidth = metadata.width || 0;
+		let baseHeight = metadata.height || 0;
 
-		if (width > OPTIMIZATION_CONFIG.maxWidth) {
-			height = Math.round((height / width) * OPTIMIZATION_CONFIG.maxWidth);
-			width = OPTIMIZATION_CONFIG.maxWidth;
+		if (baseWidth > OPTIMIZATION_CONFIG.maxWidth) {
+			baseHeight = Math.round(
+				(baseHeight / baseWidth) * OPTIMIZATION_CONFIG.maxWidth,
+			);
+			baseWidth = OPTIMIZATION_CONFIG.maxWidth;
 		}
 
 		// 优化并保存原格式
-		await image
-			.resize(width, height, { fit: "inside", withoutEnlargement: true })
-			.jpeg({ quality: OPTIMIZATION_CONFIG.quality, mozjpeg: true })
-			.png({ quality: OPTIMIZATION_CONFIG.quality, compressionLevel: 8 })
-			.toFile(filePath, { overwrite: OPTIMIZATION_CONFIG.overwrite });
+		const originalExt = filePath.split(".").pop().toLowerCase();
+		let optimizedBuffer;
 
-		// 生成WebP和AVIF格式
-		const basePath = filePath.replace(/\.[^/.]+$/, "");
-
-		// WebP
-		const webpPath = `${basePath}.webp`;
-		if (!existsSync(webpPath) || OPTIMIZATION_CONFIG.overwrite) {
-			await image
-				.resize(width, height, { fit: "inside", withoutEnlargement: true })
-				.webp({ quality: OPTIMIZATION_CONFIG.quality })
-				.toFile(webpPath);
+		// 根据文件类型选择优化参数
+		if (originalExt === "jpg" || originalExt === "jpeg") {
+			optimizedBuffer = await sharp(imageBuffer)
+				.resize(baseWidth, baseHeight, {
+					fit: "inside",
+					withoutEnlargement: true,
+				})
+				.jpeg({
+					quality: OPTIMIZATION_CONFIG.quality,
+					mozjpeg: true,
+					progressive: true,
+				})
+				.toBuffer();
+		} else if (originalExt === "png") {
+			optimizedBuffer = await sharp(imageBuffer)
+				.resize(baseWidth, baseHeight, {
+					fit: "inside",
+					withoutEnlargement: true,
+				})
+				.png({
+					quality: OPTIMIZATION_CONFIG.quality,
+					compressionLevel: 8,
+					adaptiveFiltering: true,
+					force: false,
+				})
+				.toBuffer();
+		} else {
+			// 其他格式直接使用原图
+			optimizedBuffer = imageBuffer;
 		}
 
-		// AVIF
-		const avifPath = `${basePath}.avif`;
-		if (!existsSync(avifPath) || OPTIMIZATION_CONFIG.overwrite) {
-			await image
-				.resize(width, height, { fit: "inside", withoutEnlargement: true })
-				.avif({ quality: OPTIMIZATION_CONFIG.quality - 5 })
-				.toFile(avifPath);
+		// 写入优化后的原图
+		await fs.writeFile(filePath, optimizedBuffer);
+
+		// 生成WebP和AVIF格式的不同尺寸版本
+		const basePath = filePath.replace(/\.[^/.]+$/, "");
+
+		// 为每种格式生成响应式图片
+		for (const format of OPTIMIZATION_CONFIG.formats) {
+			// 生成主格式版本（不包含尺寸后缀）
+			const mainOutputPath = `${basePath}.${format}`;
+			await sharp(optimizedBuffer)
+				.resize(baseWidth, baseHeight, {
+					fit: "inside",
+					withoutEnlargement: true,
+					kernel: "lanczos3",
+				})
+				.withMetadata()
+				[format]({
+					quality: OPTIMIZATION_CONFIG.quality - (format === "avif" ? 5 : 0),
+					...(format === "webp" && { lossless: false, smartSubsample: true }),
+					...(format === "avif" && { chromaSubsampling: "4:2:0" }),
+				})
+				.toFile(mainOutputPath, { overwrite: OPTIMIZATION_CONFIG.overwrite });
+
+			// 生成响应式尺寸版本
+			for (const size of OPTIMIZATION_CONFIG.responsiveSizes) {
+				// 只生成小于等于原图宽度的尺寸
+				if (size > baseWidth) continue;
+
+				// 计算该尺寸下的高度
+				const height = Math.round((baseHeight / baseWidth) * size);
+
+				// 构建输出路径
+				const outputPath = `${basePath}-${size}.${format}`;
+
+				// 优化并保存
+				await sharp(optimizedBuffer)
+					.resize(size, height, {
+						fit: "inside",
+						withoutEnlargement: true,
+						kernel: "lanczos3",
+					})
+					.withMetadata() // 保留元数据
+					[format]({
+						quality: OPTIMIZATION_CONFIG.quality - (format === "avif" ? 5 : 0),
+						...(format === "webp" && { lossless: false, smartSubsample: true }),
+						...(format === "avif" && { chromaSubsampling: "4:2:0" }),
+					})
+					.toFile(outputPath, { overwrite: OPTIMIZATION_CONFIG.overwrite });
+			}
 		}
 
 		console.log(`✅ 优化完成: ${filePath}`);
