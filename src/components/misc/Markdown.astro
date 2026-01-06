@@ -1,7 +1,4 @@
 ---
-import "@fontsource-variable/jetbrains-mono";
-import "@fontsource-variable/jetbrains-mono/wght-italic.css";
-
 interface Props {
 	class: string;
 	style?: string;
@@ -9,6 +6,18 @@ interface Props {
 const className = Astro.props.class;
 const style = Astro.props.style;
 ---
+
+<!-- 预加载字体以优化性能 -->
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" href="https://fonts.googleapis.com/variable?+
+    family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" 
+    as="style" 
+    onload="this.onload=null;this.rel='stylesheet'">
+<noscript>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/variable?+
+        family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap">
+</noscript>
 <div data-pagefind-body class={`prose dark:prose-invert prose-base custom-md ${className}`} style={style}>
     <!--<div class="prose dark:prose-invert max-w-none custom-md">-->
     <!--<div class="max-w-none custom-md">-->

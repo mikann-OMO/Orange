@@ -2,32 +2,42 @@ import { getCollection } from "astro:content";
 import I18nKey from "../i18n/i18nKey.ts";
 import { i18n } from "../i18n/translation.ts";
 
-export async function getSortedPosts(): Promise<
-	Awaited<ReturnType<typeof getCollection<"posts">>>
+// 复用获取博客文章的函数，避免重复查询
+export async function getAllPublishedPosts(): Promise<
+	ReturnType<typeof getCollection<"posts">>
 > {
-	const allBlogPosts = await getCollection("posts", ({ data }) => {
+	return getCollection("posts", ({ data }) => {
 		return import.meta.env.PROD ? data.draft !== true : true;
 	});
+}
 
-	const sorted = allBlogPosts.sort((a, b) => {
-		const dateA = new Date(a.data.published);
-		const dateB = new Date(b.data.published);
-		if (dateA > dateB) return -1;
-		if (dateA < dateB) return 1;
-		// 如果日期相同，根据标题排序以确保顺序一致
-		return a.data.title.localeCompare(b.data.title);
-	});
+export async function getSortedPosts(): Promise<
+	ReturnType<typeof getCollection<"posts">>
+> {
+	const allBlogPosts = await getAllPublishedPosts();
 
-	for (let i = 1; i < sorted.length; i++) {
-		sorted[i].data.nextSlug = sorted[i - 1].slug;
-		sorted[i].data.nextTitle = sorted[i - 1].data.title;
-	}
-	for (let i = 0; i < sorted.length - 1; i++) {
-		sorted[i].data.prevSlug = sorted[i + 1].slug;
-		sorted[i].data.prevTitle = sorted[i + 1].data.title;
-	}
-
-	return sorted;
+	// 使用稳定排序算法，先按日期倒序，再按标题正序
+	return allBlogPosts
+		.sort((a, b) => {
+			const dateA = new Date(a.data.published).getTime();
+			const dateB = new Date(b.data.published).getTime();
+			if (dateA !== dateB) {
+				return dateB - dateA; // 日期倒序
+			}
+			return a.data.title.localeCompare(b.data.title); // 标题正序
+		})
+		.map((post, index, array) => {
+			// 同时设置前后文章，减少一次循环
+			if (index > 0) {
+				post.data.nextSlug = array[index - 1].slug;
+				post.data.nextTitle = array[index - 1].data.title;
+			}
+			if (index < array.length - 1) {
+				post.data.prevSlug = array[index + 1].slug;
+				post.data.prevTitle = array[index + 1].data.title;
+			}
+			return post;
+		});
 }
 
 export type Tag = {
@@ -36,24 +46,23 @@ export type Tag = {
 };
 
 export async function getTagList(): Promise<Tag[]> {
-	const allBlogPosts = await getCollection<"posts">("posts", ({ data }) => {
-		return import.meta.env.PROD ? data.draft !== true : true;
-	});
+	const allBlogPosts = await getAllPublishedPosts();
+	const countMap = new Map<string, number>();
 
-	const countMap: { [key: string]: number } = {};
-	allBlogPosts.map((post: { data: { tags: string[] } }) => {
-		post.data.tags.map((tag: string) => {
-			if (!countMap[tag]) countMap[tag] = 0;
-			countMap[tag]++;
-		});
-	});
+	// 使用 for...of 替代 forEach，提高性能
+	for (const post of allBlogPosts) {
+		const tags = post.data.tags;
+		if (tags) {
+			for (const tag of tags) {
+				countMap.set(tag, (countMap.get(tag) || 0) + 1);
+			}
+		}
+	}
 
-	// sort tags
-	const keys: string[] = Object.keys(countMap).sort((a, b) => {
-		return a.toLowerCase().localeCompare(b.toLowerCase());
-	});
-
-	return keys.map((key) => ({ name: key, count: countMap[key] }));
+	// 转换为数组并排序
+	return Array.from(countMap.entries())
+		.sort(([a], [b]) => a.toLowerCase().localeCompare(b.toLowerCase()))
+		.map(([name, count]) => ({ name, count }));
 }
 
 export type Category = {
@@ -62,32 +71,26 @@ export type Category = {
 };
 
 export async function getCategoryList(): Promise<Category[]> {
-	const allBlogPosts = await getCollection<"posts">("posts", ({ data }) => {
-		return import.meta.env.PROD ? data.draft !== true : true;
-	});
-	const count: { [key: string]: number } = {};
-	allBlogPosts.map((post: { data: { category: string | number } }) => {
+	const allBlogPosts = await getAllPublishedPosts();
+	const countMap = new Map<string, number>();
+	const uncategorizedKey = i18n(I18nKey.uncategorized);
+
+	// 使用 for...of 替代 forEach，提高性能
+	for (const post of allBlogPosts) {
+		let categoryName: string;
 		if (!post.data.category) {
-			const ucKey = i18n(I18nKey.uncategorized);
-			count[ucKey] = count[ucKey] ? count[ucKey] + 1 : 1;
-			return;
+			categoryName = uncategorizedKey;
+		} else {
+			categoryName =
+				typeof post.data.category === "string"
+					? post.data.category.trim()
+					: String(post.data.category).trim();
 		}
-
-		const categoryName =
-			typeof post.data.category === "string"
-				? post.data.category.trim()
-				: String(post.data.category).trim();
-
-		count[categoryName] = count[categoryName] ? count[categoryName] + 1 : 1;
-	});
-
-	const lst = Object.keys(count).sort((a, b) => {
-		return a.toLowerCase().localeCompare(b.toLowerCase());
-	});
-
-	const ret: Category[] = [];
-	for (const c of lst) {
-		ret.push({ name: c, count: count[c] });
+		countMap.set(categoryName, (countMap.get(categoryName) || 0) + 1);
 	}
-	return ret;
+
+	// 转换为数组并排序
+	return Array.from(countMap.entries())
+		.sort(([a], [b]) => a.toLowerCase().localeCompare(b.toLowerCase()))
+		.map(([name, count]) => ({ name, count }));
 }

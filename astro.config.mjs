@@ -32,7 +32,22 @@ export default defineConfig({
 		experimental: {
 			optimizeCss: true,
 		},
+		// 增加构建缓存
+		cache: true,
+		// 输出目录
+		outDir: "dist",
+		// 资产目录
+		assetsDir: "_astro",
+		// 源映射
+		sourcemap: false,
 	},
+	// 优化HTTP头和缓存策略
+	// 配置CDN前缀
+	// cdn: {
+	//   base: 'https://cdn.example.com',
+	// },
+	// 压缩HTML
+	compressHTML: true,
 	integrations: [
 		tailwind({
 			nesting: true,
@@ -187,13 +202,13 @@ export default defineConfig({
 			// 优化 Rollup 配置
 			rollupOptions: {
 				output: {
-					// 优化资源命名
+					// 优化资源命名，添加hash便于缓存
 					entryFileNames: "_astro/[name].[hash].js",
 					chunkFileNames: "_astro/[name].[hash].js",
 					assetFileNames: "_astro/[name].[hash][extname]",
 					// 启用更高效的压缩
 					manualChunks: {
-						// 分割大型依赖
+						// 分割大型依赖，便于缓存和并行加载
 						photoswipe: ["photoswipe"],
 						katex: ["katex"],
 						markdown: ["markdown-it"],
@@ -208,6 +223,18 @@ export default defineConfig({
 					},
 					// 启用动态导入的代码分割
 					dynamicImportInCjs: true,
+					// 优化缓存策略
+					manualChunks: (id) => {
+						// 将 node_modules 中的大型依赖拆分到单独的 chunk
+						if (id.includes("node_modules")) {
+							if (id.includes("photoswipe")) return "photoswipe";
+							if (id.includes("katex")) return "katex";
+							if (id.includes("markdown-it")) return "markdown";
+							if (id.includes("overlayscrollbars")) return "overlayscrollbars";
+							if (id.includes("iconify")) return "iconify";
+							return "vendor";
+						}
+					},
 				},
 				onwarn(warning, warn) {
 					// Suppress dynamic/static import conflict warnings
@@ -221,7 +248,7 @@ export default defineConfig({
 			},
 			// 优化 CSS 构建
 			cssCodeSplit: true,
-			// 启用源映射（仅开发环境）
+			// 禁用源映射以减小文件大小
 			sourcemap: false,
 			// 优化 terser 配置
 			terserOptions: {
@@ -229,7 +256,27 @@ export default defineConfig({
 					drop_console: true,
 					drop_debugger: true,
 					pure_funcs: ["console.log", "console.debug", "console.warn"],
+					// 进一步优化压缩
+					pure_getters: true,
+					unsafe: true,
+					unsafe_comps: true,
+					unsafe_math: true,
+					unsafe_proto: true,
+					unsafe_regexp: true,
 				},
+				mangle: {
+					// 启用变量名混淆
+					toplevel: true,
+					keep_classnames: false,
+					keep_fnames: false,
+				},
+			},
+			// 配置缓存策略
+			cacheOptions: {
+				// 缓存目录
+				cacheDir: ".vite-cache",
+				// 缓存失效时间（毫秒）
+				ttl: 604800000, // 7天
 			},
 		},
 		// 优化开发服务器

@@ -45,35 +45,51 @@ const coverWidth = "28%";
 const { remarkPluginFrontmatter } = await entry.render();
 ---
 <!-- 现代化文章卡片 -->
-<div class:list={["group flex flex-col md:flex-row w-full rounded-[var(--radius-large)] overflow-hidden relative arknights-card hover:border-[var(--primary)]/70 hover:shadow-[0_8px_24px_rgba(0,0,0,0.15)] transition-all duration-300 hover:-translate-y-1", className]} style={style}>
+<div class:list={["group flex flex-col w-full rounded-[var(--radius-large)] overflow-hidden relative arknights-card hover:border-[var(--primary)]/70 hover:shadow-[0_8px_24px_rgba(0,0,0,0.15)] transition-all duration-300 hover:-translate-y-1", className]} style={style}>
     <a href={url} aria-label={title} class="absolute inset-0 z-10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"></a>
     <!-- 顶部装饰条 -->
     <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] scale-x-0 transition-transform duration-500 delay-300 origin-left group-hover:scale-x-100 z-20"></div>
     
+    <!-- 封面图片 - 顶部，移动端占满宽度 -->
+    {hasCover && <div class="w-full p-4 pt-4 pb-0 relative">
+        <div class="opacity-0 animate-fade-in-up" style={`animation-delay: calc(var(--content-delay) + ${delay + 50}ms); animation-fill-mode: forwards;`}>
+            <!-- 移动端封面图片样式 - 自适应宽度，固定高度 -->
+            <div class="w-full h-[180px] rounded-[var(--radius-large)] overflow-hidden shadow-md transition-all duration-300">
+                <ImageWrapper 
+                    src={image} 
+                    basePath={path.join("content/posts/", getDir(entry.id))} 
+                    alt="Cover Image of the Post" 
+                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                    position="center"
+                />
+            </div>
+        </div>
+    </div>}
+    
     <!-- 内容区域 -->
-    <div class="flex-1 p-6">
+    <div class="flex-1 p-4">
         <!-- 分类标签 -->
-        <div class="inline-block px-3 py-1 rounded-full text-xs font-medium bg-[var(--primary)]/10 text-[var(--primary)] mb-4 opacity-0 animate-fade-in-up group-hover:bg-[var(--primary)]/20 transition-all duration-200" style={`animation-delay: calc(var(--content-delay) + ${delay + 100}ms); animation-fill-mode: forwards;`}>
+        <div class="inline-block px-3 py-1 rounded-full text-xs font-medium bg-[var(--primary)]/10 text-[var(--primary)] mb-3 opacity-0 animate-fade-in-up group-hover:bg-[var(--primary)]/20 transition-all duration-200" style={`animation-delay: calc(var(--content-delay) + ${delay + 100}ms); animation-fill-mode: forwards;`}>
             {category || i18n(I18nKey.uncategorized)}
         </div>
         
         <!-- 标题 -->
-        <h2 class="block font-bold text-xl md:text-2xl text-[var(--text-primary)] group-hover:text-[var(--primary)] transition-colors duration-200 mb-3 font-['SimSun',serif] opacity-0 animate-fade-in-up" style={`animation-delay: calc(var(--content-delay) + ${delay + 150}ms); animation-fill-mode: forwards;`}>
+        <h2 class="block font-bold text-lg md:text-xl text-[var(--text-primary)] group-hover:text-[var(--primary)] transition-colors duration-200 mb-2 font-['SimSun',serif] opacity-0 animate-fade-in-up" style={`animation-delay: calc(var(--content-delay) + ${delay + 150}ms); animation-fill-mode: forwards;`}>
             {title}
         </h2>
         
         <!-- 元数据 -->
         <div class="opacity-0 animate-fade-in-up" style={`animation-delay: calc(var(--content-delay) + ${delay + 200}ms); animation-fill-mode: forwards;`}>
-          <PostMetadata published={published} updated={updated} tags={tags} category={category} hideTagsForMobile={true} hideUpdateDate={true} class="mb-4 text-sm group-hover:text-[var(--primary)]/80 transition-colors duration-200"></PostMetadata>
+          <PostMetadata published={published} updated={updated} tags={tags} category={category} hideTagsForMobile={true} hideUpdateDate={true} class="mb-3 text-sm group-hover:text-[var(--primary)]/80 transition-colors duration-200"></PostMetadata>
         </div>
         
         <!-- 描述 -->
-        <div class:list={["text-[var(--text-secondary)] mb-4 line-clamp-2", {"md:line-clamp-3": description}]} class="opacity-0 animate-fade-in-up group-hover:text-[var(--text-primary)] transition-colors duration-200" style={`animation-delay: calc(var(--content-delay) + ${delay + 250}ms); animation-fill-mode: forwards;`}>
+        <div class:list={["text-[var(--text-secondary)] mb-3 line-clamp-2", {"md:line-clamp-3": description}]} class="opacity-0 animate-fade-in-up group-hover:text-[var(--text-primary)] transition-colors duration-200" style={`animation-delay: calc(var(--content-delay) + ${delay + 250}ms); animation-fill-mode: forwards;`}>
             { description || remarkPluginFrontmatter.excerpt }
         </div>
         
         <!-- 阅读信息 -->
-        <div class="flex items-center justify-between pt-4 border-t border-[var(--card-border)] opacity-0 animate-fade-in-up group-hover:border-[var(--primary)]/30 transition-all duration-200" style={`animation-delay: calc(var(--content-delay) + ${delay + 300}ms); animation-fill-mode: forwards;`}>
+        <div class="flex items-center justify-between pt-2 border-t border-[var(--card-border)] opacity-0 animate-fade-in-up group-hover:border-[var(--primary)]/30 transition-all duration-200" style={`animation-delay: calc(var(--content-delay) + ${delay + 300}ms); animation-fill-mode: forwards;`}>
             <div class="text-sm text-[var(--text-tertiary)] flex gap-3 group-hover:text-[var(--primary)]/70 transition-colors duration-200">
                 <span>{remarkPluginFrontmatter.words} {" " + i18n(I18nKey.wordsCount)}</span>
                 <span>•</span>
@@ -85,22 +101,6 @@ const { remarkPluginFrontmatter } = await entry.render();
             </div>
         </div>
     </div>
-    
-    <!-- 封面图片 - 右侧1:1画框 -->
-    {hasCover && <div class="md:block w-full md:w-auto h-full flex-shrink-0 p-6 pt-6 md:pt-6 pb-6 md:pb-6 pr-6 md:pr-6 relative">
-        <div class="opacity-0 animate-fade-in-up" style={`animation-delay: calc(var(--content-delay) + ${delay + 50}ms); animation-fill-mode: forwards;`}>
-            <!-- 固定200px×200px 1:1 画框样式 -->
-            <div class="w-[200px] h-[200px] aspect-square rounded-[var(--radius-large)] overflow-hidden shadow-md transition-all duration-300">
-                <ImageWrapper 
-                    src={image} 
-                    basePath={path.join("content/posts/", getDir(entry.id))} 
-                    alt="Cover Image of the Post" 
-                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
-                    position="center"
-                />
-            </div>
-        </div>
-    </div>}
 </div>
 <div class="transition border-t-[1px] border-dashed mx-6 border-black/10 dark:border-white/[0.15] last:border-t-0 md:hidden"></div>
 
