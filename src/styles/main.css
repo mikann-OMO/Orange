@@ -11,7 +11,8 @@
     .arknights-card:hover {
         @apply shadow-lg;
     }
-    h1, h2, h3, h4, h5, h6, p, a, span, li, ul, ol, blockquote, code, pre, table, th, td, strong {
+    /* 只对需要过渡效果的元素应用transition */
+    a, button, input, select, textarea, .btn-plain, .btn-card, .btn-regular, .link, .link-lg, .arknights-card {
         @apply transition;
     }
     .card-shadow {
