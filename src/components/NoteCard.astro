@@ -1,0 +1,68 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { formatDate } from "../utils/date-utils";
+
+interface Props {
+	entry: CollectionEntry<"notes">;
+	style: string;
+}
+
+const { entry, style } = Astro.props;
+
+// 添加防御性检查标志
+const isValidNote = entry?.data;
+
+// 直接提取便签内容，简单处理
+let noteContent = "";
+if (isValidNote && entry.body) {
+	// 简单处理，直接提取内容部分
+	const firstSeparatorIndex = entry.body.indexOf("---\n");
+	if (firstSeparatorIndex >= 0) {
+		const contentStartIndex = entry.body.indexOf(
+			"---\n",
+			firstSeparatorIndex + 4,
+		);
+		if (contentStartIndex > 0) {
+			// 提取第二个---\n后的内容
+			noteContent = entry.body.substring(contentStartIndex + 4).trim();
+		} else {
+			// 如果没有第二个分隔符，就取第一个分隔符后的内容
+			noteContent = entry.body.substring(firstSeparatorIndex + 4).trim();
+		}
+	} else {
+		// 如果没有分隔符，直接使用整个内容
+		noteContent = entry.body.trim();
+	}
+}
+---
+{!isValidNote ? (
+    <div class="note-card p-6 border border-white/20 shadow-md bg-gray-200 bg-opacity-10 text-white max-w-2xl mx-auto mb-4">Invalid note</div>
+) : (
+    <div class="note-card p-6 border border-[var(--line-divider)] shadow-md hover:shadow-lg hover:shadow-gray-300/20 transition-all duration-300 bg-white bg-opacity-25 text-[var(--text-primary)] max-w-2xl mx-auto mb-4 dark:bg-gray-200 dark:bg-opacity-10 dark:text-white dark:border-white/20" style={style}>
+        {/* 时间 - 直接显示标题的原始内容 */}
+        {entry.data?.title && (
+            <div class="text-xs text-[var(--text-secondary)] font-mono mb-4 border-b border-[var(--line-divider)] pb-2 dark:text-white/60 dark:border-white/10">
+                {entry.data.title}
+            </div>
+        )}
+        
+        {/* 内容和图片容器 */}
+        <div class="flex flex-col md:flex-row gap-4">
+            {/* 主要内容 */}
+            <div class="text-[var(--text-primary)] text-lg whitespace-pre-wrap break-words p-0 m-0 flex-1 dark:text-white">
+                {noteContent}
+            </div>
+            
+            {/* 图片 */}
+            {entry.data?.image && entry.data.image.trim() !== '' && (
+                <div class="note-image flex-shrink-0 overflow-hidden rounded-md">
+                    <img 
+                        src={entry.data.image} 
+                        alt="Note image" 
+                        class="w-full h-auto max-w-40 max-h-64 object-contain transition-transform duration-500 hover:scale-102"
+                    />
+                </div>
+            )}
+        </div>
+    </div>
+)}

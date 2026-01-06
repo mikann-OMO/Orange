@@ -1,0 +1,160 @@
+---
+
+import { getCollection } from "astro:content";
+import FriendCard from "./FriendCard.astro";
+
+// 获取所有友链数据
+const friends = await getCollection("friends");
+
+// 将集合数据转换为组件所需格式
+const items = friends.map((friend) => ({
+	name: friend.data.title,
+	avatar: friend.data.image,
+	url: friend.data.siteurl,
+	description: friend.data.desc,
+	// 默认设置为普通稀有度，可以在友链数据中添加rarity字段进行自定义
+	rarity: "common" as const,
+	// 默认添加在线状态，可以在友链数据中添加status字段进行自定义
+	status: "online" as const,
+}));
+---
+<div class="card-base rounded-[var(--radius-large)] p-6">
+    <!-- 可编辑文字区域 -->
+    <div class="editable-text mb-10 arknights-tech">
+        <div contenteditable="true" class="text-left text-3xl font-light mb-4 tech-text"> 
+Friends Card!
+        </div>
+        <div class="tech-divider"></div>
+    </div>
+    
+    <style scoped>
+        .arknights-tech {
+            position: relative;
+        }
+        
+        .tech-text {
+            color: rgba(170, 170, 170, 0.65);
+            font-family: 'Arial', sans-serif;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            background-image: linear-gradient(transparent 50%, rgba(255, 255, 255, 0.1) 50%);
+            background-size: 100% 4px;
+            background-attachment: fixed;
+            -webkit-background-clip: text;
+        }
+        
+        .tech-text:focus {
+            outline: none;
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+        }
+        
+        /* Markdown格式支持 */
+        .tech-text ul {
+            list-style-type: disc;
+            padding-left: 24px;
+            margin: 8px 0;
+        }
+        
+        .tech-text ol {
+            list-style-type: decimal;
+            padding-left: 24px;
+            margin: 8px 0;
+        }
+        
+        .tech-text li {
+            margin: 4px 0;
+        }
+        
+        .tech-text strong {
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+        
+        .tech-text em {
+            font-style: italic;
+            color: var(--text-primary);
+        }
+        
+        .tech-text h1, .tech-text h2, .tech-text h3 {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin: 8px 0;
+            color: var(--text-primary);
+        }
+        
+        .tech-text a {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+        
+        .tech-text a:hover {
+        }
+        
+        .tech-divider {
+            height: 1px;
+            background: linear-gradient(90deg, 
+                var(--primary) 0%, 
+                rgba(255, 255, 255, 0) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tech-divider::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                rgba(255, 255, 255, 0.8) 0%, 
+                transparent 100%);
+            animation: techScan 1.5s ease-out forwards;
+        }
+        
+        @keyframes techScan {
+            0% {
+                left: -100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        .friend-card-wrapper {
+            opacity: 0;
+            transform: translateY(30px) scale(0.9);
+            animation: cardSlideIn 0.8s ease forwards;
+            animation-delay: var(--delay);
+        }
+
+        @keyframes cardSlideIn {
+            0% {
+                opacity: 0;
+                transform: translateY(30px) scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+    </style>
+    
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-[52px]">
+        {items.map((item, index) => (
+            <div class="friend-card-wrapper" style={`--delay: ${index * 0.1}s`}>
+                <FriendCard
+                    key={index}
+                    name={item.name}
+                    avatar={item.avatar}
+                    url={item.url}
+                    description={item.description}
+                    rarity={item.rarity}
+                    status={item.status}
+                />
+            </div>
+        ))}
+    </div>
+</div>
+

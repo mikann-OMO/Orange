@@ -18,7 +18,7 @@ if (Array.isArray(tags) && tags.length > 0) {
 	posts = posts.filter(
 		(post) =>
 			Array.isArray(post.data.tags) &&
-			post.data.tags.some((tag) => tags.includes(tag)),
+			post.data.tags.some((tag: string) => tags.includes(tag)),
 	);
 }
 
@@ -91,7 +91,6 @@ function formatTag(tag: string[]) {
                                 <div class="transition-all mx-auto w-1 h-1 rounded group-hover:h-5
                                 bg-[oklch(0.5_0.05_var(--hue))] group-hover:bg-[var(--primary)]
                                 outline outline-4 z-50
-                                outline-[var(--card-bg)]
                                 group-hover:outline-[var(--btn-plain-bg-hover)]
                                 group-active:outline-[var(--btn-plain-bg-active)]
                                 "

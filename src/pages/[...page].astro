@@ -2,6 +2,9 @@
 import type { GetStaticPaths } from "astro";
 import PostPage from "../components/PostPage.astro";
 import Pagination from "../components/control/Pagination.astro";
+import Categories from "../components/widget/Categories.astro";
+import Profile from "../components/widget/Profile.astro";
+import Tags from "../components/widget/Tags.astro";
 import { PAGE_SIZE } from "../constants/constants";
 import MainGridLayout from "../layouts/MainGridLayout.astro";
 import { getSortedPosts } from "../utils/content-utils";
@@ -17,7 +20,19 @@ const { page } = Astro.props;
 const len = page.data.length;
 ---
 
-<MainGridLayout>
+<MainGridLayout fullWidth={true}>
+    <!-- 居中圆形头像资料卡 -->
+    <div class="max-w-6xl mx-auto mb-8">
+        <Profile class="onload-animation fade-in-avatar mx-auto max-w-md" style="animation-delay: 100ms"></Profile>
+    </div>
+    
+    <!-- 分类和标签组件 -->
+    <div class="max-w-6xl mx-auto mb-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Categories class="onload-animation fade-in-left" style="animation-delay: 300ms"></Categories>
+        <Tags class="onload-animation fade-in-right" style="animation-delay: 350ms"></Tags>
+    </div>
+    
+    <!-- 博客文章列表 -->
     <PostPage page={page}></PostPage>
-    <Pagination class="mx-auto onload-animation" page={page} style={`animation-delay: calc(var(--content-delay) + ${(len)*50}ms)`}></Pagination>
+    <Pagination class="mx-auto onload-animation slide-up" page={page} style={`animation-delay: calc(var(--content-delay) + ${len * 50}ms + 200ms)`}></Pagination>
 </MainGridLayout>

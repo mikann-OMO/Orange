@@ -1,13 +1,13 @@
-import { siteConfig } from "@/config";
 import rss from "@astrojs/rss";
-import { getSortedPosts } from "@utils/content-utils";
 import type { APIContext } from "astro";
 import MarkdownIt from "markdown-it";
 import sanitizeHtml from "sanitize-html";
+import { siteConfig } from "../config";
+import { getSortedPosts } from "../utils/content-utils";
 
 const parser = new MarkdownIt();
 
-export async function GET(context: APIContext) {
+export async function GET(context: APIContext): Promise<Response> {
 	const blog = await getSortedPosts();
 
 	return rss({

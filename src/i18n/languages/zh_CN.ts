@@ -2,9 +2,12 @@ import Key from "../i18nKey";
 import type { Translation } from "../translation";
 
 export const zh_CN: Translation = {
-	[Key.home]: "主页",
+	[Key.home]: "首页",
 	[Key.about]: "关于",
 	[Key.archive]: "归档",
+	[Key.friends]: "友链",
+	[Key.notes]: "便签",
+	[Key.works]: "作品",
 	[Key.search]: "搜索",
 
 	[Key.tags]: "标签",
@@ -16,6 +19,7 @@ export const zh_CN: Translation = {
 	[Key.untitled]: "无标题",
 	[Key.uncategorized]: "未分类",
 	[Key.noTags]: "无标签",
+	[Key.no_notes_yet]: "暂无便签",
 
 	[Key.wordCount]: "字",
 	[Key.wordsCount]: "字",
@@ -31,8 +35,11 @@ export const zh_CN: Translation = {
 	[Key.systemMode]: "跟随系统",
 
 	[Key.more]: "更多",
+	[Key.prev_page]: "上一页",
+	[Key.next_page]: "下一页",
 
 	[Key.author]: "作者",
 	[Key.publishedAt]: "发布于",
 	[Key.license]: "许可协议",
+	[Key.back_to_notes]: "返回便签列表",
 };

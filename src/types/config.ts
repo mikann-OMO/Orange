@@ -20,10 +20,6 @@ export type SiteConfig = {
 			url?: string;
 		};
 	};
-	toc: {
-		enable: boolean;
-		depth: 1 | 2 | 3;
-	};
 
 	favicon: Favicon[];
 };
@@ -38,6 +34,9 @@ export enum LinkPreset {
 	Home = 0,
 	Archive = 1,
 	About = 2,
+	Friends = 3,
+	Notes = 4,
+	Works = 5,
 }
 
 export type NavBarLink = {

@@ -2,7 +2,14 @@
 
 @layer components {
     .card-base {
-        @apply rounded-[var(--radius-large)] overflow-hidden bg-[var(--card-bg)] transition;
+        @apply rounded-[var(--radius-large)] overflow-hidden transition;
+    }
+    /* 明日方舟风格卡片 */
+    .arknights-card {
+        @apply rounded-[var(--radius-large)] overflow-hidden bg-[var(--card-bg)] transition-all duration-300 border border-[var(--card-border)] shadow-[var(--card-shadow)] backdrop-blur-sm;
+    }
+    .arknights-card:hover {
+        @apply shadow-lg;
     }
     h1, h2, h3, h4, h5, h6, p, a, span, li, ul, ol, blockquote, code, pre, table, th, td, strong {
         @apply transition;
@@ -21,7 +28,7 @@
         @apply transition rounded-md p-1.5 -m-1.5 expand-animation;
     }
     .float-panel {
-        @apply top-[5.25rem] rounded-[var(--radius-large)] overflow-hidden bg-[var(--float-panel-bg)] transition shadow-xl dark:shadow-none
+        @apply top-[5.25rem] rounded-[var(--radius-large)] overflow-hidden bg-[rgba(0,0,0,0)] transition shadow-none dark:shadow-none
     }
     .float-panel-closed {
         @apply -translate-y-1 opacity-0 pointer-events-none
@@ -31,7 +38,7 @@
     }
 
     .btn-card {
-        @apply transition flex items-center justify-center bg-[var(--card-bg)] hover:bg-[var(--btn-card-bg-hover)]
+        @apply transition flex items-center justify-center hover:bg-[var(--btn-card-bg-hover)]
         active:bg-[var(--btn-card-bg-active)]
     }
     .btn-card.disabled {
@@ -51,7 +58,7 @@
         }
     }
     .btn-regular {
-        @apply transition flex items-center justify-center bg-[var(--btn-regular-bg)] hover:bg-[var(--btn-regular-bg-hover)] active:bg-[var(--btn-regular-bg-active)]
+        @apply transition flex items-center justify-center bg-[var(--btn-regular-bg)] hover:bg-[var(--btn-regular-bg-hover)] active:bg-[var(--btn-regular-bg-active)] backdrop-blur-sm
         text-[var(--btn-content)] dark:text-white/75
     }
 
@@ -94,7 +101,7 @@
     }
 
     .meta-icon {
-        @apply w-8 h-8 transition rounded-md flex items-center justify-center bg-[var(--btn-regular-bg)]
+        @apply w-8 h-8 transition rounded-md flex items-center justify-center bg-[var(--btn-regular-bg)] backdrop-blur-sm
         text-[var(--btn-content)] mr-2
     }
     .with-divider {
@@ -154,4 +161,20 @@
 
 .collapsed {
     height: var(--collapsedHeight);
+}
+
+/* 隐藏水平滚动条 */
+::-webkit-scrollbar-horizontal {
+    display: none;
+}
+
+body {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+/* 确保页面内容不会溢出 */
+html, body {
+    overflow-x: hidden;
+    width: 100%;
 }

@@ -1,0 +1,12 @@
+---
+import I18nKey from "../i18n/i18nKey";
+import { i18n } from "../i18n/translation";
+import MainGridLayout from "../layouts/MainGridLayout.astro";
+---
+
+<MainGridLayout title={i18n(I18nKey.works)} description="作品">
+    <div class="card-base rounded-[var(--radius-large)] p-8">
+        <h1 class="text-3xl font-bold mb-6 text-[var(--text-primary)]">{i18n(I18nKey.works)}</h1>
+        <p class="text-[var(--text-secondary)]">内容正在建设中...</p>
+    </div>
+</MainGridLayout>

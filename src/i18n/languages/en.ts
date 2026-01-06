@@ -5,6 +5,9 @@ export const en: Translation = {
 	[Key.home]: "Home",
 	[Key.about]: "About",
 	[Key.archive]: "Archive",
+	[Key.friends]: "Friends",
+	[Key.notes]: "Notes",
+	[Key.works]: "Works",
 	[Key.search]: "Search",
 
 	[Key.tags]: "Tags",
@@ -16,6 +19,7 @@ export const en: Translation = {
 	[Key.untitled]: "Untitled",
 	[Key.uncategorized]: "Uncategorized",
 	[Key.noTags]: "No Tags",
+	[Key.no_notes_yet]: "No notes yet",
 
 	[Key.wordCount]: "word",
 	[Key.wordsCount]: "words",
@@ -31,8 +35,11 @@ export const en: Translation = {
 	[Key.systemMode]: "System",
 
 	[Key.more]: "More",
+	[Key.prev_page]: "Previous page",
+	[Key.next_page]: "Next page",
 
 	[Key.author]: "Author",
 	[Key.publishedAt]: "Published at",
 	[Key.license]: "License",
+	[Key.back_to_notes]: "Back to Notes",
 };

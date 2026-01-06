@@ -1,8 +1,10 @@
 import { getCollection } from "astro:content";
-import I18nKey from "@i18n/i18nKey";
-import { i18n } from "@i18n/translation";
+import I18nKey from "../i18n/i18nKey.ts";
+import { i18n } from "../i18n/translation.ts";
 
-export async function getSortedPosts() {
+export async function getSortedPosts(): Promise<
+	Awaited<ReturnType<typeof getCollection<"posts">>>
+> {
 	const allBlogPosts = await getCollection("posts", ({ data }) => {
 		return import.meta.env.PROD ? data.draft !== true : true;
 	});
@@ -10,7 +12,10 @@ export async function getSortedPosts() {
 	const sorted = allBlogPosts.sort((a, b) => {
 		const dateA = new Date(a.data.published);
 		const dateB = new Date(b.data.published);
-		return dateA > dateB ? -1 : 1;
+		if (dateA > dateB) return -1;
+		if (dateA < dateB) return 1;
+		// 如果日期相同，根据标题排序以确保顺序一致
+		return a.data.title.localeCompare(b.data.title);
 	});
 
 	for (let i = 1; i < sorted.length; i++) {

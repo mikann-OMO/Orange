@@ -2,6 +2,9 @@ enum I18nKey {
 	home = "home",
 	about = "about",
 	archive = "archive",
+	friends = "friends",
+	notes = "notes",
+	works = "works",
 	search = "search",
 
 	tags = "tags",
@@ -13,6 +16,7 @@ enum I18nKey {
 	untitled = "untitled",
 	uncategorized = "uncategorized",
 	noTags = "noTags",
+	no_notes_yet = "no_notes_yet",
 
 	wordCount = "wordCount",
 	wordsCount = "wordsCount",
@@ -28,10 +32,13 @@ enum I18nKey {
 	systemMode = "systemMode",
 
 	more = "more",
+	prev_page = "prev_page",
+	next_page = "next_page",
 
 	author = "author",
 	publishedAt = "publishedAt",
 	license = "license",
+	back_to_notes = "back_to_notes",
 }
 
 export default I18nKey;
