@@ -15,14 +15,14 @@ importers:
         specifier: ^4.0.11
         version: 4.0.14
       '@astrojs/sitemap':
-        specifier: ^3.4.0
-        version: 3.6.0
+        specifier: ^3.6.1
+        version: 3.6.1
       '@astrojs/svelte':
         specifier: 7.0.13
-        version: 7.0.13(@types/node@25.0.2)(astro@5.7.13(@types/node@25.0.2)(jiti@1.21.7)(rollup@2.79.2)(stylus@0.64.0)(terser@5.44.1)(typescript@5.9.3)(yaml@2.8.2))(jiti@1.21.7)(stylus@0.64.0)(svelte@5.46.0)(terser@5.44.1)(typescript@5.9.3)(yaml@2.8.2)
+        version: 7.0.13(@types/node@25.0.3)(astro@5.7.13(@types/node@25.0.3)(jiti@1.21.7)(rollup@2.79.2)(stylus@0.64.0)(terser@5.44.1)(typescript@5.9.3)(yaml@2.8.2))(jiti@1.21.7)(stylus@0.64.0)(svelte@5.46.1)(terser@5.44.1)(typescript@5.9.3)(yaml@2.8.2)
       '@astrojs/tailwind':
         specifier: ^6.0.2
-        version: 6.0.2(astro@5.7.13(@types/node@25.0.2)(jiti@1.21.7)(rollup@2.79.2)(stylus@0.64.0)(terser@5.44.1)(typescript@5.9.3)(yaml@2.8.2))(tailwindcss@3.4.19(yaml@2.8.2))
+        version: 6.0.2(astro@5.7.13(@types/node@25.0.3)(jiti@1.21.7)(rollup@2.79.2)(stylus@0.64.0)(terser@5.44.1)(typescript@5.9.3)(yaml@2.8.2))(tailwindcss@3.4.19(yaml@2.8.2))
       '@fontsource-variable/jetbrains-mono':
         specifier: ^5.2.5
         version: 5.2.8
@@ -43,7 +43,7 @@ importers:
         version: 1.2.50
       '@iconify/svelte':
         specifier: ^4.2.0
-        version: 4.2.0(svelte@5.46.0)
+        version: 4.2.0(svelte@5.46.1)
       '@swup/astro':
         specifier: ^1.6.0
         version: 1.7.0
@@ -52,7 +52,7 @@ importers:
         version: 0.5.19(tailwindcss@3.4.19(yaml@2.8.2))
       astro:
         specifier: 5.7.13
-        version: 5.7.13(@types/node@25.0.2)(jiti@1.21.7)(rollup@2.79.2)(stylus@0.64.0)(terser@5.44.1)(typescript@5.9.3)(yaml@2.8.2)
+        version: 5.7.13(@types/node@25.0.3)(jiti@1.21.7)(rollup@2.79.2)(stylus@0.64.0)(terser@5.44.1)(typescript@5.9.3)(yaml@2.8.2)
       astro-icon:
         specifier: ^1.1.5
         version: 1.1.5
@@ -120,8 +120,8 @@ importers:
         specifier: ^0.64.0
         version: 0.64.0
       svelte:
-        specifier: ^5.30.1
-        version: 5.46.0
+        specifier: ^5.46.1
+        version: 5.46.1
       tailwindcss:
         specifier: ^3.4.17
         version: 3.4.19(yaml@2.8.2)
@@ -209,8 +209,8 @@ packages:
   '@astrojs/rss@4.0.14':
     resolution: {integrity: sha512-KCe1imDcADKOOuO/wtKOMDO/umsBD6DWF+94r5auna1jKl5fmlK9vzf+sjA3EyveXA/FoB3khtQ/u/tQgETmTw==}
 
-  '@astrojs/sitemap@3.6.0':
-    resolution: {integrity: sha512-4aHkvcOZBWJigRmMIAJwRQXBS+ayoP5z40OklTXYXhUDhwusz+DyDl+nSshY6y9DvkVEavwNcFO8FD81iGhXjg==}
+  '@astrojs/sitemap@3.6.1':
+    resolution: {integrity: sha512-+o+TbxXqQJAOd+HxCjz/5RdAMrRFGjeuO+U6zddUuTO59WqMqXnsc8uveRiEr2Ff+3McZiEne7iG4J5cnuI6kA==}
 
   '@astrojs/svelte@7.0.13':
     resolution: {integrity: sha512-wAWZu3Y/shIa83qVWyhr34vqwfl0GOXLsTYp081mMMOzuiyDAqmusFILua2zpbhqsQhQlhH/BYbGLEIQ/zQpRA==}
@@ -1768,8 +1768,8 @@ packages:
   '@types/node@17.0.45':
     resolution: {integrity: sha512-w+tIMs3rq2afQdsPJlODhoUEKzFP1ayaoyl1CcnwtIlsVe7K7bA1NGm4s3PraqTLlXnbIN84zuBlxBWo1u9BLw==}
 
-  '@types/node@25.0.2':
-    resolution: {integrity: sha512-gWEkeiyYE4vqjON/+Obqcoeffmk0NF15WSBwSs7zwVA2bAbTaE0SJ7P0WNGoJn8uE7fiaV5a7dKYIJriEqOrmA==}
+  '@types/node@25.0.3':
+    resolution: {integrity: sha512-W609buLVRVmeW693xKfzHeIV6nJGGz98uCPfeXI1ELMLXVeKYZ9m15fAMSaUPBHYLGFsVRcMmSCksQOrZV9BYA==}
 
   '@types/parse-json@4.0.2':
     resolution: {integrity: sha512-dISoDXWWQwUquiKsyZ4Ng+HX2KsPL7LyHKHQwgGFEA3IaKac4Obd+h2a/a6waisAoepJlBcx9paWqjA8/HVjCw==}
@@ -4436,8 +4436,8 @@ packages:
       svelte: ^3.55 || ^4.0.0-next.0 || ^4.0 || ^5.0.0-next.0
       typescript: ^4.9.4 || ^5.0.0
 
-  svelte@5.46.0:
-    resolution: {integrity: sha512-ZhLtvroYxUxr+HQJfMZEDRsGsmU46x12RvAv/zi9584f5KOX7bUrEbhPJ7cKFmUvZTJXi/CFZUYwDC6M1FigPw==}
+  svelte@5.46.1:
+    resolution: {integrity: sha512-ynjfCHD3nP2el70kN5Pmg37sSi0EjOm9FgHYQdC4giWG/hzO3AatzXXJJgP305uIhGQxSufJLuYWtkY8uK/8RA==}
     engines: {node: '>=18'}
 
   svgo@2.8.0:
@@ -4898,6 +4898,7 @@ packages:
   whatwg-encoding@3.1.1:
     resolution: {integrity: sha512-6qN4hJdMwfYBtE3YBTTHhoeuUrDBPZmbQaxWAqSALV/MeEnR5z1xd8UKud2RAkFoPkmB+hli1TZSnyi84xz1vQ==}
     engines: {node: '>=18'}
+    deprecated: Use @exodus/bytes instead for a more spec-conformant and faster implementation
 
   whatwg-mimetype@4.0.0:
     resolution: {integrity: sha512-QaKxh0eNIi2mE9p2vEdzfagOKHCcj1pJ56EEHGQOVxp8r9/iszLUUV7v89x9O1p/T+NlTM5W7jW6+cz4Fq1YVg==}
@@ -5113,20 +5114,20 @@ snapshots:
       fast-xml-parser: 5.3.3
       piccolore: 0.1.3
 
-  '@astrojs/sitemap@3.6.0':
+  '@astrojs/sitemap@3.6.1':
     dependencies:
       sitemap: 8.0.2
       stream-replace-string: 2.0.0
       zod: 3.25.76
 
-  '@astrojs/svelte@7.0.13(@types/node@25.0.2)(astro@5.7.13(@types/node@25.0.2)(jiti@1.21.7)(rollup@2.79.2)(stylus@0.64.0)(terser@5.44.1)(typescript@5.9.3)(yaml@2.8.2))(jiti@1.21.7)(stylus@0.64.0)(svelte@5.46.0)(terser@5.44.1)(typescript@5.9.3)(yaml@2.8.2)':
+  '@astrojs/svelte@7.0.13(@types/node@25.0.3)(astro@5.7.13(@types/node@25.0.3)(jiti@1.21.7)(rollup@2.79.2)(stylus@0.64.0)(terser@5.44.1)(typescript@5.9.3)(yaml@2.8.2))(jiti@1.21.7)(stylus@0.64.0)(svelte@5.46.1)(terser@5.44.1)(typescript@5.9.3)(yaml@2.8.2)':
     dependencies:
-      '@sveltejs/vite-plugin-svelte': 5.1.1(svelte@5.46.0)(vite@6.4.1(@types/node@25.0.2)(jiti@1.21.7)(stylus@0.64.0)(terser@5.44.1)(yaml@2.8.2))
-      astro: 5.7.13(@types/node@25.0.2)(jiti@1.21.7)(rollup@2.79.2)(stylus@0.64.0)(terser@5.44.1)(typescript@5.9.3)(yaml@2.8.2)
-      svelte: 5.46.0
-      svelte2tsx: 0.7.45(svelte@5.46.0)(typescript@5.9.3)
+      '@sveltejs/vite-plugin-svelte': 5.1.1(svelte@5.46.1)(vite@6.4.1(@types/node@25.0.3)(jiti@1.21.7)(stylus@0.64.0)(terser@5.44.1)(yaml@2.8.2))
+      astro: 5.7.13(@types/node@25.0.3)(jiti@1.21.7)(rollup@2.79.2)(stylus@0.64.0)(terser@5.44.1)(typescript@5.9.3)(yaml@2.8.2)
+      svelte: 5.46.1
+      svelte2tsx: 0.7.45(svelte@5.46.1)(typescript@5.9.3)
       typescript: 5.9.3
-      vite: 6.4.1(@types/node@25.0.2)(jiti@1.21.7)(stylus@0.64.0)(terser@5.44.1)(yaml@2.8.2)
+      vite: 6.4.1(@types/node@25.0.3)(jiti@1.21.7)(stylus@0.64.0)(terser@5.44.1)(yaml@2.8.2)
     transitivePeerDependencies:
       - '@types/node'
       - jiti
@@ -5141,9 +5142,9 @@ snapshots:
       - tsx
       - yaml
 
-  '@astrojs/tailwind@6.0.2(astro@5.7.13(@types/node@25.0.2)(jiti@1.21.7)(rollup@2.79.2)(stylus@0.64.0)(terser@5.44.1)(typescript@5.9.3)(yaml@2.8.2))(tailwindcss@3.4.19(yaml@2.8.2))':
+  '@astrojs/tailwind@6.0.2(astro@5.7.13(@types/node@25.0.3)(jiti@1.21.7)(rollup@2.79.2)(stylus@0.64.0)(terser@5.44.1)(typescript@5.9.3)(yaml@2.8.2))(tailwindcss@3.4.19(yaml@2.8.2))':
     dependencies:
-      astro: 5.7.13(@types/node@25.0.2)(jiti@1.21.7)(rollup@2.79.2)(stylus@0.64.0)(terser@5.44.1)(typescript@5.9.3)(yaml@2.8.2)
+      astro: 5.7.13(@types/node@25.0.3)(jiti@1.21.7)(rollup@2.79.2)(stylus@0.64.0)(terser@5.44.1)(typescript@5.9.3)(yaml@2.8.2)
       autoprefixer: 10.4.22(postcss@8.5.6)
       postcss: 8.5.6
       postcss-load-config: 4.0.2(postcss@8.5.6)
@@ -6085,10 +6086,10 @@ snapshots:
     dependencies:
       '@iconify/types': 2.0.0
 
-  '@iconify/svelte@4.2.0(svelte@5.46.0)':
+  '@iconify/svelte@4.2.0(svelte@5.46.1)':
     dependencies:
       '@iconify/types': 2.0.0
-      svelte: 5.46.0
+      svelte: 5.46.1
 
   '@iconify/tools@4.2.0':
     dependencies:
@@ -6546,25 +6547,25 @@ snapshots:
     dependencies:
       acorn: 8.15.0
 
-  '@sveltejs/vite-plugin-svelte-inspector@4.0.1(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.46.0)(vite@6.4.1(@types/node@25.0.2)(jiti@1.21.7)(stylus@0.64.0)(terser@5.44.1)(yaml@2.8.2)))(svelte@5.46.0)(vite@6.4.1(@types/node@25.0.2)(jiti@1.21.7)(stylus@0.64.0)(terser@5.44.1)(yaml@2.8.2))':
+  '@sveltejs/vite-plugin-svelte-inspector@4.0.1(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.46.1)(vite@6.4.1(@types/node@25.0.3)(jiti@1.21.7)(stylus@0.64.0)(terser@5.44.1)(yaml@2.8.2)))(svelte@5.46.1)(vite@6.4.1(@types/node@25.0.3)(jiti@1.21.7)(stylus@0.64.0)(terser@5.44.1)(yaml@2.8.2))':
     dependencies:
-      '@sveltejs/vite-plugin-svelte': 5.1.1(svelte@5.46.0)(vite@6.4.1(@types/node@25.0.2)(jiti@1.21.7)(stylus@0.64.0)(terser@5.44.1)(yaml@2.8.2))
+      '@sveltejs/vite-plugin-svelte': 5.1.1(svelte@5.46.1)(vite@6.4.1(@types/node@25.0.3)(jiti@1.21.7)(stylus@0.64.0)(terser@5.44.1)(yaml@2.8.2))
       debug: 4.4.3
-      svelte: 5.46.0
-      vite: 6.4.1(@types/node@25.0.2)(jiti@1.21.7)(stylus@0.64.0)(terser@5.44.1)(yaml@2.8.2)
+      svelte: 5.46.1
+      vite: 6.4.1(@types/node@25.0.3)(jiti@1.21.7)(stylus@0.64.0)(terser@5.44.1)(yaml@2.8.2)
     transitivePeerDependencies:
       - supports-color
 
-  '@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.46.0)(vite@6.4.1(@types/node@25.0.2)(jiti@1.21.7)(stylus@0.64.0)(terser@5.44.1)(yaml@2.8.2))':
+  '@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.46.1)(vite@6.4.1(@types/node@25.0.3)(jiti@1.21.7)(stylus@0.64.0)(terser@5.44.1)(yaml@2.8.2))':
     dependencies:
-      '@sveltejs/vite-plugin-svelte-inspector': 4.0.1(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.46.0)(vite@6.4.1(@types/node@25.0.2)(jiti@1.21.7)(stylus@0.64.0)(terser@5.44.1)(yaml@2.8.2)))(svelte@5.46.0)(vite@6.4.1(@types/node@25.0.2)(jiti@1.21.7)(stylus@0.64.0)(terser@5.44.1)(yaml@2.8.2))
+      '@sveltejs/vite-plugin-svelte-inspector': 4.0.1(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.46.1)(vite@6.4.1(@types/node@25.0.3)(jiti@1.21.7)(stylus@0.64.0)(terser@5.44.1)(yaml@2.8.2)))(svelte@5.46.1)(vite@6.4.1(@types/node@25.0.3)(jiti@1.21.7)(stylus@0.64.0)(terser@5.44.1)(yaml@2.8.2))
       debug: 4.4.3
       deepmerge: 4.3.1
       kleur: 4.1.5
       magic-string: 0.30.21
-      svelte: 5.46.0
-      vite: 6.4.1(@types/node@25.0.2)(jiti@1.21.7)(stylus@0.64.0)(terser@5.44.1)(yaml@2.8.2)
-      vitefu: 1.1.1(vite@6.4.1(@types/node@25.0.2)(jiti@1.21.7)(stylus@0.64.0)(terser@5.44.1)(yaml@2.8.2))
+      svelte: 5.46.1
+      vite: 6.4.1(@types/node@25.0.3)(jiti@1.21.7)(stylus@0.64.0)(terser@5.44.1)(yaml@2.8.2)
+      vitefu: 1.1.1(vite@6.4.1(@types/node@25.0.3)(jiti@1.21.7)(stylus@0.64.0)(terser@5.44.1)(yaml@2.8.2))
     transitivePeerDependencies:
       - supports-color
 
@@ -6730,7 +6731,7 @@ snapshots:
 
   '@types/fontkit@2.0.8':
     dependencies:
-      '@types/node': 25.0.2
+      '@types/node': 25.0.3
 
   '@types/hast@2.3.10':
     dependencies:
@@ -6763,7 +6764,7 @@ snapshots:
 
   '@types/node@17.0.45': {}
 
-  '@types/node@25.0.2':
+  '@types/node@25.0.3':
     dependencies:
       undici-types: 7.16.0
 
@@ -6771,7 +6772,7 @@ snapshots:
 
   '@types/resolve@1.17.1':
     dependencies:
-      '@types/node': 25.0.2
+      '@types/node': 25.0.3
 
   '@types/sanitize-html@2.16.0':
     dependencies:
@@ -6787,7 +6788,7 @@ snapshots:
 
   '@types/yauzl@2.10.3':
     dependencies:
-      '@types/node': 25.0.2
+      '@types/node': 25.0.3
     optional: true
 
   '@ungap/structured-clone@1.3.0': {}
@@ -6911,7 +6912,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  astro@5.7.13(@types/node@25.0.2)(jiti@1.21.7)(rollup@2.79.2)(stylus@0.64.0)(terser@5.44.1)(typescript@5.9.3)(yaml@2.8.2):
+  astro@5.7.13(@types/node@25.0.3)(jiti@1.21.7)(rollup@2.79.2)(stylus@0.64.0)(terser@5.44.1)(typescript@5.9.3)(yaml@2.8.2):
     dependencies:
       '@astrojs/compiler': 2.13.0
       '@astrojs/internal-helpers': 0.6.1
@@ -6965,8 +6966,8 @@ snapshots:
       unist-util-visit: 5.0.0
       unstorage: 1.17.3
       vfile: 6.0.3
-      vite: 6.4.1(@types/node@25.0.2)(jiti@1.21.7)(stylus@0.64.0)(terser@5.44.1)(yaml@2.8.2)
-      vitefu: 1.1.1(vite@6.4.1(@types/node@25.0.2)(jiti@1.21.7)(stylus@0.64.0)(terser@5.44.1)(yaml@2.8.2))
+      vite: 6.4.1(@types/node@25.0.3)(jiti@1.21.7)(stylus@0.64.0)(terser@5.44.1)(yaml@2.8.2)
+      vitefu: 1.1.1(vite@6.4.1(@types/node@25.0.3)(jiti@1.21.7)(stylus@0.64.0)(terser@5.44.1)(yaml@2.8.2))
       xxhash-wasm: 1.1.0
       yargs-parser: 21.1.1
       yocto-spinner: 0.2.3
@@ -8347,7 +8348,7 @@ snapshots:
 
   jest-worker@26.6.2:
     dependencies:
-      '@types/node': 25.0.2
+      '@types/node': 25.0.3
       merge-stream: 2.0.0
       supports-color: 7.2.0
 
@@ -10170,14 +10171,14 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  svelte2tsx@0.7.45(svelte@5.46.0)(typescript@5.9.3):
+  svelte2tsx@0.7.45(svelte@5.46.1)(typescript@5.9.3):
     dependencies:
       dedent-js: 1.0.1
       scule: 1.3.0
-      svelte: 5.46.0
+      svelte: 5.46.1
       typescript: 5.9.3
 
-  svelte@5.46.0:
+  svelte@5.46.1:
     dependencies:
       '@jridgewell/remapping': 2.3.5
       '@jridgewell/sourcemap-codec': 1.5.5
@@ -10519,7 +10520,7 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
 
-  vite@6.4.1(@types/node@25.0.2)(jiti@1.21.7)(stylus@0.64.0)(terser@5.44.1)(yaml@2.8.2):
+  vite@6.4.1(@types/node@25.0.3)(jiti@1.21.7)(stylus@0.64.0)(terser@5.44.1)(yaml@2.8.2):
     dependencies:
       esbuild: 0.25.12
       fdir: 6.5.0(picomatch@4.0.3)
@@ -10528,16 +10529,16 @@ snapshots:
       rollup: 4.53.3
       tinyglobby: 0.2.15
     optionalDependencies:
-      '@types/node': 25.0.2
+      '@types/node': 25.0.3
       fsevents: 2.3.3
       jiti: 1.21.7
       stylus: 0.64.0
       terser: 5.44.1
       yaml: 2.8.2
 
-  vitefu@1.1.1(vite@6.4.1(@types/node@25.0.2)(jiti@1.21.7)(stylus@0.64.0)(terser@5.44.1)(yaml@2.8.2)):
+  vitefu@1.1.1(vite@6.4.1(@types/node@25.0.3)(jiti@1.21.7)(stylus@0.64.0)(terser@5.44.1)(yaml@2.8.2)):
     optionalDependencies:
-      vite: 6.4.1(@types/node@25.0.2)(jiti@1.21.7)(stylus@0.64.0)(terser@5.44.1)(yaml@2.8.2)
+      vite: 6.4.1(@types/node@25.0.3)(jiti@1.21.7)(stylus@0.64.0)(terser@5.44.1)(yaml@2.8.2)
 
   volar-service-css@0.0.67(@volar/language-service@2.4.27):
     dependencies:
