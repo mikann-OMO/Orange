@@ -9,7 +9,7 @@ interface Props {
 
 const links = Astro.props.links;
 ---
-<div id="nav-menu-panel" class:list={["float-panel", "float-panel-closed", "absolute", "transition-all", "duration-300", "ease-in-out", "fixed", "top-16", "right-4", "w-[80vw]", "max-w-[320px]", "max-h-[80vh]", "bg-[var(--card-bg)]", "border", "border-[var(--card-border)]", "rounded-[var(--radius-large)]", "shadow-[8px_8px_32px_rgba(0,0,0,0.15)]", "dark:shadow-[8px_8px_32px_rgba(0,0,0,0.4)]", "backdrop-blur-md", "z-50"]}>
+<div id="nav-menu-panel" class:list={["float-panel", "float-panel-closed", "absolute", "transition-all", "duration-300", "ease-in-out", "fixed", "top-16", "right-4", "w-[80vw]", "max-w-[320px]", "max-h-[80vh]", "bg-[rgba(255,255,255,0.8)] dark:bg-[rgba(38,40,48,0.9)]", "border", "border-[var(--card-border)]", "rounded-[var(--radius-large)]", "shadow-[8px_8px_32px_rgba(0,0,0,0.15)]", "dark:shadow-[8px_8px_32px_rgba(0,0,0,0.4)]", "backdrop-blur-xl", "z-50"]}>
     <div class="flex flex-col h-full">
         <div class="py-3 px-5 border-b border-[var(--card-border)] flex justify-between items-center">
             <h3 class="text-lg font-bold text-[var(--primary)]">导航菜单</h3>
