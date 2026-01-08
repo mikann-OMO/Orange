@@ -306,17 +306,21 @@ const activeStars = config.stars; // 激活的星星数量
 /* 响应式设计 */
 @media (max-width: 640px) {
   .friend-card {
-    width: 160px;
-    height: 300px;
+    width: 100%;
+    max-width: 280px;
+    height: auto;
+    min-height: 280px;
   }
   
   .card-inner {
     padding: 1rem;
+    height: auto;
+    min-height: 280px;
   }
   
   .avatar {
-    width: 70px;
-    height: 70px;
+    width: 80px;
+    height: 80px;
   }
   
   .friend-name {
@@ -325,11 +329,31 @@ const activeStars = config.stars; // 激活的星星数量
   
   .friend-desc {
     font-size: 0.75rem;
-    height: 50px;
+    height: 45px;
   }
   
   .star {
     font-size: 1rem;
+  }
+  
+  .card-background {
+    height: 120px;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 768px) {
+  .friend-card {
+    width: 100%;
+    height: 320px;
+  }
+  
+  .card-inner {
+    height: 100%;
+  }
+  
+  .avatar {
+    width: 90px;
+    height: 90px;
   }
 }
 </style>

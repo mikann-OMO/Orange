@@ -11,9 +11,43 @@
     .arknights-card:hover {
         @apply shadow-lg;
     }
-    /* 只对需要过渡效果的元素应用transition */
+    /* 只对需要过渡效果的元素应用transition，并优化移动端性能 */
     a, button, input, select, textarea, .btn-plain, .btn-card, .btn-regular, .link, .link-lg, .arknights-card {
-        @apply transition;
+        @apply transition duration-200;
+    }
+    
+    /* 移动端优化：减少或简化某些动画效果 */
+    @media (max-width: 768px) {
+        .arknights-card:hover {
+            @apply shadow-md; /* 简化移动端卡片悬浮效果 */
+        }
+        
+        /* 简化移动端链接动画 */
+        .link, .link-lg {
+            @apply before:transition-all before:duration-150;
+        }
+        
+        /* 简化移动端按钮动画 */
+        .btn-plain.scale-animation, .btn-card, .btn-regular {
+            @apply transition-all duration-150;
+        }
+        
+        /* 简化移动端搜索结果动画 */
+        .search-panel a {
+            animation: fadeIn 0.15s ease-out; /* 缩短动画时间 */
+        }
+    }
+    
+    /* 优化动画性能，使用transform代替top/left等属性 */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(5px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
     .card-shadow {
         @apply drop-shadow-[0_2px_4px_rgba(0,0,0,0.005)]
@@ -29,10 +63,21 @@
         @apply transition rounded-md p-1.5 -m-1.5 expand-animation;
     }
     .float-panel {
-        @apply top-[5.25rem] rounded-[var(--radius-large)] overflow-hidden bg-[rgba(0,0,0,0)] transition shadow-none dark:shadow-none
+        @apply top-[5.25rem] rounded-t-none overflow-hidden bg-[var(--card-bg)] transition-all duration-300 ease-out shadow-[var(--card-shadow)] dark:shadow-[var(--card-shadow)]
     }
     .float-panel-closed {
-        @apply -translate-y-1 opacity-0 pointer-events-none
+        @apply translate-y-full opacity-0 pointer-events-none
+    }
+    
+    /* 移动端优化：简化浮动面板过渡效果 */
+    @media (max-width: 768px) {
+        .float-panel {
+            @apply duration-200; /* 缩短移动端面板过渡时间 */
+        }
+    }
+    /* 适配移动端导航栏的特殊样式 */
+    #nav-menu-panel {
+        @apply inset-x-0 right-auto rounded-none border-t-2
     }
     .search-panel mark {
         @apply bg-transparent text-[var(--primary)]

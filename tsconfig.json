@@ -5,6 +5,11 @@
     "strictNullChecks": true,
     "allowJs": false,
     "declaration": true,
+    "declarationMap": false,
+    "sourceMap": false,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
     "plugins": [
       { "name": "@astrojs/ts-plugin" }
     ],
@@ -18,5 +23,6 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", ".astro"]
 }

@@ -10,9 +10,11 @@
     "preview": "astro preview",
     "astro": "astro",
     "new-post": "node scripts/new-post.js",
-    "type-check": "tsc --noEmit --isolatedDeclarations",
+    "type-check": "tsc --noEmit",
     "format": "biome format --write ./src",
     "lint": "biome check --write ./src",
+    "check": "astro check && tsc --noEmit",
+    "clean": "rm -rf .astro dist node_modules",
     "preinstall": "npx only-allow pnpm"
   },
   "dependencies": {

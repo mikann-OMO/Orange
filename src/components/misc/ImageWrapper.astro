@@ -68,9 +68,12 @@ const imageStyle = `object-position: ${position}`;
             loading={loading}
             width={width}
             height={height}
-            format="webp"
-            quality={85}
+            format="avif"
+            quality={75}
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            densities={[1, 1.5, 2]}
+            decoding="async"
+            fetchpriority={loading === "eager" ? "high" : "auto"}
         />
     )}
     {!isLocal && (
@@ -83,7 +86,8 @@ const imageStyle = `object-position: ${position}`;
             width={width}
             height={height}
             decoding="async"
+            fetchpriority={loading === "eager" ? "high" : "auto"}
+            onerror="console.error('Image failed to load:', this.src)"
         />
     )}
 </div>
-

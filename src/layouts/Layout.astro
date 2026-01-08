@@ -255,7 +255,7 @@ const bannerOffset =
 }
 </style>
 
-<script defer>
+<script defer is:inline>
 // 延迟加载非关键CSS
 const loadOverlayScrollbarsCSS = () => {
 	const link = document.createElement('link');
@@ -291,6 +291,10 @@ const bannerEnabled = !!document.getElementById('banner-wrapper');
 
 // Set up click outside to close functionality for panels
 // Optimized: Single event listener for all panels
+// 只在桌面端使用复杂的面板交互，移动端简化
+const isMobile = window.innerWidth <= 768;
+
+// 简化的面板配置
 const panelConfigs = {
 	"display-setting": ["display-setting", "display-settings-switch"],
 	"nav-menu-panel": ["nav-menu-panel", "nav-menu-switch"],
@@ -298,39 +302,53 @@ const panelConfigs = {
 };
 
 // Cache DOM elements for better performance
-const cachedElements: { [key: string]: HTMLElement | null } = {};
+const cachedElements = {};
 
-function getCachedElement(id: string): HTMLElement | null {
+function getCachedElement(id) {
 	if (!cachedElements[id]) {
 		cachedElements[id] = document.getElementById(id);
 	}
 	return cachedElements[id];
 }
 
-document.addEventListener("click", (event) => {
-	const target = event.target as Node;
-	if (!(target instanceof Node)) return;
-	
-	// Check all panels
-	for (const [panelId, ignoreIds] of Object.entries(panelConfigs)) {
-		const panel = getCachedElement(panelId);
-		if (!panel) continue;
+// 只在桌面端添加复杂的点击事件处理
+if (!isMobile) {
+	document.addEventListener("click", (event) => {
+		const target = event.target;
+		if (!(target instanceof Node)) return;
 		
-		// Check if click is inside any ignored elements
-		let isInsideIgnored = false;
-		for (const ignoreId of ignoreIds) {
-			const ignoreElement = getCachedElement(ignoreId);
-			if (ignoreElement && (ignoreElement === target || ignoreElement.contains(target))) {
-				isInsideIgnored = true;
-				break;
+		// Check all panels
+		for (const [panelId, ignoreIds] of Object.entries(panelConfigs)) {
+			const panel = getCachedElement(panelId);
+			if (!panel) continue;
+			
+			// Check if click is inside any ignored elements
+			let isInsideIgnored = false;
+			for (const ignoreId of ignoreIds) {
+				const ignoreElement = getCachedElement(ignoreId);
+				if (ignoreElement && (ignoreElement === target || ignoreElement.contains(target))) {
+					isInsideIgnored = true;
+					break;
+				}
+			}
+			
+			// Check if click is inside the panel itself
+			const isInsidePanel = panel.contains(target);
+			
+			// For nav-menu-panel, only close if clicked outside both the panel and the switch
+			if (panelId === "nav-menu-panel") {
+				if (!isInsideIgnored && !isInsidePanel) {
+					panel.classList.add("float-panel-closed");
+				}
+			} else {
+				// For other panels, keep existing behavior
+				if (!isInsideIgnored) {
+					panel.classList.add("float-panel-closed");
+				}
 			}
 		}
-		
-		if (!isInsideIgnored) {
-			panel.classList.add("float-panel-closed");
-		}
-	}
-});
+	});
+}
 
 // Add click event listener for nav menu switch - Optimized with caching
 const navMenuSwitch = getCachedElement("nav-menu-switch");
@@ -350,7 +368,11 @@ function loadTheme() {
 }
 
 // Initialize custom scrollbar with lazy loading
+// 只在桌面端初始化自定义滚动条，移动端使用原生滚动
 async function initCustomScrollbar() {
+	// 在移动端不使用自定义滚动条
+	if (isMobile) return;
+	
 	const OverlayScrollbars = await loadOverlayScrollbars();
 	if (!OverlayScrollbars) return;
 	
@@ -387,7 +409,7 @@ async function initCustomScrollbar() {
 	});
 	
 	// Initialize scrollbar for KaTeX elements
-	const katexElements = document.querySelectorAll('.katex-display') as NodeListOf<HTMLElement>;
+	const katexElements = document.querySelectorAll('.katex-display');
 	katexElements.forEach((ele) => {
 		OverlayScrollbars(ele, {
 			scrollbars: {
@@ -398,9 +420,10 @@ async function initCustomScrollbar() {
 }
 
 // 添加滚动事件监听器，仅在用户滚动时初始化自定义滚动条
+// 只在桌面端添加这些监听器
 let customScrollbarInitialized = false;
 function lazyInitCustomScrollbar() {
-	if (!customScrollbarInitialized) {
+	if (!customScrollbarInitialized && !isMobile) {
 		customScrollbarInitialized = true;
 		initCustomScrollbar();
 		// 移除事件监听器，避免重复初始化
@@ -410,8 +433,11 @@ function lazyInitCustomScrollbar() {
 }
 
 // 监听滚动和触摸事件，触发懒加载
-window.addEventListener('scroll', lazyInitCustomScrollbar, { passive: true });
-window.addEventListener('touchstart', lazyInitCustomScrollbar, { passive: true });
+// 只在桌面端添加这些监听器
+if (!isMobile) {
+	window.addEventListener('scroll', lazyInitCustomScrollbar, { passive: true });
+	window.addEventListener('touchstart', lazyInitCustomScrollbar, { passive: true });
+}
 
 // Show banner with animation
 function showBanner() {
@@ -455,7 +481,7 @@ const setupSwupHooks = () => {
 	
 	window.swup.hooks.on('content:replace', initCustomScrollbar);
 	
-	window.swup.hooks.on('visit:start', (visit: {to: {url: string}}) => {
+	window.swup.hooks.on('visit:start', (visit) => {
 		// Update body class for home page banner height
 		const bodyElement = document.querySelector('body');
 		if (bodyElement) {
@@ -495,76 +521,88 @@ if (window?.swup?.hooks) {
 let backToTopBtn = document.getElementById('back-to-top-btn');
 let navbar = document.getElementById('navbar-wrapper');
 
-// Debounce scroll function to improve performance
-let scrollTimeout: ReturnType<typeof setTimeout> | null = null;
-const SCROLL_DEBOUNCE_DELAY = 100;
+// Throttle scroll function to improve performance - 使用节流替代防抖，减少计算频率
+let lastScrollTime = 0;
+const SCROLL_THROTTLE_DELAY = 150; // 移动端增大节流延迟
+let lastScrollPosition = 0;
 
 function scrollFunction() {
-	if (scrollTimeout) {
-		clearTimeout(scrollTimeout);
+	const currentTime = Date.now();
+	const currentScrollPosition = document.body.scrollTop || document.documentElement.scrollTop;
+	
+	// 节流：只在指定时间间隔后执行
+	if (currentTime - lastScrollTime < SCROLL_THROTTLE_DELAY) {
+		return;
 	}
 	
-	scrollTimeout = setTimeout(() => {
-		// Calculate banner height for back to top button
-		const bannerHeight = window.innerHeight * (BANNER_HEIGHT / 100);
+	// 避免重复计算：只有当滚动位置变化超过一定阈值时才执行
+	if (Math.abs(currentScrollPosition - lastScrollPosition) < 10) {
+		return;
+	}
+	
+	lastScrollTime = currentTime;
+	lastScrollPosition = currentScrollPosition;
+	
+	// Calculate banner height for back to top button
+	const bannerHeight = window.innerHeight * (BANNER_HEIGHT / 100);
 
-		// Update back to top button visibility
-		if (backToTopBtn) {
-			if (document.body.scrollTop > bannerHeight || document.documentElement.scrollTop > bannerHeight) {
-				backToTopBtn.classList.remove('hide');
-			} else {
-				backToTopBtn.classList.add('hide');
-			}
+	// Update back to top button visibility
+	if (backToTopBtn) {
+		if (currentScrollPosition > bannerHeight) {
+			backToTopBtn.classList.remove('hide');
+		} else {
+			backToTopBtn.classList.add('hide');
 		}
+	}
 
-		// Update navbar visibility based on scroll position
-		if (bannerEnabled && navbar) {
-			const NAVBAR_HEIGHT = 72;
-			const MAIN_PANEL_EXCESS_HEIGHT = MAIN_PANEL_OVERLAPS_BANNER_HEIGHT * 16;
+	// Update navbar visibility based on scroll position
+	if (bannerEnabled && navbar) {
+		const NAVBAR_HEIGHT = 72;
+		const MAIN_PANEL_EXCESS_HEIGHT = MAIN_PANEL_OVERLAPS_BANNER_HEIGHT * 16;
 
-			let currentBannerHeight = BANNER_HEIGHT;
-			if (document.body.classList.contains('lg:is-home') && window.innerWidth >= 1024) {
-				currentBannerHeight = BANNER_HEIGHT_HOME;
-			}
-			
-			const threshold = window.innerHeight * (currentBannerHeight / 100) - NAVBAR_HEIGHT - MAIN_PANEL_EXCESS_HEIGHT - 16;
-			if (document.body.scrollTop >= threshold || document.documentElement.scrollTop >= threshold) {
-				navbar.classList.add('navbar-hidden');
-			} else {
-				navbar.classList.remove('navbar-hidden');
-			}
+		let currentBannerHeight = BANNER_HEIGHT;
+		if (document.body.classList.contains('lg:is-home') && window.innerWidth >= 1024) {
+			currentBannerHeight = BANNER_HEIGHT_HOME;
 		}
-	}, SCROLL_DEBOUNCE_DELAY);
+		
+		const threshold = window.innerHeight * (currentBannerHeight / 100) - NAVBAR_HEIGHT - MAIN_PANEL_EXCESS_HEIGHT - 16;
+		if (currentScrollPosition >= threshold) {
+			navbar.classList.add('navbar-hidden');
+		} else {
+			navbar.classList.remove('navbar-hidden');
+		}
+	}
 }
 
-// Set up scroll and resize event listeners
-window.onscroll = scrollFunction;
+// Set up scroll and resize event listeners with passive option for better performance
+window.addEventListener('scroll', scrollFunction, { passive: true });
 
-// Debounce resize function to improve performance
-let resizeTimeout: ReturnType<typeof setTimeout> | null = null;
-const RESIZE_DEBOUNCE_DELAY = 200;
+// Throttle resize function to improve performance
+let lastResizeTime = 0;
+const RESIZE_THROTTLE_DELAY = 300; // 增大resize节流延迟
 
-window.onresize = () => {
-	if (resizeTimeout) {
-		clearTimeout(resizeTimeout);
+function resizeFunction() {
+	const currentTime = Date.now();
+	if (currentTime - lastResizeTime < RESIZE_THROTTLE_DELAY) {
+		return;
 	}
+	lastResizeTime = currentTime;
 	
-	resizeTimeout = setTimeout(() => {
-		// Recalculate banner height on resize
-		let offset = Math.floor(window.innerHeight * (BANNER_HEIGHT_EXTEND / 100));
-		offset = offset - offset % 4;
-		document.documentElement.style.setProperty('--banner-height-extend', `${offset}px`);
-	}, RESIZE_DEBOUNCE_DELAY);
-};
+	// Recalculate banner height on resize
+	let offset = Math.floor(window.innerHeight * (BANNER_HEIGHT_EXTEND / 100));
+	offset = offset - offset % 4;
+	document.documentElement.style.setProperty('--banner-height-extend', `${offset}px`);
+}
+
+window.addEventListener('resize', resizeFunction, { passive: true });
 
 </script>
 
-<script defer>
+<script defer is:inline>
 // Lazy load PhotoSwipe to improve initial page load performance
-let lightbox: any = null;
-let pswp: any = null;
+let lightbox = null;
+let pswp = null;
 let isPhotoSwipeLoaded = false;
-let isPhotoSwipeInitialized = false;
 
 // Create PhotoSwipe instance
 async function createPhotoSwipe() {
@@ -588,7 +626,7 @@ async function createPhotoSwipe() {
 			doubleTapAction: 'zoom',
 		});
 		
-		lightbox.addFilter("domItemData", (itemData: any, element: any) => {
+		lightbox.addFilter("domItemData", (itemData, element) => {
 			if (element instanceof HTMLImageElement) {
 				itemData.src = element.src;
 				itemData.w = Number(element.naturalWidth || window.innerWidth);
@@ -600,13 +638,12 @@ async function createPhotoSwipe() {
 	}
 	
 	lightbox.init();
-	isPhotoSwipeInitialized = true;
 }
 
 // 添加图片点击事件监听器，仅在用户点击图片时初始化PhotoSwipe
 function setupPhotoSwipeLazyLoad() {
-	const handleImageClick = async (e: MouseEvent) => {
-		const target = e.target as HTMLElement;
+	const handleImageClick = async (e) => {
+		const target = e.target;
 		if (target.tagName === 'IMG') {
 			await createPhotoSwipe();
 			// 移除事件监听器，避免重复初始化
@@ -622,7 +659,6 @@ const setupPhotoSwipe = () => {
 	window.swup.hooks.on("content:replace", () => {
 		if (lightbox?.destroy) {
 			lightbox.destroy();
-			isPhotoSwipeInitialized = false;
 		}
 		// 重新设置懒加载监听器
 		setTimeout(setupPhotoSwipeLazyLoad, 100);

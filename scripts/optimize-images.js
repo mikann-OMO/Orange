@@ -39,7 +39,7 @@ async function getAllImages() {
 async function optimizeImage(filePath) {
 	try {
 		console.log(`正在优化: ${filePath}`);
-		const fs = await import("fs/promises");
+		const fs = await import('fs/promises');
 
 		// 读取图片数据到缓冲区
 		const imageBuffer = await fs.readFile(filePath);
@@ -61,7 +61,7 @@ async function optimizeImage(filePath) {
 		let optimizedBuffer;
 
 		// 根据文件类型选择优化参数
-		if (originalExt === "jpg" || originalExt === "jpeg") {
+		if (originalExt === 'jpg' || originalExt === 'jpeg') {
 			optimizedBuffer = await sharp(imageBuffer)
 				.resize(baseWidth, baseHeight, {
 					fit: "inside",
@@ -73,7 +73,7 @@ async function optimizeImage(filePath) {
 					progressive: true,
 				})
 				.toBuffer();
-		} else if (originalExt === "png") {
+		} else if (originalExt === 'png') {
 			optimizedBuffer = await sharp(imageBuffer)
 				.resize(baseWidth, baseHeight, {
 					fit: "inside",
