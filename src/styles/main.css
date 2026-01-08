@@ -77,7 +77,7 @@
     }
     /* 适配移动端导航栏的特殊样式 */
     #nav-menu-panel {
-        @apply inset-x-0 right-auto rounded-none border-t-2
+        @apply right-4 border rounded-[var(--radius-large)] shadow-lg
     }
     .search-panel mark {
         @apply bg-transparent text-[var(--primary)]
