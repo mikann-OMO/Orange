@@ -79,23 +79,16 @@ let links: NavBarLink[] = navBarConfig.links.map(
 
 
 
-{import.meta.env.PROD && <script is:inline define:vars={{scriptUrl: url('/pagefind/pagefind.js')}}>
-// 延迟加载Pagefind，仅在用户交互或搜索时加载
-function loadPagefind() {
-    if (window.pagefind) return;
-    
-    const script = document.createElement('script');
-    script.src = scriptUrl;
-    script.onload = () => {
-        import(scriptUrl).then((pagefind) => {
-            pagefind.options({
-                'excerptLength': 20
-            });
-            pagefind.init();
-            window.pagefind = pagefind;
-        });
-    };
-    document.head.appendChild(script);
+{import.meta.env.PROD && <script is:inline>
+async function loadPagefind() {
+    const scriptUrl = '/pagefind/pagefind.js';
+    const pagefind = await import(scriptUrl);
+    await pagefind.options({
+        'excerptLength': 20
+    });
+    pagefind.init();
+    window.pagefind = pagefind;
+    pagefind.search('');     // speed up the first search
 }
 
 // 导航菜单控制
@@ -139,22 +132,9 @@ function setupNavMenu() {
     });
 }
 
-// 监听搜索输入或点击事件，触发Pagefind加载
-const setupPagefindLazyLoad = () => {
-    const searchSwitch = document.getElementById('search-switch');
-    if (searchSwitch) {
-        searchSwitch.addEventListener('click', loadPagefind, { once: true });
-    }
-    
-    const searchInput = document.querySelector('input[placeholder*="搜索"]');
-    if (searchInput) {
-        searchInput.addEventListener('focus', loadPagefind, { once: true });
-    }
-};
-
 // 页面加载完成后设置监听器
 document.addEventListener('DOMContentLoaded', () => {
-    setupPagefindLazyLoad();
+    loadPagefind();
     setupNavMenu();
 });
 </script>}

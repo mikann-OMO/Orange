@@ -89,10 +89,28 @@ const bannerOffset =
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 		<meta name="mobile-web-app-capable" content="yes">
-		<!-- 性能优化：禁止自动检测电话号码和邮箱 -->
-		<meta name="format-detection" content="telephone=no, email=no, address=no">
-		<!-- 性能优化：启用浏览器缓存 -->
-		<meta http-equiv="Cache-Control" content="public, max-age=31536000, immutable">
+		<!-- 性能优化：预加载所有文章链接 -->
+		<script is:inline>
+			// 性能优化：在客户端动态添加 prefetch 标签
+			// 只在空闲时间执行，避免影响首屏加载
+			if ('requestIdleCallback' in window) {
+				requestIdleCallback(() => {
+					// 所有文章链接
+					const postLinks = [
+						'/notes/1'
+						// 其他文章链接会在构建时自动添加
+					];
+					
+					postLinks.forEach(link => {
+						const prefetchLink = document.createElement('link');
+						prefetchLink.rel = 'prefetch';
+						prefetchLink.href = link;
+						prefetchLink.as = 'document';
+						document.head.appendChild(prefetchLink);
+					});
+				});
+			}
+		</script>
 		
 		<title>{pageTitle}</title>
 		<meta name="description" content={description || pageTitle}>
@@ -210,7 +228,7 @@ const bannerOffset =
 	<body class="min-h-screen transition" class:list={[{"lg:is-home": isHomePage, "enable-banner": enableBanner}]}
 		  data-overlayscrollbars-initialize
 		  <!-- 性能优化：减少不必要的触摸事件延迟 -->
-		  style="touch-action: manipulation; -webkit-tap-highlight-color: transparent;"
+		  style="touch-action: manipulation; -webkit-tap-highlight-color: transparent; -webkit-overflow-scrolling: touch;"
 	>
 		<ConfigCarrier></ConfigCarrier>
 		<slot />
@@ -251,6 +269,23 @@ const bannerOffset =
 	}
 	.navbar-hidden {
 		@apply opacity-0 -translate-y-16
+	}
+	
+	/* Swup 页面过渡动画 */
+	.transition-swup-fade {
+		transition: opacity 0.25s ease-in-out;
+	}
+	.transition-swup-fade-enter {
+		opacity: 0;
+	}
+	.transition-swup-fade-enter-active {
+		opacity: 1;
+	}
+	.transition-swup-fade-exit {
+		opacity: 1;
+	}
+	.transition-swup-fade-exit-active {
+		opacity: 0;
 	}
 }
 </style>

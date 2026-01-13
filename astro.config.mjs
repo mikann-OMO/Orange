@@ -12,6 +12,7 @@ import remarkDirective from "remark-directive";
 import remarkGithubAdmonitionsToDirectives from "remark-github-admonitions-to-directives";
 import remarkMath from "remark-math";
 import remarkSectionize from "remark-sectionize";
+import { VitePWA } from "vite-plugin-pwa";
 import { AdmonitionComponent } from "./src/plugins/rehype-component-admonition.mjs";
 import { GithubCardComponent } from "./src/plugins/rehype-component-github-card.mjs";
 import { parseDirectiveNode } from "./src/plugins/remark-directive-rehype.js";
@@ -28,6 +29,7 @@ export default defineConfig({
 		cache: true,
 		minify: "esbuild",
 		sourcemap: false,
+		compression: true,
 	},
 	integrations: [
 		tailwind({
@@ -37,12 +39,12 @@ export default defineConfig({
 		swup({
 			theme: false,
 			animationClass: "transition-swup-",
-			containers: ["main", "#toc"],
+			containers: ["#swup-container", "#toc"],
 			smoothScrolling: true,
 			cache: true,
 			preload: {
-				hover: false,
-				focus: false,
+				hover: true,
+				focus: true,
 				top: true,
 				topOffset: 500,
 				delay: 0,
@@ -50,7 +52,7 @@ export default defineConfig({
 			},
 			accessibility: true,
 			updateHead: true,
-			updateBodyClass: false,
+			updateBodyClass: true,
 			globalInstance: true,
 			animationSelector: "[data-swup-animation]",
 			ignoreVisit: (visit) => {
@@ -125,6 +127,52 @@ export default defineConfig({
 		decoding: "async",
 	},
 	vite: {
+		plugins: [
+			VitePWA({
+				registerType: "autoUpdate",
+				includeAssets: ["favicon/**/*", "images/**/*"],
+				manifest: {
+					name: "我的博客",
+					short_name: "博客",
+					description: "我的个人技术博客",
+					theme_color: "#ffffff",
+					background_color: "#ffffff",
+					icons: [
+						{
+							src: "favicon/favicon-light-192.webp",
+							sizes: "192x192",
+							type: "image/webp",
+							purpose: "any maskable",
+						},
+						{
+							src: "favicon/favicon-light-512.webp",
+							sizes: "512x512",
+							type: "image/webp",
+							purpose: "any maskable",
+						},
+					],
+				},
+				workbox: {
+					globPatterns: ["**/*.{js,css,html,ico,png,svg,webp,avif}"],
+					runtimeCaching: [
+						{
+							urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+							handler: "CacheFirst",
+							options: {
+								cacheName: "google-fonts-cache",
+								expiration: {
+									maxEntries: 10,
+									maxAgeSeconds: 60 * 60 * 24 * 365,
+								},
+								cacheableResponse: {
+									statuses: [0, 200],
+								},
+							},
+						},
+					],
+				},
+			}),
+		],
 		resolve: {
 			alias: {
 				"@components/*": "./src/components/*",

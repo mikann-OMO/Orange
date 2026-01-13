@@ -1,7 +1,7 @@
 ---
 title: 博客？& bot？
 published: 2025-12-31T00:00:00.000Z
-description: “代码小白认识学习搭建静态博客&bot”
+description: “如果你感兴趣，不懂代码也能搭建自己的博客网站以及智能bot”
 image: ''
 tags:
   - bot

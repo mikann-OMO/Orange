@@ -3,6 +3,7 @@ import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import Icon from "@iconify/svelte";
 import { url } from "@utils/url-utils";
+import { pinyin } from "pinyin-pro";
 import { onMount, tick } from "svelte";
 
 // 显式声明 SearchResult 类型
@@ -30,6 +31,9 @@ interface SearchResult {
 	raw_content?: string;
 	raw_url?: string;
 	sub_results?: SearchResult[];
+	// 添加拼音字段用于搜索
+	titlePinyin?: string;
+	titleFirstLetter?: string;
 }
 
 // 合并关键字变量，使用单个变量管理搜索关键字
@@ -41,6 +45,13 @@ let isSearching = false;
 let pagefindLoaded = false;
 // 跟踪搜索面板的可见性
 let isPanelVisible = false;
+// 跟踪 Pagefind 加载状态
+let isPagefindLoading = false;
+
+// 存储文章索引的缓存
+let articleIndexCache: SearchResult[] = [];
+// 标记是否已加载文章索引
+let isArticleIndexLoaded = false;
 
 const fakeResult: SearchResult[] = [
 	{
@@ -50,6 +61,8 @@ const fakeResult: SearchResult[] = [
 		},
 		excerpt:
 			"Because the search cannot work in the <mark>dev</mark> environment.",
+		titlePinyin: "This Is a Fake Search Result",
+		titleFirstLetter: "TIIF SR",
 	},
 	{
 		url: url("/"),
@@ -57,20 +70,235 @@ const fakeResult: SearchResult[] = [
 			title: "If You Want to Test the Search",
 		},
 		excerpt: "Try running <mark>npm build && npm preview</mark> instead.",
+		titlePinyin: "If You Want to Test the Search",
+		titleFirstLetter: "IYWTTTS",
 	},
 ];
 
 // 防抖函数，延迟执行搜索
 let searchTimeout: ReturnType<typeof setTimeout> | null = null;
-const DEBOUNCE_DELAY = 300; // 300ms 防抖延迟
+const DEBOUNCE_DELAY = 100; // 减少防抖延迟，实现更实时的搜索
 
 // 优化的搜索面板可见性控制
 const togglePanel = () => {
 	isPanelVisible = !isPanelVisible;
+	// 如果打开面板且 Pagefind 未加载，则尝试加载
+	if (isPanelVisible && !pagefindLoaded && !isPagefindLoading) {
+		loadPagefind();
+	}
+	// 如果打开面板且文章索引未加载，则尝试加载
+	if (isPanelVisible && !isArticleIndexLoaded) {
+		loadArticleIndex();
+	}
 };
 
 const setPanelVisibility = (show: boolean) => {
 	isPanelVisible = show;
+	// 如果打开面板且 Pagefind 未加载，则尝试加载
+	if (show && !pagefindLoaded && !isPagefindLoading) {
+		loadPagefind();
+	}
+	// 如果打开面板且文章索引未加载，则尝试加载
+	if (show && !isArticleIndexLoaded) {
+		loadArticleIndex();
+	}
+};
+
+// 加载 Pagefind 函数
+const loadPagefind = async () => {
+	if (pagefindLoaded || isPagefindLoading) return;
+
+	isPagefindLoading = true;
+
+	try {
+		if (typeof window !== "undefined") {
+			// 检查是否已经加载
+			if ("pagefind" in window) {
+				pagefindLoaded = true;
+				return;
+			}
+
+			// 动态加载 Pagefind
+			const scriptUrl = url("/pagefind/pagefind.js");
+			const script = document.createElement("script");
+			script.src = scriptUrl;
+
+			await new Promise<void>((resolve, reject) => {
+				script.onload = () => {
+					// 确保 Pagefind 初始化
+					if ("pagefind" in window) {
+						pagefindLoaded = true;
+						resolve();
+					} else {
+						reject(new Error("Pagefind loaded but not available"));
+					}
+				};
+				script.onerror = () => reject(new Error("Failed to load Pagefind"));
+				document.head.appendChild(script);
+			});
+		}
+	} catch (error) {
+		console.error("Error loading Pagefind:", error);
+	} finally {
+		isPagefindLoading = false;
+	}
+};
+
+// 加载文章索引
+const loadArticleIndex = async () => {
+	if (isArticleIndexLoaded) return;
+
+	try {
+		// 尝试从 localStorage 加载缓存的文章索引
+		if (typeof window !== "undefined" && window.localStorage) {
+			const cachedIndex = localStorage.getItem("articleSearchIndex");
+			if (cachedIndex) {
+				articleIndexCache = JSON.parse(cachedIndex);
+				isArticleIndexLoaded = true;
+				return;
+			}
+		}
+
+		// 如果没有缓存，则从 RSS 加载
+		try {
+			const response = await fetch("/rss.xml");
+			if (response.ok) {
+				const text = await response.text();
+				const parser = new DOMParser();
+				const xmlDoc = parser.parseFromString(text, "application/xml");
+
+				const items = xmlDoc.querySelectorAll("item");
+				const articles: SearchResult[] = [];
+
+				items.forEach((item) => {
+					const title = item.querySelector("title")?.textContent || "";
+					const link = item.querySelector("link")?.textContent || "";
+					const description =
+						item.querySelector("description")?.textContent || "";
+
+					// 转换为相对路径
+					let relativeUrl = link;
+					if (link.includes(window.location.origin)) {
+						relativeUrl = link.replace(window.location.origin, "");
+					}
+
+					articles.push({
+						url: relativeUrl,
+						meta: {
+							title,
+						},
+						excerpt: description,
+						titlePinyin: getPinyin(title),
+						titleFirstLetter: getFirstLetter(title),
+					});
+				});
+
+				articleIndexCache = articles;
+				isArticleIndexLoaded = true;
+
+				// 缓存到 localStorage
+				if (typeof window !== "undefined" && window.localStorage) {
+					localStorage.setItem(
+						"articleSearchIndex",
+						JSON.stringify(articleIndexCache),
+					);
+				}
+
+				return;
+			}
+		} catch (error) {
+			console.error("Error loading from RSS:", error);
+		}
+
+		// 如果 RSS 加载失败，使用模拟数据
+		articleIndexCache = fakeResult;
+		isArticleIndexLoaded = true;
+
+		// 缓存到 localStorage
+		if (typeof window !== "undefined" && window.localStorage) {
+			localStorage.setItem(
+				"articleSearchIndex",
+				JSON.stringify(articleIndexCache),
+			);
+		}
+	} catch (error) {
+		console.error("Error loading article index:", error);
+	}
+};
+
+// 高亮关键词函数
+const highlightKeyword = (text: string, keyword: string): string => {
+	if (!keyword.trim()) return text;
+
+	const regex = new RegExp(`(${keyword})`, "gi");
+	return text.replace(
+		regex,
+		'<mark class="bg-yellow-200 dark:bg-yellow-800 px-0.5 rounded">$1</mark>',
+	);
+};
+
+// 拼音转换函数
+const getPinyin = (text: string): string => {
+	try {
+		return pinyin(text, {
+			style: "normal",
+			withoutTone: true,
+			separator: " ",
+		});
+	} catch (error) {
+		console.error("Error converting to pinyin:", error);
+		return text;
+	}
+};
+
+// 获取首字母函数
+const getFirstLetter = (text: string): string => {
+	try {
+		return pinyin(text, {
+			style: "first",
+			withoutTone: true,
+			separator: "",
+		});
+	} catch (error) {
+		console.error("Error getting first letter:", error);
+		return text;
+	}
+};
+
+// 模糊搜索函数
+const fuzzySearch = (searchKeyword: string): SearchResult[] => {
+	if (!searchKeyword.trim()) return [];
+
+	const keyword = searchKeyword.toLowerCase();
+	const results: SearchResult[] = [];
+
+	// 遍历文章索引
+	for (const article of articleIndexCache) {
+		// 检查标题是否匹配
+		const titleMatch = article.meta.title.toLowerCase().includes(keyword);
+		// 检查拼音是否匹配
+		const pinyinMatch = article.titlePinyin?.toLowerCase().includes(keyword);
+		// 检查首字母是否匹配
+		const firstLetterMatch = article.titleFirstLetter
+			?.toLowerCase()
+			.includes(keyword);
+		// 检查摘要是否匹配
+		const excerptMatch = article.excerpt.toLowerCase().includes(keyword);
+
+		// 如果有任何匹配，则添加到结果中
+		if (titleMatch || pinyinMatch || firstLetterMatch || excerptMatch) {
+			results.push({
+				...article,
+				meta: {
+					...article.meta,
+					title: highlightKeyword(article.meta.title, searchKeyword),
+				},
+				excerpt: highlightKeyword(article.excerpt, searchKeyword),
+			});
+		}
+	}
+
+	return results;
 };
 
 // 优化的搜索函数
@@ -83,29 +311,74 @@ const search = async (searchKeyword: string): Promise<void> => {
 		return;
 	}
 
+	// 确保搜索面板显示
+	if (isDesktop) {
+		setPanelVisibility(true);
+	}
+
 	isSearching = true;
 
 	try {
 		let searchResults: SearchResult[] = [];
 
+		// 无论是否在生产环境，都先尝试使用模糊搜索
+		// 这样可以确保在 Pagefind 未加载时也能搜索
+		searchResults = fuzzySearch(searchKeyword);
+
+		// 检查是否在生产环境且 Pagefind 已加载
 		if (import.meta.env.PROD && pagefindLoaded) {
-			const response = await window.pagefind.search(searchKeyword);
-			searchResults = await Promise.all(
-				response.results.map((item) => item.data()),
-			);
-		} else {
-			// 开发环境使用模拟数据，添加搜索关键词过滤
+			// 确保 window.pagefind 存在
+			if (typeof window !== "undefined" && window.pagefind) {
+				try {
+					const response = await window.pagefind.search(searchKeyword);
+					// 处理搜索结果
+					if (response && response.results && response.results.length > 0) {
+						searchResults = await Promise.all(
+							response.results.map((item) => item.data()),
+						);
+						// 为 Pagefind 结果添加高亮
+						searchResults = searchResults.map((item) => ({
+							...item,
+							meta: {
+								...item.meta,
+								title: highlightKeyword(item.meta.title, searchKeyword),
+							},
+							excerpt: highlightKeyword(item.excerpt, searchKeyword),
+						}));
+					}
+				} catch (error) {
+					console.error("Pagefind search error:", error);
+					// Pagefind 搜索失败，继续使用模糊搜索结果
+				}
+			}
+		}
+
+		// 如果模糊搜索和 Pagefind 搜索都没有结果，使用模拟数据
+		if (searchResults.length === 0) {
 			searchResults = fakeResult.filter(
 				(item) =>
 					item.meta.title.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-					item.excerpt.toLowerCase().includes(searchKeyword.toLowerCase()),
+					item.excerpt.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+					item.titlePinyin
+						?.toLowerCase()
+						.includes(searchKeyword.toLowerCase()) ||
+					item.titleFirstLetter
+						?.toLowerCase()
+						.includes(searchKeyword.toLowerCase()),
 			);
+
+			// 高亮模拟数据中的关键词
+			searchResults = searchResults.map((item) => ({
+				...item,
+				meta: {
+					...item.meta,
+					title: highlightKeyword(item.meta.title, searchKeyword),
+				},
+				excerpt: highlightKeyword(item.excerpt, searchKeyword),
+			}));
 		}
 
 		result = searchResults;
-		if (isDesktop) {
-			setPanelVisibility(true);
-		}
 	} catch (error) {
 		console.error("Search error:", error);
 		result = [];
@@ -129,6 +402,14 @@ const handleInputFocus = (desktop: boolean) => {
 	isDesktop = desktop;
 	if (keyword && desktop) {
 		setPanelVisibility(true);
+		// 如果 Pagefind 未加载，则尝试加载
+		if (!pagefindLoaded && !isPagefindLoading) {
+			loadPagefind();
+		}
+		// 如果文章索引未加载，则尝试加载
+		if (!isArticleIndexLoaded) {
+			loadArticleIndex();
+		}
 		search(keyword);
 	}
 };
@@ -149,7 +430,11 @@ const handleKeyDown = (event: KeyboardEvent) => {
 };
 
 onMount(async () => {
+	// 检查 Pagefind 是否已加载
 	pagefindLoaded = typeof window !== "undefined" && "pagefind" in window;
+
+	// 加载文章索引
+	await loadArticleIndex();
 
 	if (import.meta.env.DEV) {
 		console.log(
