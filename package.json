@@ -11,8 +11,8 @@
 		"astro": "astro",
 		"new-post": "node scripts/new-post.js",
 		"type-check": "tsc --noEmit",
-		"format": "biome format --write ./src",
-		"lint": "biome check --write ./src",
+		"format": "biome format --write .",
+		"lint": "biome check --write .",
 		"check": "astro check && tsc --noEmit",
 		"clean": "rm -rf .astro dist node_modules",
 		"preinstall": "npx only-allow pnpm"
