@@ -7,6 +7,7 @@ import tailwind from "@astrojs/tailwind";
 // import swup from "@swup/astro";
 import icon from "astro-icon";
 import { defineConfig } from "astro/config";
+import yaml from "@rollup/plugin-yaml";
 
 // Markdown 处理插件
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
@@ -188,6 +189,7 @@ export default defineConfig({
 	vite: {
 		// Vite 插件
 		plugins: [
+			yaml(),
 			// PWA 配置
 			VitePWA({
 				// 注册类型
@@ -221,6 +223,7 @@ export default defineConfig({
 				workbox: {
 					// 缓存模式
 					globPatterns: ["**/*.{js,css,html,ico,png,svg,webp,avif}"],
+					globIgnores: ["**/*.yaml"],
 					// 运行时缓存
 					runtimeCaching: [
 						{
