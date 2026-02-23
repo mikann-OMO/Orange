@@ -189,7 +189,9 @@ export default defineConfig({
 	vite: {
 		// Vite 插件
 		plugins: [
-			yaml(),
+			yaml({
+				include: "**/*.yaml",
+			}),
 			// PWA 配置
 			VitePWA({
 				// 注册类型
