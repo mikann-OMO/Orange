@@ -1,0 +1,52 @@
+---
+import { Icon } from "astro-icon/components";
+import { type NavBarLink } from "../../types/config";
+import { url } from "../../utils/url-utils";
+
+interface Props {
+	links: NavBarLink[];
+}
+
+const links = Astro.props.links;
+---
+<div id="nav-menu-panel" class:list={["float-panel", "float-panel-closed", "absolute", "transition-all", "duration-300", "ease-in-out", "fixed", "top-16", "right-4", "w-[80vw]", "max-w-[320px]", "max-h-[80vh]", "bg-[rgba(255,255,255,0.7)] dark:bg-[rgba(38,40,48,0.85)]", "border", "border-[var(--card-border)]", "rounded-[var(--radius-large)]", "shadow-[8px_8px_32px_rgba(0,0,0,0.15)]", "dark:shadow-[8px_8px_32px_rgba(0,0,0,0.4)]", "backdrop-blur-3xl", "z-50"]} style="backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);">
+    <div class="flex flex-col h-full">
+        <div class="py-3 px-5 border-b border-[var(--card-border)] flex justify-between items-center">
+            <h3 class="text-lg font-bold text-[var(--primary)]">导航菜单</h3>
+            <button 
+                aria-label="Close navigation menu" 
+                class="btn-plain scale-animation rounded-lg w-8 h-8 active:scale-90"
+                id="nav-menu-close"
+            >
+                <Icon name="material-symbols:close-rounded" class="text-[1.25rem]"></Icon>
+            </button>
+        </div>
+        <div class="flex-1 overflow-y-auto py-1">
+            {links.map((link) => (
+                <a 
+                    href={link.external ? link.url : url(link.url)} 
+                    class="group flex justify-between items-center py-3 px-5 rounded-none
+                        hover:bg-[var(--btn-plain-bg-hover)] active:bg-[var(--btn-plain-bg-active)] transition-all
+                        text-base font-bold font-['SimSun',serif]
+                    "
+                    target={link.external ? "_blank" : null}
+                    aria-label={link.name}
+                >
+                    <div class="transition-all text-black/85 dark:text-white/85 group-hover:text-[var(--primary)] group-active:text-[var(--primary)]">
+                        {link.name}
+                    </div>
+                    {!link.external && <Icon 
+                        name="material-symbols:chevron-right-rounded"
+                        class="transition-all text-[1.25rem] text-[var(--primary)] group-hover:translate-x-1"
+                    />
+                    }
+                    {link.external && <Icon 
+                        name="fa6-solid:arrow-up-right-from-square"
+                        class="transition-all text-[0.875rem] text-black/30 dark:text-white/30 group-hover:translate-x-1 group-hover:-translate-y-1"
+                    />
+                    }
+                </a>
+            ))}
+        </div>
+    </div>
+</div>

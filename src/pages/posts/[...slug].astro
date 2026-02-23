@@ -1,0 +1,283 @@
+---
+import path from "node:path";
+import { Icon } from "astro-icon/components";
+import PostMetadata from "../../components/PostMeta.astro";
+import ImageWrapper from "../../components/misc/ImageWrapper.astro";
+import License from "../../components/misc/License.astro";
+import Markdown from "../../components/misc/Markdown.astro";
+import { licenseConfig } from "../../config";
+import { profileConfig, siteConfig } from "../../config";
+import I18nKey from "../../i18n/i18nKey";
+import { i18n } from "../../i18n/translation";
+import MainGridLayout from "../../layouts/MainGridLayout.astro";
+import { getSortedPosts } from "../../utils/content-utils";
+import { formatDateToYYYYMMDD } from "../../utils/date-utils";
+import { getDir, getPostUrlBySlug } from "../../utils/url-utils";
+
+export async function getStaticPaths() {
+	const blogEntries = await getSortedPosts();
+	return blogEntries.map((entry) => ({
+		params: { slug: entry.slug },
+		props: { entry },
+	}));
+}
+
+const { entry } = Astro.props;
+const { Content, headings } = await entry.render();
+
+const { remarkPluginFrontmatter } = await entry.render();
+
+const jsonLd = {
+	"@context": "https://schema.org",
+	"@type": "BlogPosting",
+	headline: entry.data.title,
+	description: entry.data.description || entry.data.title,
+	keywords: entry.data.tags,
+	author: {
+		"@type": "Person",
+		name: profileConfig.name,
+		url: Astro.site,
+	},
+	datePublished: formatDateToYYYYMMDD(entry.data.published),
+	inLanguage: entry.data.lang
+		? entry.data.lang.replace("_", "-")
+		: siteConfig.lang.replace("_", "-"),
+	// TODO include cover image here
+};
+---
+<MainGridLayout banner={entry.data.image} title={entry.data.title} description={entry.data.description} lang={entry.data.lang} setOGTypeArticle={true} headings={headings}>
+    <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
+    <div class="flex max-w-[50rem] mx-auto w-full rounded-[var(--radius-large)] overflow-hidden relative mb-4">
+        <div id="post-container" class:list={["card-base z-10 px-6 md:px-9 pt-6 pb-4 relative w-full ",
+            {}
+        ]}>
+            <!-- word count and reading time -->
+            <div class="flex flex-row text-black/30 dark:text-white/30 gap-5 mb-3 transition onload-animation">
+                <div class="flex flex-row items-center">
+                    <div class="transition h-6 w-6 rounded-md bg-black/5 dark:bg-white/10 text-black/50 dark:text-white/50 flex items-center justify-center mr-2">
+                        <Icon name="material-symbols:notes-rounded"></Icon>
+                    </div>
+                    <div class="text-sm">{remarkPluginFrontmatter.words} {" " + i18n(I18nKey.wordsCount)}</div>
+                </div>
+                <div class="flex flex-row items-center">
+                    <div class="transition h-6 w-6 rounded-md bg-black/5 dark:bg-white/10 text-black/50 dark:text-white/50 flex items-center justify-center mr-2">
+                        <Icon name="material-symbols:schedule-outline-rounded"></Icon>
+                    </div>
+                    <div class="text-sm">{remarkPluginFrontmatter.minutes} {" " + i18n(I18nKey.minutesCount)}</div>
+                </div>
+            </div>
+
+            <!-- 标题和图片组合 -->
+            <div class="onload-animation">
+                <div class="flex flex-col md:flex-row items-start gap-6 mb-5">
+                    <!-- 标题 -->
+                    <div class="flex-1">
+                        <div
+                            data-pagefind-body data-pagefind-weight="10" data-pagefind-meta="title"
+                            class="transition w-full block font-bold mb-3
+                            text-3xl md:text-[2.25rem]/[2.75rem]
+                            text-black/90 dark:text-white/90
+                            md:before:w-1 before:h-5 before:rounded-md before:bg-[var(--primary)]
+                            before:absolute before:top-[0.75rem] before:left-[-1.125rem]
+                            font-['SimSun',serif]
+                        "
+                        >
+                            {entry.data.title}
+                        </div>
+                        
+                        <!-- metadata -->
+                        <PostMetadata
+                                class="mb-5"
+                                published={entry.data.published}
+                                updated={entry.data.updated}
+                                tags={entry.data.tags}
+                                category={entry.data.category}
+                        ></PostMetadata>
+                        <div class="border-[var(--line-divider)] border-dashed border-b-[1px] mb-5"></div>
+                    </div>
+                    
+                    <!-- 封面图片 - 右侧1:1画框 -->
+                    {entry.data.image &&
+                        <div class="w-full md:w-1/3 flex-shrink-0">
+                            <!-- 1:1 画框样式 -->
+                            <div class="w-full aspect-square rounded-[var(--radius-large)] overflow-hidden border-2 border-[var(--primary)]/30 shadow-md hover:border-[var(--primary)]/70 transition-all duration-300">
+                                <ImageWrapper 
+                                    id="post-cover" 
+                                    src={entry.data.image} 
+                                    basePath={path.join("content/posts/", getDir(entry.id))} 
+                                    class="w-full h-full object-cover"
+                                    position="center"
+                                />
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+
+            <Markdown class="mb-6 markdown-content onload-animation !max-w-none">
+                <Content />
+            </Markdown>
+
+            {licenseConfig.enable && <License title={entry.data.title} slug={entry.slug} pubDate={entry.data.published} class="mb-6 rounded-xl license-container onload-animation"></License>}
+
+        </div>
+    </div>
+
+    <div class="flex flex-col md:flex-row justify-between mb-4 gap-4 overflow-hidden w-full">
+        <a href={entry.data.nextSlug ? getPostUrlBySlug(entry.data.nextSlug) : "#"}
+           class:list={["w-full font-bold overflow-hidden active:scale-95", {"pointer-events-none": !entry.data.nextSlug}]}>
+            {entry.data.nextSlug && <div class="btn-card rounded-2xl w-full h-[3.75rem] max-w-full px-4 flex items-center !justify-start gap-4" >
+                <Icon name="material-symbols:chevron-left-rounded" class="text-[2rem] text-[var(--primary)]" />
+                <div class="overflow-hidden transition overflow-ellipsis whitespace-nowrap max-w-[calc(100%_-_3rem)] text-black/75 dark:text-white/75">
+                    {entry.data.nextTitle}
+                </div>
+            </div>}
+        </a>
+
+        <a href={entry.data.prevSlug ? getPostUrlBySlug(entry.data.prevSlug) : "#"}
+           class:list={["w-full font-bold overflow-hidden active:scale-95", {"pointer-events-none": !entry.data.prevSlug}]}>
+            {entry.data.prevSlug && <div class="btn-card rounded-2xl w-full h-[3.75rem] max-w-full px-4 flex items-center !justify-end gap-4">
+                <div class="overflow-hidden transition overflow-ellipsis whitespace-nowrap max-w-[calc(100%_-_3rem)] text-black/75 dark:text-white/75">
+                    {entry.data.prevTitle}
+                </div>
+                <Icon name="material-symbols:chevron-right-rounded" class="text-[2rem] text-[var(--primary)]" />
+            </div>}
+        </a>
+    </div>
+
+    <!-- giscus评论 -->
+    <div class="card-base rounded-[var(--radius-large)] p-6 mt-8">
+        <h3 class="text-xl font-bold mb-4 text-[var(--text-primary)]">评论</h3>
+        <div id="giscus-container">
+          <!-- 根据当前主题动态设置giscus初始主题 -->
+          <script is:inline>
+            // 动态创建giscus脚本标签
+            const script = document.createElement('script');
+            script.src = 'https://giscus.app/client.js';
+            script.async = true;
+            script.crossOrigin = 'anonymous';
+            
+            // 获取当前主题
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            const giscusTheme = currentTheme === 'dark' ? 'transparent_dark' : 'light';
+            
+            // 设置giscus配置
+            script.setAttribute('data-repo', 'mikann-OMO/comments');
+            script.setAttribute('data-repo-id', 'R_kgDOO3ArSw');
+            script.setAttribute('data-category', 'Q&A');
+            script.setAttribute('data-category-id', 'DIC_kwDOO3ArS84CrGgL');
+            script.setAttribute('data-mapping', 'pathname');
+            script.setAttribute('data-strict', '1');
+            script.setAttribute('data-reactions-enabled', '1');
+            script.setAttribute('data-emit-metadata', '0');
+            script.setAttribute('data-input-position', 'top');
+            script.setAttribute('data-theme', giscusTheme);
+            script.setAttribute('data-lang', 'zh-CN');
+            
+            // 添加到页面
+            document.getElementById('giscus-container').appendChild(script);
+          </script>
+          <!-- 提示：如果以上配置仍然无法正常工作，请访问 https://giscus.app/ 并使用您的 GitHub 仓库生成正确的配置代码 -->
+      </div>
+    </div>
+
+    <script is:inline>
+      // 配置giscus主题的核心函数
+      function updateGiscusTheme() {
+        // 获取当前主题
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        // giscus支持的夜间主题包括'dark'和'transparent_dark'，根据实际情况选择
+        const giscusTheme = currentTheme === 'dark' ? 'transparent_dark' : 'light';
+        
+        // 确保giscus已加载
+        if (typeof window.giscus !== 'undefined') {
+          try {
+            window.giscus.setConfig({
+              theme: giscusTheme
+            });
+          } catch (error) {
+            console.error('Failed to update giscus theme:', error);
+          }
+        } else {
+          // 如果giscus尚未加载，重新创建giscus脚本标签
+          const container = document.getElementById('giscus-container');
+          container.innerHTML = '';
+          
+          const script = document.createElement('script');
+          script.src = 'https://giscus.app/client.js';
+          script.async = true;
+          script.crossOrigin = 'anonymous';
+          
+          script.setAttribute('data-repo', 'mikann-OMO/comments');
+          script.setAttribute('data-repo-id', 'R_kgDOO3ArSw');
+          script.setAttribute('data-category', 'Q&A');
+          script.setAttribute('data-category-id', 'DIC_kwDOO3ArS84CrGgL');
+          script.setAttribute('data-mapping', 'pathname');
+          script.setAttribute('data-strict', '1');
+          script.setAttribute('data-reactions-enabled', '1');
+          script.setAttribute('data-emit-metadata', '0');
+          script.setAttribute('data-input-position', 'top');
+          script.setAttribute('data-theme', giscusTheme);
+          script.setAttribute('data-lang', 'zh-CN');
+          
+          container.appendChild(script);
+        }
+      }
+      
+      // 主题变化处理函数
+      function handleThemeChange() {
+        updateGiscusTheme();
+      }
+      
+      // 监听主题变化事件
+      window.addEventListener('themeChange', handleThemeChange);
+      
+      // 页面加载完成后初始化
+      document.addEventListener('DOMContentLoaded', () => {
+        // 立即尝试更新主题
+        updateGiscusTheme();
+      });
+    </script>
+    
+    <!-- 添加CSS样式来强制评论区跟随博客的日夜间模式 -->
+    <style is:global>
+      /* 强制giscus评论区跟随博客的日夜间模式 */
+      #giscus-container {
+        --giscus-theme-color-primary: var(--primary);
+        --giscus-theme-color-text: var(--text-primary);
+        --giscus-theme-color-text-secondary: var(--text-secondary);
+        --giscus-theme-color-bg: var(--card-bg);
+        --giscus-theme-color-border: var(--line-color);
+      }
+      
+      /* 深色模式下的样式 */
+      .dark #giscus-container {
+        --giscus-theme-color-primary: var(--primary);
+        --giscus-theme-color-text: var(--text-primary);
+        --giscus-theme-color-text-secondary: var(--text-secondary);
+        --giscus-theme-color-bg: var(--card-bg);
+        --giscus-theme-color-border: var(--line-color);
+      }
+      
+      /* 强制覆盖giscus的样式 */
+      #giscus-container iframe {
+        background-color: var(--card-bg) !important;
+      }
+      
+      /* 深色模式下强制覆盖giscus的样式 */
+      .dark #giscus-container iframe {
+        background-color: var(--card-bg) !important;
+      }
+    </style>
+
+    <style is:global>
+    #post-container :nth-child(1) { animation-delay: calc(var(--content-delay) + 0ms) }
+    #post-container :nth-child(2) { animation-delay: calc(var(--content-delay) + 50ms) }
+    #post-container :nth-child(3) { animation-delay: calc(var(--content-delay) + 100ms) }
+    #post-container :nth-child(4) { animation-delay: calc(var(--content-delay) + 175ms) }
+    #post-container :nth-child(5) { animation-delay: calc(var(--content-delay) + 250ms) }
+    #post-container :nth-child(6) { animation-delay: calc(var(--content-delay) + 325ms) } 
+    </style>
+
+</MainGridLayout>

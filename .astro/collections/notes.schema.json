@@ -1,0 +1,69 @@
+{
+  "$ref": "#/definitions/notes",
+  "definitions": {
+    "notes": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null
+        },
+        "published": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "integer",
+              "format": "unix-time"
+            }
+          ]
+        },
+        "updated": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "integer",
+              "format": "unix-time"
+            }
+          ]
+        },
+        "draft": {
+          "type": "boolean",
+          "default": false
+        },
+        "lang": {
+          "type": "string",
+          "default": ""
+        },
+        "image": {
+          "type": "string",
+          "default": ""
+        },
+        "$schema": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "published"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

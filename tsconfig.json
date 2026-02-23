@@ -1,0 +1,71 @@
+/**
+ * TypeScript 配置文件
+ * 详细配置说明：https://www.typescriptlang.org/tsconfig
+ */
+{
+	// 扩展 Astro 严格模式配置
+	"extends": "astro/tsconfigs/strict",
+
+	// 编译器选项
+	"compilerOptions": {
+		// 基础路径
+		"baseUrl": ".",
+
+		// 严格空值检查
+		"strictNullChecks": true,
+
+		// 是否允许 JavaScript 文件
+		"allowJs": false,
+
+		// 是否生成声明文件
+		"declaration": true,
+
+		// 是否生成声明映射文件
+		"declarationMap": false,
+
+		// 是否生成源映射文件
+		"sourceMap": false,
+
+		// 是否跳过库文件检查
+		"skipLibCheck": true,
+
+		// 是否启用 ES 模块互操作性
+		"esModuleInterop": true,
+
+		// 是否强制一致的文件名大小写
+		"forceConsistentCasingInFileNames": true,
+
+		// 插件配置
+		"plugins": [
+			{ "name": "@astrojs/ts-plugin" } // Astro TypeScript 插件
+		],
+
+		// 路径别名配置
+		// 用于简化导入路径
+		"paths": {
+			"@components/*": ["src/components/*"], // 组件路径别名
+			"@assets/*": ["src/assets/*"], // 资源路径别名
+			"@constants/*": ["src/constants/*"], // 常量路径别名
+			"@utils/*": ["src/utils/*"], // 工具函数路径别名
+			"@i18n/*": ["src/i18n/*"], // 国际化路径别名
+			"@layouts/*": ["src/layouts/*"], // 布局路径别名
+			"@/*": ["src/*"] // 根路径别名
+		}
+	},
+
+	// 包含的文件
+	"include": [
+		"src/**/*.ts",
+		"src/**/*.tsx",
+		"src/**/*.js",
+		"src/**/*.jsx",
+		"src/**/*.astro",
+		"src/**/*.svelte",
+		"src/**/*.vue",
+		"scripts/**/*.ts",
+		"scripts/**/*.js"
+	],
+
+	// 排除的文件和目录
+	"exclude": ["node_modules", "dist", ".astro"]
+}

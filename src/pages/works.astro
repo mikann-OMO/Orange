@@ -1,0 +1,98 @@
+---
+import { getCollection } from "astro:content";
+import placeholder from "../assets/images/chikann-640.webp";
+import I18nKey from "../i18n/i18nKey";
+import { i18n } from "../i18n/translation";
+import MainGridLayout from "../layouts/MainGridLayout.astro";
+import fs from "node:fs/promises";
+import path from "node:path";
+
+const albums = await getCollection("albums");
+const sorted = albums.slice().sort((a, b) => {
+	const da = new Date(b.data.date).getTime() - new Date(a.data.date).getTime();
+	return da;
+});
+
+// Pre-load file lists
+const albumImages: Record<string, string[]> = {};
+for (const album of sorted) {
+    const dirName = album.data.dir;
+    const fullPath = path.join(process.cwd(), "public", "images", dirName);
+    try {
+        const files = await fs.readdir(fullPath);
+        albumImages[dirName] = files.filter(f => /\.(jpg|jpeg|png)$/i.test(f));
+    } catch (e) {
+        albumImages[dirName] = [];
+    }
+}
+
+function sampleMosaic(dir: string, cover?: string) {
+    const files = albumImages[dir] || [];
+    // Transform to objects for processing
+    const entries = files.map(f => ({ k: f, url: `/images/${dir}/${f}` }));
+
+	const pinnedByAlbum: Record<string, string> = {
+		"南京2024.10.18": "a南京站.jpg",
+		"广州2025.04.30": "a广州站.jpg",
+		"苏州2025.01.04": "a苏州站.jpg",
+	};
+	function shuffle<T>(arr: T[]): T[] {
+		const a = arr.slice();
+		for (let i = a.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[a[i], a[j]] = [a[j], a[i]];
+		}
+		return a;
+	}
+	
+    let list = entries.slice();
+	list = shuffle(list);
+
+	// 优先使用 cover 指定的主图
+	const preferred = (cover || "").trim();
+	if (preferred) {
+		const coverIdx = list.findIndex((e) => e.k === preferred);
+		if (coverIdx !== -1) {
+			const [p] = list.splice(coverIdx, 1);
+			list = [p, ...list];
+		}
+	}
+
+	// 兼容旧的按相册固定置顶映射
+	const pinned = pinnedByAlbum[dir];
+	if (!preferred && pinned) {
+		const idx = list.findIndex((e) => e.k === pinned);
+		if (idx !== -1) {
+			const [p] = list.splice(idx, 1);
+			list = [p, ...list];
+		}
+	}
+	const picks = list.slice(0, 3).map((e) => e.url);
+	return { picks, total: entries.length };
+}
+---
+
+<MainGridLayout title={i18n(I18nKey.works)} description="图册">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    {sorted.map((a) => {
+      const { picks, total } = sampleMosaic(a.data.dir, a.data.cover);
+      return (
+        <a href={`/works/${a.id}/`} class="group rounded-2xl overflow-hidden arknights-card">
+          <div class="relative">
+            <div class="aspect-[3/2] overflow-hidden">
+              <div class="grid grid-cols-3 grid-rows-2 gap-[4px] h-full">
+                <img src={picks[0] || placeholder.src} alt={a.data.title} loading="lazy" decoding="async" class="col-span-2 row-span-2 w-full h-full object-cover bg-black/5 dark:bg-white/5 transition-transform duration-300 group-hover:scale-[1.02]" />
+                <img src={picks[1] || picks[0] || placeholder.src} alt={a.data.title} loading="lazy" decoding="async" class="col-span-1 row-span-1 w-full h-full object-cover bg-black/5 dark:bg-white/5" />
+                <img src={picks[2] || picks[1] || picks[0] || placeholder.src} alt={a.data.title} loading="lazy" decoding="async" class="col-span-1 row-span-1 w-full h-full object-cover bg-black/5 dark:bg-white/5" />
+              </div>
+            </div>
+            <div class="p-4">
+              <div class="text-base font-semibold text-[var(--text-primary)] line-clamp-1">{a.data.title}</div>
+              <div class="text-xs mt-1 text-[var(--text-secondary)]">{total} 张</div>
+            </div>
+          </div>
+        </a>
+      );
+    })}
+  </div>
+</MainGridLayout>

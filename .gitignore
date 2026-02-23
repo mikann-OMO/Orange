@@ -1,0 +1,95 @@
+# build output
+dist/          # 构建输出目录
+
+# generated types
+.astro/        # Astro 生成的类型文件
+
+# dependencies
+node_modules/  # 依赖包目录
+
+# logs
+npm-debug.log*     # npm 调试日志
+*.npm-debug.log*
+
+yarn-debug.log*    # yarn 调试日志
+yarn-error.log*    # yarn 错误日志
+*.yarn-debug.log*
+*.yarn-error.log*
+
+pnpm-debug.log*    # pnpm 调试日志
+*.pnpm-debug.log*
+
+lerna-debug.log*   # lerna 调试日志
+
+# environment variables
+.env               # 环境变量文件
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# macOS-specific files
+.DS_Store          # macOS 文件夹图标
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Windows
+Thumbs.db          # Windows 缩略图
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+
+# Windows desktop.ini
+Desktop.ini
+
+# IDEs and editors
+.vscode/*          # VS Code 配置
+!.vscode/extensions.json
+!.vscode/settings.json
+
+.idea/             # IntelliJ IDEA 配置
+*.suo              # Visual Studio 配置
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Local development
+.local
+
+# Testing
+coverage/          # 测试覆盖率报告
+.nyc_output
+
+# Production
+build/             # 构建目录
+out/               # 输出目录
+
+# Misc
+.cache             # 缓存目录
+.parcel-cache
+.next
+.nuxt
+.vuepress/dist
+.serverless/
+.fusebox/
+.dynamodb/
+.tern-port
+.vscode-test
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# Vercel
+.vercel            # Vercel 部署配置
+
+# Package manager lock files (only commit pnpm-lock.yaml)
+package-lock.json  # npm 锁文件
+yarn.lock          # yarn 锁文件
+bun.lockb          # bun 锁文件
+node_modules

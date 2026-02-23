@@ -1,0 +1,93 @@
+{
+  "$ref": "#/definitions/albums",
+  "definitions": {
+    "albums": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "integer",
+              "format": "unix-time"
+            }
+          ]
+        },
+        "dir": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string",
+          "default": ""
+        },
+        "cover": {
+          "type": "string",
+          "default": ""
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "location": {
+          "type": "string",
+          "default": ""
+        },
+        "featured": {
+          "type": "boolean",
+          "default": false
+        },
+        "order": {
+          "type": "number",
+          "default": 0
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "file": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string",
+                "default": ""
+              },
+              "desc": {
+                "type": "string",
+                "default": ""
+              }
+            },
+            "required": [
+              "file"
+            ],
+            "additionalProperties": false
+          },
+          "default": []
+        },
+        "$schema": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "date",
+        "dir"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

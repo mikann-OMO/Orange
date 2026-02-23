@@ -1,0 +1,41 @@
+---
+import { getCollection } from "astro:content";
+import NoteCard from "../../components/NoteCard.astro";
+import I18nKey from "../../i18n/i18nKey";
+import { i18n } from "../../i18n/translation";
+import MainGridLayout from "../../layouts/MainGridLayout.astro";
+
+// 直接获取所有随记，不使用分页
+const allNotes = await getCollection("notes", ({ data }) => !data.draft);
+
+// 按发布日期降序排序
+const sortedNotes = allNotes.sort((a, b) => {
+	const dateA = new Date(a.data.published);
+	const dateB = new Date(b.data.published);
+	return dateB.getTime() - dateA.getTime();
+});
+
+console.log("Notes count:", sortedNotes.length);
+
+let delay = 0;
+const interval = 50;
+---
+
+<MainGridLayout title={i18n(I18nKey.notes)} description={i18n(I18nKey.notes)}>
+    <div class="transition max-w-2xl mx-auto w-full py-4 mb-4">
+        {sortedNotes.length > 0 ? (
+            <div class="space-y-6">
+                {sortedNotes.map((note) => (
+                    <NoteCard
+                        entry={note}
+                        style={`animation-delay: calc(var(--content-delay) + ${delay++ * interval}ms);`}
+                    />
+                ))}
+            </div>
+        ) : (
+            <div class="text-center py-16 text-white text-lg">
+                {i18n(I18nKey.no_notes_yet)}
+            </div>
+        )}
+    </div>
+</MainGridLayout>
