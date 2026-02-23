@@ -520,7 +520,7 @@ $: {
 </script>
 
 <!-- search bar for desktop view -->
-<div id="search-bar" class="hidden lg:flex transition-all duration-300 items-center h-11 mr-2 rounded-lg
+<div id="search-bar" class="hidden lg:flex transition-all duration-300 items-center h-11 mr-2 rounded-lg relative
       bg-black/[0.04] hover:bg-black/[0.06] focus-within:bg-black/[0.06]
       dark:bg-white/5 dark:hover:bg-white/10 dark:focus-within:bg-white/10
       backdrop-blur-sm">
@@ -552,8 +552,8 @@ $: {
 <!-- search panel -->
 <div 
     id="search-panel" 
-    class="float-panel float-panel-closed search-panel absolute md:w-[30rem]
-top-20 left-4 md:left-[unset] right-4 shadow-2xl rounded-2xl p-2 transition-all duration-300 ease-in-out backdrop-blur-sm"
+    class="float-panel float-panel-closed search-panel absolute w-80
+top-12 right--4 shadow-2xl rounded-2xl p-2 transition-all duration-300 ease-in-out backdrop-blur-sm"
     on:keydown={handleKeyDown}
     tabindex="0"
     role="region"

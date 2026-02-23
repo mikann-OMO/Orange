@@ -185,6 +185,16 @@
     @apply cursor-zoom-in
 }
 
+@media (max-width: 640px) {
+    .custom-md img {
+        float: none !important;
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 1rem auto !important;
+    }
+}
+
 ::selection {
     background-color: var(--selection-bg)
 }
