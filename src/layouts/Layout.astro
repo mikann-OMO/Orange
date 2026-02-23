@@ -15,6 +15,8 @@ import { defaultFavicons } from "../constants/icon";
 import type { Favicon } from "../types/config";
 import { url, pathsEqual } from "../utils/url-utils";
 import "katex/dist/katex.css";
+import "photoswipe/style.css";
+import BackToTop from "@components/control/BackToTop.astro";
 
 interface Props {
 	title?: string;
@@ -85,33 +87,14 @@ const bannerOffset =
 		<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 		<!-- 性能优化：预加载关键资源 -->
 		<link rel="preload" href="/favicon/favicon-light-32.png" as="image">
+		<!-- 性能优化：预加载主要字体 -->
+		<link rel="preload" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" as="style">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
 		<!-- 性能优化：移动端优化 -->
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 		<meta name="mobile-web-app-capable" content="yes">
-		<!-- 性能优化：预加载所有文章链接 -->
-		<script is:inline>
-			// 性能优化：在客户端动态添加 prefetch 标签
-			// 只在空闲时间执行，避免影响首屏加载
-			if ('requestIdleCallback' in window) {
-				requestIdleCallback(() => {
-					// 所有文章链接
-					const postLinks = [
-						'/notes/1'
-						// 其他文章链接会在构建时自动添加
-					];
-					
-					postLinks.forEach(link => {
-						const prefetchLink = document.createElement('link');
-						prefetchLink.rel = 'prefetch';
-						prefetchLink.href = link;
-						prefetchLink.as = 'document';
-						document.head.appendChild(prefetchLink);
-					});
-				});
-			}
-		</script>
-		
+
 		<title>{pageTitle}</title>
 		<meta name="description" content={description || pageTitle}>
 		<meta name="author" content={profileConfig.name}>
@@ -148,7 +131,7 @@ const bannerOffset =
 		<link rel="canonical" href={Astro.url}>
 
 		<!-- Structured Data (JSON-LD) -->
-		<script type="application/ld+json">
+		<script is:inline type="application/ld+json">
 		{
 			"@context": "https://schema.org",
 			"@type": "${setOGTypeArticle ? 'Article' : 'WebSite'}",
@@ -232,6 +215,7 @@ const bannerOffset =
 	>
 		<ConfigCarrier></ConfigCarrier>
 		<slot />
+		<BackToTop />
 
 		<!-- increase the page height during page transition to prevent the scrolling animation from jumping -->
 		<div id="page-height-extend" class="hidden h-[300vh]"></div>
@@ -271,7 +255,7 @@ const bannerOffset =
 		@apply opacity-0 -translate-y-16
 	}
 	
-	/* Swup 页面过渡动画 */
+/* Swup 页面过渡动画 - 已禁用
 	.transition-swup-fade {
 		transition: opacity 0.25s ease-in-out;
 	}
@@ -287,10 +271,109 @@ const bannerOffset =
 	.transition-swup-fade-exit-active {
 		opacity: 0;
 	}
+    */
 }
 </style>
 
 <script defer is:inline>
+// 兼容性检查和错误处理
+const compatibilityChecks = {
+	init: () => {
+		// 检查必要的API支持
+		compatibilityChecks.checkAPIs();
+		
+		// 检查浏览器特性支持
+		compatibilityChecks.checkFeatures();
+		
+		// 初始化错误处理
+		compatibilityChecks.initErrorHandling();
+	},
+	
+	checkAPIs: () => {
+		// 检查Performance API支持
+		if (!('performance' in window)) {
+			// 降级处理
+			window.performance = {
+				mark: () => {},
+				measure: () => {},
+				getEntriesByName: () => []
+			};
+		}
+		
+		// 检查requestIdleCallback支持
+		if (!('requestIdleCallback' in window)) {
+			window.requestIdleCallback = (callback) => {
+				return setTimeout(callback, 100);
+			};
+			window.cancelIdleCallback = (id) => {
+				clearTimeout(id);
+			};
+		}
+		
+		// 检查IntersectionObserver支持
+		if (!('IntersectionObserver' in window)) {
+			// 降级处理
+			window.IntersectionObserver = class {
+				constructor(callback) {
+					this.callback = callback;
+				}
+				
+				observe() {
+					// 立即执行回调
+					setTimeout(() => {
+						this.callback([{ isIntersecting: true }], this);
+					}, 100);
+				}
+				
+				unobserve() {}
+				disconnect() {}
+			};
+		}
+	},
+	
+	checkFeatures: () => {
+		// 检查CSS特性支持
+		const checkCSSFeature = (property) => {
+			return property in document.documentElement.style;
+		};
+		
+		// 检查必要的CSS特性
+		const cssFeatures = [
+			'backdropFilter',
+			'clipPath',
+			'transform',
+			'transition'
+		];
+		
+		cssFeatures.forEach(feature => {
+			if (!checkCSSFeature(feature)) {
+				// 添加降级类
+				document.documentElement.classList.add(`no-${feature}`);
+			}
+		});
+	},
+	
+	initErrorHandling: () => {
+		// 全局错误处理
+		window.addEventListener('error', (e) => {
+			// 忽略资源加载错误
+			if (e.target instanceof Element) {
+				return;
+			}
+			
+			console.warn('Global error:', e.error);
+		});
+		
+		// 未捕获的Promise错误处理
+		window.addEventListener('unhandledrejection', (e) => {
+			console.warn('Unhandled promise rejection:', e.reason);
+		});
+	}
+};
+
+// 初始化兼容性检查
+compatibilityChecks.init();
+
 // 延迟加载非关键CSS
 const loadOverlayScrollbarsCSS = () => {
 	const link = document.createElement('link');
@@ -304,10 +387,15 @@ const loadOverlayScrollbarsCSS = () => {
 let OverlayScrollbarsLoaded = false;
 const loadOverlayScrollbars = async () => {
 	if (!OverlayScrollbarsLoaded) {
-		loadOverlayScrollbarsCSS();
-		const { OverlayScrollbars } = await import('overlayscrollbars');
-		OverlayScrollbarsLoaded = true;
-		return OverlayScrollbars;
+		try {
+			loadOverlayScrollbarsCSS();
+			const { OverlayScrollbars } = await import('overlayscrollbars');
+			OverlayScrollbarsLoaded = true;
+			return OverlayScrollbars;
+		} catch (error) {
+			console.warn('Failed to load OverlayScrollbars:', error);
+			return null;
+		}
 	}
 	return null;
 };
@@ -335,6 +423,94 @@ const panelConfigs = {
 	"nav-menu-panel": ["nav-menu-panel", "nav-menu-switch"],
 	"search-panel": ["search-panel", "search-bar", "search-switch"]
 };
+
+// 移动端优化：触摸事件处理
+const mobileOptimizations = {
+	init: () => {
+		if (isMobile) {
+			// 优化触摸事件
+			document.addEventListener('touchstart', (e) => {
+				// 防止双击缩放
+				if (e.touches.length > 1) {
+					e.preventDefault();
+				}
+			}, { passive: false });
+			
+			// 优化触摸滚动
+			document.addEventListener('touchmove', (e) => {
+				// 允许垂直滚动，防止水平滚动
+				if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+					e.preventDefault();
+				}
+			}, { passive: false });
+			
+			// 优化点击事件
+			mobileOptimizations.optimizeClickEvents();
+			
+			// 优化预加载策略
+			mobileOptimizations.optimizePreloadStrategy();
+		}
+	},
+	
+	optimizeClickEvents: () => {
+		// 移除300ms点击延迟
+		const fastClick = (element, callback) => {
+			let startTime = 0;
+			
+			element.addEventListener('touchstart', () => {
+				startTime = Date.now();
+			}, { passive: true });
+			
+			element.addEventListener('touchend', (e) => {
+				const endTime = Date.now();
+				if (endTime - startTime < 200) {
+					e.preventDefault();
+					callback(e);
+				}
+			}, { passive: false });
+		};
+		
+		// 应用快速点击到非图片预览相关的链接，避免干扰 PhotoSwipe
+		const links = Array.from(document.querySelectorAll('a'))
+			.filter(link => 
+				!link.closest('.gallery') && 
+				!link.closest('.custom-md') &&
+				!link.closest('#post-cover')
+			);
+		links.forEach(link => {
+			fastClick(link, () => {
+				link.click();
+			});
+		});
+	},
+	
+	optimizePreloadStrategy: () => {
+		// 移动端预加载策略
+		if ('requestIdleCallback' in window) {
+			requestIdleCallback(() => {
+				// 移动端只预加载关键页面
+				const criticalPages = [
+					'/',
+					'/archive'
+				];
+				
+				criticalPages.forEach(link => {
+					if (link !== window.location.pathname) {
+						const prefetchLink = document.createElement('link');
+						prefetchLink.rel = 'prefetch';
+						prefetchLink.href = link;
+						prefetchLink.as = 'document';
+						prefetchLink.fetchPriority = 'low';
+						document.head.appendChild(prefetchLink);
+					}
+				});
+			});
+		}
+	}
+};
+
+// 初始化移动端优化
+mobileOptimizations.init();
 
 // Cache DOM elements for better performance
 const cachedElements = {};
@@ -414,44 +590,58 @@ async function initCustomScrollbar() {
 	const bodyElement = document.querySelector('body');
 	if (!bodyElement) return;
 	
-	// Initialize scrollbar for body
+	// 优化滚动条配置
 	OverlayScrollbars(
 		{
 			target: bodyElement,
 			cancel: {
 				nativeScrollbarsOverlaid: true,
+				wheel: true,
+				touch: true,
 			}
 		}, {
 		scrollbars: {
 			theme: 'scrollbar-base scrollbar-auto py-1',
 			autoHide: 'move',
-			autoHideDelay: 500,
-			autoHideSuspend: false,
+			autoHideDelay: 800,
+			autoHideSuspend: true,
 		},
+		callbacks: {
+			onInitialized: () => {
+				// 滚动条初始化完成后执行
+			},
+			onDestroyed: () => {
+				// 滚动条销毁时执行清理
+			}
+		}
 	});
 	
-	// Initialize scrollbar for code blocks
+	// 优化：只在有元素时才初始化
 	const preElements = document.querySelectorAll('pre');
-	preElements.forEach((ele) => {
-		OverlayScrollbars(ele, {
-			scrollbars: {
-				theme: 'scrollbar-base scrollbar-dark px-2',
-				autoHide: 'leave',
-				autoHideDelay: 500,
-				autoHideSuspend: false
-			}
+	if (preElements.length > 0) {
+		preElements.forEach((ele) => {
+			OverlayScrollbars(ele, {
+				scrollbars: {
+					theme: 'scrollbar-base scrollbar-dark px-2',
+					autoHide: 'leave',
+					autoHideDelay: 500,
+					autoHideSuspend: false
+				}
+			});
 		});
-	});
+	}
 	
-	// Initialize scrollbar for KaTeX elements
+	// 优化：只在有元素时才初始化
 	const katexElements = document.querySelectorAll('.katex-display');
-	katexElements.forEach((ele) => {
-		OverlayScrollbars(ele, {
-			scrollbars: {
-				theme: 'scrollbar-base scrollbar-auto py-1',
-			}
+	if (katexElements.length > 0) {
+		katexElements.forEach((ele) => {
+			OverlayScrollbars(ele, {
+				scrollbars: {
+					theme: 'scrollbar-base scrollbar-auto py-1',
+				}
+			});
 		});
-	});
+	}
 }
 
 // 添加滚动事件监听器，仅在用户滚动时初始化自定义滚动条
@@ -498,7 +688,33 @@ init();
 
 // Set up Swup hooks
 const setupSwupHooks = () => {
+	// 性能监控
+	const performanceMonitor = {
+		measures: new Map(),
+		start: (name) => {
+			if ('performance' in window) {
+				performance.mark(`${name}-start`);
+			}
+		},
+		end: (name) => {
+			if ('performance' in window) {
+				performance.mark(`${name}-end`);
+				try {
+					performance.measure(name, `${name}-start`, `${name}-end`);
+					const measure = performance.getEntriesByName(name)[0];
+					if (measure) {
+						performanceMonitor.measures.set(name, measure.duration);
+					}
+				} catch (e) {
+					// 忽略性能API错误
+				}
+			}
+		}
+	};
+	
 	window.swup.hooks.on('link:click', () => {
+		performanceMonitor.start('page-transition');
+		
 		// Remove the delay for the first time page load
 		document.documentElement.style.setProperty('--content-delay', '0ms');
 
@@ -514,7 +730,12 @@ const setupSwupHooks = () => {
 		}
 	});
 	
-	window.swup.hooks.on('content:replace', initCustomScrollbar);
+	window.swup.hooks.on('content:replace', () => {
+		// 优化资源清理
+		cleanupResources();
+		// 延迟初始化滚动条，避免阻塞页面过渡
+		setTimeout(initCustomScrollbar, 50);
+	});
 	
 	window.swup.hooks.on('visit:start', (visit) => {
 		// Update body class for home page banner height
@@ -535,20 +756,86 @@ const setupSwupHooks = () => {
 	});
 	
 	window.swup.hooks.on('visit:end', () => {
+		performanceMonitor.end('page-transition');
+		
 		// Hide temp high element after transition
 		setTimeout(() => {
 			const heightExtend = document.getElementById('page-height-extend');
 			if (heightExtend) {
 				heightExtend.classList.add('hidden');
 			}
-		}, 200);
+			
+			// 重置动画状态
+			document.querySelectorAll('.onload-animation').forEach(el => {
+				el.style.animation = 'none';
+				el.offsetHeight; // 触发重排
+				el.style.animation = '';
+			});
+			
+			// 滚动到顶部，优化用户体验
+			window.scrollTo({
+				top: 0,
+				behavior: 'smooth'
+			});
+			
+			// 清理过期的性能指标
+			cleanupPerformanceMarks();
+		}, 100);
 	});
+	
+	window.swup.hooks.on('animation:in:start', () => {
+		// 禁用用户交互，避免过渡期间的意外操作
+		document.body.style.pointerEvents = 'none';
+	});
+	
+	window.swup.hooks.on('animation:in:end', () => {
+		// 重新启用用户交互
+		document.body.style.pointerEvents = 'auto';
+	});
+};
+
+// 资源清理函数
+function cleanupResources() {
+	// 清理未使用的DOM元素
+	const unusedElements = document.querySelectorAll('.temp-element, .lazy-loaded');
+	unusedElements.forEach(el => {
+		if (el.parentNode) {
+			el.parentNode.removeChild(el);
+		}
+	});
+	
+	// 清理过期的prefetch链接
+	const prefetchLinks = document.querySelectorAll('link[rel="prefetch"]');
+	prefetchLinks.forEach(link => {
+		if (link.dataset.expire && Date.now() > parseInt(link.dataset.expire)) {
+			if (link.parentNode) {
+				link.parentNode.removeChild(link);
+			}
+		}
+	});
+}
+
+// 清理性能标记
+function cleanupPerformanceMarks() {
+	if ('performance' in window) {
+		try {
+			performance.getEntriesByType('mark').forEach(entry => {
+				performance.clearMarks(entry.name);
+			});
+			performance.getEntriesByType('measure').forEach(entry => {
+				performance.clearMeasures(entry.name);
+			});
+		} catch (e) {
+			// 忽略性能API错误
+		}
+	}
 }
 
 // Initialize Swup hooks if available
 if (window?.swup?.hooks) {
 	setupSwupHooks();
-} else {
+} else if (window.swup) {
+	// Fallback if hooks are not yet initialized
 	document.addEventListener('swup:enable', setupSwupHooks);
 }
 
@@ -556,12 +843,19 @@ if (window?.swup?.hooks) {
 let backToTopBtn = document.getElementById('back-to-top-btn');
 let navbar = document.getElementById('navbar-wrapper');
 
+function refreshBackToTop() {
+	backToTopBtn = document.getElementById('back-to-top-btn');
+}
+
 // Throttle scroll function to improve performance - 使用节流替代防抖，减少计算频率
 let lastScrollTime = 0;
-const SCROLL_THROTTLE_DELAY = 150; // 移动端增大节流延迟
+const SCROLL_THROTTLE_DELAY = isMobile ? 200 : 150; // 移动端增大节流延迟
 let lastScrollPosition = 0;
 
 function scrollFunction() {
+	if (!backToTopBtn || !document.body.contains(backToTopBtn)) {
+		refreshBackToTop();
+	}
 	const currentTime = Date.now();
 	const currentScrollPosition = document.body.scrollTop || document.documentElement.scrollTop;
 	
@@ -578,16 +872,8 @@ function scrollFunction() {
 	lastScrollTime = currentTime;
 	lastScrollPosition = currentScrollPosition;
 	
-	// Calculate banner height for back to top button
-	const bannerHeight = window.innerHeight * (BANNER_HEIGHT / 100);
-
-	// Update back to top button visibility
 	if (backToTopBtn) {
-		if (currentScrollPosition > bannerHeight) {
-			backToTopBtn.classList.remove('hide');
-		} else {
-			backToTopBtn.classList.add('hide');
-		}
+		backToTopBtn.classList.remove('hide');
 	}
 
 	// Update navbar visibility based on scroll position
@@ -611,10 +897,31 @@ function scrollFunction() {
 
 // Set up scroll and resize event listeners with passive option for better performance
 window.addEventListener('scroll', scrollFunction, { passive: true });
+document.addEventListener('DOMContentLoaded', () => {
+	refreshBackToTop();
+	scrollFunction();
+});
+window.addEventListener('load', () => {
+	refreshBackToTop();
+	scrollFunction();
+}, { once: true });
+
+// 移动端优化：触摸滚动事件
+if (isMobile) {
+	let touchScrollTimeout;
+	
+	window.addEventListener('touchmove', () => {
+		// 防抖处理触摸滚动
+		clearTimeout(touchScrollTimeout);
+		touchScrollTimeout = setTimeout(() => {
+			scrollFunction();
+		}, SCROLL_THROTTLE_DELAY / 2);
+	}, { passive: true });
+}
 
 // Throttle resize function to improve performance
 let lastResizeTime = 0;
-const RESIZE_THROTTLE_DELAY = 300; // 增大resize节流延迟
+const RESIZE_THROTTLE_DELAY = isMobile ? 400 : 300; // 移动端增大resize节流延迟
 
 function resizeFunction() {
 	const currentTime = Date.now();
@@ -627,86 +934,110 @@ function resizeFunction() {
 	let offset = Math.floor(window.innerHeight * (BANNER_HEIGHT_EXTEND / 100));
 	offset = offset - offset % 4;
 	document.documentElement.style.setProperty('--banner-height-extend', `${offset}px`);
+	
+	// 移动端特殊处理
+	if (isMobile) {
+		// 重新计算移动端布局
+		const bodyElement = document.querySelector('body');
+		if (bodyElement) {
+			// 调整移动端的banner高度
+			if (bannerEnabled) {
+				const mobileBannerHeight = Math.min(window.innerHeight * 0.4, 300);
+				bodyElement.style.setProperty('--mobile-banner-height', `${mobileBannerHeight}px`);
+			}
+		}
+	}
 }
 
 window.addEventListener('resize', resizeFunction, { passive: true });
+
+// 移动端优化：设备旋转处理
+if (isMobile) {
+	window.addEventListener('orientationchange', () => {
+		// 延迟执行，等待设备旋转完成
+		setTimeout(resizeFunction, 100);
+	}, { passive: true });
+}
 
 </script>
 
 <script defer is:inline>
 // Lazy load PhotoSwipe to improve initial page load performance
 let lightbox = null;
-let pswp = null;
-let isPhotoSwipeLoaded = false;
 
-// Create PhotoSwipe instance
-async function createPhotoSwipe() {
-	if (!isPhotoSwipeLoaded) {
-		// Dynamically import PhotoSwipe only when needed
-		const PhotoSwipeLightbox = (await import("photoswipe/lightbox")).default;
-		pswp = import("photoswipe");
-		isPhotoSwipeLoaded = true;
-		
-		lightbox = new PhotoSwipeLightbox({
-			gallery: ".custom-md img, #post-cover img",
-			pswpModule: () => pswp,
-			closeSVG: '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff"><path d="M480-424 284-228q-11 11-28 11t-28-11q-11-11-11-28t11-28l196-196-196-196q-11-11-11-28t11-28q11-11 28-11t28 11l196 196 196-196q11-11 28-11t28 11q11 11 11 28t-11 28L536-480l196 196q11 11 11 28t-11 28q-11 11-28 11t-28-11L480-424Z"/></svg>',
-			zoomSVG: '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff"><path d="M340-540h-40q-17 0-28.5-11.5T260-580q0-17 11.5-28.5T300-620h40v-40q0-17 11.5-28.5T380-700q17 0 28.5 11.5T420-660v40h40q17 0 28.5 11.5T500-580q0 17-11.5 28.5T460-540h-40v40q0 17-11.5 28.5T380-460q-17 0-28.5-11.5T340-500v-40Zm40 220q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l224 224q11 11 11 28t-11 28q-11 11-28 11t-28-11L532-372q-30 24-69 38t-83 14Zm0-80q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg>',
-			padding: { top: 20, bottom: 20, left: 20, right: 20 },
-			wheelToZoom: true,
-			arrowPrev: false,
-			arrowNext: false,
-			imageClickAction: 'close',
-			tapAction: 'close',
-			doubleTapAction: 'zoom',
-		});
-		
-		lightbox.addFilter("domItemData", (itemData, element) => {
-			if (element instanceof HTMLImageElement) {
-				itemData.src = element.src;
-				itemData.w = Number(element.naturalWidth || window.innerWidth);
-				itemData.h = Number(element.naturalHeight || window.innerHeight);
-				itemData.msrc = element.src;
-			}
-			return itemData;
-		});
+// Initialize PhotoSwipe
+async function initPhotoSwipe() {
+	// Destroy existing instance if any
+	if (lightbox) {
+		lightbox.destroy();
+		lightbox = null;
 	}
+
+	// Dynamically import PhotoSwipe Lightbox
+	const PhotoSwipeLightbox = (await import("photoswipe/lightbox")).default;
 	
+	const options = {
+		gallery: ".gallery a, .custom-md img, #post-cover img",
+		pswpModule: () => import("photoswipe"),
+		closeSVG: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"></line><line x1="18" y1="6" x2="6" y2="18"></line></svg>',
+		zoomSVG: '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff"><path d="M340-540h-40q-17 0-28.5-11.5T260-580q0-17 11.5-28.5T300-620h40v-40q0-17 11.5-28.5T380-700q17 0 28.5 11.5T420-660v40h40q17 0 28.5 11.5T500-580q0 17-11.5 28.5T460-540h-40v40q0 17-11.5 28.5T380-460q-17 0-28.5-11.5T340-500v-40Zm40 220q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l224 224q11 11 11 28t-11 28q-11 11-28 11t-28-11L532-372q-30 24-69 38t-83 14Zm0-80q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg>',
+		padding: { top: 20, bottom: 20, left: 20, right: 20 },
+		wheelToZoom: true,
+		arrowPrev: true,
+		arrowNext: true,
+		imageClickAction: 'zoom',
+		bgClickAction: 'close',
+		tapAction: 'toggle-controls',
+		doubleTapAction: 'zoom',
+	};
+
+	lightbox = new PhotoSwipeLightbox(options);
+
+	lightbox.addFilter("domItemData", (itemData, element) => {
+		if (element instanceof HTMLImageElement) {
+			itemData.src = element.src;
+			itemData.w = Number(element.naturalWidth || window.innerWidth);
+			itemData.h = Number(element.naturalHeight || window.innerHeight);
+			itemData.msrc = element.src;
+		}
+		return itemData;
+	});
+
 	lightbox.init();
 }
 
-// 添加图片点击事件监听器，仅在用户点击图片时初始化PhotoSwipe
-function setupPhotoSwipeLazyLoad() {
-	const handleImageClick = async (e) => {
-		const target = e.target;
-		if (target.tagName === 'IMG') {
-			await createPhotoSwipe();
-			// 移除事件监听器，避免重复初始化
-			document.removeEventListener('click', handleImageClick);
-		}
-	};
-	
-	document.addEventListener('click', handleImageClick);
-}
+// Initialize PhotoSwipe when DOM is ready
+document.addEventListener('DOMContentLoaded', initPhotoSwipe);
 
-// Set up Swup hooks for PhotoSwipe
+window.addEventListener('load', initPhotoSwipe, { once: true });
+
+// Set up Swup hooks for PhotoSwipe if Swup is available (though currently disabled in astro.config)
 const setupPhotoSwipe = () => {
-	window.swup.hooks.on("content:replace", () => {
-		if (lightbox?.destroy) {
-			lightbox.destroy();
-		}
-		// 重新设置懒加载监听器
-		setTimeout(setupPhotoSwipeLazyLoad, 100);
-	}, { before: true });
+	if (window.swup && window.swup.hooks) {
+		window.swup.hooks.on("content:replace", () => {
+			initPhotoSwipe();
+		});
+	}
 };
 
-// Initialize PhotoSwipe lazy loading when DOM is ready
-document.addEventListener('DOMContentLoaded', setupPhotoSwipeLazyLoad);
-
-// Initialize Swup hooks when Swup is available
 if (window.swup) {
 	setupPhotoSwipe();
 } else {
 	document.addEventListener("swup:enable", setupPhotoSwipe);
 }
 </script>
+
+<style is:global>
+.pswp__button--custom-x {
+  font-size: 28px;
+  line-height: 1;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  opacity: 0.9;
+}
+.pswp__button--custom-x:hover { opacity: 1; }
+</style>

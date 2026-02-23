@@ -16,7 +16,7 @@ const displayedComments = comments.slice(0, limit);
   
   {displayedComments.length > 0 ? (
     <div class="space-y-4">
-      {displayedComments.map((comment, index) => (
+      {displayedComments.map((comment) => (
         <div 
           class="p-4 rounded-[var(--radius-medium)] border border-[var(--line-color)] hover:shadow-md transition-shadow"
         >

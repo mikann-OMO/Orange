@@ -3,8 +3,8 @@ import { Icon } from "astro-icon/components";
 ---
 
 <!-- There can't be a filter on parent element, or it will break `fixed` -->
-<div class="back-to-top-wrapper hidden lg:block">
-    <div id="back-to-top-btn" class="back-to-top-btn hide flex items-center rounded-2xl overflow-hidden transition" onclick="backToTop()">
+<div class="back-to-top-wrapper block">
+    <div id="back-to-top-btn" class="back-to-top-btn flex items-center rounded-2xl overflow-hidden transition" onclick="backToTop()">
         <button aria-label="Back to Top" class="btn-card h-[3.75rem] w-[3.75rem]">
             <Icon name="material-symbols:keyboard-arrow-up-rounded" class="mx-auto"></Icon>
         </button>
@@ -26,20 +26,22 @@ import { Icon } from "astro-icon/components";
     font-weight: bold
     border: none
     position: fixed
-    bottom: 10rem
+    bottom: 2rem
+    right: 1rem
+    z-index: 60
     opacity: 1
     cursor: pointer
-    transform: translateX(5rem)
+    transform: translateY(0)
     pointer-events: auto
     i
         font-size: 1.75rem
-    &.hide
-        transform: translateX(5rem) scale(0.9)
-        opacity: 0
-        pointer-events: none
     &:active
-      transform: translateX(5rem) scale(0.9)
+      transform: translateY(0.5rem) scale(0.95)
 
+@media (min-width: 1024px)
+  .back-to-top-btn
+    bottom: 4rem
+    right: 2rem
 </style>
 
 <script is:raw is:inline>

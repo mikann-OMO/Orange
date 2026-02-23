@@ -1,10 +1,10 @@
 ---
 import Footer from "@components/Footer.astro";
 import Navbar from "@components/Navbar.astro";
-import BackToTop from "@components/control/BackToTop.astro";
 
 import type { MarkdownHeading } from "astro";
 import { Icon } from "astro-icon/components";
+import Toc from "../components/control/Toc.astro";
 import ImageWrapper from "../components/misc/ImageWrapper.astro";
 import { siteConfig } from "../config";
 import {
@@ -113,7 +113,7 @@ const mainPanelTop = siteConfig.banner.enable
             </div>
         </div>
 
-        <BackToTop></BackToTop>
+        {headings.length > 0 && <Toc headings={headings}></Toc>}
     </div>
 </div>
 

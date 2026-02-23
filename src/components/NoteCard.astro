@@ -1,6 +1,5 @@
 ---
 import type { CollectionEntry } from "astro:content";
-import { formatDate } from "../utils/date-utils";
 
 interface Props {
 	entry: CollectionEntry<"notes">;
@@ -12,7 +11,7 @@ const { entry, style } = Astro.props;
 // 添加防御性检查标志
 const isValidNote = entry?.data;
 
-// 直接提取便签内容，简单处理
+// 直接提取随记内容，简单处理
 let noteContent = "";
 if (isValidNote && entry.body) {
 	// 简单处理，直接提取内容部分

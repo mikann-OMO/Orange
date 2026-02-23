@@ -1,0 +1,230 @@
+---
+import type { MarkdownHeading } from "astro";
+
+interface Props {
+	headings?: MarkdownHeading[];
+	title?: string;
+}
+
+const { headings = [], title = "目录" } = Astro.props;
+
+const filtered = headings.filter((h) => h.depth >= 1 && h.depth <= 4);
+
+const clean = (t: string) => t.replace(/\s*#\s*$/, "").trim();
+
+let idx = 0;
+type Node = { id: string; text: string; children: Node[]; num?: number };
+const level1: Node[] = [];
+let l1: Node | null = null;
+let l2: Node | null = null;
+let l3: Node | null = null;
+
+for (const h of filtered) {
+	const d = h.depth;
+	if (d === 1) {
+		idx += 1;
+		l1 = { id: h.slug, text: clean(h.text), children: [], num: idx };
+		level1.push(l1);
+		l2 = null;
+		l3 = null;
+	} else if (d === 2) {
+		const parent =
+			l1 ??
+			(() => {
+				idx += 1;
+				l1 = { id: h.slug, text: clean(h.text), children: [], num: idx };
+				level1.push(l1);
+				return l1;
+			})();
+		const node: Node = { id: h.slug, text: clean(h.text), children: [] };
+		parent.children.push(node);
+		l2 = node;
+		l3 = null;
+	} else if (d === 3) {
+		const parent =
+			l2 ??
+			l1 ??
+			(() => {
+				idx += 1;
+				l1 = { id: h.slug, text: clean(h.text), children: [], num: idx };
+				level1.push(l1);
+				return l1;
+			})();
+		const node: Node = { id: h.slug, text: clean(h.text), children: [] };
+		parent.children.push(node);
+		l3 = node;
+	} else if (d === 4) {
+		const parent = l3 ?? l2 ?? l1;
+		if (parent) {
+			parent.children.push({ id: h.slug, text: clean(h.text), children: [] });
+		}
+	}
+}
+---
+
+{level1.length > 0 && (
+  <aside id="toc" class="hidden lg:block fixed right-5 top-28 w-64 z-40 select-none">
+    <div class="card-base rounded-2xl overflow-hidden">
+      <div class="px-4 py-3 text-sm font-bold text-[var(--text-secondary)]">{title}</div>
+      <div class="px-2 pb-2">
+        {level1.map((g) => (
+          <div class="mb-1">
+            <a
+              href={`#${g.id}`}
+              class="px-2 flex gap-2 relative transition w-full min-h-9 rounded-xl py-2 group hover:bg-black/5 dark:hover:bg-white/10 active:bg-black/10 dark:active:bg-white/20 mt-[2px]"
+              data-toc-id={g.id}
+            >
+              <div class="transition w-5 h-5 shrink-0 rounded-lg text-xs flex items-center justify-center font-bold bg-black/5 dark:bg-white/10 text-[var(--btn-content)]">
+                {g.num ?? "•"}
+              </div>
+              <div class="transition text-sm overflow-hidden text-ellipsis whitespace-nowrap text-black/60 dark:text-white/60 group-hover:text-black/80 dark:group-hover:text-white/80" title={g.text}>
+                {g.text}
+              </div>
+              <div class="active-indicator absolute right-2 top-1/2 -translate-y-1/2 w-1 h-5 rounded bg-[var(--primary)]"></div>
+            </a>
+            {g.children.length > 0 && (
+              <div class="ml-6 pl-2 border-l border-[var(--line-divider)]">
+                {g.children.map((c) => (
+                  <div class="mb-1">
+                    <a
+                      href={`#${c.id}`}
+                      class="px-2 flex gap-2 relative transition w-full min-h-9 rounded-xl py-2 group hover:bg-black/5 dark:hover:bg-white/10 active:bg-black/10 dark:active:bg-white/20 mt-1"
+                      data-toc-id={c.id}
+                      data-parent-id={g.id}
+                    >
+                      <div class="transition w-5 h-5 shrink-0 rounded-lg text-xs flex items-center justify-center font-bold bg-black/5 dark:bg-white/10 text-[var(--btn-content)] opacity-60">
+                        •
+                      </div>
+                      <div class="transition text-[0.9rem] overflow-hidden text-ellipsis whitespace-nowrap text-black/60 dark:text-white/60 group-hover:text-black/80 dark:group-hover:text-white/80" title={c.text}>
+                        {c.text}
+                      </div>
+                      <div class="active-indicator absolute right-2 top-1/2 -translate-y-1/2 w-1 h-5 rounded bg-[var(--primary)]"></div>
+                    </a>
+                    {c.children.length > 0 && (
+                      <div class="ml-5 pl-2 border-l border-[var(--line-divider)]">
+                        {c.children.map((d) => (
+                          <a
+                            href={`#${d.id}`}
+                            class="px-2 flex gap-2 relative transition w-full min-h-9 rounded-xl py-2 group hover:bg-black/5 dark:hover:bg-white/10 active:bg-black/10 dark:active:bg-white/20 mt-1"
+                            data-toc-id={d.id}
+                            data-parent-id={c.id}
+                          >
+                            <div class="transition w-5 h-5 shrink-0 rounded-lg text-xs flex items-center justify-center font-bold bg-black/5 dark:bg-white/10 text-[var(--btn-content)] opacity-60">
+                              •
+                            </div>
+                            <div class="transition text-[0.9rem] overflow-hidden text-ellipsis whitespace-nowrap text-black/60 dark:text-white/60 group-hover:text-black/80 dark:group-hover:text-white/80" title={d.text}>
+                              {d.text}
+                            </div>
+                            <div class="active-indicator absolute right-2 top-1/2 -translate-y-1/2 w-1 h-5 rounded bg-[var(--primary)]"></div>
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  </aside>
+)}
+
+<style>
+  #toc .active-indicator{opacity:0;transition:opacity .2s}
+  #toc [data-active="true"] .active-indicator{opacity:1}
+  #toc a{user-select:none}
+</style>
+
+<style is:global>
+  #content-wrapper .markdown-content h1,
+  #content-wrapper .markdown-content h2,
+  #content-wrapper .markdown-content h3,
+  #content-wrapper .markdown-content h4{
+    scroll-margin-top: var(--toc-offset,96px);
+  }
+</style>
+
+<script is:inline>
+  const getOffset = () => {
+    const nav = document.getElementById('navbar-wrapper');
+    const h = nav ? nav.getBoundingClientRect().height : 0;
+    return Math.max(72, Math.round(h) + 12);
+  };
+
+  const enableSmooth = () => {
+    document.querySelectorAll('#toc a[href^="#"]').forEach((a) => {
+      a.addEventListener("click", (e) => {
+        const href = a.getAttribute("href");
+        if (!href) return;
+        const el = document.querySelector(href);
+        if (!el) return;
+        e.preventDefault();
+        const top = window.scrollY + el.getBoundingClientRect().top - getOffset();
+        window.scrollTo({ top, behavior: "smooth" });
+        history.replaceState(null, "", href);
+      });
+    });
+  };
+
+  const activate = (id) => {
+    const nodes = document.querySelectorAll("#toc [data-toc-id]");
+    nodes.forEach((n) => {
+      n.classList.remove("bg-black/5", "dark:bg-white/10");
+      n.removeAttribute("data-active");
+    });
+    const current = document.querySelector(`#toc [data-toc-id="${id}"]`);
+    if (current) {
+      current.classList.add("bg-black/5", "dark:bg-white/10");
+      current.setAttribute("data-active", "true");
+      const parentId = current.getAttribute("data-parent-id");
+      if (parentId) {
+        const parent = document.querySelector(`#toc [data-toc-id="${parentId}"]`);
+        if (parent) {
+          parent.classList.add("bg-black/5", "dark:bg-white/10");
+          parent.setAttribute("data-active", "true");
+        }
+      }
+    }
+  };
+
+  const initSpy = () => {
+    const content = document.getElementById("content-wrapper") || document;
+    const hs = Array.from(content.querySelectorAll("h1, h2, h3, h4"));
+    if (hs.length === 0) return;
+    const map = hs.map((h) => ({ id: h.id, el: h }));
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((en) => {
+          if (en.isIntersecting) {
+            activate(en.target.id);
+          }
+        });
+      },
+      { rootMargin: "0px 0px -70% 0px", threshold: 0 }
+    );
+    map.forEach((m) => m.el && io.observe(m.el));
+  };
+
+  const boot = () => {
+    const off = getOffset();
+    document.documentElement.style.setProperty('--toc-offset', off + 'px');
+    enableSmooth();
+    initSpy();
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot, { once: true });
+  } else {
+    boot();
+  }
+
+  if (window?.swup?.hooks) {
+    window.swup.hooks.on("content:replace", () => {
+      boot();
+    });
+  } else {
+    document.addEventListener("swup:enable", boot, { once: true });
+  }
+</script>

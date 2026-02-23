@@ -1,5 +1,4 @@
 import type { CollectionEntry } from "astro:content";
-import { getPostUrlBySlug } from "./url-utils";
 
 // Giscus 配置信息（从评论区配置中获取）
 export const giscusConfig = {
@@ -160,7 +159,7 @@ export async function getAllGiscusComments(): Promise<GiscusComment[]> {
 					.map((comment) => ({
 						id:
 							comment.id?.toString() ||
-							`comment-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+							`comment-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
 						body: comment.body || "",
 						author: {
 							login: comment.user.login || "unknown",

@@ -1,69 +1,85 @@
-/* utils */
+/* 工具函数：生成白色透明度颜色 */
 white(a)
   rgba(255, 255, 255, a)
 
+/* 工具函数：生成黑色透明度颜色 */
 black(a)
   rgba(0, 0, 0, a)
 
-/* 明日方舟风格颜色变量 */
+/* 风格颜色变量 - Arknights主题配色系统 */
+
+/* 主色调：用于品牌标识、主要按钮、链接、强调文字 */
 arknights-orange-primary(a)
-  rgba(255, 107, 53, a) /* 明日方舟主橙色 - #FF6B35 */
+  rgba(255, 107, 53, a) /* 主橙色 - #FF6B35 */
 
+/* 次要色调：用于按钮悬停状态、次要强调元素 */
 arknights-orange-secondary(a)
-  rgba(247, 147, 30, a) /* 明日方舟次要橙色 - #F7931E */
+  rgba(247, 147, 30, a) /* 次要橙色 - #F7931E */
 
+/* 三级色调：用于装饰性元素、渐变过渡 */
 arknights-orange-tertiary(a)
-  rgba(255, 165, 0, a) /* 明日方舟三级橙色 - #FFA500 */
+  rgba(255, 165, 0, a) /* 三级橙色 - #FFA500 */
 
+/* 深色背景：用于深色模式页面背景、侧边栏背景 */
 arknights-dark-bg(a)
-  rgba(29, 30, 34, a) /* 明日方舟深色背景 - 高灰度基调 */
+  rgba(29, 30, 34, a) /* 深色背景 - 高灰度基调 */
 
+/* 浅色背景：用于浅色模式页面背景 */
 arknights-light-bg(a)
-  rgba(240, 235, 220, a) /* 明日方舟浅色背景 - 高灰度基调 */
+  rgba(240, 235, 220, a) /* 浅色背景 - 高灰度基调 */
 
+/* 深色卡片：用于深色模式下的卡片、面板容器 */
 arknights-card-dark(a)
-  rgba(38, 40, 48, a) /* 明日方舟深色卡片 - 高灰度基调 */
+  rgba(38, 40, 48, a) /* 深色卡片 - 高灰度基调 */
 
+/* 浅色卡片：用于浅色模式下的卡片、面板容器 */
 arknights-card-light(a)
-  rgba(255, 255, 255, a) /* 明日方舟浅色卡片 - 纯白色 */
+  rgba(255, 255, 255, a) /* 浅色卡片 - 纯白色 */
 
+/* 蓝色强调色：用于科技感元素、信息提示、链接装饰 */
 arknights-accent-blue(a)
-  rgba(51, 143, 255, a) /* 明日方舟蓝色强调色 - 科技感 */
+  rgba(51, 143, 255, a) /* 蓝色强调色 - 科技感 */
 
+/* 紫色强调色：用于注意提示、特殊标记 */
 arknights-accent-purple(a)
-  rgba(144, 48, 224, a) /* 明日方舟紫色强调色 - 沉稳 */
+  rgba(144, 48, 224, a) /* 紫色强调色 - 沉稳 */
 
+/* 绿色强调色：用于成功提示、重要信息 */
 arknights-accent-green(a)
-  rgba(0, 200, 128, a) /* 明日方舟绿色强调色 - 活力 */
+  rgba(0, 200, 128, a) /* 绿色强调色 - 活力 */
 
+/* 彩虹渐变 - 浅色模式：用于装饰性背景、分隔线、特殊标记 */
 rainbow-light = linear-gradient(to right, oklch(0.80 0.10 0), oklch(0.80 0.10 30), oklch(0.80 0.10 60), oklch(0.80 0.10 90), oklch(0.80 0.10 120), oklch(0.80 0.10 150), oklch(0.80 0.10 180), oklch(0.80 0.10 210), oklch(0.80 0.10 240), oklch(0.80 0.10 270), oklch(0.80 0.10 300), oklch(0.80 0.10 330), oklch(0.80 0.10 360))
+/* 彩虹渐变 - 深色模式：用于装饰性背景、分隔线、特殊标记 */
 rainbow-dark = linear-gradient(to right, oklch(0.70 0.10 0), oklch(0.70 0.10 30), oklch(0.70 0.10 60), oklch(0.70 0.10 90), oklch(0.70 0.10 120), oklch(0.70 0.10 150), oklch(0.70 0.10 180), oklch(0.70 0.10 210), oklch(0.70 0.10 240), oklch(0.70 0.10 270), oklch(0.70 0.10 300), oklch(0.70 0.10 330), oklch(0.70 0.10 360))
 
 :root
-  --radius-large 0.75rem
-  --radius-small 0.375rem
-  --content-delay 150ms
-  --border-thin 1px
-  --border-thick 2px
+  /* 圆角尺寸：用于卡片、按钮、输入框等元素 */
+  --radius-large 0.75rem /* 大圆角 - 主要卡片、面板 */
+  --radius-small 0.375rem /* 小圆角 - 按钮、标签 */
+  --content-delay 150ms /* 内容延迟动画时间 */
+  --border-thin 1px /* 细边框 - 分隔线、装饰线 */
+  --border-thick 2px /* 粗边框 - 强调边框 */
   
-  /* 字体方案 - 科技感 */
-  --font-primary: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif
-  --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', 'Fira Code', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace
-  --font-size-xs: 0.75rem
-  --font-size-sm: 0.875rem
-  --font-size-base: 1rem
-  --font-size-lg: 1.125rem
-  --font-size-xl: 1.25rem
-  --font-size-2xl: 1.5rem
-  --font-size-3xl: 1.875rem
-  --font-size-4xl: 2.25rem
-  --font-weight-light: 300
-  --font-weight-regular: 400
-  --font-weight-medium: 500
-  --font-weight-semibold: 600
-  --font-weight-bold: 700
+  /* 字体方案 - 科技感风格 */
+  --font-primary: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif /* 主要字体 - 正文、标题 */
+  --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', 'Fira Code', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace /* 等宽字体 - 代码、技术术语 */
+  --font-size-xs: 0.75rem /* 极小字体 - 标签、元信息 */
+  --font-size-sm: 0.875rem /* 小字体 - 辅助文字 */
+  --font-size-base: 1rem /* 基础字体 - 正文 */
+  --font-size-lg: 1.125rem /* 大字体 - 副标题 */
+  --font-size-xl: 1.25rem /* 特大字体 - 小标题 */
+  --font-size-2xl: 1.5rem /* 超大字体 - 标题 */
+  --font-size-3xl: 1.875rem /* 巨大字体 - 主标题 */
+  --font-size-4xl: 2.25rem /* 超巨大字体 - 特殊标题 */
+  --font-weight-light: 300 /* 细体字重 - 装饰性文字 */
+  --font-weight-regular: 400 /* 常规字重 - 正文 */
+  --font-weight-medium: 500 /* 中等字重 - 强调文字 */
+  --font-weight-semibold: 600 /* 半粗字重 - 小标题 */
+  --font-weight-bold: 700 /* 粗体字重 - 主标题 */
 
-/* An util to define variables that vary with light and dark mode */
+/* 主题变量定义工具：定义在浅色模式和深色模式下变化的变量 */
+/* 参数格式：变量名: [浅色模式值, 深色模式值] */
 define(vars)
   :root
     for key, value in vars
@@ -74,82 +90,82 @@ define(vars)
         {key}: value[1]
 
 define({
-  /* 主色调 - 明日方舟橙色系统 */
-  --primary: oklch(0.75 0.25 25) oklch(0.80 0.25 30) /* 主橙色 - #FF6B35 */
-  --primary-light: oklch(0.85 0.20 25) oklch(0.90 0.20 30) /* 浅橙色 */
-  --primary-dark: oklch(0.65 0.30 25) oklch(0.70 0.30 30) /* 深橙色 */
-  --primary-glow: rgba(255, 107, 53, 0.3) rgba(255, 165, 0, 0.3) /* 橙色光晕效果 */
+  /* 主色调 - 橙色系统 */
+  --primary: oklch(0.75 0.25 25) oklch(0.80 0.25 30) /* 主橙色 - 品牌色、主要按钮、链接 */
+  --primary-light: oklch(0.85 0.20 25) oklch(0.90 0.20 30) /* 浅橙色 - 悬停状态、装饰元素 */
+  --primary-dark: oklch(0.65 0.30 25) oklch(0.70 0.30 30) /* 深橙色 - 点击状态、强调元素 */
+  --primary-glow: rgba(255, 107, 53, 0.3) rgba(255, 165, 0, 0.3) /* 橙色光晕效果 - 阴影、发光效果 */
   
   /* 背景色 - 高灰度基调 */
-  --page-bg: rgba(239, 210, 195, 0.78) arknights-dark-bg(1) /* 浅色/深色背景 */
-  --card-bg: rgba(255, 255, 255, 0.2) rgba(255, 223, 200, 0.03) /* 卡片背景  */
-  --card-border: rgba(255, 155, 88, 0.3) rgba(0, 0, 0, 0) /* 卡片边框 - 完全透明 */
-  --card-shadow: 0 0 0 rgba(0, 0, 0, 0) 0 0 0 rgba(0, 0, 0, 0) /* 卡片阴影 - 移除 */
+  --page-bg: rgba(239, 210, 195, 0.78) arknights-dark-bg(1) /* 页面背景 - 整体页面底色 */
+  --card-bg: rgba(255, 255, 255, 0.2) rgba(255, 223, 200, 0.03) /* 卡片背景 - 内容卡片、面板 */
+  --card-border: rgba(255, 155, 88, 0.3) rgba(0, 0, 0, 0) /* 卡片边框 - 卡片轮廓（深色模式透明） */
+  --card-shadow: 0 0 0 rgba(0, 0, 0, 0) 0 0 0 rgba(0, 0, 0, 0) /* 卡片阴影 - 已移除阴影效果 */
   
   /* 文字颜色 - 高灰度基调 */
-  --text-primary: rgba(51, 51, 51, 1) rgba(255, 255, 255, 1) /* 主要文字 - 深色模式白色，浅色模式#333333 */
-  --text-secondary: rgba(85, 85, 85, 1) rgba(255, 255, 255, 0.9) /* 次要文字 */
-  --text-tertiary: rgba(128, 128, 128, 1) rgba(255, 255, 255, 0.7) /*  tertiary文字 */
+  --text-primary: rgba(51, 51, 51, 1) rgba(255, 255, 255, 1) /* 主要文字 - 标题、正文、重要信息 */
+  --text-secondary: rgba(85, 85, 85, 1) rgba(255, 255, 255, 0.9) /* 次要文字 - 辅助说明、描述文字 */
+  --text-tertiary: rgba(128, 128, 128, 1) rgba(255, 255, 255, 0.7) /* 三级文字 - 元信息、标签、提示 */
   
-  /* 按钮样式 - 明日方舟科技感 */
-  --btn-primary-bg: arknights-orange-primary(1) oklch(0.85 0.25 30) /* 主要按钮背景 */
-  --btn-primary-bg-hover: arknights-orange-secondary(1) oklch(0.75 0.30 30) /* 主要按钮悬停 */
-  --btn-primary-bg-active: arknights-orange-primary(0.8) oklch(0.85 0.25 30 / 0.8) /* 主要按钮点击 */
-  --btn-primary-text: white(1) white(1) /* 主要按钮文字 */
+  /* 按钮样式 - 科技感 */
+  --btn-primary-bg: arknights-orange-primary(1) oklch(0.85 0.25 30) /* 主要按钮背景 - 主要操作按钮 */
+  --btn-primary-bg-hover: arknights-orange-secondary(1) oklch(0.75 0.30 30) /* 主要按钮悬停 - 鼠标悬停状态 */
+  --btn-primary-bg-active: arknights-orange-primary(0.8) oklch(0.85 0.25 30 / 0.8) /* 主要按钮点击 - 鼠标按下状态 */
+  --btn-primary-text: white(1) white(1) /* 主要按钮文字 - 按钮内文字颜色 */
   
-  --btn-regular-bg: rgba(255, 255, 255, 0.4) rgba(45, 45, 45, 1) /* 常规按钮背景 - 50%透明度 */
-  --btn-regular-bg-hover: rgba(255, 255, 255, 0.5) rgba(55, 55, 55, 1) /* 常规按钮悬停 - 60%透明度 */
-  --btn-regular-bg-active: rgba(255, 255, 255, 0.6) rgba(65, 65, 65, 1) /* 常规按钮点击 - 70%透明度 */
-  --btn-regular-text: var(--text-primary) var(--text-primary) /* 常规按钮文字 */
+  --btn-regular-bg: rgba(255, 255, 255, 0.4) rgba(45, 45, 45, 1) /* 常规按钮背景 - 次要操作按钮 */
+  --btn-regular-bg-hover: rgba(255, 255, 255, 0.5) rgba(55, 55, 55, 1) /* 常规按钮悬停 - 鼠标悬停状态 */
+  --btn-regular-bg-active: rgba(255, 255, 255, 0.6) rgba(65, 65, 65, 1) /* 常规按钮点击 - 鼠标按下状态 */
+  --btn-regular-text: var(--text-primary) var(--text-primary) /* 常规按钮文字 - 按钮内文字颜色 */
   
   /* 线条和分隔 - 科技感 */
-  --line-divider: rgba(200, 200, 210, 0.8) rgba(50, 50, 60, 0.9) /* 分隔线 */
-  --line-color: rgba(180, 180, 190, 0.6) rgba(60, 60, 70, 0.8) /* 线条颜色 */
-  --meta-divider: rgba(170, 170, 180, 0.8) rgba(70, 70, 80, 0.9) /* 元信息分隔 */
+  --line-divider: rgba(200, 200, 210, 0.8) rgba(50, 50, 60, 0.9) /* 分隔线 - 内容区域分隔 */
+  --line-color: rgba(180, 180, 190, 0.6) rgba(60, 60, 70, 0.8) /* 线条颜色 - 边框、装饰线 */
+  --meta-divider: rgba(170, 170, 180, 0.8) rgba(70, 70, 80, 0.9) /* 元信息分隔 - 元数据区域分隔 */
   
-  /* 代码块 - 明日方舟风格 */
-  --inline-code-bg: rgba(255, 255, 255, 0.5) rgba(45, 45, 45, 1) /* 行内代码背景 - 50%透明度 */
-  --inline-code-color: arknights-orange-primary(1) oklch(0.85 0.25 30) /* 行内代码颜色 */
-  --codeblock-bg: rgba(29, 30, 34, 1) rgba(29, 30, 34, 1) /* 代码块背景 */
-  --codeblock-border: rgba(255, 107, 53, 0.2) oklch(0.85 0.25 30 / 0.2) /* 代码块边框 */
-  --selection-bg: rgba(255, 107, 53, 0.3) oklch(0.85 0.25 30 / 0.3) /* 选中文本背景 */
+  /* 代码块样式 - Arknights风格 */
+  --inline-code-bg: rgba(255, 255, 255, 0.5) rgba(45, 45, 45, 1) /* 行内代码背景 - 文中代码片段 */
+  --inline-code-color: arknights-orange-primary(1) oklch(0.85 0.25 30) /* 行内代码颜色 - 代码文字颜色 */
+  --codeblock-bg: rgba(29, 30, 34, 1) rgba(29, 30, 34, 1) /* 代码块背景 - 独立代码块 */
+  --codeblock-border: rgba(255, 107, 53, 0.2) oklch(0.85 0.25 30 / 0.2) /* 代码块边框 - 代码块轮廓 */
+  --selection-bg: rgba(255, 107, 53, 0.3) rgba(255, 107, 53, 0.2) /* 选中文本背景 - 浅色模式(30%透明度)，暗色模式(20%透明度，低饱和度) */
   
   /* 其他元素 */
-  --link-color: arknights-orange-primary(1) oklch(0.85 0.25 30) /* 链接颜色 */
-  --link-hover: arknights-orange-secondary(1) oklch(0.75 0.30 30) /* 链接悬停 */
-  --link-active: arknights-orange-primary(0.8) oklch(0.85 0.25 30 / 0.8) /* 链接激活 */
-  --license-block-bg: rgba(255, 255, 255, 0.2) rgba(45, 45, 45, 0.5) /* 许可证块背景 - 50%透明度 */
+  --link-color: arknights-orange-primary(1) oklch(0.85 0.25 30) /* 链接颜色 - 超链接文字 */
+  --link-hover: arknights-orange-secondary(1) oklch(0.75 0.30 30) /* 链接悬停 - 鼠标悬停状态 */
+  --link-active: arknights-orange-primary(0.8) oklch(0.85 0.25 30 / 0.8) /* 链接激活 - 鼠标点击状态 */
+  --license-block-bg: rgba(255, 255, 255, 0.2) rgba(45, 45, 45, 0.5) /* 许可证块背景 - 版权信息区域 */
   
-  --float-panel-bg: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) /* 浮动面板背景 - 完全透明 */
-  --float-panel-border: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) /* 浮动面板边框 - 完全透明 */
+  --float-panel-bg: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) /* 浮动面板背景 - 浮动元素背景（透明） */
+  --float-panel-border: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) /* 浮动面板边框 - 浮动元素边框（透明） */
   
-  /* 滚动条 - 明日方舟风格 */
-  --scrollbar-bg: rgba(200, 200, 210, 0.4) rgba(50, 50, 60, 0.4) /* 滚动条背景 */
-  --scrollbar-bg-hover: rgba(180, 180, 190, 0.6) rgba(70, 70, 80, 0.6) /* 滚动条悬停 */
-  --scrollbar-bg-active: arknights-orange-primary(0.6) oklch(0.85 0.25 30 / 0.6) /* 滚动条激活 - 橙色 */
+  /* 滚动条样式 - Arknights风格 */
+  --scrollbar-bg: rgba(200, 200, 210, 0.4) rgba(50, 50, 60, 0.4) /* 滚动条背景 - 滚动条底色 */
+  --scrollbar-bg-hover: rgba(180, 180, 190, 0.6) rgba(70, 70, 80, 0.6) /* 滚动条悬停 - 鼠标悬停状态 */
+  --scrollbar-bg-active: arknights-orange-primary(0.6) oklch(0.85 0.25 30 / 0.6) /* 滚动条激活 - 拖动时颜色 */
   
-  /* 目录样式 - 明日方舟风格 */
-  --toc-bg: rgba(255, 255, 255, 0.95) rgba(38, 40, 48, 0.95) /* 目录背景 */
-  --toc-border: rgba(255, 107, 53, 0.2) oklch(0.85 0.25 30 / 0.2) /* 目录边框 */
-  --toc-item-active: arknights-orange-primary(1) oklch(0.85 0.25 30) /* 目录活跃项 - 橙色 */
+  /* 目录样式 - Arknights风格 */
+  --toc-bg: rgba(255, 255, 255, 0.95) rgba(38, 40, 48, 0.95) /* 目录背景 - 侧边目录面板 */
+  --toc-border: rgba(255, 107, 53, 0.2) oklch(0.85 0.25 30 / 0.2) /* 目录边框 - 目录面板轮廓 */
+  --toc-item-active: arknights-orange-primary(1) oklch(0.85 0.25 30) /* 目录活跃项 - 当前章节高亮 */
   
-  /* 提示框颜色 - 明日方舟风格 */
-  --admonitions-color-tip: rgba(51, 143, 255, 0.9) rgba(51, 143, 255, 0.9) /* 提示 - 蓝色 */
-  --admonitions-color-note: rgba(144, 48, 224, 0.9) rgba(144, 48, 224, 0.9) /* 注意 - 紫色 */
-  --admonitions-color-important: rgba(0, 200, 128, 0.9) rgba(0, 200, 128, 0.9) /* 重要 - 绿色 */
-  --admonitions-color-warning: rgba(247, 147, 30, 0.9) rgba(247, 147, 30, 0.9) /* 警告 - 次要橙色 */
-  --admonitions-color-caution: arknights-orange-primary(0.9) oklch(0.85 0.25 30 / 0.9) /* 谨慎 - 主橙色 */
+  /* 提示框颜色 - Arknights风格 */
+  --admonitions-color-tip: rgba(51, 143, 255, 0.9) rgba(51, 143, 255, 0.9) /* 提示 - 蓝色提示框 */
+  --admonitions-color-note: rgba(144, 48, 224, 0.9) rgba(144, 48, 224, 0.9) /* 注意 - 紫色提示框 */
+  --admonitions-color-important: rgba(0, 200, 128, 0.9) rgba(0, 200, 128, 0.9) /* 重要 - 绿色提示框 */
+  --admonitions-color-warning: rgba(247, 147, 30, 0.9) rgba(247, 147, 30, 0.9) /* 警告 - 次要橙色提示框 */
+  --admonitions-color-caution: arknights-orange-primary(0.9) oklch(0.85 0.25 30 / 0.9) /* 谨慎 - 主橙色提示框 */
   
   /* 动画和过渡 */
-  --transition-fast: 150ms ease /* 快速过渡 */
-  --transition-normal: 300ms ease /* 正常过渡 */
-  --transition-slow: 500ms ease /* 慢速过渡 */
+  --transition-fast: 150ms ease /* 快速过渡 - 按钮悬停、小元素动画 */
+  --transition-normal: 300ms ease /* 正常过渡 - 一般交互动画 */
+  --transition-slow: 500ms ease /* 慢速过渡 - 大型元素、页面切换 */
   
   /* 科技感装饰 */
-  --tech-grid-pattern: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255, 107, 53, 0.02) 10px, rgba(255, 107, 53, 0.02) 20px) /* 科技网格背景 */
-  --glow-effect: 0 0 20px var(--primary-glow) /* 光晕效果 */
+  --tech-grid-pattern: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255, 107, 53, 0.02) 10px, rgba(255, 107, 53, 0.02) 20px) /* 科技网格背景 - 装饰性背景图案 */
+  --glow-effect: 0 0 20px var(--primary-glow) /* 光晕效果 - 发光阴影 */
   
-  /* 图标显示 */
-  --display-light-icon: 1 0
-  --display-dark-icon: 0 1
+  /* 图标显示 - 控制明暗模式图标显示 */
+  --display-light-icon: 1 0 /* 浅色模式图标显示状态 */
+  --display-dark-icon: 0 1 /* 深色模式图标显示状态 */
 })

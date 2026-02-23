@@ -20,6 +20,31 @@ const postsCollection = defineCollection({
 	}),
 });
 
+const albumsCollection = defineCollection({
+	type: "data",
+	schema: z.object({
+		title: z.string(),
+		date: z.date(),
+		dir: z.string(), // 对应 public/images 下的相册目录名
+		description: z.string().optional().default(""),
+		cover: z.string().optional().default(""), // 可选：自定义封面
+		tags: z.array(z.string()).optional().default([]),
+		location: z.string().optional().default(""),
+		featured: z.boolean().optional().default(false),
+		order: z.number().optional().default(0),
+		images: z
+			.array(
+				z.object({
+					file: z.string(),
+					title: z.string().optional().default(""),
+					desc: z.string().optional().default(""),
+				}),
+			)
+			.optional()
+			.default([]),
+	}),
+});
+
 const notesCollection = defineCollection({
 	schema: z.object({
 		title: z.string().nullable().optional().default(null),
@@ -54,6 +79,7 @@ export const collections: Record<
 	ReturnType<typeof defineCollection>
 > = {
 	posts: postsCollection,
+	albums: albumsCollection,
 	notes: notesCollection,
 	about: aboutCollection,
 	friends: friendsCollection,

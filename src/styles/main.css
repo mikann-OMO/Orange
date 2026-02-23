@@ -4,7 +4,7 @@
     .card-base {
         @apply rounded-[var(--radius-large)] overflow-hidden transition;
     }
-    /* 明日方舟风格卡片 */
+    /* 风格卡片 */
     .arknights-card {
         @apply rounded-[var(--radius-large)] overflow-hidden bg-[var(--card-bg)] transition-all duration-300 border border-[var(--card-border)] shadow-[var(--card-shadow)] backdrop-blur-sm;
     }

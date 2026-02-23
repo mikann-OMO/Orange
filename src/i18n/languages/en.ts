@@ -9,6 +9,10 @@ export const en: Translation = {
 	[Key.notes]: "Notes",
 	[Key.works]: "Works",
 	[Key.search]: "Search",
+	[Key.searching]: "Searching...",
+	[Key.noResults]: "No results found",
+	[Key.tryDifferentKeywords]: "Try different keywords",
+	[Key.enterKeywordsToSearch]: "Enter keywords to search",
 
 	[Key.tags]: "Tags",
 	[Key.categories]: "Categories",

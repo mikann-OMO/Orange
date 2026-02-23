@@ -13,7 +13,7 @@ const style = Astro.props.style;
 <link rel="preload" href="https://fonts.googleapis.com/variable?+
     family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" 
     as="style" 
-    onload="this.onload=null;this.rel='stylesheet'">
+    onload="this.removeAttribute('onload');this.setAttribute('rel', 'stylesheet')">
 <noscript>
     <link rel="stylesheet" href="https://fonts.googleapis.com/variable?+
         family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap">

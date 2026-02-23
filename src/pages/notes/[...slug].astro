@@ -1,7 +1,6 @@
 ---
-import path from "node:path";
+
 import { getCollection } from "astro:content";
-import PostMetadata from "../../components/PostMeta.astro";
 import Markdown from "../../components/misc/Markdown.astro";
 import { profileConfig, siteConfig } from "../../config";
 import I18nKey from "../../i18n/i18nKey";
@@ -9,7 +8,7 @@ import { i18n } from "../../i18n/translation";
 import MainGridLayout from "../../layouts/MainGridLayout.astro";
 import { formatDate, formatDateToYYYYMMDD } from "../../utils/date-utils";
 
-// 获取所有便签并生成静态路径
+// 获取所有随记并生成静态路径
 export async function getStaticPaths() {
 	const notes = await getCollection("notes");
 	// 严格过滤有效且非草稿的note
@@ -28,7 +27,7 @@ export async function getStaticPaths() {
 	}));
 }
 
-// 获取当前便签数据
+// 获取当前随记数据
 const { note } = Astro.props;
 const { Content, headings } = await note.render();
 
@@ -36,8 +35,8 @@ const { Content, headings } = await note.render();
 const jsonLd = {
 	"@context": "https://schema.org",
 	"@type": "NoteDigitalDocument",
-	headline: note.data.title || "便签",
-	description: "便签内容",
+	headline: note.data.title || "随记",
+	description: "随记内容",
 	author: {
 		"@type": "Person",
 		name: profileConfig.name,
@@ -50,15 +49,15 @@ const jsonLd = {
 };
 ---
 
-<MainGridLayout title={note.data.title || "便签"} description="便签内容" lang={note.data.lang} setOGTypeArticle={true} headings={headings}>
+<MainGridLayout title={note.data.title || "随记"} description="随记内容" lang={note.data.lang} setOGTypeArticle={true} headings={headings}>
     <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
     
     <div class="flex flex-col items-center w-full py-6">
-        <!-- 硬卡样式便签 -->
+        <!-- 硬卡样式随记 -->
         <div id="note-container" class="w-full max-w-2xl overflow-hidden shadow-md hover:shadow-lg hover:shadow-gray-300/20 transition-all duration-300 border border-white/20 bg-gray-200 bg-opacity-10 text-white">
             <!-- 卡片主体 -->
             <div class="p-5">
-                <!-- 便签图片 -->
+                <!-- 随记图片 -->
                 {note.data.image && (
                     <div class="note-image w-full mb-4 overflow-hidden rounded-md">
                         <img 
@@ -69,7 +68,7 @@ const jsonLd = {
                     </div>
                 )}
                 
-                <!-- 便签头部 -->
+                <!-- 随记头部 -->
                 <div class="note-header mb-4">
                     <!-- 日期 -->
                     <div class="text-xs text-white/80 font-mono mb-4 border-b border-white/10 pb-2">
@@ -84,7 +83,7 @@ const jsonLd = {
                     )}
                 </div>
 
-                <!-- 便签内容 -->
+                <!-- 随记内容 -->
                 <div class="note-content whitespace-pre-wrap">
                     <Markdown class="markdown-content prose prose-white max-w-none">
                         <Content />
@@ -93,7 +92,7 @@ const jsonLd = {
             </div>
         </div>
 
-        <!-- 返回便签列表 -->
+        <!-- 返回随记列表 -->
         <div class="mt-6">
             <a 
                 href="/notes/"
@@ -108,7 +107,7 @@ const jsonLd = {
     </div>
 
     <style>
-        /* 便签内容样式 */
+        /* 随记内容样式 */
         .note-content {
             overflow: auto;
             max-height: calc(100vh - 400px);

@@ -5,7 +5,7 @@ import I18nKey from "../../i18n/i18nKey";
 import { i18n } from "../../i18n/translation";
 import MainGridLayout from "../../layouts/MainGridLayout.astro";
 
-// 直接获取所有便签，不使用分页
+// 直接获取所有随记，不使用分页
 const allNotes = await getCollection("notes", ({ data }) => !data.draft);
 
 // 按发布日期降序排序

@@ -1,0 +1,126 @@
+---
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+import type { GetStaticPaths } from "astro";
+import MainGridLayout from "../../layouts/MainGridLayout.astro";
+
+export const getStaticPaths: GetStaticPaths = async () => {
+	const albums = await getCollection("albums");
+	return albums.map((a) => ({
+		params: { slug: a.id },
+		props: { album: a },
+	}));
+};
+
+interface Props {
+	album: CollectionEntry<"albums">;
+}
+const { album } = Astro.props as unknown as Props;
+const albumName: string = album.data.dir;
+const title: string = album.data.title || album.id;
+const description: string = album.data.description || "相册";
+const cover: string = (album.data.cover || "").trim();
+type ImageMeta = { file: string; title?: string; desc?: string };
+const imageMetas: ImageMeta[] = album.data.images ?? [];
+const metaMap = new Map<string, ImageMeta>(imageMetas.map((m) => [m.file, m]));
+
+const glob = import.meta.glob("../../content/albums/**/*.{jpg,jpeg,png}", {
+	eager: true,
+}) as Record<string, { default: ImageMetadata }>;
+
+const entries = Object.entries(glob).filter(([k]) =>
+	k.replace(/\\/g, "/").includes(`/albums/${albumName}/`),
+);
+
+const pinnedByAlbum: Record<string, string> = {
+	"南京2024.10.18": "a南京站.jpg",
+	"广州2025.04.30": "a广州站.jpg",
+	"苏州2025.01.04": "a苏州站.jpg",
+};
+
+function shuffle<T>(arr: T[]): T[] {
+	const a = arr.slice();
+	for (let i = a.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[a[i], a[j]] = [a[j], a[i]];
+	}
+	return a;
+}
+
+let ordered = entries.slice();
+// 优先使用 cover 指定的主图；若无则使用旧的固定置顶表
+if (cover) {
+	const idx = ordered.findIndex(([k]) => {
+		const base = (k.split("/").pop() || k.split("\\").pop() || "").toString();
+		return base === cover;
+	});
+	if (idx !== -1) {
+		const [p] = ordered.splice(idx, 1);
+		ordered = [p, ...shuffle(ordered)];
+	} else {
+		ordered = shuffle(ordered);
+	}
+} else {
+	const pinned = pinnedByAlbum[albumName];
+	if (pinned) {
+		const idx = ordered.findIndex(([k]) => {
+			const base = (k.split("/").pop() || k.split("\\").pop() || "").toString();
+			return base === pinned;
+		});
+		if (idx !== -1) {
+			const [p] = ordered.splice(idx, 1);
+			ordered = [p, ...shuffle(ordered)];
+		} else {
+			ordered = shuffle(ordered);
+		}
+	} else {
+		ordered = shuffle(ordered);
+	}
+}
+type Item = { src: string; w: number; h: number; alt: string; caption: string };
+const items: Item[] = ordered.map(([k, mod]) => {
+	const base = k.split("/").pop() || "";
+	const name = base.replace(/\.(jpg|jpeg|png)$/i, "");
+	const altBase = name.replace(/^[a-zA-Z]\s*/, "");
+	const meta = metaMap.get(base);
+	const titleTrim = meta?.title?.trim();
+	const descTrim = meta?.desc?.trim();
+	const altTitle = titleTrim || altBase;
+	const caption = descTrim ? `${altTitle} — ${descTrim}` : altTitle;
+	const imgData = mod.default;
+	return {
+		src: imgData.src,
+		w: imgData.width,
+		h: imgData.height,
+		alt: altTitle,
+		caption,
+	};
+});
+---
+
+<MainGridLayout title={title} description={description}>
+  <section class="rounded-[var(--radius-large)] overflow-hidden">
+    <div class="card-base p-0">
+      <div class="p-4 md:p-6">
+        <div class="flex items-center justify-between gap-3">
+          <h1 class="text-2xl md:text-3xl font-bold text-[var(--text-primary)]">{title}</h1>
+          <a href="/works/" class="btn-regular inline-flex items-center px-3 py-1.5 rounded-lg text-sm">返回</a>
+        </div>
+      </div>
+
+      <div class="px-0 md:px-2 pb-6">
+        <div class="gallery columns-2 md:columns-3 lg:columns-4 gap-x-3 md:gap-x-4 px-3 md:px-4">
+          {items.map((it) => (
+            <div class="inline-block w-full mb-3 break-inside-avoid rounded-2xl overflow-hidden arknights-card">
+              <a href={it.src} aria-label={it.alt} data-pswp-width={it.w} data-pswp-height={it.h} data-pswp-caption={it.caption} class="block overflow-hidden group">
+                <img src={it.src} alt={it.alt} loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-300 block group-hover:scale-105" />
+              </a>
+              <div class="px-2 py-1 text-xs text-[var(--text-secondary)]">{it.caption}</div>
+            </div>
+          ))}
+        </div>
+        {items.length === 0 && <div class="text-[var(--text-secondary)]">尚未找到相册图片，请将图片放入 src/content/albums/{albumName}/</div>}
+      </div>
+    </div>
+  </section>
+</MainGridLayout>

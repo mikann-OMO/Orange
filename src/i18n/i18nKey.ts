@@ -6,6 +6,10 @@ enum I18nKey {
 	notes = "notes",
 	works = "works",
 	search = "search",
+	searching = "searching",
+	noResults = "noResults",
+	tryDifferentKeywords = "tryDifferentKeywords",
+	enterKeywordsToSearch = "enterKeywordsToSearch",
 
 	tags = "tags",
 	categories = "categories",

@@ -3,8 +3,7 @@ import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import Icon from "@iconify/svelte";
 import { url } from "@utils/url-utils";
-import { pinyin } from "pinyin-pro";
-import { onMount, tick } from "svelte";
+import { onMount } from "svelte";
 
 // 显式声明 SearchResult 类型
 interface SearchResult {
@@ -52,6 +51,51 @@ let isPagefindLoading = false;
 let articleIndexCache: SearchResult[] = [];
 // 标记是否已加载文章索引
 let isArticleIndexLoaded = false;
+
+// 动态拼音函数及加载器
+let pinyinFn:
+	| ((
+			text: string,
+			options: {
+				style: "normal" | "first";
+				withoutTone?: boolean;
+				separator?: string;
+			},
+	  ) => string)
+	| null = null;
+
+const loadPinyin = async (): Promise<void> => {
+	if (pinyinFn) return;
+	try {
+		const mod = await import("pinyin-pro");
+		const pinyinPro = mod.pinyin || mod.default?.pinyin;
+		if (!pinyinPro) {
+			console.warn("pinyin-pro module structure unexpected:", mod);
+			return;
+		}
+		pinyinFn = (text, options) => {
+			const toneType = options.withoutTone ? "none" : "num";
+			const pattern = options.style === "first" ? "first" : "pinyin";
+			const separator = options.separator ?? " ";
+			return pinyinPro(text, { toneType, pattern, type: "string", separator });
+		};
+	} catch (e) {
+		console.error("Failed to load pinyin library:", e);
+		pinyinFn = null;
+	}
+};
+
+const pinyin = (
+	text: string,
+	options: {
+		style: "normal" | "first";
+		withoutTone?: boolean;
+		separator?: string;
+	},
+) => {
+	if (!pinyinFn) return text;
+	return pinyinFn(text, options);
+};
 
 const fakeResult: SearchResult[] = [
 	{
@@ -107,10 +151,14 @@ const setPanelVisibility = (show: boolean) => {
 // 加载 Pagefind 函数
 const loadPagefind = async () => {
 	if (pagefindLoaded || isPagefindLoading) return;
+	// 在开发环境跳过 Pagefind 加载，直接使用 RSS 索引
+	if (import.meta.env.DEV) return;
 
 	isPagefindLoading = true;
-
 	try {
+		// 并行加载拼音库
+		loadPinyin();
+
 		if (typeof window !== "undefined") {
 			// 检查是否已经加载
 			if ("pagefind" in window) {
@@ -159,39 +207,34 @@ const loadArticleIndex = async () => {
 			}
 		}
 
-		// 如果没有缓存，则从 RSS 加载
+		// 如果没有缓存，则从 search.json 加载
 		try {
-			const response = await fetch("/rss.xml");
+			// 并行加载拼音库
+			if (!pinyinFn) loadPinyin();
+
+			const response = await fetch("/search.json");
 			if (response.ok) {
-				const text = await response.text();
-				const parser = new DOMParser();
-				const xmlDoc = parser.parseFromString(text, "application/xml");
+				// 确保拼音库已完全加载
+				if (!pinyinFn) await loadPinyin();
 
-				const items = xmlDoc.querySelectorAll("item");
-				const articles: SearchResult[] = [];
-
-				items.forEach((item) => {
-					const title = item.querySelector("title")?.textContent || "";
-					const link = item.querySelector("link")?.textContent || "";
-					const description =
-						item.querySelector("description")?.textContent || "";
-
-					// 转换为相对路径
-					let relativeUrl = link;
-					if (link.includes(window.location.origin)) {
-						relativeUrl = link.replace(window.location.origin, "");
-					}
-
-					articles.push({
-						url: relativeUrl,
+				const data = await response.json();
+				const articles: SearchResult[] = data.map(
+					(item: {
+						title: string;
+						description: string;
+						url: string;
+						content: string;
+					}) => ({
+						url: item.url,
 						meta: {
-							title,
+							title: item.title,
 						},
-						excerpt: description,
-						titlePinyin: getPinyin(title),
-						titleFirstLetter: getFirstLetter(title),
-					});
-				});
+						excerpt: item.description,
+						content: item.content,
+						titlePinyin: getPinyin(item.title),
+						titleFirstLetter: getFirstLetter(item.title),
+					}),
+				);
 
 				articleIndexCache = articles;
 				isArticleIndexLoaded = true;
@@ -207,7 +250,7 @@ const loadArticleIndex = async () => {
 				return;
 			}
 		} catch (error) {
-			console.error("Error loading from RSS:", error);
+			console.error("Error loading from search.json:", error);
 		}
 
 		// 如果 RSS 加载失败，使用模拟数据
@@ -282,18 +325,35 @@ const fuzzySearch = (searchKeyword: string): SearchResult[] => {
 		const firstLetterMatch = article.titleFirstLetter
 			?.toLowerCase()
 			.includes(keyword);
-		// 检查摘要是否匹配
 		const excerptMatch = article.excerpt.toLowerCase().includes(keyword);
+		const contentMatch = article.content
+			? article.content.toLowerCase().includes(keyword)
+			: false;
 
-		// 如果有任何匹配，则添加到结果中
-		if (titleMatch || pinyinMatch || firstLetterMatch || excerptMatch) {
+		if (
+			titleMatch ||
+			pinyinMatch ||
+			firstLetterMatch ||
+			excerptMatch ||
+			contentMatch
+		) {
+			let displayExcerpt = article.excerpt;
+			if (!excerptMatch && contentMatch && article.content) {
+				const idx = article.content.toLowerCase().indexOf(keyword);
+				const start = Math.max(0, idx - 40);
+				const end = Math.min(article.content.length, idx + keyword.length + 40);
+				displayExcerpt =
+					(start > 0 ? "…" : "") +
+					article.content.slice(start, end) +
+					(end < article.content.length ? "…" : "");
+			}
 			results.push({
 				...article,
 				meta: {
 					...article.meta,
 					title: highlightKeyword(article.meta.title, searchKeyword),
 				},
-				excerpt: highlightKeyword(article.excerpt, searchKeyword),
+				excerpt: highlightKeyword(displayExcerpt, searchKeyword),
 			});
 		}
 	}
@@ -332,7 +392,7 @@ const search = async (searchKeyword: string): Promise<void> => {
 				try {
 					const response = await window.pagefind.search(searchKeyword);
 					// 处理搜索结果
-					if (response && response.results && response.results.length > 0) {
+					if (response?.results && response.results.length > 0) {
 						searchResults = await Promise.all(
 							response.results.map((item) => item.data()),
 						);

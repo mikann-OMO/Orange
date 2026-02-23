@@ -1,8 +1,16 @@
-/* This is a script to create a new post markdown file with front-matter */
+/**
+ * 创建新博客文章的脚本
+ * 用于自动生成带有 front-matter 的 Markdown 文件
+ * Usage: npm run new-post -- <filename>
+ */
 
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 
+/**
+ * 获取当前日期
+ * @returns {string} 格式化的日期字符串 (YYYY-MM-DD)
+ */
 function getDate() {
 	const today = new Date();
 	const year = today.getFullYear();
@@ -12,37 +20,49 @@ function getDate() {
 	return `${year}-${month}-${day}`;
 }
 
-const args = process.argv.slice(2);
+/**
+ * 主函数
+ * 处理命令行参数并创建新文章
+ */
+function main() {
+	// 获取命令行参数
+	const args = process.argv.slice(2);
 
-if (args.length === 0) {
-	console.error(`Error: No filename argument provided
+	// 检查是否提供了文件名
+	if (args.length === 0) {
+		console.error(`Error: No filename argument provided
 Usage: npm run new-post -- <filename>`);
-	process.exit(1); // Terminate the script and return error code 1
-}
+		process.exit(1); // 终止脚本并返回错误代码 1
+	}
 
-let fileName = args[0];
+	let fileName = args[0];
 
-// Add .md extension if not present
-const fileExtensionRegex = /\.(md|mdx)$/i;
-if (!fileExtensionRegex.test(fileName)) {
-	fileName += ".md";
-}
+	// 添加 .md 扩展名（如果不存在）
+	const fileExtensionRegex = /\.(md|mdx)$/i;
+	if (!fileExtensionRegex.test(fileName)) {
+		fileName += ".md";
+	}
 
-const targetDir = "./src/content/posts/";
-const fullPath = path.join(targetDir, fileName);
+	// 目标目录
+	const targetDir = "./src/content/posts/";
+	// 完整文件路径
+	const fullPath = path.join(targetDir, fileName);
 
-if (fs.existsSync(fullPath)) {
-	console.error(`Error: File ${fullPath} already exists `);
-	process.exit(1);
-}
+	// 检查文件是否已存在
+	if (fs.existsSync(fullPath)) {
+		console.error(`Error: File ${fullPath} already exists `);
+		process.exit(1);
+	}
 
-// recursive mode creates multi-level directories
-const dirPath = path.dirname(fullPath);
-if (!fs.existsSync(dirPath)) {
-	fs.mkdirSync(dirPath, { recursive: true });
-}
+	// 递归创建目录
+	const dirPath = path.dirname(fullPath);
+	if (!fs.existsSync(dirPath)) {
+		fs.mkdirSync(dirPath, { recursive: true });
+		console.log(`Directory ${dirPath} created`);
+	}
 
-const content = `---
+	// 生成文件内容
+	const content = `---
 title: ${args[0]}
 published: ${getDate()}
 description: ''
@@ -54,6 +74,11 @@ lang: ''
 ---
 `;
 
-fs.writeFileSync(path.join(targetDir, fileName), content);
+	// 写入文件
+	fs.writeFileSync(fullPath, content);
 
-console.log(`Post ${fullPath} created`);
+	console.log(`Post ${fullPath} created successfully`);
+}
+
+// 执行主函数
+main();
