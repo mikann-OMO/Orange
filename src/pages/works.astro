@@ -1,11 +1,11 @@
 ---
+import fs from "node:fs/promises";
+import path from "node:path";
 import { getCollection } from "astro:content";
 import placeholder from "../assets/images/chikann-640.webp";
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
 import MainGridLayout from "../layouts/MainGridLayout.astro";
-import fs from "node:fs/promises";
-import path from "node:path";
 
 const albums = await getCollection("albums");
 const sorted = albums.slice().sort((a, b) => {
@@ -16,20 +16,20 @@ const sorted = albums.slice().sort((a, b) => {
 // Pre-load file lists
 const albumImages: Record<string, string[]> = {};
 for (const album of sorted) {
-    const dirName = album.data.dir;
-    const fullPath = path.join(process.cwd(), "public", "images", dirName);
-    try {
-        const files = await fs.readdir(fullPath);
-        albumImages[dirName] = files.filter(f => /\.(jpg|jpeg|png)$/i.test(f));
-    } catch (e) {
-        albumImages[dirName] = [];
-    }
+	const dirName = album.data.dir;
+	const fullPath = path.join(process.cwd(), "public", "images", dirName);
+	try {
+		const files = await fs.readdir(fullPath);
+		albumImages[dirName] = files.filter((f) => /\.(jpg|jpeg|png)$/i.test(f));
+	} catch (e) {
+		albumImages[dirName] = [];
+	}
 }
 
 function sampleMosaic(dir: string, cover?: string) {
-    const files = albumImages[dir] || [];
-    // Transform to objects for processing
-    const entries = files.map(f => ({ k: f, url: `/images/${dir}/${f}` }));
+	const files = albumImages[dir] || [];
+	// Transform to objects for processing
+	const entries = files.map((f) => ({ k: f, url: `/images/${dir}/${f}` }));
 
 	const pinnedByAlbum: Record<string, string> = {
 		"南京2024.10.18": "a南京站.jpg",
@@ -44,8 +44,8 @@ function sampleMosaic(dir: string, cover?: string) {
 		}
 		return a;
 	}
-	
-    let list = entries.slice();
+
+	let list = entries.slice();
 	list = shuffle(list);
 
 	// 优先使用 cover 指定的主图
