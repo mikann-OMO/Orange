@@ -15,8 +15,6 @@ draft: false
 
 # 正文
 
-[九华山 2026.01.01 图册](/pictures/九华山2026.01.01/)
-
 二〇二六，新的一年新的开始，本来计划 solo camp *（动画《摇曳露营》深度受害者(´・ｖ・)）* ，但因为各种复杂的原因，最终突发奇想决定找座不算矮的山夜爬去看新年日出。
 
 
@@ -379,6 +377,7 @@ draft: false
 <div style="opacity: 0.5;">（话说我好像没有真正意义上的夜爬，也没有真正意义的看到日出，不过没关系，吃饭八分饱，留到下次感动）</div>
 
 ---
+[九华山 2026.01.01 图册](/pictures/jiuhuashan-2026-01-01)
 
 # 沿边
 <div style="display: flex; flex-wrap: nowrap; gap: 5px; margin: 20px 0; overflow-x: auto; padding: 10px 0; scrollbar-width: thin; scrollbar-color: rgba(153, 153, 153, 0.3) transparent;">
