@@ -1,6 +1,7 @@
 ---
 import path from "node:path";
 import { Icon } from "astro-icon/components";
+import CommentSection from "../../components/CommentSection.astro";
 import PostMetadata from "../../components/PostMeta.astro";
 import ImageWrapper from "../../components/misc/ImageWrapper.astro";
 import License from "../../components/misc/License.astro";
@@ -115,7 +116,7 @@ const jsonLd = {
             </div>
 
 
-            <Markdown class="mb-6 markdown-content onload-animation !max-w-none">
+            <Markdown class="mb-6 markdown-content onload-animation !max-w-none" class:list={entry.slug === 'travel/jiuhuashan-adventure' ? 'jiuhuashan-gallery' : ''}>
                 <Content />
             </Markdown>
 
@@ -146,130 +147,8 @@ const jsonLd = {
         </a>
     </div>
 
-    <!-- giscus评论 -->
-    <div class="card-base rounded-[var(--radius-large)] p-6 mt-8">
-        <h3 class="text-xl font-bold mb-4 text-[var(--text-primary)]">评论</h3>
-        <div id="giscus-container">
-          <!-- 根据当前主题动态设置giscus初始主题 -->
-          <script is:inline>
-            // 动态创建giscus脚本标签
-            const script = document.createElement('script');
-            script.src = 'https://giscus.app/client.js';
-            script.async = true;
-            script.crossOrigin = 'anonymous';
-            
-            // 获取当前主题
-            const currentTheme = localStorage.getItem('theme') || 'light';
-            const giscusTheme = currentTheme === 'dark' ? 'transparent_dark' : 'light';
-            
-            // 设置giscus配置
-            script.setAttribute('data-repo', 'mikann-OMO/comments');
-            script.setAttribute('data-repo-id', 'R_kgDOO3ArSw');
-            script.setAttribute('data-category', 'Q&A');
-            script.setAttribute('data-category-id', 'DIC_kwDOO3ArS84CrGgL');
-            script.setAttribute('data-mapping', 'pathname');
-            script.setAttribute('data-strict', '1');
-            script.setAttribute('data-reactions-enabled', '1');
-            script.setAttribute('data-emit-metadata', '0');
-            script.setAttribute('data-input-position', 'top');
-            script.setAttribute('data-theme', giscusTheme);
-            script.setAttribute('data-lang', 'zh-CN');
-            
-            // 添加到页面
-            document.getElementById('giscus-container').appendChild(script);
-          </script>
-          <!-- 提示：如果以上配置仍然无法正常工作，请访问 https://giscus.app/ 并使用您的 GitHub 仓库生成正确的配置代码 -->
-      </div>
-    </div>
-
-    <script is:inline>
-      // 配置giscus主题的核心函数
-      function updateGiscusTheme() {
-        // 获取当前主题
-        const currentTheme = localStorage.getItem('theme') || 'light';
-        // giscus支持的夜间主题包括'dark'和'transparent_dark'，根据实际情况选择
-        const giscusTheme = currentTheme === 'dark' ? 'transparent_dark' : 'light';
-        
-        // 确保giscus已加载
-        if (typeof window.giscus !== 'undefined') {
-          try {
-            window.giscus.setConfig({
-              theme: giscusTheme
-            });
-          } catch (error) {
-            console.error('Failed to update giscus theme:', error);
-          }
-        } else {
-          // 如果giscus尚未加载，重新创建giscus脚本标签
-          const container = document.getElementById('giscus-container');
-          container.innerHTML = '';
-          
-          const script = document.createElement('script');
-          script.src = 'https://giscus.app/client.js';
-          script.async = true;
-          script.crossOrigin = 'anonymous';
-          
-          script.setAttribute('data-repo', 'mikann-OMO/comments');
-          script.setAttribute('data-repo-id', 'R_kgDOO3ArSw');
-          script.setAttribute('data-category', 'Q&A');
-          script.setAttribute('data-category-id', 'DIC_kwDOO3ArS84CrGgL');
-          script.setAttribute('data-mapping', 'pathname');
-          script.setAttribute('data-strict', '1');
-          script.setAttribute('data-reactions-enabled', '1');
-          script.setAttribute('data-emit-metadata', '0');
-          script.setAttribute('data-input-position', 'top');
-          script.setAttribute('data-theme', giscusTheme);
-          script.setAttribute('data-lang', 'zh-CN');
-          
-          container.appendChild(script);
-        }
-      }
-      
-      // 主题变化处理函数
-      function handleThemeChange() {
-        updateGiscusTheme();
-      }
-      
-      // 监听主题变化事件
-      window.addEventListener('themeChange', handleThemeChange);
-      
-      // 页面加载完成后初始化
-      document.addEventListener('DOMContentLoaded', () => {
-        // 立即尝试更新主题
-        updateGiscusTheme();
-      });
-    </script>
-    
-    <!-- 添加CSS样式来强制评论区跟随博客的日夜间模式 -->
-    <style is:global>
-      /* 强制giscus评论区跟随博客的日夜间模式 */
-      #giscus-container {
-        --giscus-theme-color-primary: var(--primary);
-        --giscus-theme-color-text: var(--text-primary);
-        --giscus-theme-color-text-secondary: var(--text-secondary);
-        --giscus-theme-color-bg: var(--card-bg);
-        --giscus-theme-color-border: var(--line-color);
-      }
-      
-      /* 深色模式下的样式 */
-      .dark #giscus-container {
-        --giscus-theme-color-primary: var(--primary);
-        --giscus-theme-color-text: var(--text-primary);
-        --giscus-theme-color-text-secondary: var(--text-secondary);
-        --giscus-theme-color-bg: var(--card-bg);
-        --giscus-theme-color-border: var(--line-color);
-      }
-      
-      /* 强制覆盖giscus的样式 */
-      #giscus-container iframe {
-        background-color: var(--card-bg) !important;
-      }
-      
-      /* 深色模式下强制覆盖giscus的样式 */
-      .dark #giscus-container iframe {
-        background-color: var(--card-bg) !important;
-      }
-    </style>
+    <!-- 评论区 -->
+    <CommentSection />
 
     <style is:global>
     #post-container :nth-child(1) { animation-delay: calc(var(--content-delay) + 0ms) }

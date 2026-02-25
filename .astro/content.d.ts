@@ -157,14 +157,6 @@ declare module 'astro:content' {
   rendered?: RenderedContent;
   filePath?: string;
 }>;
-"albums": Record<string, {
-  id: string;
-  body?: string;
-  collection: "albums";
-  data: InferEntrySchema<"albums">;
-  rendered?: RenderedContent;
-  filePath?: string;
-}>;
 "friends": Record<string, {
   id: string;
   render(): Render[".md"];
@@ -182,6 +174,14 @@ declare module 'astro:content' {
   body: string;
   collection: "notes";
   data: InferEntrySchema<"notes">;
+  rendered?: RenderedContent;
+  filePath?: string;
+}>;
+"pictures": Record<string, {
+  id: string;
+  body?: string;
+  collection: "pictures";
+  data: InferEntrySchema<"pictures">;
   rendered?: RenderedContent;
   filePath?: string;
 }>;

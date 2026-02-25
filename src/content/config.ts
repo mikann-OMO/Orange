@@ -20,7 +20,7 @@ const postsCollection = defineCollection({
 	}),
 });
 
-const albumsCollection = defineCollection({
+const picturesCollection = defineCollection({
 	type: "data",
 	schema: z.object({
 		title: z.string(),
@@ -79,7 +79,7 @@ export const collections: Record<
 	ReturnType<typeof defineCollection>
 > = {
 	posts: postsCollection,
-	albums: albumsCollection,
+	pictures: picturesCollection,
 	notes: notesCollection,
 	about: aboutCollection,
 	friends: friendsCollection,

@@ -66,47 +66,47 @@ export default defineConfig({
 		svelte(),
 		// Swup 页面过渡集成
 		// swup({
-		// 	// 禁用默认主题
-		// 	theme: false,
-		// 	// 动画类前缀
-		// 	animationClass: "transition-swup-",
-		// 	// 要更新的容器
-		// 	containers: ["#swup-container", "#toc"],
-		// 	// 启用平滑滚动
-		// 	smoothScrolling: true,
-		// 	// 启用缓存
-		// 	cache: true,
-		// 	// 预加载配置
-		// 	preload: {
-		// 		hover: true, // 悬停时预加载
-		// 		focus: true, // 聚焦时预加载
-		// 		top: true, // 顶部预加载
-		// 		topOffset: 800, // 顶部预加载偏移量
-		// 		delay: 0, // 预加载延迟
-		// 		throttle: 80, // 预加载节流
-		// 	},
-		// 	// 无障碍支持
-		// 	accessibility: true,
-		// 	// 更新头部
-		// 	updateHead: true,
-		// 	// 更新 body 类
-		// 	updateBodyClass: true,
-		// 	// 全局实例
-		// 	globalInstance: true,
-		// 	// 动画选择器
-		// 	animationSelector: "[data-swup-animation]",
-		// 	// 忽略访问的条件
-		// 	ignoreVisit: (visit) => {
-		// 		// 忽略外部链接
-		// 		if (visit.url.origin !== window.location.origin) {
-		// 			return true;
-		// 		}
-		// 		// 忽略下载链接
-		// 		if (visit.link?.getAttribute("download")) {
-		// 			return true;
-		// 		}
-		// 		return false;
-		// 	},
+		// 禁用默认主题
+		// theme: false,
+		// 动画类前缀
+		// animationClass: "transition-swup-",
+		// 要更新的容器
+		// containers: ["#swup-container", "#toc"],
+		// 启用平滑滚动
+		// smoothScrolling: true,
+		// 启用缓存
+		// cache: true,
+		// 预加载配置
+		// preload: {
+		// hover: true, // 悬停时预加载
+		// focus: true, // 聚焦时预加载
+		// top: true, // 顶部预加载
+		// topOffset: 800, // 顶部预加载偏移量
+		// delay: 0, // 预加载延迟
+		// throttle: 80, // 预加载节流
+		// },
+		// 无障碍支持
+		// accessibility: true,
+		// 更新头部
+		// updateHead: true,
+		// 更新 body 类
+		// updateBodyClass: true,
+		// 全局实例
+		// globalInstance: true,
+		// 动画选择器
+		// animationSelector: "[data-swup-animation]",
+		// 忽略访问的条件
+		// ignoreVisit: (visit) => {
+		// 忽略外部链接
+		// if (visit.url.origin !== window.location.origin) {
+		// return true;
+		// }
+		// 忽略下载链接
+		// if (visit.link?.getAttribute("download")) {
+		// return true;
+		// }
+		// return false;
+		// },
 		// }),
 		// 图标集成
 		icon({

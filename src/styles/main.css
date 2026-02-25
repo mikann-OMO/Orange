@@ -49,6 +49,30 @@
             transform: translateY(0);
         }
     }
+    
+    /* 九华山游记爆炸效果动画 */
+    @keyframes explodeEntrance {
+        0% {
+            opacity: 0;
+            transform: scale(0) rotate(var(--start-rotate)) translateY(-200px);
+            left: var(--start-left);
+            top: var(--start-top);
+        }
+        30% {
+            opacity: 0.6;
+            transform: scale(1.2) rotate(var(--mid-rotate)) translateY(20px);
+        }
+        60% {
+            opacity: 0.8;
+            transform: scale(0.95) rotate(var(--end-rotate)) translateY(-10px);
+        }
+        100% {
+            opacity: 1;
+            transform: scale(1) rotate(var(--end-rotate)) translateY(0);
+            left: var(--left);
+            top: var(--top);
+        }
+    }
     .card-shadow {
         @apply drop-shadow-[0_2px_4px_rgba(0,0,0,0.005)]
     }
@@ -192,6 +216,71 @@
         width: 100% !important;
         max-width: 100% !important;
         margin: 1rem auto !important;
+    }
+    
+    /* 九华山游记图片样式，确保移动端和PC端一致 */
+    .jiuhuashan-gallery .custom-md img {
+        float: none !important;
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 1rem auto !important;
+    }
+    
+    /* 九华山游记中的弹性布局图片容器 */
+    .jiuhuashan-gallery div[style*="display: flex"] {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        gap: 5px !important;
+        margin: 20px 0 !important;
+        overflow-x: auto !important;
+        padding: 10px 0 !important;
+    }
+    
+    /* 九华山游记中的图片 */
+    .jiuhuashan-gallery div[style*="display: flex"] img {
+        width: 80px !important;
+        height: 80px !important;
+        object-fit: cover !important;
+        border-radius: 4px !important;
+        transition: transform 0.2s ease !important;
+        cursor: pointer !important;
+        flex-shrink: 0 !important;
+    }
+    
+    /* 九华山游记中的爆炸效果图片容器 */
+    .jiuhuashan-gallery div[style*="position: relative"] {
+        position: relative !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 450px !important;
+        margin: 20px 0 !important;
+        overflow: hidden !important;
+        border-radius: 8px !important;
+        padding: 10px 0 !important;
+    }
+    
+    /* 九华山游记中的爆炸效果图片 */
+    .jiuhuashan-gallery .explosion-image {
+        position: absolute !important;
+        width: var(--size) !important;
+        max-width: 40% !important;
+        height: auto !important;
+        object-fit: cover !important;
+        border-radius: 10px !important;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3) !important;
+        animation: explodeEntrance 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards !important;
+        animation-delay: var(--delay) !important;
+        transform-origin: center !important;
+        z-index: var(--z-index) !important;
+        transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1) !important;
+    }
+    
+    /* 九华山游记中的爆炸效果图片悬停 */
+    .jiuhuashan-gallery .explosion-image:hover {
+        transform: scale(1.05) rotate(var(--end-rotate)) translateY(-5px) !important;
+        box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4) !important;
+        z-index: 10 !important;
     }
 }
 

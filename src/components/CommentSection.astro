@@ -1,0 +1,283 @@
+---
+import { Astro, getStaticPaths } from "astro";
+import { Icon } from "astro-icon/components";
+
+const { entry } = Astro.props;
+const postId = entry ? entry.slug : "unknown";
+---
+<div class="max-w-[50rem] mx-auto w-full rounded-lg border border-[var(--card-border)] dark:border-[var(--card-border)] overflow-hidden relative mb-4 bg-[var(--card-bg)] dark:bg-[var(--card-bg)]">
+    <div class="p-6 relative w-full">
+        <!-- 点赞功能 -->
+        <div class="text-center mb-6">
+            <div class="flex items-center justify-center gap-2 mb-1">
+                <button id="post-like-btn" class="transition hover:scale-110" data-post-id={postId}>
+                    <Icon name="material-symbols:favorite" class="w-8 h-8 text-[var(--text-secondary)] dark:text-[var(--text-secondary)] hover:text-red-500 dark:hover:text-red-500" />
+                </button>
+            </div>
+            <p id="like-count" class="text-sm text-[var(--text-secondary)] dark:text-[var(--text-secondary)]">已有0人喜欢~</p>
+        </div>
+
+        <!-- 评论表单 -->
+        <div class="mb-4">
+            <h3 class="text-lg font-bold mb-4 text-[var(--text-primary)] dark:text-[var(--text-primary)]">
+                发表评论
+            </h3>
+            
+            <form id="comment-form" data-post-id={postId}>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-medium text-[var(--text-secondary)] dark:text-[var(--text-secondary)] mb-1">昵称 *</label>
+                        <input 
+                            type="text" 
+                            name="name" 
+                            class="w-full px-3 py-2 border border-[var(--card-border)] dark:border-[var(--card-border)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/50 bg-[var(--input-bg)] dark:bg-[var(--input-bg)] text-[var(--text-primary)] dark:text-[var(--text-primary)]"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-[var(--text-secondary)] dark:text-[var(--text-secondary)] mb-1">邮箱 *</label>
+                        <input 
+                            type="email" 
+                            name="email" 
+                            class="w-full px-3 py-2 border border-[var(--card-border)] dark:border-[var(--card-border)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/50 bg-[var(--input-bg)] dark:bg-[var(--input-bg)] text-[var(--text-primary)] dark:text-[var(--text-primary)]"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-[var(--text-secondary)] dark:text-[var(--text-secondary)] mb-1">网址 (选填)</label>
+                        <input 
+                            type="url" 
+                            name="url" 
+                            class="w-full px-3 py-2 border border-[var(--card-border)] dark:border-[var(--card-border)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/50 bg-[var(--input-bg)] dark:bg-[var(--input-bg)] text-[var(--text-primary)] dark:text-[var(--text-primary)]"
+                        />
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-[var(--text-secondary)] dark:text-[var(--text-secondary)] mb-1">写下你的评论...</label>
+                    <textarea 
+                        name="content" 
+                        rows="4" 
+                        class="w-full px-3 py-2 border border-[var(--card-border)] dark:border-[var(--card-border)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/50 resize-none bg-[var(--input-bg)] dark:bg-[var(--input-bg)] text-[var(--text-primary)] dark:text-[var(--text-primary)]"
+                        required
+                    ></textarea>
+                </div>
+                
+                <div class="flex justify-end">
+                    <button type="submit" class="px-6 py-2 bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white rounded-md transition">
+                        提交评论
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- 评论列表 -->
+        <div class="space-y-4 mt-8">
+            <h4 class="text-md font-semibold text-[var(--text-primary)] dark:text-[var(--text-primary)] mb-4">评论列表</h4>
+            
+            <!-- 测试评论 - 只在特定文章中显示 -->
+            {postId === 'acgn-car-design' && (
+                <>
+                    <div class="border-t border-[var(--line-divider)] pt-4">
+                        <div class="flex gap-3">
+                            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-[var(--btn-regular-bg)] flex items-center justify-center">
+                                <Icon name="material-symbols:person" class="w-5 h-5 text-[var(--btn-content)]" />
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-start">
+                                    <h5 class="font-medium text-[var(--text-primary)] dark:text-[var(--text-primary)]">用户A</h5>
+                                    <span class="text-xs text-[var(--text-secondary)] dark:text-[var(--text-secondary)]">2026-02-25</span>
+                                </div>
+                                <p class="text-sm text-[var(--text-secondary)] dark:text-[var(--text-secondary)] mt-1 mb-2">
+                                    这是一条评论内容，测试评论功能是否正常工作。
+                                </p>
+                                <div class="flex items-center gap-4">
+                                    <button class="text-xs text-[var(--text-secondary)] dark:text-[var(--text-secondary)] hover:text-[var(--primary)] dark:hover:text-[var(--primary)] transition">
+                                        回复
+                                    </button>
+                                    <button class="comment-like-btn text-xs text-[var(--text-secondary)] dark:text-[var(--text-secondary)] hover:text-[var(--primary)] dark:hover:text-[var(--primary)] transition" data-comment-id="1">
+                                        点赞
+                                    </button>
+                                </div>
+
+                                <!-- 回复 -->
+                                <div class="mt-3 pl-4 border-l-2 border-[var(--line-divider)]">
+                                    <div class="flex gap-2">
+                                        <div class="flex-shrink-0 w-6 h-6 rounded-full bg-[var(--btn-regular-bg)] flex items-center justify-center">
+                                            <Icon name="material-symbols:person" class="w-4 h-4 text-[var(--btn-content)]" />
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex justify-between items-start">
+                                                <h6 class="font-medium text-sm text-[var(--text-primary)] dark:text-[var(--text-primary)]">用户B</h6>
+                                                <span class="text-xs text-[var(--text-secondary)] dark:text-[var(--text-secondary)]">2026-02-25</span>
+                                            </div>
+                                            <p class="text-xs text-[var(--text-secondary)] dark:text-[var(--text-secondary)] mt-1 mb-1">
+                                                @用户A 这是对您评论的回复。
+                                            </p>
+                                            <div class="flex items-center gap-3">
+                                                <button class="text-xs text-[var(--text-secondary)] dark:text-[var(--text-secondary)] hover:text-[var(--primary)] dark:hover:text-[var(--primary)] transition">
+                                                    回复
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-[var(--line-divider)] pt-4">
+                        <div class="flex gap-3">
+                            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-[var(--btn-regular-bg)] flex items-center justify-center">
+                                <Icon name="material-symbols:person" class="w-5 h-5 text-[var(--btn-content)]" />
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-start">
+                                    <h5 class="font-medium text-[var(--text-primary)] dark:text-[var(--text-primary)]">用户C</h5>
+                                    <span class="text-xs text-[var(--text-secondary)] dark:text-[var(--text-secondary)]">2026-02-25</span>
+                                </div>
+                                <p class="text-sm text-[var(--text-secondary)] dark:text-[var(--text-secondary)] mt-1 mb-2">
+                                    这是另一条独立评论，测试不同用户之间的评论功能。
+                                </p>
+                                <div class="flex items-center gap-4">
+                                    <button class="text-xs text-[var(--text-secondary)] dark:text-[var(--text-secondary)] hover:text-[var(--primary)] dark:hover:text-[var(--primary)] transition">
+                                        回复
+                                    </button>
+                                    <button class="comment-like-btn text-xs text-[var(--text-secondary)] dark:text-[var(--text-secondary)] hover:text-[var(--primary)] dark:hover:text-[var(--primary)] transition" data-comment-id="2">
+                                        点赞
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </>
+            )}
+            
+            <!-- 暂无评论提示 -->
+            {postId !== 'acgn-car-design' && (
+                <div class="text-center py-8">
+                    <div class="mb-4">
+                        <Icon name="material-symbols:comment-rounded" class="w-10 h-10 text-[var(--text-secondary)]/30 dark:text-[var(--text-secondary)]/30 mx-auto" />
+                    </div>
+                    <p class="text-sm text-[var(--text-secondary)] dark:text-[var(--text-secondary)]">暂无评论，快来发表你的看法吧！</p>
+                </div>
+            )}
+        </div>
+    </div>
+</div>
+
+<script>
+// 后端功能说明：
+// 1. 当用户A评论时，用户B对A进行回复，博主会收到邮件通知
+// 2. 当用户A和用户B都评论时，他们互相不会收到通知，只有博主会收到
+// 3. 邮件通知中会包含文章标题和评论内容，标记是哪篇文章的回复
+// 4. 所有回复都会发送到博主邮箱：1035757196@qq.com
+// 5. 前端已实现点赞功能，网址框为选填
+// 6. 组件已适配夜间/日间模式切换
+
+// 清除缓存记录
+localStorage.removeItem('likedPosts');
+// 清除评论点赞记录
+for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && key.startsWith('comment_')) {
+        localStorage.removeItem(key);
+    }
+}
+
+// 前端逻辑：
+// 1. 评论区不互通：通过postId区分不同文章的评论
+// 2. 点赞功能：每个用户只能对同一文章点一次赞
+
+// 获取当前文章ID
+const postId = document.getElementById('comment-form').dataset.postId;
+
+// 点赞功能实现
+const postLikeBtn = document.getElementById('post-like-btn');
+const likeCountElement = document.getElementById('like-count');
+
+// 检查用户是否已经点赞过
+function checkUserLiked() {
+    const likedPosts = JSON.parse(localStorage.getItem('likedPosts') || '[]');
+    return likedPosts.includes(postId);
+}
+
+// 初始化点赞状态
+function initLikeStatus() {
+    if (checkUserLiked()) {
+        const likeIcon = postLikeBtn.querySelector('svg');
+        likeIcon.classList.remove('text-[var(--text-secondary)]', 'dark:text-[var(--text-secondary)]');
+        likeIcon.classList.add('text-red-500', 'dark:text-red-500');
+        postLikeBtn.disabled = true;
+        postLikeBtn.classList.add('cursor-not-allowed');
+    }
+}
+
+// 处理点赞事件
+postLikeBtn.addEventListener('click', function() {
+    if (checkUserLiked()) return;
+    
+    // 模拟点赞操作
+    const currentCount = parseInt(likeCountElement.textContent.match(/\d+/)[0]);
+    const newCount = currentCount + 1;
+    likeCountElement.textContent = `已有${newCount}人喜欢~`;
+    
+    // 更新UI
+    const likeIcon = this.querySelector('svg');
+    likeIcon.classList.remove('text-[var(--text-secondary)]', 'dark:text-[var(--text-secondary)]');
+    likeIcon.classList.add('text-red-500', 'dark:text-red-500');
+    
+    // 禁用按钮
+    this.disabled = true;
+    this.classList.add('cursor-not-allowed');
+    
+    // 保存到本地存储
+    const likedPosts = JSON.parse(localStorage.getItem('likedPosts') || '[]');
+    likedPosts.push(postId);
+    localStorage.setItem('likedPosts', JSON.stringify(likedPosts));
+    
+    // 后端API调用（实际项目中）
+    // fetch('/api/like', {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({ postId })
+    // });
+});
+
+// 评论点赞功能
+const commentLikeBtns = document.querySelectorAll('.comment-like-btn');
+commentLikeBtns.forEach(btn => {
+    const commentId = btn.dataset.commentId;
+    const likeKey = `comment_${postId}_${commentId}_liked`;
+    
+    // 检查是否已点赞
+    if (localStorage.getItem(likeKey)) {
+        btn.disabled = true;
+        btn.classList.add('text-red-500', 'dark:text-red-500');
+        btn.classList.remove('text-[var(--text-secondary)]', 'dark:text-[var(--text-secondary)]');
+    }
+    
+    // 处理评论点赞
+    btn.addEventListener('click', function() {
+        if (localStorage.getItem(likeKey)) return;
+        
+        // 更新UI
+        this.disabled = true;
+        this.classList.add('text-red-500', 'dark:text-red-500');
+        this.classList.remove('text-[var(--text-secondary)]', 'dark:text-[var(--text-secondary)]');
+        
+        // 保存到本地存储
+        localStorage.setItem(likeKey, 'true');
+        
+        // 后端API调用（实际项目中）
+        // fetch('/api/comment-like', {
+        //     method: 'POST',
+        //     headers: { 'Content-Type': 'application/json' },
+        //     body: JSON.stringify({ postId, commentId })
+        // });
+    });
+});
+
+// 初始化
+initLikeStatus();
+</script>

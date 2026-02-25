@@ -28,7 +28,7 @@ export function applyThemeToDocument(theme: LIGHT_DARK_MODE): void {
 export function setTheme(theme: LIGHT_DARK_MODE): void {
 	localStorage.setItem("theme", theme);
 	applyThemeToDocument(theme);
-	// 触发主题变化事件，用于通知其他组件如giscus评论区
+	// 触发主题变化事件
 	const event = new CustomEvent("themeChange", { detail: { theme } });
 	window.dispatchEvent(event);
 }
