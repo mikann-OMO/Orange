@@ -1,5 +1,4 @@
 ---
-import { Astro, getStaticPaths } from "astro";
 import { Icon } from "astro-icon/components";
 
 const { entry } = Astro.props;
@@ -166,10 +165,10 @@ const postId = entry ? entry.slug : "unknown";
     </div>
 </div>
 
-<script>
+<script is:inline>
 // 后端功能说明：
 // 1. 当用户A评论时，用户B对A进行回复，博主会收到邮件通知
-// 2. 当用户A和用户B都评论时，他们互相不会收到通知，只有博主会收到
+// 2. 当用户A和用户B评论时，他们互相不会收到通知，只有博主会收到
 // 3. 邮件通知中会包含文章标题和评论内容，标记是哪篇文章的回复
 // 4. 所有回复都会发送到博主邮箱：1035757196@qq.com
 // 5. 前端已实现点赞功能，网址框为选填
@@ -190,7 +189,8 @@ for (let i = 0; i < localStorage.length; i++) {
 // 2. 点赞功能：每个用户只能对同一文章点一次赞
 
 // 获取当前文章ID
-const postId = document.getElementById('comment-form').dataset.postId;
+const commentForm = document.getElementById('comment-form');
+const postId = commentForm ? commentForm.dataset.postId : '';
 
 // 点赞功能实现
 const postLikeBtn = document.getElementById('post-like-btn');
@@ -204,77 +204,78 @@ function checkUserLiked() {
 
 // 初始化点赞状态
 function initLikeStatus() {
-    if (checkUserLiked()) {
+    if (checkUserLiked() && postLikeBtn) {
         const likeIcon = postLikeBtn.querySelector('svg');
-        likeIcon.classList.remove('text-[var(--text-secondary)]', 'dark:text-[var(--text-secondary)]');
-        likeIcon.classList.add('text-red-500', 'dark:text-red-500');
-        postLikeBtn.disabled = true;
+        if (likeIcon) {
+            likeIcon.classList.remove('text-[var(--text-secondary)]', 'dark:text-[var(--text-secondary)]');
+            likeIcon.classList.add('text-red-500', 'dark:text-red-500');
+        }
+        postLikeBtn.setAttribute('data-disabled', 'true');
         postLikeBtn.classList.add('cursor-not-allowed');
     }
 }
 
 // 处理点赞事件
-postLikeBtn.addEventListener('click', function() {
-    if (checkUserLiked()) return;
-    
-    // 模拟点赞操作
-    const currentCount = parseInt(likeCountElement.textContent.match(/\d+/)[0]);
-    const newCount = currentCount + 1;
-    likeCountElement.textContent = `已有${newCount}人喜欢~`;
-    
-    // 更新UI
-    const likeIcon = this.querySelector('svg');
-    likeIcon.classList.remove('text-[var(--text-secondary)]', 'dark:text-[var(--text-secondary)]');
-    likeIcon.classList.add('text-red-500', 'dark:text-red-500');
-    
-    // 禁用按钮
-    this.disabled = true;
-    this.classList.add('cursor-not-allowed');
-    
-    // 保存到本地存储
-    const likedPosts = JSON.parse(localStorage.getItem('likedPosts') || '[]');
-    likedPosts.push(postId);
-    localStorage.setItem('likedPosts', JSON.stringify(likedPosts));
-    
-    // 后端API调用（实际项目中）
-    // fetch('/api/like', {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify({ postId })
-    // });
-});
+if (postLikeBtn) {
+    postLikeBtn.addEventListener('click', function() {
+        if (checkUserLiked()) return;
+
+        // 模拟点赞操作
+        let currentCount = 0;
+        if (likeCountElement && likeCountElement.textContent) {
+            const match = likeCountElement.textContent.match(/\d+/);
+            if (match) {
+                currentCount = parseInt(match[0]);
+            }
+        }
+        const newCount = currentCount + 1;
+        if (likeCountElement) {
+            likeCountElement.textContent = `已有${newCount}人喜欢~`;
+        }
+
+        // 更新UI
+        const likeIcon = this.querySelector('svg');
+        if (likeIcon) {
+            likeIcon.classList.remove('text-[var(--text-secondary)]', 'dark:text-[var(--text-secondary)]');
+            likeIcon.classList.add('text-red-500', 'dark:text-red-500');
+        }
+
+        // 禁用按钮
+        this.setAttribute('data-disabled', 'true');
+        this.classList.add('cursor-not-allowed');
+
+        // 保存到本地存储
+        const likedPosts = JSON.parse(localStorage.getItem('likedPosts') || '[]');
+        likedPosts.push(postId);
+        localStorage.setItem('likedPosts', JSON.stringify(likedPosts));
+    });
+}
 
 // 评论点赞功能
 const commentLikeBtns = document.querySelectorAll('.comment-like-btn');
-commentLikeBtns.forEach(btn => {
-    const commentId = btn.dataset.commentId;
+commentLikeBtns.forEach((btn) => {
+    const btnEl = /** @type {HTMLElement} */ (btn);
+    const commentId = btnEl.dataset.commentId;
     const likeKey = `comment_${postId}_${commentId}_liked`;
-    
+
     // 检查是否已点赞
     if (localStorage.getItem(likeKey)) {
-        btn.disabled = true;
-        btn.classList.add('text-red-500', 'dark:text-red-500');
-        btn.classList.remove('text-[var(--text-secondary)]', 'dark:text-[var(--text-secondary)]');
+        btnEl.setAttribute('data-disabled', 'true');
+        btnEl.classList.add('text-red-500', 'dark:text-red-500');
+        btnEl.classList.remove('text-[var(--text-secondary)]', 'dark:text-[var(--text-secondary)]');
     }
-    
+
     // 处理评论点赞
-    btn.addEventListener('click', function() {
+    btnEl.addEventListener('click', function() {
         if (localStorage.getItem(likeKey)) return;
-        
+
         // 更新UI
-        this.disabled = true;
+        this.setAttribute('data-disabled', 'true');
         this.classList.add('text-red-500', 'dark:text-red-500');
         this.classList.remove('text-[var(--text-secondary)]', 'dark:text-[var(--text-secondary)]');
-        
+
         // 保存到本地存储
         localStorage.setItem(likeKey, 'true');
-        
-        // 后端API调用（实际项目中）
-        // fetch('/api/comment-like', {
-        //     method: 'POST',
-        //     headers: { 'Content-Type': 'application/json' },
-        //     body: JSON.stringify({ postId, commentId })
-        // });
     });
 });
 
