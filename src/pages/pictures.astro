@@ -11,14 +11,17 @@ const sorted = pictures.slice().sort((a, b) => {
 	return da;
 });
 
-const imageModules = import.meta.glob("../content/pictures/**/*.{jpg,jpeg,png}", {
-	eager: true,
-	as: "url",
-}) as Record<string, string>;
+const imageModules = import.meta.glob(
+	"../content/pictures/**/*.{jpg,jpeg,png}",
+	{
+		eager: true,
+		as: "url",
+	},
+) as Record<string, string>;
 
 function sampleMosaic(dir: string, cover?: string) {
-	const entries = Object.entries(imageModules).filter(([k]) =>
-		k.includes(`pictures\\${dir}`) || k.includes(`pictures/${dir}`),
+	const entries = Object.entries(imageModules).filter(
+		([k]) => k.includes(`pictures\\${dir}`) || k.includes(`pictures/${dir}`),
 	);
 	const pinnedByAlbum: Record<string, string> = {
 		"南京2024.10.18": "a南京站.jpg",

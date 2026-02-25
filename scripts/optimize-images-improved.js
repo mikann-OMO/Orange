@@ -6,9 +6,9 @@
  */
 
 import { existsSync, mkdirSync, rmSync } from "node:fs";
+import path from "node:path";
 import { glob } from "glob";
 import sharp from "sharp";
-import path from "node:path";
 
 /**
  * 图片优化配置
@@ -38,7 +38,9 @@ const IGNORE_DIRS = ["node_modules", ".git", "dist"];
  * @returns {Promise<string[]>} 图片文件路径数组
  */
 async function getAllOriginalImages() {
-	const patterns = IMAGE_EXTENSIONS.map((ext) => `${OPTIMIZATION_CONFIG.inputDir}/**/*.${ext}`);
+	const patterns = IMAGE_EXTENSIONS.map(
+		(ext) => `${OPTIMIZATION_CONFIG.inputDir}/**/*.${ext}`,
+	);
 	const options = {
 		ignore: IGNORE_DIRS.map((dir) => `${dir}/**`),
 		nodir: true,
@@ -87,7 +89,10 @@ async function optimizeImage(filePath) {
 
 		// 计算输出路径
 		const relativePath = path.relative(OPTIMIZATION_CONFIG.inputDir, filePath);
-		const basePath = path.join(OPTIMIZATION_CONFIG.outputDir, relativePath.replace(/\.[^/.]+$/, ""));
+		const basePath = path.join(
+			OPTIMIZATION_CONFIG.outputDir,
+			relativePath.replace(/\.[^/.]+$/, ""),
+		);
 		const outputDir = path.dirname(basePath);
 
 		// 确保输出目录存在
@@ -195,17 +200,23 @@ async function cleanUnusedImages(usedImages) {
 
 	// 获取所有生成的图片
 	const allGeneratedImages = [];
-	const patterns = ["**/*.jpg", "**/*.jpeg", "**/*.png", "**/*.webp", "**/*.avif"];
-	
+	const patterns = [
+		"**/*.jpg",
+		"**/*.jpeg",
+		"**/*.png",
+		"**/*.webp",
+		"**/*.avif",
+	];
+
 	for (const pattern of patterns) {
 		const files = await glob(`${OPTIMIZATION_CONFIG.outputDir}/${pattern}`, {
-			nodir: true
+			nodir: true,
 		});
 		allGeneratedImages.push(...files);
 	}
 
 	// 找出未使用的图片
-	const unusedImages = allGeneratedImages.filter(img => {
+	const unusedImages = allGeneratedImages.filter((img) => {
 		const relativePath = path.relative(OPTIMIZATION_CONFIG.outputDir, img);
 		return !usedImages.includes(`/images/${relativePath}`);
 	});
@@ -232,21 +243,21 @@ async function analyzeUsedImages() {
 	const imagePatterns = [
 		/\/images\/[^"'\s]+\.(jpg|jpeg|png|webp|avif)/g,
 		/"\/images\/[^"']+/g,
-		/'\/images\/[^"']+/g
+		/'\/images\/[^"']+/g,
 	];
 
 	const usedImages = new Set();
 
 	// 搜索所有可能包含图片引用的文件
 	const files = await glob("src/**/*.{js,jsx,ts,tsx,md,astro}", {
-		ignore: IGNORE_DIRS.map(dir => `${dir}/**`)
+		ignore: IGNORE_DIRS.map((dir) => `${dir}/**`),
 	});
 
 	const fs = await import("node:fs/promises");
 
 	for (const file of files) {
-		const content = await fs.readFile(file, 'utf8');
-		
+		const content = await fs.readFile(file, "utf8");
+
 		for (const pattern of imagePatterns) {
 			let match;
 			while (true) {
@@ -254,7 +265,7 @@ async function analyzeUsedImages() {
 				if (match === null) break;
 				let imagePath = match[0];
 				// 清理引号
-				imagePath = imagePath.replace(/['"]/g, '');
+				imagePath = imagePath.replace(/['"]/g, "");
 				usedImages.add(imagePath);
 			}
 		}
