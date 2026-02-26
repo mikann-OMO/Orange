@@ -48,9 +48,9 @@ draft: false
 
 ------
 
-># 南京 [南京 2024.10.18 图册](/pictures/nanjing-2024-10-18/)
+># 南京 [南京 2024.10.18 图册](/pictures/南京2024.10.18/)
 
-<img src="/images/南京2024.10.18/a南京站.jpg" alt="南京站" style="float: right; width: 260px; margin: 0 0 8px 16px; border-radius: 8px;" />
+<img src="/pictures/南京2024.10.18/a南京站.jpg" alt="南京站" style="float: right; width: 260px; margin: 0 0 8px 16px; border-radius: 8px;" />
 
 终于开始写关于旅行了，大一上半学期，我的第一站是**南京**。为什么我会开始计划旅行呢？嘿嘿，天高任鸟飞！读万卷书不如行万里路，我倒要看看外面的世界是怎样的。
 
@@ -74,9 +74,9 @@ draft: false
 
 ---
 
-># 苏州 [苏州 2025.01.04 图册](/pictures/suzhou-2025-01-04/)
+># 苏州 [苏州 2025.01.04 图册](/pictures/苏州2025.01.04/)
 
-<img src="/images/苏州2025.01.04/a苏州站.jpg" alt="苏州站" style="float: right; width: 260px; margin: 0 0 8px 16px; border-radius: 8px;" />
+<img src="/pictures/苏州2025.01.04/a苏州站.jpg" alt="苏州站" style="float: right; width: 260px; margin: 0 0 8px 16px; border-radius: 8px;" />
 
 这一站，我**第二次见了网友**。这次是一位认识了很久的网友，出去玩的行程大部分都是他带着的，可以看得出来他真的很认真的安排了这次出行，也很紧张我的看法。他跟我说他都是问过他朋友然后提前踩过点的，很用心，我内心挺感动的，但是不表现出来，我这个人还是挺别扭的哈哈哈。不过第二天我是自己逛的，还是想留出一天时间自己逛。
 
