@@ -2,23 +2,20 @@
 import { Icon } from "astro-icon/components";
 
 const { entry } = Astro.props;
-const postId = entry ? entry.slug : "unknown";
+const postSlug = entry ? entry.slug : "unknown";
 const postTitle = entry ? entry.data.title : "";
+const postUrl = entry ? Astro.url.href : "";
 ---
 <div class="px-6">
   <div class="max-w-3xl mx-auto">
-    <!-- 点赞功能 -->
-    <div class="text-center mb-6">
-      <div class="flex items-center justify-center gap-2 mb-1">
-        <button id="post-like-btn" class="transition hover:scale-110" data-post-id={postId}>
-          <Icon name="material-symbols:favorite" class="w-8 h-8 text-[var(--text-secondary)] dark:text-[var(--text-secondary)] hover:text-red-500 dark:hover:text-red-500" />
-        </button>
-      </div>
-      <p id="like-count" class="text-sm text-[var(--text-secondary)] dark:text-[var(--text-secondary)]">已有0人喜欢~</p>
-    </div>
-
     <!-- CWD 评论系统 -->
-    <div id="cwd-comments" data-api-base-url="https://comments.lapis.cafe" data-custom-css-url="/cwd-custom.css"></div>
+    <div id="cwd-comments" 
+      data-api-base-url="https://cwd-api.2744167586.workers.dev" 
+      data-custom-css-url="/cwd-custom.css"
+      data-post-slug={postSlug}
+      data-post-title={postTitle}
+      data-post-url={postUrl}
+    ></div>
     <div class="mt-3 text-center text-sm text-[var(--text-secondary)] dark:text-[var(--text-secondary)]">
       未登录？<a href="https://cwd.js.org/" target="_blank" rel="noreferrer" class="underline hover:text-[var(--primary)]">前往 Cloudflare 登录</a>
     </div>
@@ -62,6 +59,9 @@ const postTitle = entry ? entry.data.title : "";
           const apiBaseUrl = container.dataset.apiBaseUrl;
           if (!apiBaseUrl) return;
           const customCssUrl = container.dataset.customCssUrl;
+          const postSlug = container.dataset.postSlug;
+          const postTitle = container.dataset.postTitle;
+          const postUrl = container.dataset.postUrl;
 
           await loadScript();
 
@@ -69,6 +69,9 @@ const postTitle = entry ? entry.data.title : "";
             el: container,
             apiBaseUrl,
             theme: getTheme(),
+            postSlug,
+            postTitle,
+            postUrl,
           };
           if (customCssUrl) {
             config.customCssUrl = customCssUrl;
@@ -110,74 +113,3 @@ const postTitle = entry ? entry.data.title : "";
     </script>
   </div>
 </div>
-
-<script is:inline>
-// 前端逻辑：
-// 1. 评论区不互通：通过postId区分不同文章的评论
-// 2. 点赞功能：每个用户只能对同一文章点一次赞
-
-// 获取当前文章ID
-const postId = document.getElementById('post-like-btn').dataset.postId;
-
-// 点赞功能实现
-const postLikeBtn = document.getElementById('post-like-btn');
-const likeCountElement = document.getElementById('like-count');
-
-// 检查用户是否已经点赞过
-function checkUserLiked() {
-    const likedPosts = JSON.parse(localStorage.getItem('likedPosts') || '[]');
-    return likedPosts.includes(postId);
-}
-
-// 初始化点赞状态
-function initLikeStatus() {
-    if (checkUserLiked() && postLikeBtn) {
-        const likeIcon = postLikeBtn.querySelector('svg');
-        if (likeIcon) {
-            likeIcon.classList.remove('text-[var(--text-secondary)]', 'dark:text-[var(--text-secondary)]');
-            likeIcon.classList.add('text-red-500', 'dark:text-red-500');
-        }
-        postLikeBtn.setAttribute('data-disabled', 'true');
-        postLikeBtn.classList.add('cursor-not-allowed');
-    }
-}
-
-// 处理点赞事件
-if (postLikeBtn) {
-    postLikeBtn.addEventListener('click', function() {
-        if (checkUserLiked()) return;
-
-        // 模拟点赞操作
-        let currentCount = 0;
-        if (likeCountElement && likeCountElement.textContent) {
-            const match = likeCountElement.textContent.match(/\d+/);
-            if (match) {
-                currentCount = parseInt(match[0]);
-            }
-        }
-        const newCount = currentCount + 1;
-        if (likeCountElement) {
-            likeCountElement.textContent = `已有${newCount}人喜欢~`;
-        }
-
-        // 更新UI
-        const likeIcon = this.querySelector('svg');
-        if (likeIcon) {
-            likeIcon.classList.remove('text-[var(--text-secondary)]', 'dark:text-[var(--text-secondary)]');
-            likeIcon.classList.add('text-red-500', 'dark:text-red-500');
-        }
-
-        // 禁用按钮
-        this.setAttribute('data-disabled', 'true');
-        this.classList.add('cursor-not-allowed');
-
-        // 保存到本地存储
-        const likedPosts = JSON.parse(localStorage.getItem('likedPosts') || '[]');
-        likedPosts.push(postId);
-        localStorage.setItem('likedPosts', JSON.stringify(likedPosts));
-    });
-}
-
-// 初始化
-initLikeStatus();
-</script>

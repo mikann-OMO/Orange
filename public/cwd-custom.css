@@ -1,0 +1,68 @@
+#cwd-comments {
+	color: var(--text-primary, #111827);
+	background: var(--btn-regular-bg, #f3f4f6);
+	border: 1px solid var(--line-divider, #e5e7eb);
+	border-radius: 1rem;
+	padding: 1rem;
+}
+
+#cwd-comments,
+#cwd-comments * {
+	font-family: var(
+		--font-sans,
+		"Roboto",
+		"PingFang SC",
+		"Microsoft YaHei",
+		sans-serif
+	);
+}
+
+#cwd-comments a {
+	color: var(--primary, #2563eb);
+	text-decoration: none;
+}
+
+#cwd-comments a:hover {
+	text-decoration: underline;
+}
+
+#cwd-comments input,
+#cwd-comments textarea {
+	background: var(--card-bg, #ffffff);
+	border: 1px solid var(--primary, #2563eb);
+	border-radius: 0.75rem;
+	padding: 0.6rem 0.8rem;
+	color: inherit;
+}
+
+#cwd-comments input:focus,
+#cwd-comments textarea:focus {
+	outline: none;
+	border-color: var(--primary, #2563eb);
+	box-shadow: 0 0 0 2px var(--primary, #2563eb);
+}
+
+#cwd-comments button {
+	background: var(--btn-regular-bg, #f3f4f6);
+	color: var(--btn-content, #111827);
+	border: 1px solid var(--line-divider, #e5e7eb);
+	border-radius: 9999px;
+	padding: 0.5rem 1rem;
+	transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+#cwd-comments button:hover {
+	background: var(--btn-regular-bg-hover, #e5e7eb);
+	border-color: var(--primary, #2563eb);
+}
+
+#cwd-comments hr {
+	border: none;
+	border-top: 1px dashed var(--line-divider, #e5e7eb);
+	margin: 1rem 0;
+}
+
+#cwd-comments img,
+#cwd-comments video {
+	border-radius: 0.75rem;
+}
