@@ -8,19 +8,37 @@ const postUrl = entry ? Astro.url.href : "";
 ---
 <div class="px-6">
   <div class="max-w-3xl mx-auto">
-    <!-- CWD 评论系统 -->
+    <!-- CWD 评论系统 - 懒加载 -->
     <div id="cwd-comments" 
       data-api-base-url="https://cwd-api.2744167586.workers.dev" 
       data-custom-css-url="/cwd-custom.css"
       data-post-slug={postSlug}
       data-post-title={postTitle}
       data-post-url={postUrl}
-    ></div>
+    >
+      <!-- 骨架屏 -->
+      <div id="cwd-skeleton" class="py-6">
+        <div class="flex items-center gap-4 mb-6">
+          <div class="w-10 h-10 rounded-full bg-black/10 dark:bg-white/10 animate-pulse"></div>
+          <div class="flex-1">
+            <div class="h-4 w-24 bg-black/10 dark:bg-white/10 rounded animate-pulse mb-2"></div>
+            <div class="h-3 w-32 bg-black/10 dark:bg-white/10 rounded animate-pulse"></div>
+          </div>
+        </div>
+        <div class="space-y-3">
+          <div class="h-3 w-full bg-black/10 dark:bg-white/10 rounded animate-pulse"></div>
+          <div class="h-3 w-5/6 bg-black/10 dark:bg-white/10 rounded animate-pulse"></div>
+          <div class="h-3 w-4/6 bg-black/10 dark:bg-white/10 rounded animate-pulse"></div>
+        </div>
+      </div>
+    </div>
     
     <script data-astro-exec>
       (() => {
         const getTheme = () =>
           document.documentElement.classList.contains("dark") ? "dark" : "light";
+
+        const isMobile = () => window.innerWidth <= 768;
 
         const loadScript = () => {
           if (window.CWDComments) return Promise.resolve();
@@ -38,8 +56,9 @@ const postUrl = entry ? Astro.url.href : "";
 
           return new Promise((resolve, reject) => {
             const script = document.createElement("script");
-            script.src = "https://unpkg.com/cwd-widget@0.0.x/dist/cwd.js";
+            script.src = "https://unpkg.com/cwd-widget@0.1.7/dist/cwd.umd.js";
             script.async = true;
+            script.defer = true;
             script.dataset.cwdWidget = "true";
             script.onload = () => {
               script.dataset.loaded = "true";
@@ -50,9 +69,17 @@ const postUrl = entry ? Astro.url.href : "";
           });
         };
 
+        let commentsLoaded = false;
+        let preloadTriggered = false;
+
         const mountComments = async () => {
+          if (commentsLoaded) return;
+          commentsLoaded = true;
+          
           const container = document.querySelector("#cwd-comments");
           if (!container) return;
+          
+          const skeleton = document.querySelector("#cwd-skeleton");
           const apiBaseUrl = container.dataset.apiBaseUrl;
           if (!apiBaseUrl) return;
           const customCssUrl = container.dataset.customCssUrl;
@@ -61,6 +88,10 @@ const postUrl = entry ? Astro.url.href : "";
           const postUrl = container.dataset.postUrl;
 
           await loadScript();
+
+          if (skeleton && skeleton.parentNode) {
+            skeleton.parentNode.removeChild(skeleton);
+          }
 
           const config = {
             el: container,
@@ -88,6 +119,12 @@ const postUrl = entry ? Astro.url.href : "";
           container._cwdInstance = instance;
         };
 
+        const preloadComments = () => {
+          if (preloadTriggered) return;
+          preloadTriggered = true;
+          loadScript();
+        };
+
         const updateTheme = () => {
           const container = document.querySelector("#cwd-comments");
           const instance = container?._cwdInstance;
@@ -104,8 +141,53 @@ const postUrl = entry ? Astro.url.href : "";
         });
         observer.observe(document.documentElement, { attributes: true });
 
-        mountComments();
-        document.addEventListener("astro:page-load", mountComments);
+        const setupLazyLoad = () => {
+          const container = document.querySelector("#cwd-comments");
+          if (!container) return;
+          
+          const mobile = isMobile();
+          const rootMargin = mobile ? "0px" : "200px";
+          
+          const io = new IntersectionObserver((entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                io.disconnect();
+                mountComments();
+              }
+            }
+          }, {
+            rootMargin,
+            threshold: 0.1
+          });
+          io.observe(container);
+
+          if (mobile) {
+            window.addEventListener('scroll', () => {
+              const scrollY = window.scrollY || window.pageYOffset;
+              const windowHeight = window.innerHeight;
+              const documentHeight = document.documentElement.scrollHeight;
+              
+              if (scrollY + windowHeight >= documentHeight - (windowHeight * 1.5)) {
+                preloadComments();
+              }
+            }, { passive: true });
+          }
+        };
+
+        setupLazyLoad();
+        document.addEventListener("astro:page-load", () => {
+          commentsLoaded = false;
+          preloadTriggered = false;
+          setupLazyLoad();
+        });
+
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(() => {
+            if (!isMobile()) {
+              preloadComments();
+            }
+          }, { timeout: 2000 });
+        }
       })();
     </script>
   </div>
