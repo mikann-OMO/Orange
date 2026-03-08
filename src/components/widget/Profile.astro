@@ -10,7 +10,7 @@ const { class: className } = Astro.props;
 <div class:list={["card-base", "p-3", className]}>
     <a aria-label="Go to About Page" href={url('/about/')}
        class="group block relative mx-auto mt-1 mb-3
-       w-[12rem] h-[12rem] overflow-hidden rounded-full active:scale-95">
+       w-48 h-48 overflow-hidden rounded-full active:scale-95">
         <div class="absolute transition pointer-events-none group-hover:bg-black/30 group-active:bg-black/50
         w-full h-full z-50 flex items-center justify-center rounded-full">
             <Icon name="fa6-regular:address-card"
@@ -36,5 +36,19 @@ const { class: className } = Astro.props;
             </a>}
         </div>
     </div>
+    
+    <style>
+      /* 确保头像能正常显示 */
+      .card-base img {
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        background: transparent !important;
+        animation: none !important;
+      }
+    </style>
 </div>
 

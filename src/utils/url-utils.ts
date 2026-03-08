@@ -74,5 +74,9 @@ export function getDir(filePath: string): string {
  * Generate a full URL with the base URL prepended
  */
 export function url(path: string): string {
-	return joinUrl("", import.meta.env.BASE_URL, path);
+	// 确保路径正确拼接，避免双斜杠
+	const baseUrl = import.meta.env.BASE_URL || "/";
+	const normalizedPath = path.startsWith("/") ? path.slice(1) : path;
+	const result = joinUrl(baseUrl, normalizedPath);
+	return result;
 }

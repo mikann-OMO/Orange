@@ -361,15 +361,16 @@ img[src]:not([src=""]) {
 /* 图片加载过渡效果 */
 img {
     transition: opacity 0.3s ease-in-out;
+    opacity: 1 !important;
 }
 
 img[loading="lazy"] {
-    opacity: 0;
+    opacity: 1 !important;
 }
 
 img[loading="lazy"].loaded,
 img[loading="lazy"][complete] {
-    opacity: 1;
+    opacity: 1 !important;
 }
 
 /* 内容可见性优化 - 提升渲染性能 */

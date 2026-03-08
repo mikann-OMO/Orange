@@ -24,6 +24,19 @@ const style = Astro.props.style;
     <slot/>
 </div>
 
+<style>
+  /* 确保 Markdown 中的图片能正常显示 */
+  .custom-md img {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    max-width: 100% !important;
+    height: auto !important;
+    background: transparent !important;
+    animation: none !important;
+  }
+</style>
+
 <script>
   const observer = new MutationObserver(addPreCopyButton);
   observer.observe(document.body, { childList: true, subtree: true });

@@ -24,14 +24,167 @@ type ImageMeta = { file: string; title?: string; desc?: string };
 const imageMetas: ImageMeta[] = album.data.images ?? [];
 const metaMap = new Map<string, ImageMeta>(imageMetas.map((m) => [m.file, m]));
 
-const glob = import.meta.glob("../../content/pictures/**/*.{jpg,jpeg,png}", {
-	eager: true,
-}) as Record<string, { default: ImageMetadata }>;
+// 使用 public/pictures 目录中的图片
+const entries = [];
 
-const entries = Object.entries(glob).filter(
-	([k]) =>
-		k.includes(`pictures\\${albumName}`) || k.includes(`pictures/${albumName}`),
-);
+// 手动指定图片路径，确保能正确访问
+const possibleImages = [];
+
+// 为九华山相册添加数字命名的图片
+if (albumName === "九华山2026.01.01") {
+	for (let i = 1; i <= 45; i++) {
+		possibleImages.push(`/pictures/${albumName}/${i}.jpg`);
+	}
+}
+// 为南京相册添加图片
+else if (albumName === "南京2024.10.18") {
+	possibleImages.push(`/pictures/${albumName}/a南京站.jpg`);
+	possibleImages.push(`/pictures/${albumName}/b启程路上的落叶.jpg`);
+	possibleImages.push(`/pictures/${albumName}/c老门东.jpg`);
+	possibleImages.push(`/pictures/${albumName}/d鸭血粉丝蟹黄汤包.jpg`);
+	possibleImages.push(`/pictures/${albumName}/e人很少的地铁站.jpg`);
+	possibleImages.push(`/pictures/${albumName}/f片皮烤鸭.jpg`);
+	possibleImages.push(`/pictures/${albumName}/g鲜丰水果盒.jpg`);
+	possibleImages.push(`/pictures/${albumName}/h中山陵.jpg`);
+	possibleImages.push(`/pictures/${albumName}/i中山陵2.jpg`);
+	possibleImages.push(`/pictures/${albumName}/j中山陵3.jpg`);
+	possibleImages.push(`/pictures/${albumName}/k中山陵.jpg`);
+	possibleImages.push(`/pictures/${albumName}/k中山陵梧桐大道.jpg`);
+	possibleImages.push(`/pictures/${albumName}/l美龄宫.jpg`);
+	possibleImages.push(`/pictures/${albumName}/m音乐台2.jpg`);
+	possibleImages.push(`/pictures/${albumName}/n音乐台.jpg`);
+	possibleImages.push(`/pictures/${albumName}/o拌饭.jpg`);
+	possibleImages.push(`/pictures/${albumName}/o猪.jpg`);
+	possibleImages.push(`/pictures/${albumName}/p秦淮河.jpg`);
+	possibleImages.push(`/pictures/${albumName}/q秦淮河2.jpg`);
+	possibleImages.push(`/pictures/${albumName}/r玄武湖.jpg`);
+	possibleImages.push(`/pictures/${albumName}/s玄武湖2.jpg`);
+	possibleImages.push(`/pictures/${albumName}/t玄武湖3.jpg`);
+	possibleImages.push(`/pictures/${albumName}/u步行街那块.jpg`);
+	possibleImages.push(`/pictures/${albumName}/w路上很热.jpg`);
+	possibleImages.push(`/pictures/${albumName}/y缪斯校服.jpg`);
+	possibleImages.push(`/pictures/${albumName}/z一身猫毛.jpg`);
+}
+// 为广州相册添加图片
+else if (albumName === "广州2025.04.30") {
+	possibleImages.push(`/pictures/${albumName}/a广州站.jpg`);
+	possibleImages.push(`/pictures/${albumName}/b动漫星城.jpg`);
+	possibleImages.push(`/pictures/${albumName}/b动漫星城抓的.jpg`);
+	possibleImages.push(`/pictures/${albumName}/c四月三十日ootd.jpg`);
+	possibleImages.push(`/pictures/${albumName}/d奇卡和花阳.jpg`);
+	possibleImages.push(`/pictures/${albumName}/e潮汕牛肉火锅.jpg`);
+	possibleImages.push(`/pictures/${albumName}/f人生第一次去网吧.jpg`);
+	possibleImages.push(`/pictures/${albumName}/g广东省博物馆.jpg`);
+	possibleImages.push(`/pictures/${albumName}/h特殊展票.jpg`);
+	possibleImages.push(`/pictures/${albumName}/mujica联动.jpg`);
+	possibleImages.push(`/pictures/${albumName}/一地小广告.jpg`);
+	possibleImages.push(`/pictures/${albumName}/之前苏州网友送的.jpg`);
+	possibleImages.push(`/pictures/${albumName}/买奶茶送的纪念品.jpg`);
+	possibleImages.push(`/pictures/${albumName}/亚托利.jpg`);
+	possibleImages.push(`/pictures/${albumName}/什么点心忘了.jpg`);
+	possibleImages.push(`/pictures/${albumName}/偶遇.jpg`);
+	possibleImages.push(`/pictures/${albumName}/动物园内柠檬水好喝.jpg`);
+	possibleImages.push(`/pictures/${albumName}/动物园大犀牛.jpg`);
+	possibleImages.push(`/pictures/${albumName}/华南植物园.jpg`);
+	possibleImages.push(`/pictures/${albumName}/原本完美的呆毛.jpg`);
+	possibleImages.push(`/pictures/${albumName}/可爱捏.jpg`);
+	possibleImages.push(`/pictures/${albumName}/圣心大教堂.jpg`);
+	possibleImages.push(`/pictures/${albumName}/外场后面.jpg`);
+	possibleImages.push(`/pictures/${albumName}/小姐姐送的无料.jpg`);
+	possibleImages.push(`/pictures/${albumName}/广州.jpg`);
+	possibleImages.push(`/pictures/${albumName}/广州动物园1.jpg`);
+	possibleImages.push(`/pictures/${albumName}/广州塔.jpg`);
+	possibleImages.push(`/pictures/${albumName}/广州塔那块.jpg`);
+	possibleImages.push(`/pictures/${albumName}/教堂附近买的不好吃.jpg`);
+	possibleImages.push(`/pictures/${albumName}/晚上路上.jpg`);
+	possibleImages.push(`/pictures/${albumName}/晚上路上2.jpg`);
+	possibleImages.push(`/pictures/${albumName}/某花园.jpg`);
+	possibleImages.push(`/pictures/${albumName}/植物园拍的.jpg`);
+	possibleImages.push(`/pictures/${albumName}/植物园猫猫猫.jpg`);
+	possibleImages.push(`/pictures/${albumName}/植物园的树.jpg`);
+	possibleImages.push(`/pictures/${albumName}/植物园的水.jpg`);
+	possibleImages.push(`/pictures/${albumName}/烤肉烤肉.jpg`);
+	possibleImages.push(`/pictures/${albumName}/特殊展览的珠宝.jpg`);
+	possibleImages.push(`/pictures/${albumName}/珠江夜游.jpg`);
+	possibleImages.push(`/pictures/${albumName}/第四次去网吧.jpg`);
+	possibleImages.push(`/pictures/${albumName}/红毛粉毛自助烤肉.jpg`);
+	possibleImages.push(`/pictures/${albumName}/背影.jpg`);
+	possibleImages.push(`/pictures/${albumName}/花园内.jpg`);
+	possibleImages.push(`/pictures/${albumName}/花园的蜗牛.jpg`);
+	possibleImages.push(`/pictures/${albumName}/茶餐厅好吃的炒面.jpg`);
+	possibleImages.push(`/pictures/${albumName}/菠萝包.jpg`);
+	possibleImages.push(`/pictures/${albumName}/萤火虫漫展外场.jpg`);
+	possibleImages.push(`/pictures/${albumName}/超级大雨.jpg`);
+	possibleImages.push(`/pictures/${albumName}/铠甲勇士.jpg`);
+	possibleImages.push(`/pictures/${albumName}/阴沉沉好大的雨.jpg`);
+	possibleImages.push(`/pictures/${albumName}/馆内假海洋馆.jpg`);
+	possibleImages.push(`/pictures/${albumName}/鹿.jpg`);
+}
+// 为苏州相册添加图片
+else if (albumName === "苏州2025.01.04") {
+	possibleImages.push(`/pictures/${albumName}/a苏州站.jpg`);
+	possibleImages.push(`/pictures/${albumName}/b泡泡馄饨.jpg`);
+	possibleImages.push(`/pictures/${albumName}/c报恩寺.jpg`);
+	possibleImages.push(`/pictures/${albumName}/c诚品书店.jpg`);
+	possibleImages.push(`/pictures/${albumName}/d苏州园林.jpg`);
+	possibleImages.push(`/pictures/${albumName}/e拙政园.jpg`);
+	possibleImages.push(`/pictures/${albumName}/f苏州之眼  (1).jpg`);
+	possibleImages.push(`/pictures/${albumName}/f苏州之眼  (2).jpg`);
+	possibleImages.push(`/pictures/${albumName}/h金鸡湖.jpg`);
+	possibleImages.push(`/pictures/${albumName}/i小猫.jpg`);
+	possibleImages.push(`/pictures/${albumName}/j东方之门.jpg`);
+	possibleImages.push(`/pictures/${albumName}/k商场.jpg`);
+	possibleImages.push(`/pictures/${albumName}/l很贵很贵的汉堡.jpg`);
+	possibleImages.push(`/pictures/${albumName}/m扫码送的纪念币.jpg`);
+	possibleImages.push(`/pictures/${albumName}/n我.jpg`);
+	possibleImages.push(`/pictures/${albumName}/o步数.jpg`);
+	possibleImages.push(`/pictures/${albumName}/p拙政园.jpg`);
+	possibleImages.push(`/pictures/${albumName}/q苏州博物馆 (1).jpg`);
+	possibleImages.push(`/pictures/${albumName}/q苏州博物馆 (2).jpg`);
+	possibleImages.push(`/pictures/${albumName}/q苏州博物馆 (3).jpg`);
+	possibleImages.push(`/pictures/${albumName}/q苏州博物馆.jpg`);
+	possibleImages.push(`/pictures/${albumName}/r展示猫猫外套.jpg`);
+	possibleImages.push(`/pictures/${albumName}/s网友送的周边.jpg`);
+	possibleImages.push(`/pictures/${albumName}/t返程跑南京吃的.jpg`);
+	possibleImages.push(`/pictures/${albumName}/u金鸡湖附近.jpg`);
+	possibleImages.push(`/pictures/${albumName}/v南京那家店.jpg`);
+}
+// 为上海南京相册添加图片
+else if (albumName === "上海南京2025.8.3-5") {
+	possibleImages.push(`/pictures/${albumName}/上海ootd.jpg`);
+	possibleImages.push(`/pictures/${albumName}/上海国补买的手环.jpg`);
+	possibleImages.push(`/pictures/${albumName}/上海百联.jpg`);
+	possibleImages.push(`/pictures/${albumName}/上海豫园.jpg`);
+	possibleImages.push(`/pictures/${albumName}/东方明珠.jpg`);
+	possibleImages.push(`/pictures/${albumName}/偶遇护舒宝代言明星活动.jpg`);
+	possibleImages.push(`/pictures/${albumName}/南京ootd.jpg`);
+	possibleImages.push(`/pictures/${albumName}/南京照相馆电影.jpg`);
+	possibleImages.push(`/pictures/${albumName}/南京玄武湖.jpg`);
+	possibleImages.push(`/pictures/${albumName}/南京秦淮河.jpg`);
+	possibleImages.push(`/pictures/${albumName}/南京齁甜的甜品碗.jpg`);
+	possibleImages.push(`/pictures/${albumName}/可爱小奇卡.jpg`);
+	possibleImages.push(`/pictures/${albumName}/外滩那块路上.jpg`);
+	possibleImages.push(`/pictures/${albumName}/妈妈给我买的小猫.jpg`);
+	possibleImages.push(`/pictures/${albumName}/字画.jpg`);
+	possibleImages.push(`/pictures/${albumName}/很贵的厕所.jpg`);
+	possibleImages.push(`/pictures/${albumName}/最近很喜欢的藤田琴音.jpg`);
+	possibleImages.push(`/pictures/${albumName}/玄武门.jpg`);
+	possibleImages.push(`/pictures/${albumName}/电影票.jpg`);
+	possibleImages.push(`/pictures/${albumName}/看麻麻拍照.jpg`);
+	possibleImages.push(`/pictures/${albumName}/豫园.jpg`);
+	possibleImages.push(`/pictures/${albumName}/豫园亭子.jpg`);
+	possibleImages.push(`/pictures/${albumName}/豫园内.jpg`);
+	possibleImages.push(`/pictures/${albumName}/豫园里面的.jpg`);
+	possibleImages.push(`/pictures/${albumName}/路过和平饭店.jpg`);
+	possibleImages.push(`/pictures/${albumName}/还是豫园.jpg`);
+}
+
+// 过滤出可能存在的图片
+for (const imgPath of possibleImages) {
+	entries.push([imgPath, imgPath]);
+}
+
+console.log(`Added ${entries.length} potential images for album: ${albumName}`);
 
 const pinnedByAlbum: Record<string, string> = {
 	"南京2024.10.18": "a南京站.jpg",
@@ -78,8 +231,8 @@ if (cover) {
 		ordered = shuffle(ordered);
 	}
 }
-type Item = { src: string; w: number; h: number; alt: string; caption: string };
-const items: Item[] = ordered.map(([k, mod]) => {
+type Item = { src: string; alt: string; caption: string };
+const items: Item[] = ordered.map(([k, src]) => {
 	const base = k.split("/").pop() || "";
 	const name = base.replace(/\.(jpg|jpeg|png)$/i, "");
 	const altBase = name.replace(/^[a-zA-Z]\s*/, "");
@@ -88,11 +241,8 @@ const items: Item[] = ordered.map(([k, mod]) => {
 	const descTrim = meta?.desc?.trim();
 	const altTitle = titleTrim || altBase;
 	const caption = descTrim ? `${altTitle} — ${descTrim}` : altTitle;
-	const imgData = mod.default;
 	return {
-		src: imgData.src,
-		w: imgData.width,
-		h: imgData.height,
+		src: src,
 		alt: altTitle,
 		caption,
 	};
@@ -113,8 +263,8 @@ const items: Item[] = ordered.map(([k, mod]) => {
         <div class="gallery columns-2 md:columns-3 lg:columns-4 gap-x-3 md:gap-x-4 px-3 md:px-4">
           {items.map((it) => (
             <div class="inline-block w-full mb-3 break-inside-avoid rounded-2xl overflow-hidden arknights-card">
-              <a href={it.src} aria-label={it.alt} data-pswp-width={it.w} data-pswp-height={it.h} data-pswp-caption={it.caption} class="block overflow-hidden group">
-                <img src={it.src} alt={it.alt} loading="lazy" decoding="async" class="w-full h-auto object-cover transition-transform duration-300 block group-hover:scale-105" />
+              <a href={it.src} aria-label={it.alt} data-pswp-caption={it.caption} class="block overflow-hidden group">
+                <img src={it.src} alt={it.alt} decoding="async" class="w-full h-auto object-cover transition-transform duration-300 block group-hover:scale-105" />
               </a>
               <div class="px-2 py-1 text-xs text-[var(--text-secondary)]">{it.caption}</div>
             </div>
@@ -124,4 +274,55 @@ const items: Item[] = ordered.map(([k, mod]) => {
       </div>
     </div>
   </section>
+
+  <script>
+    // 处理图片加载，确保图片能正常显示
+    function handleImageLoad() {
+      const images = document.querySelectorAll('img');
+      images.forEach(img => {
+        console.log('Image src:', img.src);
+        console.log('Image complete:', img.complete);
+        console.log('Image naturalWidth:', img.naturalWidth);
+        
+        // 强制重新加载图片
+        if (!img.complete || img.naturalWidth === 0) {
+          const originalSrc = img.src;
+          img.src = '';
+          img.src = originalSrc;
+        }
+        
+        // 确保图片可见
+        img.style.display = 'block';
+        img.style.opacity = '1';
+        img.style.visibility = 'visible';
+      });
+    }
+
+    // 初始处理
+    window.addEventListener('DOMContentLoaded', handleImageLoad);
+    
+    // 500ms 后再次尝试
+    setTimeout(handleImageLoad, 500);
+  </script>
+  
+  <style>
+    /* 确保图片能正常显示 */
+    .gallery img {
+      display: block !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      width: 100% !important;
+      height: auto !important;
+      object-fit: cover !important;
+      background: transparent !important;
+      animation: none !important;
+    }
+    
+    /* 确保图片容器正确显示 */
+    .gallery .arknights-card {
+      display: block !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+    }
+  </style>
 </MainGridLayout>

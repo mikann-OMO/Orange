@@ -15,7 +15,8 @@ const imageModules = import.meta.glob(
 	"../content/pictures/**/*.{jpg,jpeg,png}",
 	{
 		eager: true,
-		as: "url",
+		query: "?url",
+		import: "default",
 	},
 ) as Record<string, string>;
 
@@ -86,9 +87,9 @@ function sampleMosaic(dir: string, cover?: string) {
           <div class="relative">
             <div class="aspect-[3/2] overflow-hidden">
               <div class="grid grid-cols-3 grid-rows-2 gap-[4px] h-full">
-                <img src={picks[0] || placeholder.src} alt={a.data.title} loading="lazy" decoding="async" class="col-span-2 row-span-2 w-full h-full object-cover bg-black/5 dark:bg-white/5 transition-transform duration-300 group-hover:scale-[1.02]" />
-                <img src={picks[1] || picks[0] || placeholder.src} alt={a.data.title} loading="lazy" decoding="async" class="col-span-1 row-span-1 w-full h-full object-cover bg-black/5 dark:bg-white/5" />
-                <img src={picks[2] || picks[1] || picks[0] || placeholder.src} alt={a.data.title} loading="lazy" decoding="async" class="col-span-1 row-span-1 w-full h-full object-cover bg-black/5 dark:bg-white/5" />
+                <img src={picks[0] || placeholder} alt={a.data.title} decoding="async" class="col-span-2 row-span-2 w-full h-full object-cover bg-black/5 dark:bg-white/5 transition-transform duration-300 group-hover:scale-[1.02]" />
+                <img src={picks[1] || picks[0] || placeholder} alt={a.data.title} decoding="async" class="col-span-1 row-span-1 w-full h-full object-cover bg-black/5 dark:bg-white/5" />
+                <img src={picks[2] || picks[1] || picks[0] || placeholder} alt={a.data.title} decoding="async" class="col-span-1 row-span-1 w-full h-full object-cover bg-black/5 dark:bg-white/5" />
               </div>
             </div>
             <div class="p-4">

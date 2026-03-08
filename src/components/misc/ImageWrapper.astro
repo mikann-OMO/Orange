@@ -12,6 +12,7 @@ interface Props {
 	loading?: "eager" | "lazy";
 }
 import { Image } from "astro:assets";
+import defaultAvatar from "../../assets/images/chikann.png";
 import { url } from "../../utils/url-utils";
 
 const {
@@ -39,32 +40,45 @@ const isPublic = src.startsWith("/");
 // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
 let img;
 if (isLocal) {
+	// 尝试不同的路径模式
+	const pathsToTry = [
+		path.normalize(path.join("../../", basePath, src)).replace(/\\/g, "/"),
+		path.normalize(path.join("../../assets", src)).replace(/\\/g, "/"),
+		path.normalize(path.join("../../", src)).replace(/\\/g, "/"),
+	];
+
 	const files = import.meta.glob<ImageMetadata>("../../**", {
 		import: "default",
 	});
-	let normalizedPath = path
-		.normalize(path.join("../../", basePath, src))
-		.replace(/\\/g, "/");
-	const file = files[normalizedPath];
-	if (!file) {
+
+	let found = false;
+	for (const normalizedPath of pathsToTry) {
+		const file = files[normalizedPath];
+		if (file) {
+			console.log(`Found image at: ${normalizedPath}`);
+			img = await file();
+			found = true;
+			break;
+		}
+	}
+
+	if (!found) {
 		console.error(
-			`\n[ERROR] Image file not found: ${normalizedPath.replace("../../", "src/")}`,
+			`\n[ERROR] Image file not found: ${src}`,
+			`Tried paths: ${pathsToTry.join(", ")}`,
 		);
-	} else {
-		img = await file();
 	}
 }
 
 const imageClass = "w-full h-full object-cover";
 const imageStyle = `object-position: ${position}`;
 ---
-<div id={id} class:list={[className, 'overflow-hidden relative']}>
-    <div class="transition absolute inset-0 dark:bg-black/10 bg-opacity-50 pointer-events-none"></div>
-    {isLocal && img && (
+<div id={id} class:list={['overflow-hidden relative']}>
+    {isLocal && (
         <Image 
-            src={img} 
+            src={img || defaultAvatar} 
             alt={alt || ""} 
-            class={imageClass} 
+            class={className} 
             style={imageStyle}
             loading={loading}
             width={width}
@@ -78,9 +92,9 @@ const imageStyle = `object-position: ${position}`;
     )}
     {!isLocal && (
         <img 
-            src={isPublic ? url(src) : src} 
+            src={isPublic ? src : url(src)} 
             alt={alt || ""} 
-            class={imageClass} 
+            class={className} 
             style={imageStyle}
             loading={loading}
             width={width}
