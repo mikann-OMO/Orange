@@ -323,3 +323,66 @@ html, body {
     overflow-x: hidden;
     width: 100%;
 }
+
+/* 图片加载优化 - 骨架屏效果 */
+img {
+    background: linear-gradient(90deg, 
+        var(--card-bg) 25%, 
+        oklch(0.95 0.01 var(--hue)) 50%, 
+        var(--card-bg) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.dark img {
+    background: linear-gradient(90deg, 
+        oklch(0.20 0.02 var(--hue)) 25%, 
+        oklch(0.25 0.02 var(--hue)) 50%, 
+        oklch(0.20 0.02 var(--hue)) 75%
+    );
+    background-size: 200% 100%;
+}
+
+img[src]:not([src=""]) {
+    animation: none;
+    background: transparent;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* 图片加载过渡效果 */
+img {
+    transition: opacity 0.3s ease-in-out;
+}
+
+img[loading="lazy"] {
+    opacity: 0;
+}
+
+img[loading="lazy"].loaded,
+img[loading="lazy"][complete] {
+    opacity: 1;
+}
+
+/* 内容可见性优化 - 提升渲染性能 */
+.post-card,
+.arknights-card,
+#post-container {
+    content-visibility: auto;
+    contain-intrinsic-size: 0 500px;
+}
+
+/* 字体渲染优化 */
+html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
