@@ -101,7 +101,7 @@
     }
     /* 适配移动端导航栏的特殊样式 */
     #nav-menu-panel {
-        @apply right-4 border rounded-[var(--radius-large)] shadow-lg
+        @apply right-4 border rounded-[var(--radius-large)] shadow-lg bg-white dark:bg-[#1a1a1a]
     }
     .search-panel mark {
         @apply bg-transparent text-[var(--primary)]
