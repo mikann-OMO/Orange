@@ -9,30 +9,99 @@ const postUrl = entry ? Astro.url.href : "";
 <div class="px-6">
   <div class="max-w-3xl mx-auto">
     <!-- CWD 评论系统 - 懒加载 -->
-    <div id="cwd-comments" 
-      data-api-base-url="https://cwd-api.2744167586.workers.dev" 
+    <div id="cwd-comments"
+      data-api-base-url="https://cwd-api.2744167586.workers.dev"
       data-custom-css-url="/cwd-custom.css"
       data-post-slug={postSlug}
       data-post-title={postTitle}
       data-post-url={postUrl}
     >
-      <!-- 骨架屏 -->
-      <div id="cwd-skeleton" class="py-6">
-        <div class="flex items-center gap-4 mb-6">
-          <div class="w-10 h-10 rounded-full bg-black/10 dark:bg-white/10 animate-pulse"></div>
-          <div class="flex-1">
-            <div class="h-4 w-24 bg-black/10 dark:bg-white/10 rounded animate-pulse mb-2"></div>
-            <div class="h-3 w-32 bg-black/10 dark:bg-white/10 rounded animate-pulse"></div>
+      <!-- 增强版骨架屏 -->
+      <div id="cwd-skeleton" class="py-8 space-y-6">
+        <!-- 评论输入框骨架 -->
+        <div class="bg-white/5 dark:bg-black/5 rounded-lg p-4 shadow-sm">
+          <div class="flex items-start gap-4 mb-4">
+            <div class="w-10 h-10 rounded-full bg-black/10 dark:bg-white/10 animate-pulse flex-shrink-0"></div>
+            <div class="flex-1 space-y-3">
+              <div class="h-10 w-full bg-black/10 dark:bg-white/10 rounded-lg animate-pulse"></div>
+              <div class="flex justify-end">
+                <div class="h-8 w-24 bg-black/10 dark:bg-white/10 rounded animate-pulse"></div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="space-y-3">
-          <div class="h-3 w-full bg-black/10 dark:bg-white/10 rounded animate-pulse"></div>
-          <div class="h-3 w-5/6 bg-black/10 dark:bg-white/10 rounded animate-pulse"></div>
-          <div class="h-3 w-4/6 bg-black/10 dark:bg-white/10 rounded animate-pulse"></div>
+        
+        <!-- 评论列表骨架 -->
+        <div class="space-y-6">
+          <!-- 评论项 1 -->
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-full bg-black/10 dark:bg-white/10 animate-pulse flex-shrink-0"></div>
+            <div class="flex-1 space-y-3">
+              <div class="flex items-center gap-2">
+                <div class="h-4 w-24 bg-black/10 dark:bg-white/10 rounded animate-pulse"></div>
+                <div class="h-3 w-16 bg-black/10 dark:bg-white/10 rounded animate-pulse"></div>
+              </div>
+              <div class="space-y-2">
+                <div class="h-3 w-full bg-black/10 dark:bg-white/10 rounded animate-pulse"></div>
+                <div class="h-3 w-5/6 bg-black/10 dark:bg-white/10 rounded animate-pulse"></div>
+                <div class="h-3 w-4/6 bg-black/10 dark:bg-white/10 rounded animate-pulse"></div>
+              </div>
+              <div class="flex items-center gap-4 text-sm">
+                <div class="h-3 w-16 bg-black/10 dark:bg-white/10 rounded animate-pulse"></div>
+                <div class="h-3 w-12 bg-black/10 dark:bg-white/10 rounded animate-pulse"></div>
+                <div class="h-3 w-12 bg-black/10 dark:bg-white/10 rounded animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 评论项 2 -->
+          <div class="flex items-start gap-4 pl-8 border-l-2 border-black/5 dark:border-white/5">
+            <div class="w-8 h-8 rounded-full bg-black/10 dark:bg-white/10 animate-pulse flex-shrink-0"></div>
+            <div class="flex-1 space-y-3">
+              <div class="flex items-center gap-2">
+                <div class="h-4 w-20 bg-black/10 dark:bg-white/10 rounded animate-pulse"></div>
+                <div class="h-3 w-14 bg-black/10 dark:bg-white/10 rounded animate-pulse"></div>
+              </div>
+              <div class="space-y-2">
+                <div class="h-3 w-full bg-black/10 dark:bg-white/10 rounded animate-pulse"></div>
+                <div class="h-3 w-4/6 bg-black/10 dark:bg-white/10 rounded animate-pulse"></div>
+              </div>
+              <div class="flex items-center gap-4 text-sm">
+                <div class="h-3 w-14 bg-black/10 dark:bg-white/10 rounded animate-pulse"></div>
+                <div class="h-3 w-10 bg-black/10 dark:bg-white/10 rounded animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 评论项 3 -->
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-full bg-black/10 dark:bg-white/10 animate-pulse flex-shrink-0"></div>
+            <div class="flex-1 space-y-3">
+              <div class="flex items-center gap-2">
+                <div class="h-4 w-22 bg-black/10 dark:bg-white/10 rounded animate-pulse"></div>
+                <div class="h-3 w-15 bg-black/10 dark:bg-white/10 rounded animate-pulse"></div>
+              </div>
+              <div class="space-y-2">
+                <div class="h-3 w-full bg-black/10 dark:bg-white/10 rounded animate-pulse"></div>
+                <div class="h-3 w-5/6 bg-black/10 dark:bg-white/10 rounded animate-pulse"></div>
+                <div class="h-3 w-3/6 bg-black/10 dark:bg-white/10 rounded animate-pulse"></div>
+              </div>
+              <div class="flex items-center gap-4 text-sm">
+                <div class="h-3 w-15 bg-black/10 dark:bg-white/10 rounded animate-pulse"></div>
+                <div class="h-3 w-11 bg-black/10 dark:bg-white/10 rounded animate-pulse"></div>
+                <div class="h-3 w-11 bg-black/10 dark:bg-white/10 rounded animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 加载更多按钮骨架 -->
+        <div class="flex justify-center pt-4">
+          <div class="h-10 w-32 bg-black/10 dark:bg-white/10 rounded animate-pulse"></div>
         </div>
       </div>
     </div>
-    
+
     <script data-astro-exec>
       (() => {
         const getTheme = () =>
@@ -43,11 +112,11 @@ const postUrl = entry ? Astro.url.href : "";
         const loadScript = () => {
           if (window.CWDComments) return Promise.resolve();
 
-          const existing = document.querySelector("script[data-cwd-widget]");
+          const existing = document.querySelector("script[data-cwd-widget]");   
           if (existing) {
-            if (existing.dataset.loaded === "true") return Promise.resolve();
+            if (existing.dataset.loaded === "true") return Promise.resolve();   
             return new Promise((resolve, reject) => {
-              existing.addEventListener("load", resolve, { once: true });
+              existing.addEventListener("load", resolve, { once: true });       
               existing.addEventListener("error", () => {
                 reject(new Error("Failed to load CWD widget"));
               }, { once: true });
@@ -60,11 +129,32 @@ const postUrl = entry ? Astro.url.href : "";
             script.async = true;
             script.defer = true;
             script.dataset.cwdWidget = "true";
+            script.fetchPriority = "high";
+            script.crossOrigin = "anonymous";
             script.onload = () => {
               script.dataset.loaded = "true";
+              sessionStorage.setItem('cwdWidgetLoaded', 'true');
               resolve();
             };
-            script.onerror = () => reject(new Error("Failed to load CWD widget"));
+            script.onerror = () => {
+              console.error("Failed to load CWD widget from unpkg");
+              // 尝试备用CDN
+              const backupScript = document.createElement("script");
+              backupScript.src = "https://cdn.jsdelivr.net/npm/cwd-widget@0.1.7/dist/cwd.umd.js";
+              backupScript.async = true;
+              backupScript.defer = true;
+              backupScript.dataset.cwdWidget = "true";
+              backupScript.onload = () => {
+                backupScript.dataset.loaded = "true";
+                sessionStorage.setItem('cwdWidgetLoaded', 'true');
+                resolve();
+              };
+              backupScript.onerror = () => {
+                console.error("Failed to load CWD widget from jsdelivr");
+                reject(new Error("Failed to load CWD widget from backup CDN"));
+              };
+              document.head.appendChild(backupScript);
+            };
             document.head.appendChild(script);
           });
         };
@@ -75,48 +165,93 @@ const postUrl = entry ? Astro.url.href : "";
         const mountComments = async () => {
           if (commentsLoaded) return;
           commentsLoaded = true;
-          
+
           const container = document.querySelector("#cwd-comments");
           if (!container) return;
-          
+
           const skeleton = document.querySelector("#cwd-skeleton");
           const apiBaseUrl = container.dataset.apiBaseUrl;
-          if (!apiBaseUrl) return;
+          if (!apiBaseUrl) {
+            if (skeleton && skeleton.parentNode) {
+              skeleton.parentNode.removeChild(skeleton);
+            }
+            container.innerHTML = '<div class="py-12 text-center text-black/60 dark:text-white/60">评论系统配置错误</div>';
+            return;
+          }
           const customCssUrl = container.dataset.customCssUrl;
           const postSlug = container.dataset.postSlug;
           const postTitle = container.dataset.postTitle;
           const postUrl = container.dataset.postUrl;
 
-          await loadScript();
-
-          if (skeleton && skeleton.parentNode) {
-            skeleton.parentNode.removeChild(skeleton);
-          }
-
-          const config = {
-            el: container,
-            apiBaseUrl,
-            theme: getTheme(),
-            postSlug,
-            postTitle,
-            postUrl,
-          };
-          if (customCssUrl) {
-            config.customCssUrl = customCssUrl;
-          }
-
-          if (container._cwdInstance) {
-            if (typeof container._cwdInstance.updateConfig === "function") {
-              container._cwdInstance.updateConfig(config);
+          try {
+            if (skeleton) {
+              skeleton.classList.add('opacity-75');
             }
-            return;
-          }
+            
+            await loadScript();
 
-          const instance = new window.CWDComments(config);
-          if (typeof instance.mount === "function") {
-            instance.mount();
+            if (skeleton && skeleton.parentNode) {
+              skeleton.style.transition = 'opacity 0.3s ease-out';
+              skeleton.style.opacity = '0';
+              setTimeout(() => {
+                skeleton.parentNode.removeChild(skeleton);
+              }, 300);
+            }
+
+            const config = {
+              el: container,
+              apiBaseUrl,
+              theme: getTheme(),
+              postSlug,
+              postTitle,
+              postUrl,
+            };
+            if (customCssUrl) {
+              config.customCssUrl = customCssUrl;
+            }
+
+            if (container._cwdInstance) {
+              if (typeof container._cwdInstance.updateConfig === "function") {    
+                container._cwdInstance.updateConfig(config);
+              }
+              return;
+            }
+
+            const instance = new window.CWDComments(config);
+            if (typeof instance.mount === "function") {
+              instance.mount();
+            }
+            container._cwdInstance = instance;
+          } catch (error) {
+            console.error("Failed to load comments:", error);
+            if (skeleton && skeleton.parentNode) {
+              skeleton.parentNode.removeChild(skeleton);
+            }
+            const isNetworkError = error.message.includes('Failed to fetch') || error.message.includes('Network error');
+            if (isNetworkError) {
+              container.innerHTML = `
+                <div class="py-12 text-center text-black/60 dark:text-white/60">
+                  <div class="mb-4 text-xl">评论系统连接失败</div>
+                  <div class="mb-6">无法连接到评论服务器，可能需要VPN或代理</div>
+                  <div class="mb-6">您可以尝试以下解决方案：</div>
+                  <ul class="text-left max-w-md mx-auto mb-6 space-y-2">
+                    <li>1. 使用VPN连接到国外网络</li>
+                    <li>2. 检查网络连接后重试</li>
+                    <li>3. 稍后再试，服务器可能暂时不可用</li>
+                  </ul>
+                  <button id="retry-comments" class="px-4 py-2 bg-[var(--primary)] text-white rounded-lg hover:bg-[var(--primary)]/80 transition-colors">
+                    重新加载
+                  </button>
+                </div>
+              `;
+              document.getElementById('retry-comments')?.addEventListener('click', () => {
+                commentsLoaded = false;
+                mountComments();
+              });
+            } else {
+              container.innerHTML = '<div class="py-12 text-center text-black/60 dark:text-white/60">评论系统暂时不可用，请稍后再试</div>';
+            }
           }
-          container._cwdInstance = instance;
         };
 
         const preloadComments = () => {
@@ -139,15 +274,15 @@ const postUrl = entry ? Astro.url.href : "";
             }
           }
         });
-        observer.observe(document.documentElement, { attributes: true });
+        observer.observe(document.documentElement, { attributes: true });        
 
         const setupLazyLoad = () => {
           const container = document.querySelector("#cwd-comments");
           if (!container) return;
-          
+
           const mobile = isMobile();
-          const rootMargin = mobile ? "0px" : "200px";
-          
+          const rootMargin = mobile ? "0px" : "300px";
+
           const io = new IntersectionObserver((entries) => {
             for (const entry of entries) {
               if (entry.isIntersecting) {
@@ -157,24 +292,28 @@ const postUrl = entry ? Astro.url.href : "";
             }
           }, {
             rootMargin,
-            threshold: 0.1
+            threshold: 0.05
           });
           io.observe(container);
 
-          if (mobile) {
-            window.addEventListener('scroll', () => {
-              const scrollY = window.scrollY || window.pageYOffset;
-              const windowHeight = window.innerHeight;
-              const documentHeight = document.documentElement.scrollHeight;
-              
-              if (scrollY + windowHeight >= documentHeight - (windowHeight * 1.5)) {
-                preloadComments();
-              }
-            }, { passive: true });
-          }
+          const handleScroll = () => {
+            const scrollY = window.scrollY || window.pageYOffset;
+            const windowHeight = window.innerHeight;
+            const containerRect = container.getBoundingClientRect();
+            const containerTop = containerRect.top + scrollY;
+            
+            if (scrollY + windowHeight >= containerTop - 500) {
+              preloadComments();
+              window.removeEventListener('scroll', handleScroll, { passive: true });
+            }
+          };
+
+          window.addEventListener('scroll', handleScroll, { passive: true });
         };
 
+        // 初始化
         setupLazyLoad();
+        
         document.addEventListener("astro:page-load", () => {
           commentsLoaded = false;
           preloadTriggered = false;
@@ -183,10 +322,18 @@ const postUrl = entry ? Astro.url.href : "";
 
         if ('requestIdleCallback' in window) {
           requestIdleCallback(() => {
-            if (!isMobile()) {
-              preloadComments();
-            }
-          }, { timeout: 2000 });
+            preloadComments();
+          }, { timeout: 1000 });
+        } else {
+          setTimeout(() => {
+            preloadComments();
+          }, 1000);
+        }
+        
+        const container = document.querySelector("#cwd-comments");
+        if (container) {
+          container.addEventListener('mouseenter', preloadComments, { once: true, passive: true });
+          container.addEventListener('touchstart', preloadComments, { once: true, passive: true });
         }
       })();
     </script>

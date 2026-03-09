@@ -379,11 +379,7 @@ const search = async (searchKeyword: string): Promise<void> => {
 	isSearching = true;
 
 	try {
-		let searchResults: SearchResult[] = [];
-
-		// 无论是否在生产环境，都先尝试使用模糊搜索
-		// 这样可以确保在 Pagefind 未加载时也能搜索
-		searchResults = fuzzySearch(searchKeyword);
+		let searchResults = fuzzySearch(searchKeyword);
 
 		// 检查是否在生产环境且 Pagefind 已加载
 		if (import.meta.env.PROD && pagefindLoaded) {
@@ -520,10 +516,7 @@ $: {
 </script>
 
 <!-- search bar for desktop view -->
-<div id="search-bar" class="hidden lg:flex transition-all duration-300 items-center h-11 mr-2 rounded-lg relative
-      bg-black/[0.04] hover:bg-black/[0.06] focus-within:bg-black/[0.06]
-      dark:bg-white/5 dark:hover:bg-white/10 dark:focus-within:bg-white/10
-      backdrop-blur-sm">
+<div id="search-bar" class="hidden lg:flex transition-all duration-300 items-center h-11 mr-2 rounded-lg relative bg-black/[0.04] hover:bg-black/[0.06] focus-within:bg-black/[0.06] dark:bg-white/5 dark:hover:bg-white/10 dark:focus-within:bg-white/10 backdrop-blur-sm">
     <Icon icon="material-symbols:search" class="absolute text-[1.25rem] pointer-events-none ml-3 transition-all duration-300 my-auto text-black/30 dark:text-white/30"></Icon>
     {#if isSearching}
         <Icon icon="material-symbols:rotate-right" class="absolute right-3 text-[1.25rem] animate-spin text-black/30 dark:text-white/30"></Icon>
@@ -533,8 +526,7 @@ $: {
         bind:value={keyword} 
         on:focus={() => handleInputFocus(true)}
         on:keydown={handleKeyDown}
-        class="transition-all duration-300 ease-in-out pl-10 pr-10 text-sm bg-transparent outline-0
-         h-full w-40 active:w-72 focus:w-72 text-black/75 dark:text-white/75 placeholder:text-black/30 dark:placeholder:text-white/30"
+        class="transition-all duration-300 ease-in-out pl-10 pr-10 text-sm bg-transparent outline-0 h-full w-40 active:w-72 focus:w-72 text-black/75 dark:text-white/75 placeholder:text-black/30 dark:placeholder:text-white/30"
         aria-label="搜索"
     >
 </div>
@@ -552,29 +544,24 @@ $: {
 <!-- search panel -->
 <div 
     id="search-panel" 
-    class="float-panel float-panel-closed search-panel absolute w-80
-top-12 right--4 shadow-2xl rounded-2xl p-2 transition-all duration-300 ease-in-out backdrop-blur-sm"
+    class="float-panel float-panel-closed search-panel absolute w-80 top-12 right--4 shadow-2xl rounded-2xl p-2 transition-all duration-300 ease-in-out backdrop-blur-sm"
     on:keydown={handleKeyDown}
     tabindex="0"
     role="region"
     aria-label="搜索结果"
 >
     <!-- search bar inside panel for phone/tablet -->
-    <div id="search-bar-inside" class="flex relative lg:hidden transition-all duration-300 items-center h-11 rounded-xl
-      bg-black/[0.04] hover:bg-black/[0.06] focus-within:bg-black/[0.06]
-      dark:bg-white/5 dark:hover:bg-white/10 dark:focus-within:bg-white/10
-  ">
-        <Icon icon="material-symbols:search" class="absolute text-[1.25rem] pointer-events-none ml-3 transition-all duration-300 my-auto text-black/30 dark:text-white/30"></Icon>
+    <div id="search-bar-inside" class="flex relative lg:hidden transition-all duration-300 items-center h-12 rounded-xl bg-black/[0.04] hover:bg-black/[0.06] focus-within:bg-black/[0.06] dark:bg-white/5 dark:hover:bg-white/10 dark:focus-within:bg-white/10 shadow-sm border border-black/10 dark:border-white/10">
+        <Icon icon="material-symbols:search" class="absolute text-[1.25rem] pointer-events-none ml-4 transition-all duration-300 my-auto text-black/40 dark:text-white/40"></Icon>
         {#if isSearching}
-            <Icon icon="material-symbols:rotate-right" class="absolute right-3 text-[1.25rem] animate-spin text-black/30 dark:text-white/30"></Icon>
+            <Icon icon="material-symbols:rotate-right" class="absolute right-4 text-[1.25rem] animate-spin text-black/40 dark:text-white/40"></Icon>
         {/if}
         <input 
             placeholder="{i18n(I18nKey.search)}" 
             bind:value={keyword} 
             on:focus={() => handleInputFocus(false)}
             on:keydown={handleKeyDown}
-            class="pl-10 pr-10 absolute inset-0 text-sm bg-transparent outline-0
-               focus:w-60 text-black/75 dark:text-white/75 placeholder:text-black/30 dark:placeholder:text-white/30"
+            class="pl-12 pr-12 absolute inset-0 text-sm bg-transparent outline-0 w-full text-black/80 dark:text-white/80 placeholder:text-black/40 dark:placeholder:text-white/40"
             aria-label="搜索"
         >
     </div>
@@ -589,11 +576,10 @@ top-12 right--4 shadow-2xl rounded-2xl p-2 transition-all duration-300 ease-in-o
             </div>
         {:else if result.length > 0}
             <!-- 搜索结果列表 -->
-            {#each result as item, index}
+            {#each result as item}
                 <a 
                     href={item.url}
-                    class="transition-all duration-200 first-of-type:mt-0 group block
-               rounded-xl text-lg px-3 py-3 hover:bg-[var(--btn-plain-bg-hover)] active:bg-[var(--btn-plain-bg-active)] hover:translate-x-1"
+                    class="transition-all duration-200 first-of-type:mt-0 group block rounded-xl text-lg px-3 py-3 hover:bg-[var(--btn-plain-bg-hover)] active:bg-[var(--btn-plain-bg-active)] hover:translate-x-1"
                     role="listitem"
                     aria-label={`搜索结果：${item.meta.title}`}
                 >

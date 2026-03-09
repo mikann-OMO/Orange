@@ -90,10 +90,20 @@ const bannerOffset =
 		<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 		<link rel="preconnect" href="https://unpkg.com" crossorigin>
 		<!-- 性能优化：预加载关键资源 -->
-		<link rel="preload" href="/favicon/favicon-light-32.png" as="image">
+		<link rel="preload" href="/favicon/favicon-light-32.png" as="image" fetchpriority="high">
+		<link rel="preload" href="/favicon/favicon-dark-32.png" as="image" media="(prefers-color-scheme: dark)">
 		<!-- 性能优化：预加载主要字体 -->
-		<link rel="preload" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" as="style">
+		<link rel="preload" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" as="style" fetchpriority="high">
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
+		<!-- 预加载评论系统脚本 -->
+		<link rel="preload" href="https://unpkg.com/cwd-widget@0.1.7/dist/cwd.umd.js" as="script" fetchpriority="high" crossorigin>
+		<link rel="preload" href="https://cdn.jsdelivr.net/npm/cwd-widget@0.1.7/dist/cwd.umd.js" as="script" crossorigin>
+		<!-- 性能优化：DNS预解析 -->
+		<link rel="dns-prefetch" href="https://fonts.googleapis.com">
+		<link rel="dns-prefetch" href="https://fonts.gstatic.com">
+		<link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+		<link rel="dns-prefetch" href="https://unpkg.com">
+		<link rel="dns-prefetch" href="https://cwd-api.2744167586.workers.dev">
 		<!-- 性能优化：移动端优化 -->
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -266,28 +276,32 @@ const bannerOffset =
 }
 
 ::view-transition-old(root) {
-	animation: fade-out 0.2s ease-out forwards;
+	animation: fade-out 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 ::view-transition-new(root) {
-	animation: fade-in 0.25s ease-in forwards;
+	animation: fade-in 0.3s cubic-bezier(0, 0, 0.2, 1) forwards;
 }
 
 @keyframes fade-out {
 	from {
 		opacity: 1;
+		transform: translateY(0);
 	}
 	to {
 		opacity: 0;
+		transform: translateY(10px);
 	}
 }
 
 @keyframes fade-in {
 	from {
 		opacity: 0;
+		transform: translateY(10px);
 	}
 	to {
 		opacity: 1;
+		transform: translateY(0);
 	}
 }
 
@@ -296,9 +310,192 @@ const bannerOffset =
 .dark ::view-transition-new(root) {
 	color-scheme: dark;
 }
+
+/* Swup 页面过渡动画 */
+.transition-swup-out {
+	animation: swup-fade-out 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.transition-swup-in {
+	animation: swup-fade-in 0.3s cubic-bezier(0, 0, 0.2, 1) forwards;
+}
+
+@keyframes swup-fade-out {
+	from {
+		opacity: 1;
+		transform: translateY(0);
+	}
+	to {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+}
+
+@keyframes swup-fade-in {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+/* 平滑滚动优化 */
+html {
+	scroll-behavior: smooth;
+}
+
+/* 减少点击延迟 */
+* {
+	touch-action: manipulation;
+	-webkit-tap-highlight-color: transparent;
+}
 </style>
 
 <script defer is:inline>
+// 性能监控系统
+const performanceMonitor = {
+	measures: new Map(),
+	metrics: {},
+	
+	init: () => {
+		// 检查Performance API支持
+		if (!('performance' in window)) {
+			window.performance = {
+				mark: () => {},
+				measure: () => {},
+				getEntriesByName: () => [],
+				getEntriesByType: () => []
+			};
+		}
+		
+		// 监听核心Web性能指标
+		performanceMonitor.listenToCoreWebVitals();
+		
+		// 监听页面加载事件
+		performanceMonitor.listenToPageLoad();
+		
+		// 监听页面跳转事件
+		performanceMonitor.listenToPageTransitions();
+	},
+	
+	// 监听核心Web性能指标
+	listenToCoreWebVitals: () => {
+		// 监听LCP
+		if ('PerformanceObserver' in window) {
+			try {
+				new PerformanceObserver((list) => {
+					list.getEntries().forEach((entry) => {
+						performanceMonitor.metrics.lcp = entry.startTime;
+						console.log('LCP:', entry.startTime.toFixed(2), 'ms');
+					});
+				}).observe({ type: 'largest-contentful-paint', buffered: true });
+			} catch (e) {
+				console.warn('Failed to observe LCP:', e);
+			}
+			
+			// 监听FID
+			try {
+				new PerformanceObserver((list) => {
+					list.getEntries().forEach((entry) => {
+						performanceMonitor.metrics.fid = entry.processingStart - entry.startTime;
+						console.log('FID:', performanceMonitor.metrics.fid.toFixed(2), 'ms');
+					});
+				}).observe({ type: 'first-input', buffered: true });
+			} catch (e) {
+				console.warn('Failed to observe FID:', e);
+			}
+			
+			// 监听CLS
+			try {
+				let cumulativeLayoutShift = 0;
+				new PerformanceObserver((list) => {
+					list.getEntries().forEach((entry) => {
+						if (!entry.hadRecentInput) {
+							cumulativeLayoutShift += entry.value;
+							performanceMonitor.metrics.cls = cumulativeLayoutShift;
+							console.log('CLS:', cumulativeLayoutShift.toFixed(4));
+						}
+					});
+				}).observe({ type: 'layout-shift', buffered: true });
+			} catch (e) {
+				console.warn('Failed to observe CLS:', e);
+			}
+		}
+	},
+	
+	// 监听页面加载事件
+	listenToPageLoad: () => {
+		window.addEventListener('load', () => {
+			performanceMonitor.measurePageLoad();
+		});
+		
+		document.addEventListener('DOMContentLoaded', () => {
+			performanceMonitor.metrics.domContentLoaded = performance.now();
+			console.log('DOMContentLoaded:', performanceMonitor.metrics.domContentLoaded.toFixed(2), 'ms');
+		});
+	},
+	
+	// 监听页面跳转事件
+	listenToPageTransitions: () => {
+		window.addEventListener('page-transition-start', () => {
+			performanceMonitor.start('page-transition');
+		});
+		
+		window.addEventListener('page-transition-complete', () => {
+			performanceMonitor.end('page-transition');
+		});
+	},
+	
+	// 测量页面加载性能
+	measurePageLoad: () => {
+		const navigationEntry = performance.getEntriesByType('navigation')[0];
+		if (navigationEntry) {
+			performanceMonitor.metrics.loadTime = navigationEntry.loadEventEnd - navigationEntry.startTime;
+			performanceMonitor.metrics.domContentLoadedTime = navigationEntry.domContentLoadedEventEnd - navigationEntry.startTime;
+			performanceMonitor.metrics.firstPaint = navigationEntry.responseEnd;
+			
+			console.log('Page Load Time:', performanceMonitor.metrics.loadTime.toFixed(2), 'ms');
+			console.log('DOM Content Loaded Time:', performanceMonitor.metrics.domContentLoadedTime.toFixed(2), 'ms');
+			console.log('First Paint:', performanceMonitor.metrics.firstPaint.toFixed(2), 'ms');
+		}
+	},
+	
+	// 开始测量
+	start: (name) => {
+		if ('performance' in window) {
+			performance.mark(`${name}-start`);
+		}
+	},
+	
+	// 结束测量
+	end: (name) => {
+		if ('performance' in window) {
+			performance.mark(`${name}-end`);
+			try {
+				performance.measure(name, `${name}-start`, `${name}-end`);
+				const measure = performance.getEntriesByName(name)[0];
+				if (measure) {
+					performanceMonitor.measures.set(name, measure.duration);
+					console.log(`${name}:`, measure.duration.toFixed(2), 'ms');
+				}
+			} catch (e) {
+				// 忽略性能API错误
+			}
+		}
+	},
+	
+	// 获取性能指标
+	getMetrics: () => {
+		return {
+			...performanceMonitor.metrics,
+			measures: Object.fromEntries(performanceMonitor.measures)
+		};
+	}
+};
+
 // 兼容性检查和错误处理
 const compatibilityChecks = {
 	init: () => {
@@ -310,6 +507,9 @@ const compatibilityChecks = {
 		
 		// 初始化错误处理
 		compatibilityChecks.initErrorHandling();
+		
+		// 初始化性能监控
+		performanceMonitor.init();
 	},
 	
 	checkAPIs: () => {
@@ -319,7 +519,8 @@ const compatibilityChecks = {
 			window.performance = {
 				mark: () => {},
 				measure: () => {},
-				getEntriesByName: () => []
+				getEntriesByName: () => [],
+				getEntriesByType: () => []
 			};
 		}
 		
@@ -350,6 +551,14 @@ const compatibilityChecks = {
 				
 				unobserve() {}
 				disconnect() {}
+			};
+		}
+		
+		// 检查PerformanceObserver支持
+		if (!('PerformanceObserver' in window)) {
+			window.PerformanceObserver = class {
+				constructor() {}
+				observe() {}
 			};
 		}
 	},
@@ -735,7 +944,7 @@ const setupSwupHooks = () => {
 		}
 	};
 	
-	window.swup.hooks.on('link:click', () => {
+	window.swup.hooks.on('link:click', (visit) => {
 		performanceMonitor.start('page-transition');
 		
 		// Remove the delay for the first time page load
@@ -751,13 +960,28 @@ const setupSwupHooks = () => {
 				}
 			}
 		}
+		
+		// 预加载目标页面的关键资源
+		if (visit.to.url) {
+			const preloadLink = document.createElement('link');
+			preloadLink.rel = 'prefetch';
+			preloadLink.href = visit.to.url;
+			preloadLink.as = 'document';
+			preloadLink.fetchPriority = 'high';
+			preloadLink.dataset.expire = Date.now() + 30000; // 30秒过期
+			document.head.appendChild(preloadLink);
+		}
 	});
 	
 	window.swup.hooks.on('content:replace', () => {
 		// 优化资源清理
 		cleanupResources();
 		// 延迟初始化滚动条，避免阻塞页面过渡
-		setTimeout(initCustomScrollbar, 50);
+		setTimeout(initCustomScrollbar, 30);
+		// 重新初始化评论区
+		if (window.initComments) {
+			window.initComments();
+		}
 	});
 	
 	window.swup.hooks.on('visit:start', (visit) => {
@@ -776,6 +1000,9 @@ const setupSwupHooks = () => {
 		if (heightExtend) {
 			heightExtend.classList.remove('hidden');
 		}
+		
+		// 添加页面过渡类
+		document.body.classList.add('page-transition-active');
 	});
 	
 	window.swup.hooks.on('visit:end', () => {
@@ -803,17 +1030,35 @@ const setupSwupHooks = () => {
 			
 			// 清理过期的性能指标
 			cleanupPerformanceMarks();
-		}, 100);
+			
+			// 移除页面过渡类
+			document.body.classList.remove('page-transition-active');
+		}, 50);
 	});
 	
 	window.swup.hooks.on('animation:in:start', () => {
 		// 禁用用户交互，避免过渡期间的意外操作
 		document.body.style.pointerEvents = 'none';
+		// 添加过渡期间的样式
+		document.body.style.userSelect = 'none';
 	});
 	
 	window.swup.hooks.on('animation:in:end', () => {
 		// 重新启用用户交互
 		document.body.style.pointerEvents = 'auto';
+		document.body.style.userSelect = '';
+		// 触发页面加载完成事件
+		const event = new CustomEvent('page-transition-complete');
+		window.dispatchEvent(event);
+	});
+	
+	// 错误处理
+	window.swup.hooks.on('error', (error) => {
+		console.warn('Swup error:', error);
+		// 恢复用户交互
+		document.body.style.pointerEvents = 'auto';
+		document.body.style.userSelect = '';
+		document.body.classList.remove('page-transition-active');
 	});
 };
 

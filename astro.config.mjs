@@ -4,6 +4,7 @@
 import sitemap from "@astrojs/sitemap";
 import svelte from "@astrojs/svelte";
 import tailwind from "@astrojs/tailwind";
+import swup from "@swup/astro";
 import yaml from "@rollup/plugin-yaml";
 import icon from "astro-icon";
 import { defineConfig } from "astro/config";
@@ -64,49 +65,68 @@ export default defineConfig({
 		// Svelte 集成
 		svelte(),
 		// Swup 页面过渡集成
-		// swup({
-		// 禁用默认主题
-		// theme: false,
-		// 动画类前缀
-		// animationClass: "transition-swup-",
-		// 要更新的容器
-		// containers: ["#swup-container", "#toc"],
-		// 启用平滑滚动
-		// smoothScrolling: true,
-		// 启用缓存
-		// cache: true,
-		// 预加载配置
-		// preload: {
-		// hover: true, // 悬停时预加载
-		// focus: true, // 聚焦时预加载
-		// top: true, // 顶部预加载
-		// topOffset: 800, // 顶部预加载偏移量
-		// delay: 0, // 预加载延迟
-		// throttle: 80, // 预加载节流
-		// },
-		// 无障碍支持
-		// accessibility: true,
-		// 更新头部
-		// updateHead: true,
-		// 更新 body 类
-		// updateBodyClass: true,
-		// 全局实例
-		// globalInstance: true,
-		// 动画选择器
-		// animationSelector: "[data-swup-animation]",
-		// 忽略访问的条件
-		// ignoreVisit: (visit) => {
-		// 忽略外部链接
-		// if (visit.url.origin !== window.location.origin) {
-		// return true;
-		// }
-		// 忽略下载链接
-		// if (visit.link?.getAttribute("download")) {
-		// return true;
-		// }
-		// return false;
-		// },
-		// }),
+		swup({
+			// 禁用默认主题
+			theme: false,
+			// 动画类前缀
+			animationClass: "transition-swup-",
+			// 要更新的容器
+			containers: ["#swup-container", "#toc"],
+			// 启用平滑滚动
+			smoothScrolling: true,
+			// 启用缓存
+			cache: {
+				enabled: true,
+				maxAge: 300000, // 5分钟缓存
+				maxEntries: 10, // 最多缓存10个页面
+			},
+			// 预加载配置
+			preload: {
+				hover: true, // 悬停时预加载
+				focus: true, // 聚焦时预加载
+				top: true, // 顶部预加载
+				topOffset: 1000, // 顶部预加载偏移量
+				delay: 0, // 预加载延迟
+				throttle: 60, // 预加载节流，减少延迟
+				invisible: true, // 预加载视口外的链接
+			},
+			// 无障碍支持
+			accessibility: true,
+			// 更新头部
+			updateHead: true,
+			// 更新 body 类
+			updateBodyClass: true,
+			// 全局实例
+			globalInstance: true,
+			// 动画选择器
+			animationSelector: "[data-swup-animation]",
+			// 忽略访问的条件
+			ignoreVisit: (visit) => {
+				// 忽略外部链接
+				if (visit.url.origin !== window.location.origin) {
+					return true;
+				}
+				// 忽略下载链接
+				if (visit.link?.getAttribute("download")) {
+					return true;
+				}
+				// 忽略锚点链接
+				if (visit.url.hash && visit.url.pathname === window.location.pathname) {
+					return true;
+				}
+				return false;
+			},
+			// 动画持续时间
+			animationDuration: 300, // 动画持续时间（毫秒）
+			// 滚动到顶部
+			scrollToTop: true,
+			// 滚动到锚点
+			scrollToAnchor: true,
+			// 滚动行为
+			scrollBehavior: 'smooth',
+			// 插件
+			plugins: [],
+		}),
 		// 图标集成
 		icon({
 			// 包含的图标集
@@ -291,9 +311,14 @@ export default defineConfig({
 							if (id.includes("svelte")) return "svelte";
 							if (id.includes("swup")) return "swup";
 							if (id.includes("pagefind")) return "pagefind";
+							if (id.includes("@astrojs")) return "astro";
+							if (id.includes("tailwind")) return "tailwind";
 							return "vendor";
 						}
 					},
+					// 优化输出
+					minifyInternalExports: true,
+					generatedCode: 'es2015',
 				},
 			},
 			// Terser 配置
@@ -302,11 +327,19 @@ export default defineConfig({
 					drop_console: true, // 移除 console
 					drop_debugger: true, // 移除 debugger
 					unused: true, // 移除未使用的代码
+					dead_code: true, // 移除死代码
+					collapse_vars: true, // 折叠变量
+					reduce_vars: true, // 减少变量
 				},
 				format: {
 					comments: false, // 移除注释
+					beautify: false, // 不美化
 				},
 			},
+			// 资源优化
+			assetsInlineLimit: 4096, // 4KB以下的资源内联
+			cssCodeSplit: true, // 启用CSS代码分割
+			dynamicImportVars: true, // 启用动态导入变量
 		},
 
 		// 依赖优化
