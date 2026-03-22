@@ -20,23 +20,31 @@
     }
 
     a:not(.no-styling) {
-        @apply relative bg-none font-medium text-[var(--primary)]
-        underline decoration-[var(--link-underline)] decoration-1 decoration-dashed underline-offset-4;
+        @apply relative bg-none font-medium text-orange-700
+        underline decoration-orange-950/20 dark:decoration-white/20 decoration-1 decoration-dashed underline-offset-4;
         box-decoration-break: clone;
         -webkit-box-decoration-break: clone;
     
         &:hover, &:active {
             @apply decoration-transparent;
-            background: var(--btn-plain-bg-hover);
-            border-bottom: 1px dashed var(--link-hover);
+            background: rgba(230, 74, 25, 0.05);
+            border-bottom: 1px dashed #e64a19;
             text-decoration: none;
         }
     }
 
-    code {
-        @apply bg-[var(--inline-code-bg)] text-[var(--inline-code-color)] px-1 py-0.5 rounded-md overflow-hidden;
+    @media (prefers-color-scheme: dark) {
+        a:not(.no-styling) {
+            &:hover, &:active {
+                background: rgba(255, 255, 255, 0.1);
+            }
+        }
+    }
 
-        font-family: var(--font-mono);
+    code {
+        @apply bg-orange-950/5 dark:bg-white/10 text-orange-700 px-1 py-0.5 rounded-md overflow-hidden;
+
+        font-family: 'JetBrains Mono Variable', 'JetBrains Mono', 'Fira Code', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
         &:before {
             content:none;
         }
@@ -59,21 +67,21 @@
     }
 
     pre {
-        @apply bg-[var(--codeblock-bg)] !important;
+        @apply bg-gray-900 dark:bg-gray-950 !important;
         @apply rounded-xl px-5;
 
         code {
             @apply bg-transparent text-inherit text-sm p-0;
 
             ::selection {
-                @apply bg-[var(--codeblock-selection)];
+                @apply bg-orange-500/20;
             }
         }
     }
 
     ul, ol {
         li::marker {
-            @apply text-[var(--primary)];
+            @apply text-orange-700;
         }
     }
 
@@ -82,10 +90,15 @@
         font-weight: inherit;
 
         &:before {
-            @apply content-[''] absolute -left-1 block transition bg-[var(--btn-regular-bg)] h-full w-1 rounded-full;
+            @apply content-[''] absolute -left-1 block transition bg-white/60 h-full w-1 rounded-full;
         }
 
-        /* Remove the double quotes from default styles */
+        @media (prefers-color-scheme: dark) {
+            blockquote:before {
+                @apply bg-gray-700/80;
+            }
+        }
+
         p:before, p:after {
             @apply content-none;
         }

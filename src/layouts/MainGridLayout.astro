@@ -6,6 +6,7 @@ import type { MarkdownHeading } from "astro";
 import { Icon } from "astro-icon/components";
 import Toc from "../components/control/Toc.astro";
 import ImageWrapper from "../components/misc/ImageWrapper.astro";
+import SidebarToc from "../components/widget/SidebarToc.astro";
 import { siteConfig } from "../config";
 import {
 	BANNER_HEIGHT,
@@ -13,6 +14,16 @@ import {
 	MAIN_PANEL_OVERLAPS_BANNER_HEIGHT,
 } from "../constants/constants";
 import Layout from "./Layout.astro";
+
+// 导入公告配置
+import announcement from "../content/announcement.yaml";
+
+interface AnnouncementConfig {
+	title: string;
+	content: string;
+	avatar: string;
+	enabled: boolean;
+}
 
 interface Props {
 	title?: string;
@@ -22,6 +33,9 @@ interface Props {
 	setOGTypeArticle?: boolean;
 	headings?: MarkdownHeading[];
 	fullWidth?: boolean;
+	showAnnouncement?: boolean;
+	isPostPage?: boolean;
+	announcementConfig?: AnnouncementConfig;
 }
 
 const {
@@ -32,7 +46,13 @@ const {
 	setOGTypeArticle,
 	headings = [],
 	fullWidth = false,
+	showAnnouncement = true,
+	isPostPage = false,
+	announcementConfig,
 } = Astro.props;
+
+// 使用传入的公告配置，如果没有则使用默认配置
+const activeAnnouncement = announcementConfig || announcement;
 const hasBannerCredit =
 	siteConfig.banner.enable && siteConfig.banner.credit.enable;
 const hasBannerLink = !!siteConfig.banner.credit.url;
@@ -46,74 +66,76 @@ const mainPanelTop = siteConfig.banner.enable
 
 <!-- Navbar -->
 <slot slot="head" name="head"></slot>
-<div id="top-row" class="z-50 pointer-events-none fixed top-0 left-0 right-0 transition-all duration-700 w-full">
-    <div id="navbar-wrapper" class="pointer-events-auto sticky top-0 transition-all w-full bg-[var(--page-bg)]/80 backdrop-blur-md shadow-sm">
+<div id="top-row" class="z-[999] pointer-events-none fixed top-0 left-0 right-0 w-full">
+    <div id="navbar-wrapper" class="pointer-events-auto fixed top-0 left-0 right-0 w-full bg-orange-100 dark:bg-stone-800 shadow-md z-[999]">
         <Navbar></Navbar>
     </div>
 </div>
 
 <!-- Banner -->
 {siteConfig.banner.enable && (
-    <div id="banner-wrapper" class="absolute z-10 w-full transition duration-700 overflow-hidden" style={`top: -${BANNER_HEIGHT_EXTEND}vh`}>
-        <ImageWrapper 
-            id="banner" 
-            alt="Banner image of the blog" 
-            class="object-cover h-full transition duration-700 opacity-0 scale-105"
-            src={siteConfig.banner.src} 
-            position={siteConfig.banner.position}
-        />
+    <div id="banner-wrapper" class="h-screen w-full fixed top-0 left-0 right-0 z-0 hidden md:block" style={`background-image: url(${siteConfig.banner.src}); background-size: cover; background-position: ${siteConfig.banner.position};`}>
     </div>
 )}
 
 <!-- Main content -->
-<div class="absolute w-full z-30 pointer-events-none" style={`top: ${mainPanelTop}`}>
-    <!-- The pointer-events-none here prevent blocking the click event of the TOC -->
-    <div class="relative max-w-[var(--page-width)] mx-auto pointer-events-auto">
-        <div id="main-grid" class="transition duration-700 w-full left-0 right-0 mx-auto gap-4 px-4 md:px-6 grid grid-cols-1 grid-rows-[auto_1fr_auto]">
-            <!-- Banner image credit -->
-            {hasBannerCredit && (
-                <a 
-                    href={siteConfig.banner.credit.url} 
-                    id="banner-credit" 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    aria-label="Visit image source"
-                    class:list={[
-                        "group onload-animation transition-all absolute flex justify-center items-center rounded-full",
-                        "px-3 right-4 -top-[3.25rem] bg-black/60 hover:bg-black/70 h-9",
-                        { "hover:pr-9 active:bg-black/80": hasBannerLink }
-                    ]}
-                >
-                    <Icon class="text-white/75 text-[1.25rem] mr-1" name="material-symbols:copyright-outline-rounded" />
-                    <div class="text-white/75 text-xs">{siteConfig.banner.credit.text}</div>
-                    {hasBannerLink && (
-                        <Icon 
-                            class="transition absolute text-[oklch(0.75_0.14_var(--hue))] right-4 text-[0.75rem] opacity-0 group-hover:opacity-100"
-                            name="fa6-solid:arrow-up-right-from-square"
-                        />
-                    )}
-                </a>
-            )}
-
-            <main id="swup-container" class="transition-swup-fade col-span-2 overflow-hidden">
-                <div class={fullWidth ? "max-w-6xl mx-auto" : ""}>
-                    <div id="content-wrapper" class="onload-animation">
-                        <!-- the overflow-hidden here prevent long text break the layout-->
-                        <!-- make id different from windows.swup global property -->
-                        <slot></slot>
-                        <div class="footer col-span-2 onload-animation hidden lg:block">
-                            <Footer></Footer>
-                        </div>
+<div class="relative w-full z-10 min-h-screen">
+    <!-- 高斯模糊背景层 -->
+    <div class:list={[
+        "fixed top-0 left-0 right-0 bottom-0 z-[-1] max-w-[calc(var(--page-width)-30px)] mx-auto backdrop-blur-3xl rounded-none shadow-xl",
+        isPostPage ? "bg-[#fff8f0]/70 dark:bg-[#1c1814]/90" : "bg-white/10 dark:bg-[#1c1814]/60"
+    ]}></div>
+    
+    <!-- 内容区域 -->
+    <div class="relative max-w-[var(--page-width)] mx-auto h-full overflow-x-hidden">
+        <div class="w-full left-0 right-0 mx-auto gap-4 md:gap-6 px-3 md:px-6 grid grid-cols-1 md:grid-cols-12 grid-rows-[auto_1fr_auto] h-full max-w-[calc(var(--page-width)-30px)]">
+            <!-- 中央主内容区 -->
+            <main id="content-container" class={`${fullWidth ? 'md:col-span-12 lg:col-span-12' : 'md:col-span-8 lg:col-span-8'}`}>
+                <div class="w-full">
+                    <slot></slot>
+                    <div class="footer col-span-2 hidden lg:block">
+                        <Footer></Footer>
                     </div>
                 </div>
             </main>
 
-            <div class="footer col-span-2 onload-animation block lg:hidden">
+            <!-- 右侧边栏 -->
+            {!fullWidth && (
+                <aside class="md:col-span-4 lg:col-span-4">
+                    <!-- 公告卡片 -->
+                    {activeAnnouncement.enabled && showAnnouncement && (
+                        <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-none shadow-xl p-4 mb-6">
+                            <div class="flex items-start gap-4">
+                                <!-- 正圆头像 -->
+                                <div class="flex-shrink-0">
+                                    <img src={activeAnnouncement.avatar as string} alt="公告头像" class="w-12 h-12 rounded-full object-cover border-2 border-orange-100 dark:border-stone-700">
+                                </div>
+                                <!-- 公告内容 -->
+                                <div class="flex-1">
+                                    <p class="font-bold text-orange-700 dark:text-white">{activeAnnouncement.title}：</p>
+                                    <p class="text-gray-600 dark:text-gray-300">{activeAnnouncement.content}</p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    
+                    <!-- 文章目录 - 独立容器以确保粘性定位生效 -->
+                    {headings.length > 0 && (
+                        <SidebarToc headings={headings} />
+                    )}
+                    
+                    <!-- 其他侧边栏内容 -->
+                    <div class="mt-6">
+                        <slot name="sidebar"></slot>
+                    </div>
+                </aside>
+            )}
+
+            <div class="footer col-span-2 block lg:hidden">
                 <Footer></Footer>
             </div>
         </div>
 
-        {headings.length > 0 && <Toc headings={headings}></Toc>}
     </div>
 </div>
 

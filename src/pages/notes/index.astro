@@ -21,19 +21,19 @@ let delay = 0;
 const interval = 50;
 ---
 
-<MainGridLayout title={i18n(I18nKey.notes)} description={i18n(I18nKey.notes)}>
-    <div class="transition max-w-2xl mx-auto w-full py-4 mb-4">
+<MainGridLayout title={i18n(I18nKey.notes)} description={i18n(I18nKey.notes)} showAnnouncement={false} fullWidth={true}>
+    <div class="max-w-2xl mx-auto w-full">
         {sortedNotes.length > 0 ? (
             <div class="space-y-6">
                 {sortedNotes.map((note) => (
                     <NoteCard
                         entry={note}
-                        style={`animation-delay: calc(var(--content-delay) + ${delay++ * interval}ms);`}
+                        style=""
                     />
                 ))}
             </div>
         ) : (
-            <div class="text-center py-16 text-white text-lg">
+            <div class="text-center py-16 text-orange-950/60 dark:text-white/60 text-lg">
                 {i18n(I18nKey.no_notes_yet)}
             </div>
         )}

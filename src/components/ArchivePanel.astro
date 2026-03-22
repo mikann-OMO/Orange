@@ -43,16 +43,20 @@ const groups: { year: number; posts: typeof posts }[] = (() => {
 		{},
 	);
 
-	// convert the object to an array
 	const groupedPostsArray = Object.keys(groupedPosts).map((key) => ({
 		year: Number.parseInt(key),
 		posts: groupedPosts[Number.parseInt(key)],
 	}));
 
-	// sort years by latest first
 	groupedPostsArray.sort((a, b) => b.year - a.year);
 	return groupedPostsArray;
 })();
+
+const totalPosts = posts.length;
+const yearsSpan =
+	groups.length > 0
+		? `${groups[groups.length - 1].year} - ${groups[0].year}`
+		: "-";
 
 function formatDate(date: Date) {
 	const month = (date.getMonth() + 1).toString().padStart(2, "0");
@@ -65,53 +69,94 @@ function formatTag(tag: string[]) {
 }
 ---
 
-<div class="card-base px-8 py-6">
-    {
-        groups.map(group => (
-            <div>
-                <div class="flex flex-row w-full items-center h-[3.75rem]">
-                    <div class="w-[15%] md:w-[10%] transition text-2xl font-bold text-right text-75">{group.year}</div>
-                    <div class="w-[15%] md:w-[10%]">
-                        <div class="h-3 w-3 bg-none rounded-full outline outline-[var(--primary)] mx-auto -outline-offset-[2px] z-50 outline-3"></div>
-                    </div>
-                    <div class="w-[70%] md:w-[80%] transition text-left text-50">{group.posts.length} {i18n(I18nKey.postsCount)}</div>
-                </div>
-                {group.posts.map(post => (
-                    <a href={getPostUrlBySlug(post.slug)}
-                       aria-label={post.data.title}
-                       class="group btn-plain !block h-10 w-full rounded-lg hover:text-[initial]"
-                    >
-                        <div class="flex flex-row justify-start items-center h-full">
-                            <!-- date -->
-                            <div class="w-[15%] md:w-[10%] transition text-sm text-right text-50">
-                                {formatDate(post.data.published)}
-                            </div>
-                            <!-- dot and line -->
-                            <div class="w-[15%] md:w-[10%] relative dash-line h-full flex items-center">
-                                <div class="transition-all mx-auto w-1 h-1 rounded group-hover:h-5
-                                bg-[oklch(0.5_0.05_var(--hue))] group-hover:bg-[var(--primary)]
-                                outline outline-4 z-50
-                                group-hover:outline-[var(--btn-plain-bg-hover)]
-                                group-active:outline-[var(--btn-plain-bg-active)]
-                                "
-                                ></div>
-                            </div>
-                            <!-- post title -->
-                            <div class="w-[70%] md:max-w-[65%] md:w-[65%] text-left font-bold
-                                group-hover:translate-x-1 transition-all group-hover:text-[var(--primary)]
-                                text-75 pr-8 whitespace-nowrap overflow-ellipsis overflow-hidden"
-                            >
-                                    {post.data.title}
-                            </div>
-                            <!-- tag list -->
-                            <div class="hidden md:block md:w-[15%] text-left text-sm transition
-                            whitespace-nowrap overflow-ellipsis overflow-hidden
-                            text-30"
-                            >{formatTag(post.data.tags)}</div>
-                        </div>
-                    </a>
-                ))}
-            </div>
-        ))
-    }
+<div class="archive-container max-w-3xl mx-auto px-2 md:px-0">
+	<div class="stats-bar flex flex-wrap gap-3 md:gap-6 mb-4 md:mb-6 p-3 md:p-4 rounded-lg bg-orange-50/80 dark:bg-stone-800/50 border border-orange-200/50 dark:border-stone-700/50">
+		<div class="stat-item flex items-center gap-2 md:gap-3">
+			<div class="w-8 h-8 md:w-9 md:h-9 rounded-full bg-orange-100/80 dark:bg-stone-600/80 flex items-center justify-center">
+				<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 md:w-4 md:h-4 text-orange-700 dark:text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+					<polyline points="14 2 14 8 20 8"/>
+					<line x1="16" y1="13" x2="8" y2="13"/>
+					<line x1="16" y1="17" x2="8" y2="17"/>
+					<line x1="10" y1="9" x2="8" y2="9"/>
+				</svg>
+			</div>
+			<div>
+				<div class="text-lg md:text-xl font-semibold text-orange-950 dark:text-white">{totalPosts}</div>
+				<div class="text-xs text-orange-950/60 dark:text-white/60">篇文章</div>
+			</div>
+		</div>
+		<div class="stat-item flex items-center gap-2 md:gap-3">
+			<div class="w-8 h-8 md:w-9 md:h-9 rounded-full bg-orange-100/80 dark:bg-stone-600/80 flex items-center justify-center">
+				<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 md:w-4 md:h-4 text-orange-700 dark:text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+					<line x1="16" y1="2" x2="16" y2="6"/>
+					<line x1="8" y1="2" x2="8" y2="6"/>
+					<line x1="3" y1="10" x2="21" y2="10"/>
+				</svg>
+			</div>
+			<div>
+				<div class="text-lg md:text-xl font-semibold text-orange-950 dark:text-white">{yearsSpan}</div>
+				<div class="text-xs text-orange-950/60 dark:text-white/60">时间跨度</div>
+			</div>
+		</div>
+	</div>
+
+	{groups.length > 1 && (
+		<div class="year-nav flex flex-wrap gap-1.5 md:gap-2 mb-4 md:mb-6">
+			{groups.map((group) => (
+				<a href={`#year-${group.year}`} class="year-nav-btn px-2.5 md:px-3 py-1 rounded-full text-xs md:text-sm transition-all duration-200 bg-orange-100/80 dark:bg-stone-700/60 text-orange-800 dark:text-white hover:bg-orange-200 dark:hover:bg-stone-600 hover:text-orange-950 dark:hover:text-white">
+					{group.year}
+				</a>
+			))}
+		</div>
+	)}
+
+	<div class="timeline-container card-base px-3 md:px-5 py-3 md:py-5">
+		{groups.map((group) => (
+			<div id={`year-${group.year}`} class="year-group scroll-mt-20 md:scroll-mt-24">
+				<div class="year-header flex items-center gap-2 md:gap-3 mb-2 md:mb-3 pb-1.5 md:pb-2 border-b border-orange-200/70 dark:border-stone-600/50">
+					<span class="text-lg md:text-xl font-semibold text-orange-950 dark:text-white">{group.year}</span>
+					<span class="text-xs md:text-sm text-orange-950/60 dark:text-white/60">{group.posts.length} {i18n(I18nKey.postsCount)}</span>
+				</div>
+				
+				<div class="posts-list relative pl-4 md:pl-5 border-l border-orange-200 dark:border-stone-600">
+					{group.posts.map((post) => (
+						<a href={getPostUrlBySlug(post.slug)} aria-label={post.data.title} class="post-item group flex items-start gap-2 md:gap-3 py-2 md:py-2.5 relative">
+							<div class="timeline-dot absolute left-[-1.1rem] md:left-[-1.35rem] w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-orange-400 dark:bg-stone-400 group-hover:bg-[var(--primary)] transition-colors duration-200"></div>
+							
+							<div class="post-date flex-shrink-0 w-10 md:w-12 text-xs md:text-sm text-orange-950/60 dark:text-white/60 group-hover:text-[var(--primary)] transition-colors">
+								{formatDate(post.data.published)}
+							</div>
+							
+							<div class="post-content flex-1 min-w-0">
+								<div class="post-title text-sm md:text-base text-orange-950 dark:text-white group-hover:text-[var(--primary)] transition-colors truncate">
+									{post.data.title}
+								</div>
+								{post.data.tags && post.data.tags.length > 0 && (
+									<div class="post-tags mt-0.5 text-xs text-orange-950/50 dark:text-white/50 truncate hidden md:block">
+										{formatTag(post.data.tags)}
+									</div>
+								)}
+							</div>
+						</a>
+					))}
+				</div>
+			</div>
+		))}
+	</div>
 </div>
+
+<style>
+	.year-nav-btn {
+		scroll-behavior: smooth;
+	}
+	
+	@media (prefers-reduced-motion: reduce) {
+		.year-nav-btn,
+		.post-item,
+		.timeline-dot {
+			transition: none;
+		}
+	}
+</style>

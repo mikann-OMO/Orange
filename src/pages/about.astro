@@ -5,7 +5,10 @@ import MainGridLayout from "../layouts/MainGridLayout.astro";
 import { getEntry } from "astro:content";
 import { render } from "astro:content";
 import Markdown from "@components/misc/Markdown.astro";
+import FriendsList from "@components/widget/FriendsList.astro";
 import Profile from "@components/widget/Profile.astro";
+import { Icon } from "astro-icon/components";
+import { profileConfig } from "../config";
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
 
@@ -18,18 +21,76 @@ if (!aboutPost) {
 const { Content } = await render(aboutPost);
 ---
 <MainGridLayout title={i18n(I18nKey.about)} description={i18n(I18nKey.about)}>
-    <div class="flex w-full justify-center">
-        <div class="flex flex-col md:flex-row w-full max-w-5xl gap-6">
-            <div class="flex-shrink-0 w-full md:w-auto">
-                <Profile class="w-full md:w-64 md:sticky md:top-24" />
-            </div>
-            <div class="flex-1 min-w-0 rounded-[var(--radius-large)] overflow-hidden relative">
-                <div class="card-base z-10 px-6 md:px-9 py-6 relative w-full">
-                    <Markdown class="mt-2">
-                        <Content />
-                    </Markdown>
+    <div class="space-y-4 md:space-y-6">
+        <!-- 移动端：网格布局 - 用户信息 + 友链 -->
+        <div class="md:hidden grid grid-cols-1 xs:grid-cols-2 gap-3">
+            <!-- 用户身份卡片 -->
+            <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-none shadow-xl p-3">
+                <div class="flex flex-col items-center text-center">
+                    <div class="w-20 h-20 xs:w-24 xs:h-24 overflow-hidden rounded-none border-2 border-yellow-100/60 dark:border-stone-700/60 shadow-xl">
+                        <img src={profileConfig.avatar || ""} alt="Profile Image" class="w-full h-full object-cover" loading="eager" />
+                    </div>
+                    <h1 class="text-base xs:text-lg font-bold mt-2 text-[var(--primary)] dark:text-white">{profileConfig.name}</h1>
+                    <p class="text-xs text-orange-950/60 dark:text-white/60 mt-1 line-clamp-2">{profileConfig.bio}</p>
+                    <div class="flex flex-wrap gap-1 justify-center mt-2">
+                        {profileConfig.links.map((link, index) => (
+                            <a href={link.url} target="_blank" rel="noopener noreferrer" class="bg-white/30 dark:bg-stone-700/30 backdrop-blur-3xl rounded-none p-1.5 flex items-center justify-center">
+                                <Icon name={link.icon} class="text-orange-950/70 dark:text-white/70 text-base" />
+                            </a>
+                        ))}
+                    </div>
                 </div>
             </div>
+            
+            <!-- 友链卡片 -->
+            <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-none shadow-xl p-3">
+                <h3 class="text-sm font-bold mb-2 text-orange-700 dark:text-white border-b border-orange-200/50 dark:border-stone-700/50 pb-1.5">友链</h3>
+                <FriendsList class="space-y-1" />
+            </div>
+        </div>
+        
+        <!-- 桌面端：用户身份区 -->
+        <div class="hidden md:block bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-none shadow-xl p-4 md:p-6">
+            <div class="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-6">
+                <!-- 左侧头像 -->
+                <div class="flex-shrink-0">
+                    <Profile class="max-w-md"></Profile>
+                </div>
+                <!-- 右侧用户信息 -->
+                <div class="flex-1 text-center md:text-left">
+                    <h1 class="text-xl md:text-2xl font-bold mb-1 md:mb-2 text-[var(--primary)] dark:text-white">{profileConfig.name}</h1>
+                    <p class="text-sm md:text-base text-orange-950/60 dark:text-white/60 mb-3 md:mb-4">{profileConfig.bio}</p>
+                    <div class="flex flex-col sm:flex-row gap-2 md:gap-4 justify-center md:justify-start">
+                        {profileConfig.links.map((link, index) => (
+                            <a href={link.url} target="_blank" rel="noopener noreferrer" class="bg-white/30 dark:bg-stone-700/30 backdrop-blur-3xl rounded-none px-3 md:px-4 py-1.5 md:py-2 flex items-center gap-2 text-sm">
+                                <Icon name={link.icon} class="text-orange-950/70 dark:text-white/70" />
+                                <span class="text-orange-950/70 dark:text-white/70">{link.name}</span>
+                            </a>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 个人板块原文章 -->
+        <div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl rounded-none shadow-xl overflow-hidden">
+            <div class="bg-orange-100/80 dark:bg-stone-700/70 backdrop-blur-3xl border-l-4 border-orange-700 p-3 md:p-4">
+                <h2 class="text-base md:text-lg font-bold text-orange-700 dark:text-white">关于我</h2>
+            </div>
+            <div class="p-4 md:p-6">
+                <Markdown class="mt-2">
+                    <Content />
+                </Markdown>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 右侧边栏 - 桌面端 -->
+    <div slot="sidebar" class="hidden md:block space-y-6">
+        <!-- 友链 -->
+        <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-none shadow-xl p-4">
+            <h3 class="text-lg font-bold mb-4 text-orange-700 dark:text-white border-b border-orange-200/50 dark:border-stone-700/50 pb-2">友链</h3>
+            <FriendsList class="space-y-2" />
         </div>
     </div>
 </MainGridLayout>

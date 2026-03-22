@@ -1,5 +1,6 @@
 ---
 import ArchivePanel from "../../../components/ArchivePanel.astro";
+import Breadcrumb from "../../../components/control/Breadcrumb.astro";
 import I18nKey from "../../../i18n/i18nKey";
 import { i18n } from "../../../i18n/translation";
 import MainGridLayout from "../../../layouts/MainGridLayout.astro";
@@ -63,5 +64,14 @@ const tag = decodedTag || decodePathSegment(Astro.params.tag as string);
 ---
 
 <MainGridLayout title={i18n(I18nKey.archive)} description={i18n(I18nKey.archive)}>
-    <ArchivePanel tags={[tag]}></ArchivePanel>
+    <div class="max-w-[50rem] mx-auto w-full">
+        <Breadcrumb 
+            items={[
+                { label: "首页", url: "/" },
+                { label: "归档", url: "/archive" },
+                { label: `标签: ${tag}`, isActive: true }
+            ]} 
+        />
+        <ArchivePanel tags={[tag]}></ArchivePanel>
+    </div>
 </MainGridLayout>

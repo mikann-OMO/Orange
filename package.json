@@ -73,6 +73,8 @@
 		"glob": "^13.0.0",
 		"postcss-import": "^16.1.0",
 		"postcss-nesting": "^13.0.1",
-		"vite-plugin-pwa": "^1.2.0"
+		"vite-plugin-pwa": "^1.2.0",
+		"@vitejs/plugin-legacy": "^5.4.1",
+		"core-js": "^3.37.1"
 	}
 }

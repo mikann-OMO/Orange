@@ -1,0 +1,524 @@
+---
+const { envId, lang = "zh-CN", region = "ap-guangzhou" } = Astro.props;
+---
+
+<div id="twikoo-guestbook" class="twikoo-guestbook-container"></div>
+
+<script define:vars={{ envId, lang, region }}>
+  (function() {
+    const initTwikoo = () => {
+      if (!window.twikoo) {
+        console.log('[Twikoo Guestbook] Waiting for script to load...');
+        setTimeout(initTwikoo, 100);
+        return;
+      }
+
+      const container = document.getElementById('twikoo-guestbook');
+      if (!container) return;
+
+      // 检查是否已经初始化
+      if (container.dataset.initialized === 'true') return;
+      container.dataset.initialized = 'true';
+
+      // 直接使用腾讯云开发环境配置
+      const config = {
+        envId: envId,
+        el: '#twikoo-guestbook',
+        path: 'guestbook',
+        lang: lang,
+        region: region,
+        // 添加 cloudbase 配置
+        cloudbase: {
+          env: envId,
+          region: region
+        }
+      };
+
+      window.twikoo.init(config).then(() => {
+        console.log('[Twikoo Guestbook] Initialized successfully');
+      }).catch((err) => {
+        console.error('[Twikoo Guestbook] Initialization failed:', err);
+        console.error('[Twikoo Guestbook] Config:', config);
+        container.innerHTML = `<div class="py-6 text-center text-orange-950/60 dark:text-white/60">留言板加载失败，请刷新页面重试<br>错误信息: ${err.message || '未知错误'}</div>`;
+      });
+    };
+
+    // 动态加载 Twikoo 脚本
+    const loadTwikooScript = () => {
+      if (window.twikoo) {
+        initTwikoo();
+        return;
+      }
+
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/twikoo@1.6.42/dist/twikoo.all.min.js';
+      script.async = true;
+      script.crossOrigin = 'anonymous';
+      script.onload = initTwikoo;
+      script.onerror = () => {
+        console.error('[Twikoo Guestbook] Failed to load script');
+        const container = document.getElementById('twikoo-guestbook');
+        if (container) {
+          container.innerHTML = '<div class="py-6 text-center text-orange-950/60 dark:text-white/60">留言板加载失败，请检查网络连接</div>';
+        }
+      };
+      document.head.appendChild(script);
+    };
+
+    // 使用 Intersection Observer 延迟加载
+    const container = document.getElementById('twikoo-guestbook');
+    if (container) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            observer.disconnect();
+            loadTwikooScript();
+          }
+        });
+      }, {
+        rootMargin: '100px',
+        threshold: 0.01
+      });
+      observer.observe(container);
+    }
+
+    // 页面加载完成后也尝试加载
+    if (document.readyState === 'complete') {
+      loadTwikooScript();
+    } else {
+      window.addEventListener('load', loadTwikooScript);
+    }
+  })();
+</script>
+
+<style>
+  .twikoo-guestbook-container {
+    min-height: 150px;
+    transition: all 0.3s ease;
+  }
+
+  /* ========== 亮色模式 - 纯白色调 ========== */
+  :global(.twikoo-guestbook-container .twikoo) {
+    --twikoo-font-family: inherit;
+    --twikoo-theme-color: #666;
+    font-size: 0.95rem;
+  }
+
+  :global(.twikoo-guestbook-container .tk-meta-input) {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    background: transparent !important;
+  }
+
+  :global(.twikoo-guestbook-container .tk-meta-input .el-input) {
+    flex: 1;
+    min-width: 140px;
+  }
+
+  :global(.twikoo-guestbook-container .tk-meta-input .el-input__inner) {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 0;
+    padding: 0.5rem 0;
+    font-size: 0.9rem;
+    color: #333;
+    transition: border-color 0.3s ease;
+  }
+
+  :global(.twikoo-guestbook-container .tk-meta-input .el-input__inner:focus) {
+    border-color: #999;
+    box-shadow: none;
+  }
+
+  :global(.twikoo-guestbook-container .tk-meta-input .el-input__inner::placeholder) {
+    color: #999;
+    font-size: 0.85rem;
+  }
+
+  :global(.twikoo-guestbook-container .tk-input) {
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #333;
+    transition: all 0.3s ease;
+    resize: vertical;
+    min-height: 120px;
+  }
+
+  :global(.twikoo-guestbook-container .tk-input:focus) {
+    background: #fff;
+    border-color: #666;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
+  }
+
+  :global(.twikoo-guestbook-container .tk-actions) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  :global(.twikoo-guestbook-container .tk-action-icon) {
+    color: #666;
+    font-size: 1.1rem;
+    padding: 0.4rem;
+    border-radius: 0.25rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+
+  :global(.twikoo-guestbook-container .tk-action-icon:hover) {
+    color: #333;
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  :global(.twikoo-guestbook-container .tk-submit) {
+    background: #333;
+    border: none;
+    border-radius: 0.375rem;
+    padding: 0.5rem 1.25rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  :global(.twikoo-guestbook-container .tk-submit:hover) {
+    opacity: 0.9;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  :global(.twikoo-guestbook-container .tk-submit:active) {
+    transform: translateY(0);
+  }
+
+  :global(.twikoo-guestbook-container .tk-comments) {
+    margin-top: 2rem;
+  }
+
+  :global(.twikoo-guestbook-container .tk-comment) {
+    padding: 1.25rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  :global(.twikoo-guestbook-container .tk-comment:last-child) {
+    border-bottom: none;
+  }
+
+  :global(.twikoo-guestbook-container .tk-avatar) {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    margin-right: 0.875rem;
+  }
+
+  :global(.twikoo-guestbook-container .tk-avatar img) {
+    border-radius: 50%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  :global(.twikoo-guestbook-container .tk-nick) {
+    color: #333;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+  }
+
+  :global(.twikoo-guestbook-container .tk-nick:hover) {
+    text-decoration: underline;
+  }
+
+  :global(.twikoo-guestbook-container .tk-time) {
+    color: #999;
+    font-size: 0.8rem;
+    margin-left: 0.5rem;
+  }
+
+  :global(.twikoo-guestbook-container .tk-content) {
+    color: #444;
+    line-height: 1.75;
+    margin-top: 0.5rem;
+    font-size: 0.95rem;
+  }
+
+  :global(.twikoo-guestbook-container .tk-content p) {
+    margin: 0.5rem 0;
+  }
+
+  :global(.twikoo-guestbook-container .tk-content p:first-child) {
+    margin-top: 0;
+  }
+
+  :global(.twikoo-guestbook-container .tk-reply) {
+    color: #666;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    margin-top: 0.5rem;
+  }
+
+  :global(.twikoo-guestbook-container .tk-reply:hover) {
+    color: #333;
+  }
+
+  :global(.twikoo-guestbook-container .tk-expand) {
+    color: #666;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0.5rem 0;
+  }
+
+  :global(.twikoo-guestbook-container .tk-expand:hover) {
+    opacity: 0.8;
+  }
+
+  :global(.twikoo-guestbook-container .tk-owo) {
+    border-radius: 0.5rem;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  :global(.twikoo-guestbook-container .tk-preview) {
+    background: #f9f9f9;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-top: 0.75rem;
+  }
+
+  :global(.twikoo-guestbook-container .tk-comments-count) {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 1rem;
+  }
+
+  :global(.twikoo-guestbook-container .tk-replies) {
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    margin-top: 0.75rem;
+  }
+
+  /* ========== 暗色模式 - 深褐色调 ========== */
+  :global(.dark .twikoo-guestbook-container .twikoo),
+  :global(html.dark .twikoo-guestbook-container .twikoo) {
+    --twikoo-theme-color: #ffb74d;
+  }
+
+  :global(.dark .twikoo-guestbook-container .tk-meta-input .el-input__inner),
+  :global(html.dark .twikoo-guestbook-container .tk-meta-input .el-input__inner) {
+    border-bottom-color: rgba(255, 183, 77, 0.25);
+    color: #d7ccc8;
+  }
+
+  :global(.dark .twikoo-guestbook-container .tk-meta-input .el-input__inner::placeholder),
+  :global(html.dark .twikoo-guestbook-container .tk-meta-input .el-input__inner::placeholder) {
+    color: #8d6e63;
+  }
+
+  :global(.dark .twikoo-guestbook-container .tk-input),
+  :global(html.dark .twikoo-guestbook-container .tk-input) {
+    background: #2d2418;
+    border-color: rgba(255, 183, 77, 0.2);
+    color: #efebe9;
+  }
+
+  :global(.dark .twikoo-guestbook-container .tk-input:focus),
+  :global(html.dark .twikoo-guestbook-container .tk-input:focus) {
+    background: #3a2f20;
+    border-color: #ffb74d;
+    box-shadow: 0 0 0 2px rgba(255, 183, 77, 0.15);
+  }
+
+  :global(.dark .twikoo-guestbook-container .tk-actions),
+  :global(html.dark .twikoo-guestbook-container .tk-actions) {
+    border-top-color: rgba(255, 183, 77, 0.15);
+  }
+
+  :global(.dark .twikoo-guestbook-container .tk-action-icon),
+  :global(html.dark .twikoo-guestbook-container .tk-action-icon) {
+    color: #a1887f;
+  }
+
+  :global(.dark .twikoo-guestbook-container .tk-action-icon:hover),
+  :global(html.dark .twikoo-guestbook-container .tk-action-icon:hover) {
+    color: #ffb74d;
+    background: rgba(255, 183, 77, 0.1);
+  }
+
+  :global(.dark .twikoo-guestbook-container .tk-submit),
+  :global(html.dark .twikoo-guestbook-container .tk-submit) {
+    background: linear-gradient(135deg, #f57c00, #e65100);
+  }
+
+  :global(.dark .twikoo-guestbook-container .tk-submit:hover),
+  :global(html.dark .twikoo-guestbook-container .tk-submit:hover) {
+    box-shadow: 0 2px 8px rgba(255, 183, 77, 0.3);
+  }
+
+  :global(.dark .twikoo-guestbook-container .tk-comment),
+  :global(html.dark .twikoo-guestbook-container .tk-comment) {
+    border-bottom-color: rgba(255, 183, 77, 0.1);
+  }
+
+  :global(.dark .twikoo-guestbook-container .tk-nick),
+  :global(html.dark .twikoo-guestbook-container .tk-nick) {
+    color: #ffb74d;
+  }
+
+  :global(.dark .twikoo-guestbook-container .tk-time),
+  :global(html.dark .twikoo-guestbook-container .tk-time) {
+    color: #8d6e63;
+  }
+
+  :global(.dark .twikoo-guestbook-container .tk-content),
+  :global(html.dark .twikoo-guestbook-container .tk-content) {
+    color: #efebe9;
+  }
+
+  :global(.dark .twikoo-guestbook-container .tk-reply),
+  :global(html.dark .twikoo-guestbook-container .tk-reply) {
+    color: #a1887f;
+  }
+
+  :global(.dark .twikoo-guestbook-container .tk-reply:hover),
+  :global(html.dark .twikoo-guestbook-container .tk-reply:hover) {
+    color: #ffb74d;
+  }
+
+  :global(.dark .twikoo-guestbook-container .tk-expand),
+  :global(html.dark .twikoo-guestbook-container .tk-expand) {
+    color: #ffb74d;
+  }
+
+  :global(.dark .twikoo-guestbook-container .tk-owo),
+  :global(html.dark .twikoo-guestbook-container .tk-owo) {
+    background: #2d2418;
+    border-color: rgba(255, 183, 77, 0.2);
+  }
+
+  :global(.dark .twikoo-guestbook-container .tk-preview),
+  :global(html.dark .twikoo-guestbook-container .tk-preview) {
+    background: #2d2418;
+    border-color: rgba(255, 183, 77, 0.15);
+  }
+
+  :global(.dark .twikoo-guestbook-container .tk-comments-count),
+  :global(html.dark .twikoo-guestbook-container .tk-comments-count) {
+    color: #bcaaa4;
+  }
+
+  :global(.dark .twikoo-guestbook-container .tk-replies),
+  :global(html.dark .twikoo-guestbook-container .tk-replies) {
+    background: rgba(45, 36, 24, 0.5);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :global(.twikoo-guestbook-container .twikoo) {
+      --twikoo-theme-color: #ffb74d;
+    }
+
+    :global(.twikoo-guestbook-container .tk-meta-input .el-input__inner) {
+      border-bottom-color: rgba(255, 183, 77, 0.25);
+      color: #d7ccc8;
+    }
+
+    :global(.twikoo-guestbook-container .tk-meta-input .el-input__inner::placeholder) {
+      color: #8d6e63;
+    }
+
+    :global(.twikoo-guestbook-container .tk-input) {
+      background: #2d2418;
+      border-color: rgba(255, 183, 77, 0.2);
+      color: #efebe9;
+    }
+
+    :global(.twikoo-guestbook-container .tk-input:focus) {
+      background: #3a2f20;
+      border-color: #ffb74d;
+      box-shadow: 0 0 0 2px rgba(255, 183, 77, 0.15);
+    }
+
+    :global(.twikoo-guestbook-container .tk-actions) {
+      border-top-color: rgba(255, 183, 77, 0.15);
+    }
+
+    :global(.twikoo-guestbook-container .tk-action-icon) {
+      color: #a1887f;
+    }
+
+    :global(.twikoo-guestbook-container .tk-action-icon:hover) {
+      color: #ffb74d;
+      background: rgba(255, 183, 77, 0.1);
+    }
+
+    :global(.twikoo-guestbook-container .tk-submit) {
+      background: linear-gradient(135deg, #f57c00, #e65100);
+    }
+
+    :global(.twikoo-guestbook-container .tk-submit:hover) {
+      box-shadow: 0 2px 8px rgba(255, 183, 77, 0.3);
+    }
+
+    :global(.twikoo-guestbook-container .tk-comment) {
+      border-bottom-color: rgba(255, 183, 77, 0.1);
+    }
+
+    :global(.twikoo-guestbook-container .tk-nick) {
+      color: #ffb74d;
+    }
+
+    :global(.twikoo-guestbook-container .tk-time) {
+      color: #8d6e63;
+    }
+
+    :global(.twikoo-guestbook-container .tk-content) {
+      color: #efebe9;
+    }
+
+    :global(.twikoo-guestbook-container .tk-reply) {
+      color: #a1887f;
+    }
+
+    :global(.twikoo-guestbook-container .tk-reply:hover) {
+      color: #ffb74d;
+    }
+
+    :global(.twikoo-guestbook-container .tk-expand) {
+      color: #ffb74d;
+    }
+
+    :global(.twikoo-guestbook-container .tk-owo) {
+      background: #2d2418;
+      border-color: rgba(255, 183, 77, 0.2);
+    }
+
+    :global(.twikoo-guestbook-container .tk-preview) {
+      background: #2d2418;
+      border-color: rgba(255, 183, 77, 0.15);
+    }
+
+    :global(.twikoo-guestbook-container .tk-comments-count) {
+      color: #bcaaa4;
+    }
+
+    :global(.twikoo-guestbook-container .tk-replies) {
+      background: rgba(45, 36, 24, 0.5);
+    }
+  }
+</style>

@@ -1,12 +1,15 @@
 ---
+import { Icon } from "astro-icon/components";
+
 interface Props {
 	badge?: string;
 	url?: string;
 	label?: string;
+	external?: boolean;
 }
-const { badge, url, label } = Astro.props;
+const { badge, url, label, external = false } = Astro.props;
 ---
-<a href={url} aria-label={label}>
+<a href={url} aria-label={label} target={external ? "_blank" : null} rel={external ? "noopener noreferrer" : null}>
     <button
         class:list={`
             w-full
@@ -19,16 +22,21 @@ const { badge, url, label } = Astro.props;
             pl-2
             hover:pl-3
             
-            text-neutral-700
+            text-orange-950/75
             hover:text-[var(--primary)]
-            dark:text-neutral-300
+            dark:text-white/75
             dark:hover:text-[var(--primary)]
         `
         }
     >
         <div class="flex items-center justify-between relative mr-2">
-            <div class="overflow-hidden text-left whitespace-nowrap overflow-ellipsis  ">
+            <div class="overflow-hidden text-left whitespace-nowrap overflow-ellipsis flex items-center">
                 <slot></slot>
+                { external && <Icon 
+                    name="fa6-solid:arrow-up-right-from-square" 
+                    class="text-[0.875rem] -translate-y-[1px] ml-1 text-orange-950/[0.2] dark:text-white/[0.2]"
+                    aria-hidden="true"
+                />}
             </div>
             { badge !== undefined && badge !== null && badge !== '' &&
                 <div class="transition px-2 h-7 ml-4 min-w-[2rem] rounded-lg text-sm font-bold

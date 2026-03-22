@@ -1,0 +1,72 @@
+---
+import { url } from "../../utils/url-utils";
+
+interface BreadcrumbItem {
+	label: string;
+	url?: string;
+	isActive?: boolean;
+}
+
+interface Props {
+	items: BreadcrumbItem[];
+	className?: string;
+}
+
+const { items, className = "" } = Astro.props;
+---
+<nav class={`breadcrumb ${className}`} aria-label="Breadcrumb">
+	<ol class="flex flex-wrap items-center gap-2">
+		{items.map((item, index) => (
+			<li class="breadcrumb-item">
+				{item.url && !item.isActive ? (
+					<a href={item.url} class="text-75 hover:text-[var(--primary)] transition">
+						{item.label}
+					</a>
+				) : (
+					<span class="text-50 dark:text-white/60">
+						{item.label}
+					</span>
+				)}
+				{index < items.length - 1 && (
+					<span class="text-50 mx-1">/</span>
+				)}
+			</li>
+		))}
+	</ol>
+</nav>
+
+<style>
+.breadcrumb {
+	font-size: 0.875rem;
+	margin-bottom: 1rem;
+}
+
+.breadcrumb-item {
+	display: flex;
+	align-items: center;
+}
+
+.breadcrumb-item a {
+	text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+	text-decoration: underline;
+}
+
+/* 移动端适配 */
+@media (max-width: 640px) {
+	.breadcrumb {
+		font-size: 0.75rem;
+		margin-bottom: 0.75rem;
+	}
+	
+	.breadcrumb ol {
+		gap: 1px;
+	}
+	
+	.breadcrumb-item span {
+		margin: 0 4px;
+	}
+}
+</style>

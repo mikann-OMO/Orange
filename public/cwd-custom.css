@@ -66,3 +66,12 @@
 #cwd-comments video {
 	border-radius: 0.75rem;
 }
+
+/* 隐藏点赞功能 */
+#cwd-comments .cwd-comment-like {
+	display: none !important;
+}
+
+#cwd-comments .cwd-comment-actions button[data-action="like"] {
+	display: none !important;
+}

@@ -1,0 +1,190 @@
+---
+---
+
+<div id="page-progress" class="page-progress" aria-hidden="true">
+    <div class="page-progress-bar"></div>
+    <div class="page-progress-glow"></div>
+</div>
+
+<style>
+    .page-progress {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        z-index: 9999;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.1s ease;
+    }
+
+    .page-progress.loading {
+        opacity: 1;
+    }
+
+    .page-progress-bar {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, 
+            var(--primary, #e64a19) 0%, 
+            #ff6b35 50%, 
+            #ff9800 100%
+        );
+        position: relative;
+        z-index: 2;
+    }
+
+    .page-progress-glow {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, 
+            transparent 0%,
+            rgba(255, 107, 53, 0.6) 50%,
+            transparent 100%
+        );
+        filter: blur(4px);
+        z-index: 1;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .page-progress {
+            display: none;
+        }
+    }
+</style>
+
+<script>
+    const progressEl = document.getElementById('page-progress');
+    const progressBar = progressEl?.querySelector('.page-progress-bar');
+    const progressGlow = progressEl?.querySelector('.page-progress-glow');
+    
+    let isLoading = false;
+    let showTimeout: number | null = null;
+    let progressAnimation: number | null = null;
+    let safetyTimeout: number | null = null;
+    let currentProgress = 0;
+    let targetProgress = 0;
+    
+    const MAX_LOAD_TIME = 1500;
+
+    function setProgress(value: number) {
+        currentProgress = value;
+        if (progressBar) {
+            progressBar.style.width = `${value}%`;
+        }
+        if (progressGlow) {
+            progressGlow.style.width = `${value}%`;
+        }
+    }
+
+    function animateProgress() {
+        if (currentProgress < targetProgress) {
+            const diff = targetProgress - currentProgress;
+            const step = Math.max(diff * 0.1, 1);
+            currentProgress = Math.min(currentProgress + step, targetProgress);
+            setProgress(currentProgress);
+            progressAnimation = requestAnimationFrame(animateProgress);
+        }
+    }
+
+    function clearAllTimers() {
+        if (showTimeout) {
+            clearTimeout(showTimeout);
+            showTimeout = null;
+        }
+        if (progressAnimation) {
+            cancelAnimationFrame(progressAnimation);
+            progressAnimation = null;
+        }
+        if (safetyTimeout) {
+            clearTimeout(safetyTimeout);
+            safetyTimeout = null;
+        }
+    }
+
+    function resetProgress() {
+        clearAllTimers();
+        if (progressEl) {
+            progressEl.classList.remove('loading');
+        }
+        setProgress(0);
+        currentProgress = 0;
+        targetProgress = 0;
+        isLoading = false;
+    }
+
+    function startProgress() {
+        if (!progressEl || isLoading) return;
+        isLoading = true;
+        currentProgress = 0;
+        targetProgress = 0;
+        
+        clearAllTimers();
+        
+        showTimeout = window.setTimeout(() => {
+            if (!isLoading) return;
+            progressEl.classList.add('loading');
+            
+            targetProgress = 30;
+            progressAnimation = requestAnimationFrame(animateProgress);
+            
+            setTimeout(() => {
+                if (isLoading && targetProgress < 60) {
+                    targetProgress = 60;
+                    progressAnimation = requestAnimationFrame(animateProgress);
+                }
+            }, 200);
+            
+            setTimeout(() => {
+                if (isLoading && targetProgress < 80) {
+                    targetProgress = 80;
+                    progressAnimation = requestAnimationFrame(animateProgress);
+                }
+            }, 400);
+        }, 50);
+        
+        safetyTimeout = window.setTimeout(() => {
+            if (isLoading) {
+                completeProgress();
+            }
+        }, MAX_LOAD_TIME);
+    }
+
+    function completeProgress() {
+        if (!progressEl) return;
+        
+        clearAllTimers();
+        
+        targetProgress = 100;
+        
+        const finishAnimation = () => {
+            if (currentProgress < 100) {
+                currentProgress = Math.min(currentProgress + 5, 100);
+                setProgress(currentProgress);
+                requestAnimationFrame(finishAnimation);
+            } else {
+                setTimeout(() => {
+                    resetProgress();
+                }, 100);
+            }
+        };
+        
+        requestAnimationFrame(finishAnimation);
+    }
+
+    document.addEventListener('astro:page-load', () => {
+        completeProgress();
+    });
+
+    document.addEventListener('astro:before-preparation', () => {
+        startProgress();
+    });
+
+    document.addEventListener('astro:after-swap', () => {
+        completeProgress();
+    });
+</script>

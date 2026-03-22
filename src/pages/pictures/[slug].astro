@@ -2,10 +2,19 @@
 import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 import type { GetStaticPaths } from "astro";
+import { Icon } from "astro-icon/components";
 import MainGridLayout from "../../layouts/MainGridLayout.astro";
 
+// 图册页面专用公告配置
+const picturesAnnouncement = {
+	title: "公告",
+	content: "内容还在建设中",
+	avatar: "/images/奇卡头1.jpg",
+	enabled: true,
+};
+
 export const getStaticPaths: GetStaticPaths = async () => {
-	const pictures = await getCollection("pictures");
+	const pictures = await getCollection("exhibition");
 	return pictures.map((a) => ({
 		params: { slug: a.id },
 		props: { album: a },
@@ -13,316 +22,207 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 interface Props {
-	album: CollectionEntry<"pictures">;
+	album: CollectionEntry<"exhibition">;
 }
 const { album } = Astro.props as unknown as Props;
 const albumName: string = album.data.dir;
 const title: string = album.data.title || album.id;
 const description: string = album.data.description || "相册";
-const cover: string = (album.data.cover || "").trim();
-type ImageMeta = { file: string; title?: string; desc?: string };
-const imageMetas: ImageMeta[] = album.data.images ?? [];
-const metaMap = new Map<string, ImageMeta>(imageMetas.map((m) => [m.file, m]));
 
-// 使用 public/pictures 目录中的图片
-const entries = [];
+const exhibitionImages = import.meta.glob<{ default: ImageMetadata }>(
+	"../../content/exhibition/**/*.{jpg,jpeg,png,gif,webp}",
+	{ eager: true },
+);
 
-// 手动指定图片路径，确保能正确访问
-const possibleImages = [];
-
-// 为九华山相册添加数字命名的图片
-if (albumName === "九华山2026.01.01") {
-	for (let i = 1; i <= 45; i++) {
-		possibleImages.push(`/pictures/${albumName}/${i}.jpg`);
-	}
-}
-// 为南京相册添加图片
-else if (albumName === "南京2024.10.18") {
-	possibleImages.push(`/pictures/${albumName}/a南京站.jpg`);
-	possibleImages.push(`/pictures/${albumName}/b启程路上的落叶.jpg`);
-	possibleImages.push(`/pictures/${albumName}/c老门东.jpg`);
-	possibleImages.push(`/pictures/${albumName}/d鸭血粉丝蟹黄汤包.jpg`);
-	possibleImages.push(`/pictures/${albumName}/e人很少的地铁站.jpg`);
-	possibleImages.push(`/pictures/${albumName}/f片皮烤鸭.jpg`);
-	possibleImages.push(`/pictures/${albumName}/g鲜丰水果盒.jpg`);
-	possibleImages.push(`/pictures/${albumName}/h中山陵.jpg`);
-	possibleImages.push(`/pictures/${albumName}/i中山陵2.jpg`);
-	possibleImages.push(`/pictures/${albumName}/j中山陵3.jpg`);
-	possibleImages.push(`/pictures/${albumName}/k中山陵.jpg`);
-	possibleImages.push(`/pictures/${albumName}/k中山陵梧桐大道.jpg`);
-	possibleImages.push(`/pictures/${albumName}/l美龄宫.jpg`);
-	possibleImages.push(`/pictures/${albumName}/m音乐台2.jpg`);
-	possibleImages.push(`/pictures/${albumName}/n音乐台.jpg`);
-	possibleImages.push(`/pictures/${albumName}/o拌饭.jpg`);
-	possibleImages.push(`/pictures/${albumName}/o猪.jpg`);
-	possibleImages.push(`/pictures/${albumName}/p秦淮河.jpg`);
-	possibleImages.push(`/pictures/${albumName}/q秦淮河2.jpg`);
-	possibleImages.push(`/pictures/${albumName}/r玄武湖.jpg`);
-	possibleImages.push(`/pictures/${albumName}/s玄武湖2.jpg`);
-	possibleImages.push(`/pictures/${albumName}/t玄武湖3.jpg`);
-	possibleImages.push(`/pictures/${albumName}/u步行街那块.jpg`);
-	possibleImages.push(`/pictures/${albumName}/w路上很热.jpg`);
-	possibleImages.push(`/pictures/${albumName}/y缪斯校服.jpg`);
-	possibleImages.push(`/pictures/${albumName}/z一身猫毛.jpg`);
-}
-// 为广州相册添加图片
-else if (albumName === "广州2025.04.30") {
-	possibleImages.push(`/pictures/${albumName}/a广州站.jpg`);
-	possibleImages.push(`/pictures/${albumName}/b动漫星城.jpg`);
-	possibleImages.push(`/pictures/${albumName}/b动漫星城抓的.jpg`);
-	possibleImages.push(`/pictures/${albumName}/c四月三十日ootd.jpg`);
-	possibleImages.push(`/pictures/${albumName}/d奇卡和花阳.jpg`);
-	possibleImages.push(`/pictures/${albumName}/e潮汕牛肉火锅.jpg`);
-	possibleImages.push(`/pictures/${albumName}/f人生第一次去网吧.jpg`);
-	possibleImages.push(`/pictures/${albumName}/g广东省博物馆.jpg`);
-	possibleImages.push(`/pictures/${albumName}/h特殊展票.jpg`);
-	possibleImages.push(`/pictures/${albumName}/mujica联动.jpg`);
-	possibleImages.push(`/pictures/${albumName}/一地小广告.jpg`);
-	possibleImages.push(`/pictures/${albumName}/之前苏州网友送的.jpg`);
-	possibleImages.push(`/pictures/${albumName}/买奶茶送的纪念品.jpg`);
-	possibleImages.push(`/pictures/${albumName}/亚托利.jpg`);
-	possibleImages.push(`/pictures/${albumName}/什么点心忘了.jpg`);
-	possibleImages.push(`/pictures/${albumName}/偶遇.jpg`);
-	possibleImages.push(`/pictures/${albumName}/动物园内柠檬水好喝.jpg`);
-	possibleImages.push(`/pictures/${albumName}/动物园大犀牛.jpg`);
-	possibleImages.push(`/pictures/${albumName}/华南植物园.jpg`);
-	possibleImages.push(`/pictures/${albumName}/原本完美的呆毛.jpg`);
-	possibleImages.push(`/pictures/${albumName}/可爱捏.jpg`);
-	possibleImages.push(`/pictures/${albumName}/圣心大教堂.jpg`);
-	possibleImages.push(`/pictures/${albumName}/外场后面.jpg`);
-	possibleImages.push(`/pictures/${albumName}/小姐姐送的无料.jpg`);
-	possibleImages.push(`/pictures/${albumName}/广州.jpg`);
-	possibleImages.push(`/pictures/${albumName}/广州动物园1.jpg`);
-	possibleImages.push(`/pictures/${albumName}/广州塔.jpg`);
-	possibleImages.push(`/pictures/${albumName}/广州塔那块.jpg`);
-	possibleImages.push(`/pictures/${albumName}/教堂附近买的不好吃.jpg`);
-	possibleImages.push(`/pictures/${albumName}/晚上路上.jpg`);
-	possibleImages.push(`/pictures/${albumName}/晚上路上2.jpg`);
-	possibleImages.push(`/pictures/${albumName}/某花园.jpg`);
-	possibleImages.push(`/pictures/${albumName}/植物园拍的.jpg`);
-	possibleImages.push(`/pictures/${albumName}/植物园猫猫猫.jpg`);
-	possibleImages.push(`/pictures/${albumName}/植物园的树.jpg`);
-	possibleImages.push(`/pictures/${albumName}/植物园的水.jpg`);
-	possibleImages.push(`/pictures/${albumName}/烤肉烤肉.jpg`);
-	possibleImages.push(`/pictures/${albumName}/特殊展览的珠宝.jpg`);
-	possibleImages.push(`/pictures/${albumName}/珠江夜游.jpg`);
-	possibleImages.push(`/pictures/${albumName}/第四次去网吧.jpg`);
-	possibleImages.push(`/pictures/${albumName}/红毛粉毛自助烤肉.jpg`);
-	possibleImages.push(`/pictures/${albumName}/背影.jpg`);
-	possibleImages.push(`/pictures/${albumName}/花园内.jpg`);
-	possibleImages.push(`/pictures/${albumName}/花园的蜗牛.jpg`);
-	possibleImages.push(`/pictures/${albumName}/茶餐厅好吃的炒面.jpg`);
-	possibleImages.push(`/pictures/${albumName}/菠萝包.jpg`);
-	possibleImages.push(`/pictures/${albumName}/萤火虫漫展外场.jpg`);
-	possibleImages.push(`/pictures/${albumName}/超级大雨.jpg`);
-	possibleImages.push(`/pictures/${albumName}/铠甲勇士.jpg`);
-	possibleImages.push(`/pictures/${albumName}/阴沉沉好大的雨.jpg`);
-	possibleImages.push(`/pictures/${albumName}/馆内假海洋馆.jpg`);
-	possibleImages.push(`/pictures/${albumName}/鹿.jpg`);
-}
-// 为苏州相册添加图片
-else if (albumName === "苏州2025.01.04") {
-	possibleImages.push(`/pictures/${albumName}/a苏州站.jpg`);
-	possibleImages.push(`/pictures/${albumName}/b泡泡馄饨.jpg`);
-	possibleImages.push(`/pictures/${albumName}/c报恩寺.jpg`);
-	possibleImages.push(`/pictures/${albumName}/c诚品书店.jpg`);
-	possibleImages.push(`/pictures/${albumName}/d苏州园林.jpg`);
-	possibleImages.push(`/pictures/${albumName}/e拙政园.jpg`);
-	possibleImages.push(`/pictures/${albumName}/f苏州之眼  (1).jpg`);
-	possibleImages.push(`/pictures/${albumName}/f苏州之眼  (2).jpg`);
-	possibleImages.push(`/pictures/${albumName}/h金鸡湖.jpg`);
-	possibleImages.push(`/pictures/${albumName}/i小猫.jpg`);
-	possibleImages.push(`/pictures/${albumName}/j东方之门.jpg`);
-	possibleImages.push(`/pictures/${albumName}/k商场.jpg`);
-	possibleImages.push(`/pictures/${albumName}/l很贵很贵的汉堡.jpg`);
-	possibleImages.push(`/pictures/${albumName}/m扫码送的纪念币.jpg`);
-	possibleImages.push(`/pictures/${albumName}/n我.jpg`);
-	possibleImages.push(`/pictures/${albumName}/o步数.jpg`);
-	possibleImages.push(`/pictures/${albumName}/p拙政园.jpg`);
-	possibleImages.push(`/pictures/${albumName}/q苏州博物馆 (1).jpg`);
-	possibleImages.push(`/pictures/${albumName}/q苏州博物馆 (2).jpg`);
-	possibleImages.push(`/pictures/${albumName}/q苏州博物馆 (3).jpg`);
-	possibleImages.push(`/pictures/${albumName}/q苏州博物馆.jpg`);
-	possibleImages.push(`/pictures/${albumName}/r展示猫猫外套.jpg`);
-	possibleImages.push(`/pictures/${albumName}/s网友送的周边.jpg`);
-	possibleImages.push(`/pictures/${albumName}/t返程跑南京吃的.jpg`);
-	possibleImages.push(`/pictures/${albumName}/u金鸡湖附近.jpg`);
-	possibleImages.push(`/pictures/${albumName}/v南京那家店.jpg`);
-}
-// 为上海南京相册添加图片
-else if (albumName === "上海南京2025.8.3-5") {
-	possibleImages.push(`/pictures/${albumName}/上海ootd.jpg`);
-	possibleImages.push(`/pictures/${albumName}/上海国补买的手环.jpg`);
-	possibleImages.push(`/pictures/${albumName}/上海百联.jpg`);
-	possibleImages.push(`/pictures/${albumName}/上海豫园.jpg`);
-	possibleImages.push(`/pictures/${albumName}/东方明珠.jpg`);
-	possibleImages.push(`/pictures/${albumName}/偶遇护舒宝代言明星活动.jpg`);
-	possibleImages.push(`/pictures/${albumName}/南京ootd.jpg`);
-	possibleImages.push(`/pictures/${albumName}/南京照相馆电影.jpg`);
-	possibleImages.push(`/pictures/${albumName}/南京玄武湖.jpg`);
-	possibleImages.push(`/pictures/${albumName}/南京秦淮河.jpg`);
-	possibleImages.push(`/pictures/${albumName}/南京齁甜的甜品碗.jpg`);
-	possibleImages.push(`/pictures/${albumName}/可爱小奇卡.jpg`);
-	possibleImages.push(`/pictures/${albumName}/外滩那块路上.jpg`);
-	possibleImages.push(`/pictures/${albumName}/妈妈给我买的小猫.jpg`);
-	possibleImages.push(`/pictures/${albumName}/字画.jpg`);
-	possibleImages.push(`/pictures/${albumName}/很贵的厕所.jpg`);
-	possibleImages.push(`/pictures/${albumName}/最近很喜欢的藤田琴音.jpg`);
-	possibleImages.push(`/pictures/${albumName}/玄武门.jpg`);
-	possibleImages.push(`/pictures/${albumName}/电影票.jpg`);
-	possibleImages.push(`/pictures/${albumName}/看麻麻拍照.jpg`);
-	possibleImages.push(`/pictures/${albumName}/豫园.jpg`);
-	possibleImages.push(`/pictures/${albumName}/豫园亭子.jpg`);
-	possibleImages.push(`/pictures/${albumName}/豫园内.jpg`);
-	possibleImages.push(`/pictures/${albumName}/豫园里面的.jpg`);
-	possibleImages.push(`/pictures/${albumName}/路过和平饭店.jpg`);
-	possibleImages.push(`/pictures/${albumName}/还是豫园.jpg`);
+interface ArtistGroup {
+	name: string;
+	images: { src: string; alt: string; width: number; height: number }[];
 }
 
-// 过滤出可能存在的图片
-for (const imgPath of possibleImages) {
-	entries.push([imgPath, imgPath]);
-}
+function getExhibitionImagesByArtist(dir: string): ArtistGroup[] {
+	const artistMap = new Map<
+		string,
+		{ src: string; alt: string; width: number; height: number }[]
+	>();
+	const dirNormalized = dir.replace(/\\/g, "/");
 
-console.log(`Added ${entries.length} potential images for album: ${albumName}`);
+	for (const [path, module] of Object.entries(exhibitionImages)) {
+		const pathNormalized = path.replace(/\\/g, "/");
+		if (pathNormalized.includes(`/exhibition/${dirNormalized}/`)) {
+			const img = module.default;
+			const segments = pathNormalized.split("/");
+			const exhibitionIdx = segments.findIndex((s) => s === "exhibition");
+			const artistName = segments[exhibitionIdx + 2] || "未知画师";
 
-const pinnedByAlbum: Record<string, string> = {
-	"南京2024.10.18": "a南京站.jpg",
-	"广州2025.04.30": "a广州站.jpg",
-	"苏州2025.01.04": "a苏州站.jpg",
-};
-
-function shuffle<T>(arr: T[]): T[] {
-	const a = arr.slice();
-	for (let i = a.length - 1; i > 0; i--) {
-		const j = Math.floor(Math.random() * (i + 1));
-		[a[i], a[j]] = [a[j], a[i]];
-	}
-	return a;
-}
-
-let ordered = entries.slice();
-// 优先使用 cover 指定的主图；若无则使用旧的固定置顶表
-if (cover) {
-	const idx = ordered.findIndex(([k]) => {
-		const base = (k.split("/").pop() || k.split("\\").pop() || "").toString();
-		return base === cover;
-	});
-	if (idx !== -1) {
-		const [p] = ordered.splice(idx, 1);
-		ordered = [p, ...shuffle(ordered)];
-	} else {
-		ordered = shuffle(ordered);
-	}
-} else {
-	const pinned = pinnedByAlbum[albumName];
-	if (pinned) {
-		const idx = ordered.findIndex(([k]) => {
-			const base = (k.split("/").pop() || k.split("\\").pop() || "").toString();
-			return base === pinned;
-		});
-		if (idx !== -1) {
-			const [p] = ordered.splice(idx, 1);
-			ordered = [p, ...shuffle(ordered)];
-		} else {
-			ordered = shuffle(ordered);
+			if (!artistMap.has(artistName)) {
+				artistMap.set(artistName, []);
+			}
+			artistMap.get(artistName)!.push({
+				src: img.src,
+				alt: title,
+				width: img.width,
+				height: img.height,
+			});
 		}
-	} else {
-		ordered = shuffle(ordered);
 	}
+
+	return Array.from(artistMap.entries()).map(([name, images]) => ({
+		name,
+		images,
+	}));
 }
-type Item = { src: string; alt: string; caption: string };
-const items: Item[] = ordered.map(([k, src]) => {
-	const base = k.split("/").pop() || "";
-	const name = base.replace(/\.(jpg|jpeg|png)$/i, "");
-	const altBase = name.replace(/^[a-zA-Z]\s*/, "");
-	const meta = metaMap.get(base);
-	const titleTrim = meta?.title?.trim();
-	const descTrim = meta?.desc?.trim();
-	const altTitle = titleTrim || altBase;
-	const caption = descTrim ? `${altTitle} — ${descTrim}` : altTitle;
-	return {
-		src: src,
-		alt: altTitle,
-		caption,
-	};
-});
+
+const artistGroups = getExhibitionImagesByArtist(albumName);
+const totalImages = artistGroups.reduce((sum, g) => sum + g.images.length, 0);
 ---
 
-<MainGridLayout title={title} description={description}>
-  <section class="rounded-[var(--radius-large)] overflow-hidden">
-    <div class="card-base p-0">
-      <div class="p-4 md:p-6">
-        <div class="flex items-center justify-between gap-3">
-          <h1 class="text-2xl md:text-3xl font-bold text-[var(--text-primary)]">{title}</h1>
-          <a href="/pictures/" class="btn-regular inline-flex items-center px-3 py-1.5 rounded-lg text-sm">返回</a>
-        </div>
-      </div>
+<MainGridLayout title={title} description={description} showAnnouncement={picturesAnnouncement.enabled} announcementConfig={picturesAnnouncement}>
+	<div class="space-y-6">
+		<!-- 顶部标题栏 - 简洁版本 -->
+		<div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden">
+			<div class="bg-orange-100/80 dark:bg-stone-700/70 backdrop-blur-3xl border-l-4 border-orange-700 p-4 flex items-center justify-between">
+				<h1 class="text-xl font-bold text-orange-700 dark:text-white">{title}</h1>
+				<a href="/pictures/" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/50 dark:bg-stone-600/50 hover:bg-white/80 dark:hover:bg-stone-500/50 transition-colors">
+					<Icon name="material-symbols:arrow-back-rounded" class="text-xl text-orange-700 dark:text-white" />
+				</a>
+			</div>
+		</div>
 
-      <div class="px-0 md:px-2 pb-6">
-        <div class="gallery columns-2 md:columns-3 lg:columns-4 gap-x-3 md:gap-x-4 px-3 md:px-4">
-          {items.map((it) => (
-            <div class="inline-block w-full mb-3 break-inside-avoid rounded-2xl overflow-hidden arknights-card">
-              <a href={it.src} aria-label={it.alt} data-pswp-caption={it.caption} class="block overflow-hidden group">
-                <img src={it.src} alt={it.alt} decoding="async" class="w-full h-auto object-cover transition-transform duration-300 block group-hover:scale-105" />
-              </a>
-              <div class="px-2 py-1 text-xs text-[var(--text-secondary)]">{it.caption}</div>
-            </div>
-          ))}
-        </div>
-        {items.length === 0 && <div class="text-[var(--text-secondary)]">尚未找到相册图片，请将图片放入 src/content/pictures/{albumName}/</div>}
-      </div>
-    </div>
-  </section>
+		<!-- 画师作品区 -->
+		{artistGroups.map((artist, index) => (
+			<div id={`artist-${index}`} class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden scroll-mt-24">
+				<!-- 画师标题栏 -->
+				<div class="bg-orange-100/80 dark:bg-stone-700/70 backdrop-blur-3xl border-l-4 border-orange-700 p-4">
+					<div class="flex items-center gap-3">
+						<div class="w-8 h-8 rounded-full bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center text-white font-bold text-sm">
+							{artist.name.charAt(0)}
+						</div>
+						<h2 class="text-lg font-bold text-orange-700 dark:text-white">{artist.name}</h2>
+					</div>
+				</div>
+				
+				<!-- 图片瀑布流 -->
+				<div class="p-4 md:p-6">
+					<div class="gallery-masonry columns-2 md:columns-3 gap-3 md:gap-4">
+						{artist.images.map((img) => (
+							<div class="break-inside-avoid mb-3 md:mb-4">
+								<div class="overflow-hidden rounded-sm shadow-md hover:shadow-xl transition-shadow duration-300 bg-white/50 dark:bg-stone-700/50">
+									<a href={img.src} target="_blank" rel="noopener noreferrer" class="block relative group">
+										<img 
+											src={img.src} 
+											alt={img.alt} 
+											loading="lazy" 
+											decoding="async"
+											class="w-full h-auto object-cover"
+										/>
+										<div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300 flex items-center justify-center">
+											<div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+												<div class="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
+													<Icon name="material-symbols:open-in-new-rounded" class="text-lg text-orange-700" />
+												</div>
+											</div>
+										</div>
+									</a>
+									</div>
+								</div>
+							))}
+						</div>
+					</div>
+				</div>
+			))}
 
-  <script>
-    // 处理图片加载，确保图片能正常显示
-    function handleImageLoad() {
-      const images = document.querySelectorAll('img');
-      images.forEach(img => {
-        console.log('Image src:', img.src);
-        console.log('Image complete:', img.complete);
-        console.log('Image naturalWidth:', img.naturalWidth);
-        
-        // 强制重新加载图片
-        if (!img.complete || img.naturalWidth === 0) {
-          const originalSrc = img.src;
-          img.src = '';
-          img.src = originalSrc;
-        }
-        
-        // 确保图片可见
-        img.style.display = 'block';
-        img.style.opacity = '1';
-        img.style.visibility = 'visible';
-      });
-    }
+		<!-- 空状态 -->
+		{artistGroups.length === 0 && (
+			<div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden">
+				<div class="bg-orange-100/80 dark:bg-stone-700/70 backdrop-blur-3xl border-l-4 border-orange-700 p-4">
+					<h2 class="text-lg font-bold text-orange-700 dark:text-white">暂无图片</h2>
+				</div>
+				<div class="p-12 text-center">
+					<Icon name="material-symbols:image-rounded" class="text-5xl text-orange-300 dark:text-stone-600 mb-4" />
+					<p class="text-sm text-orange-600/70 dark:text-gray-400">请将图片放入 src/content/exhibition/{albumName}/ 目录</p>
+				</div>
+			</div>
+		)}
+	</div>
 
-    // 初始处理
-    window.addEventListener('DOMContentLoaded', handleImageLoad);
-    
-    // 500ms 后再次尝试
-    setTimeout(handleImageLoad, 500);
-  </script>
-  
-  <style>
-    /* 确保图片能正常显示 */
-    .gallery img {
-      display: block !important;
-      opacity: 1 !important;
-      visibility: visible !important;
-      width: 100% !important;
-      height: auto !important;
-      object-fit: cover !important;
-      background: transparent !important;
-      animation: none !important;
-    }
-    
-    /* 确保图片容器正确显示 */
-    .gallery .arknights-card {
-      display: block !important;
-      opacity: 1 !important;
-      visibility: visible !important;
-    }
-  </style>
+	<!-- 右侧边栏 -->
+	<div slot="sidebar" class="space-y-6">
+		<!-- 统计信息 -->
+		<div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden">
+			<div class="bg-orange-100/80 dark:bg-stone-700/70 backdrop-blur-3xl border-l-4 border-orange-700 p-4">
+				<h3 class="text-base font-bold text-orange-700 dark:text-white">统计</h3>
+			</div>
+			<div class="p-4 space-y-3">
+				<div class="flex items-center gap-3">
+					<div class="w-10 h-10 rounded-lg bg-orange-200/50 dark:bg-stone-600/50 flex items-center justify-center">
+						<Icon name="material-symbols:photo-library-rounded" class="text-xl text-orange-700 dark:text-orange-300" />
+					</div>
+					<div>
+						<p class="text-2xl font-bold text-orange-700 dark:text-white">{totalImages}</p>
+						<p class="text-xs text-orange-600/70 dark:text-gray-400">张图片</p>
+					</div>
+				</div>
+				<div class="flex items-center gap-3">
+					<div class="w-10 h-10 rounded-lg bg-orange-200/50 dark:bg-stone-600/50 flex items-center justify-center">
+						<Icon name="material-symbols:person-rounded" class="text-xl text-orange-700 dark:text-orange-300" />
+					</div>
+					<div>
+						<p class="text-2xl font-bold text-orange-700 dark:text-white">{artistGroups.length}</p>
+						<p class="text-xs text-orange-600/70 dark:text-gray-400">位画师</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 画师列表 -->
+		{artistGroups.length > 0 && (
+			<div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden">
+				<div class="bg-orange-100/80 dark:bg-stone-700/70 backdrop-blur-3xl border-l-4 border-orange-700 p-4">
+					<h3 class="text-base font-bold text-orange-700 dark:text-white">画师</h3>
+				</div>
+				<div class="p-2">
+					{artistGroups.map((artist, index) => (
+						<a 
+							href={`#artist-${index}`}
+							class="flex items-center gap-3 p-3 rounded-lg hover:bg-orange-200/30 dark:hover:bg-stone-600/30 transition-colors group"
+						>
+							<div class="w-8 h-8 rounded-full bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
+								{artist.name.charAt(0)}
+							</div>
+							<div class="flex-1 min-w-0">
+								<p class="text-sm font-medium text-orange-700 dark:text-white truncate group-hover:text-orange-800 dark:group-hover:text-orange-200">
+									{artist.name}
+								</p>
+								<p class="text-xs text-orange-600/60 dark:text-gray-500">{artist.images.length} 张</p>
+							</div>
+							<Icon name="material-symbols:chevron-right-rounded" class="text-lg text-orange-400 dark:text-stone-500 flex-shrink-0" />
+						</a>
+					))}
+				</div>
+			</div>
+		)}
+	</div>
 </MainGridLayout>
+
+<style>
+	.gallery-masonry {
+		column-gap: 0.75rem;
+	}
+	
+	@media (min-width: 768px) {
+		.gallery-masonry {
+			column-gap: 1rem;
+		}
+	}
+	
+	.gallery-masonry > div {
+		break-inside: avoid;
+		margin-bottom: 0.75rem;
+	}
+	
+	@media (min-width: 768px) {
+		.gallery-masonry > div {
+			margin-bottom: 1rem;
+		}
+	}
+</style>

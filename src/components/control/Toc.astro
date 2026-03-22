@@ -71,13 +71,13 @@ for (const h of filtered) {
           <div class="mb-1">
             <a
               href={`#${g.id}`}
-              class="px-2 flex gap-2 relative transition w-full min-h-9 rounded-xl py-2 group hover:bg-black/5 dark:hover:bg-white/10 active:bg-black/10 dark:active:bg-white/20 mt-[2px]"
+              class="px-2 flex gap-2 relative transition w-full min-h-9 rounded-xl py-2 group hover:bg-orange-950/5 dark:hover:bg-white/10 active:bg-orange-950/10 dark:active:bg-white/20 mt-[2px]"
               data-toc-id={g.id}
             >
-              <div class="transition w-5 h-5 shrink-0 rounded-lg text-xs flex items-center justify-center font-bold bg-black/5 dark:bg-white/10 text-[var(--btn-content)]">
+              <div class="transition w-5 h-5 shrink-0 rounded-lg text-xs flex items-center justify-center font-bold bg-orange-950/5 dark:bg-white/10 text-[var(--btn-content)]">
                 {g.num ?? "•"}
               </div>
-              <div class="transition text-sm overflow-hidden text-ellipsis whitespace-nowrap text-black/60 dark:text-white/60 group-hover:text-black/80 dark:group-hover:text-white/80" title={g.text}>
+              <div class="transition text-sm overflow-hidden text-ellipsis whitespace-nowrap text-orange-950/60 dark:text-white/60 group-hover:text-orange-950/80 dark:group-hover:text-white/80" title={g.text}>
                 {g.text}
               </div>
               <div class="active-indicator absolute right-2 top-1/2 -translate-y-1/2 w-1 h-5 rounded bg-[var(--primary)]"></div>
@@ -88,14 +88,14 @@ for (const h of filtered) {
                   <div class="mb-1">
                     <a
                       href={`#${c.id}`}
-                      class="px-2 flex gap-2 relative transition w-full min-h-9 rounded-xl py-2 group hover:bg-black/5 dark:hover:bg-white/10 active:bg-black/10 dark:active:bg-white/20 mt-1"
+                      class="px-2 flex gap-2 relative transition w-full min-h-9 rounded-xl py-2 group hover:bg-orange-950/5 dark:hover:bg-white/10 active:bg-orange-950/10 dark:active:bg-white/20 mt-1"
                       data-toc-id={c.id}
                       data-parent-id={g.id}
                     >
-                      <div class="transition w-5 h-5 shrink-0 rounded-lg text-xs flex items-center justify-center font-bold bg-black/5 dark:bg-white/10 text-[var(--btn-content)] opacity-60">
+                      <div class="transition w-5 h-5 shrink-0 rounded-lg text-xs flex items-center justify-center font-bold bg-orange-950/5 dark:bg-white/10 text-[var(--btn-content)] opacity-60">
                         •
                       </div>
-                      <div class="transition text-[0.9rem] overflow-hidden text-ellipsis whitespace-nowrap text-black/60 dark:text-white/60 group-hover:text-black/80 dark:group-hover:text-white/80" title={c.text}>
+                      <div class="transition text-[0.9rem] overflow-hidden text-ellipsis whitespace-nowrap text-orange-950/60 dark:text-white/60 group-hover:text-orange-950/80 dark:group-hover:text-white/80" title={c.text}>
                         {c.text}
                       </div>
                       <div class="active-indicator absolute right-2 top-1/2 -translate-y-1/2 w-1 h-5 rounded bg-[var(--primary)]"></div>
@@ -105,14 +105,14 @@ for (const h of filtered) {
                         {c.children.map((d) => (
                           <a
                             href={`#${d.id}`}
-                            class="px-2 flex gap-2 relative transition w-full min-h-9 rounded-xl py-2 group hover:bg-black/5 dark:hover:bg-white/10 active:bg-black/10 dark:active:bg-white/20 mt-1"
+                            class="px-2 flex gap-2 relative transition w-full min-h-9 rounded-xl py-2 group hover:bg-orange-950/5 dark:hover:bg-white/10 active:bg-orange-950/10 dark:active:bg-white/20 mt-1"
                             data-toc-id={d.id}
                             data-parent-id={c.id}
                           >
-                            <div class="transition w-5 h-5 shrink-0 rounded-lg text-xs flex items-center justify-center font-bold bg-black/5 dark:bg-white/10 text-[var(--btn-content)] opacity-60">
+                            <div class="transition w-5 h-5 shrink-0 rounded-lg text-xs flex items-center justify-center font-bold bg-orange-950/5 dark:bg-white/10 text-[var(--btn-content)] opacity-60">
                               •
                             </div>
-                            <div class="transition text-[0.9rem] overflow-hidden text-ellipsis whitespace-nowrap text-black/60 dark:text-white/60 group-hover:text-black/80 dark:group-hover:text-white/80" title={d.text}>
+                            <div class="transition text-[0.9rem] overflow-hidden text-ellipsis whitespace-nowrap text-orange-950/60 dark:text-white/60 group-hover:text-orange-950/80 dark:group-hover:text-white/80" title={d.text}>
                               {d.text}
                             </div>
                             <div class="active-indicator absolute right-2 top-1/2 -translate-y-1/2 w-1 h-5 rounded bg-[var(--primary)]"></div>
@@ -171,18 +171,18 @@ for (const h of filtered) {
   const activate = (id) => {
     const nodes = document.querySelectorAll("#toc [data-toc-id]");
     nodes.forEach((n) => {
-      n.classList.remove("bg-black/5", "dark:bg-white/10");
+      n.classList.remove("bg-orange-950/5", "dark:bg-white/10");
       n.removeAttribute("data-active");
     });
     const current = document.querySelector(`#toc [data-toc-id="${id}"]`);
     if (current) {
-      current.classList.add("bg-black/5", "dark:bg-white/10");
+      current.classList.add("bg-orange-950/5", "dark:bg-white/10");
       current.setAttribute("data-active", "true");
       const parentId = current.getAttribute("data-parent-id");
       if (parentId) {
         const parent = document.querySelector(`#toc [data-toc-id="${parentId}"]`);
         if (parent) {
-          parent.classList.add("bg-black/5", "dark:bg-white/10");
+          parent.classList.add("bg-orange-950/5", "dark:bg-white/10");
           parent.setAttribute("data-active", "true");
         }
       }
@@ -218,13 +218,5 @@ for (const h of filtered) {
     document.addEventListener("DOMContentLoaded", boot, { once: true });
   } else {
     boot();
-  }
-
-  if (window?.swup?.hooks) {
-    window.swup.hooks.on("content:replace", () => {
-      boot();
-    });
-  } else {
-    document.addEventListener("swup:enable", boot, { once: true });
   }
 </script>

@@ -1,11 +1,20 @@
 ---
 import { getCollection } from "astro:content";
+import { Icon } from "astro-icon/components";
 import placeholder from "../assets/images/chikann-640.webp";
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
 import MainGridLayout from "../layouts/MainGridLayout.astro";
 
-const pictures = await getCollection("pictures");
+// 图册页面专用公告配置
+const picturesAnnouncement = {
+	title: "公告",
+	content: "内容还在建设中",
+	avatar: "/images/奇卡头1.jpg",
+	enabled: true,
+};
+
+const pictures = await getCollection("exhibition");
 const sorted = pictures.slice().sort((a, b) => {
 	const da = new Date(b.data.date).getTime() - new Date(a.data.date).getTime();
 	return da;
@@ -20,7 +29,56 @@ const imageModules = import.meta.glob(
 	},
 ) as Record<string, string>;
 
+const exhibitionImageModules = import.meta.glob<{ default: ImageMetadata }>(
+	"../content/exhibition/**/*.{jpg,jpeg,png,gif,webp}",
+	{ eager: true },
+);
+
 function sampleMosaic(dir: string, cover?: string) {
+	const dirNormalized = dir.replace(/\\/g, "/");
+
+	const exhibitionEntries = Object.entries(exhibitionImageModules).filter(
+		([k]) => {
+			const pathNormalized = k.replace(/\\/g, "/");
+			return pathNormalized.includes(`/exhibition/${dirNormalized}/`);
+		},
+	);
+
+	if (exhibitionEntries.length > 0) {
+		function shuffle<T>(arr: T[]): T[] {
+			const a = arr.slice();
+			for (let i = a.length - 1; i > 0; i--) {
+				const j = Math.floor(Math.random() * (i + 1));
+				[a[i], a[j]] = [a[j], a[i]];
+			}
+			return a;
+		}
+		let list = exhibitionEntries.map(([k, mod]) => ({
+			k,
+			url: mod.default.src,
+		}));
+		list = shuffle(list);
+
+		const preferred = (cover || "").trim();
+		if (preferred) {
+			const coverIdx = list.findIndex((e) => {
+				const base = (
+					e.k.split("/").pop() ||
+					e.k.split("\\").pop() ||
+					""
+				).toString();
+				return base === preferred;
+			});
+			if (coverIdx !== -1) {
+				const [p] = list.splice(coverIdx, 1);
+				list = [p, ...list];
+			}
+		}
+
+		const picks = list.slice(0, 3).map((e) => e.url);
+		return { picks, total: exhibitionEntries.length };
+	}
+
 	const entries = Object.entries(imageModules).filter(
 		([k]) => k.includes(`pictures\\${dir}`) || k.includes(`pictures/${dir}`),
 	);
@@ -40,7 +98,6 @@ function sampleMosaic(dir: string, cover?: string) {
 	let list = entries.map(([k, url]) => ({ k, url }));
 	list = shuffle(list);
 
-	// 优先使用 cover 指定的主图
 	const preferred = (cover || "").trim();
 	if (preferred) {
 		const coverIdx = list.findIndex((e) => {
@@ -57,7 +114,6 @@ function sampleMosaic(dir: string, cover?: string) {
 		}
 	}
 
-	// 兼容旧的按相册固定置顶映射
 	const pinned = pinnedByAlbum[dir];
 	if (!preferred && pinned) {
 		const idx = list.findIndex((e) => {
@@ -76,29 +132,110 @@ function sampleMosaic(dir: string, cover?: string) {
 	const picks = list.slice(0, 3).map((e) => e.url);
 	return { picks, total: entries.length };
 }
+
+const albumStats = sorted.map((a) => sampleMosaic(a.data.dir, a.data.cover));
+const totalAlbums = sorted.length;
+const totalImages = albumStats.reduce((sum, stat) => sum + stat.total, 0);
 ---
 
-<MainGridLayout title={i18n(I18nKey.works)} description="图册">
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-    {sorted.map((a) => {
-      const { picks, total } = sampleMosaic(a.data.dir, a.data.cover);
-      return (
-        <a href={`/pictures/${a.id}/`} class="group rounded-2xl overflow-hidden arknights-card">
-          <div class="relative">
-            <div class="aspect-[3/2] overflow-hidden">
-              <div class="grid grid-cols-3 grid-rows-2 gap-[4px] h-full">
-                <img src={picks[0] || placeholder.src} alt={a.data.title} decoding="async" class="col-span-2 row-span-2 w-full h-full object-cover bg-black/5 dark:bg-white/5 transition-transform duration-300 group-hover:scale-[1.02]" />
-                <img src={picks[1] || picks[0] || placeholder.src} alt={a.data.title} decoding="async" class="col-span-1 row-span-1 w-full h-full object-cover bg-black/5 dark:bg-white/5" />
-                <img src={picks[2] || picks[1] || picks[0] || placeholder.src} alt={a.data.title} decoding="async" class="col-span-1 row-span-1 w-full h-full object-cover bg-black/5 dark:bg-white/5" />
-              </div>
-            </div>
-            <div class="p-4">
-              <div class="text-base font-semibold text-[var(--text-primary)] line-clamp-1">{a.data.title}</div>
-              <div class="text-xs mt-1 text-[var(--text-secondary)]">{total} 张</div>
-            </div>
-          </div>
-        </a>
-      );
-    })}
-  </div>
+<MainGridLayout title={i18n(I18nKey.works)} description="图册" showAnnouncement={false} fullWidth={true}>
+	<div class="space-y-6">
+		<div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden">
+			<div class="bg-orange-100/80 dark:bg-stone-700/70 backdrop-blur-3xl border-l-4 border-orange-700 p-4">
+				<div class="flex items-center gap-3">
+					<div class="w-10 h-10 rounded-full bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center">
+						<Icon name="material-symbols:photo-library-rounded" class="text-xl text-white" />
+					</div>
+					<h1 class="text-xl font-bold text-orange-700 dark:text-white">图册</h1>
+				</div>
+			</div>
+		</div>
+
+		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+			<div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden rounded-lg">
+				<div class="p-4 flex items-center gap-4">
+					<div class="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center flex-shrink-0">
+						<Icon name="material-symbols:folder-rounded" class="text-2xl text-white" />
+					</div>
+					<div>
+						<p class="text-2xl font-bold text-orange-700 dark:text-white">{totalAlbums}</p>
+						<p class="text-sm text-orange-600/70 dark:text-gray-400">个相册</p>
+					</div>
+				</div>
+			</div>
+			<div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden rounded-lg">
+				<div class="p-4 flex items-center gap-4">
+					<div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center flex-shrink-0">
+						<Icon name="material-symbols:image-rounded" class="text-2xl text-white" />
+					</div>
+					<div>
+						<p class="text-2xl font-bold text-orange-700 dark:text-white">{totalImages}</p>
+						<p class="text-sm text-orange-600/70 dark:text-gray-400">张图片</p>
+					</div>
+				</div>
+			</div>
+			{picturesAnnouncement.enabled && (
+				<div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden rounded-lg sm:col-span-2">
+					<div class="p-4 flex items-center gap-4 h-full">
+						<img src={picturesAnnouncement.avatar} alt="公告头像" class="w-12 h-12 rounded-full object-cover border-2 border-orange-200 dark:border-stone-600 flex-shrink-0" />
+						<div class="flex-1 min-w-0">
+							<p class="font-bold text-orange-700 dark:text-white">{picturesAnnouncement.title}</p>
+							<p class="text-sm text-orange-600/70 dark:text-gray-400 truncate">{picturesAnnouncement.content}</p>
+						</div>
+					</div>
+				</div>
+			)}
+		</div>
+
+		<div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden">
+			<div class="bg-orange-100/80 dark:bg-stone-700/70 backdrop-blur-3xl border-l-4 border-orange-700 p-4">
+				<div class="flex items-center gap-3">
+					<Icon name="material-symbols:photo-library-rounded" class="text-xl text-orange-700 dark:text-orange-300" />
+					<h2 class="text-lg font-bold text-orange-700 dark:text-white">相册列表</h2>
+				</div>
+			</div>
+			<div class="p-4 md:p-6">
+				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+					{sorted.map((a, index) => {
+						const { picks, total } = sampleMosaic(a.data.dir, a.data.cover);
+						return (
+							<a href={`/pictures/${a.id}/`} class="group rounded-xl overflow-hidden bg-white/30 dark:bg-stone-700/30 hover:bg-white/50 dark:hover:bg-stone-600/30 transition-all duration-300 shadow-lg hover:shadow-xl border border-orange-200/30 dark:border-stone-600/30">
+								<div class="relative">
+									<div class="aspect-[4/3] overflow-hidden">
+										<div class="grid grid-cols-3 grid-rows-2 gap-[3px] h-full">
+											<img src={picks[0] || placeholder.src} alt={a.data.title} decoding="async" class="col-span-2 row-span-2 w-full h-full object-cover bg-orange-950/5 dark:bg-white/5 transition-transform duration-500 group-hover:scale-105" />
+											<img src={picks[1] || picks[0] || placeholder.src} alt={a.data.title} decoding="async" class="col-span-1 row-span-1 w-full h-full object-cover bg-orange-950/5 dark:bg-white/5 transition-transform duration-300 group-hover:scale-110" />
+											<img src={picks[2] || picks[1] || picks[0] || placeholder.src} alt={a.data.title} decoding="async" class="col-span-1 row-span-1 w-full h-full object-cover bg-orange-950/5 dark:bg-white/5 transition-transform duration-300 group-hover:scale-110" />
+										</div>
+									</div>
+									<div class="absolute top-3 right-3 px-2 py-1 rounded-full bg-black/40 backdrop-blur-sm text-white text-xs font-medium flex items-center gap-1">
+										<Icon name="material-symbols:photo-rounded" class="text-sm" />
+										{total}
+									</div>
+								</div>
+								<div class="p-4">
+									<div class="flex items-center justify-between">
+										<h3 class="text-base font-semibold text-orange-800 dark:text-white line-clamp-1 group-hover:text-orange-600 dark:group-hover:text-orange-300 transition-colors">{a.data.title}</h3>
+										<Icon name="material-symbols:arrow-forward-rounded" class="text-lg text-orange-400 dark:text-orange-300 opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-1" />
+									</div>
+									{a.data.description && (
+										<p class="text-xs mt-2 text-orange-600/60 dark:text-gray-400 line-clamp-2">{a.data.description}</p>
+									)}
+								</div>
+							</a>
+						);
+					})}
+				</div>
+			</div>
+		</div>
+
+		{sorted.length === 0 && (
+			<div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden">
+				<div class="p-12 text-center">
+					<Icon name="material-symbols:folder-open-rounded" class="text-5xl text-orange-300 dark:text-stone-600 mb-4" />
+					<p class="text-sm text-orange-600/70 dark:text-gray-400">暂无相册，请在 src/content/exhibition/ 目录下添加相册配置</p>
+				</div>
+			</div>
+		)}
+	</div>
 </MainGridLayout>

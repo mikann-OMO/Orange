@@ -1,0 +1,305 @@
+---
+const { title = "留言板" } = Astro.props;
+---
+<div class="px-4">
+  <div class="max-w-3xl mx-auto">
+    <div id="guestbook-comments"
+      data-api-base-url="https://cwd-api.2744167586.workers.dev"
+      data-custom-css-url="/cwd-custom.css"
+      data-post-slug="guestbook"
+      data-post-title="留言板"
+      data-post-url=""
+    >
+      <div id="guestbook-skeleton" class="py-6 space-y-4">
+        <div class="bg-white/5 dark:bg-orange-950/5 rounded-lg p-4 shadow-sm">
+          <div class="flex items-start gap-3 mb-3">
+            <div class="w-9 h-9 rounded-full bg-orange-950/10 dark:bg-white/10 animate-pulse flex-shrink-0"></div>
+            <div class="flex-1 space-y-2">
+              <div class="h-9 w-full bg-orange-950/10 dark:bg-white/10 rounded-lg animate-pulse"></div>
+              <div class="flex justify-end">
+                <div class="h-7 w-20 bg-orange-950/10 dark:bg-white/10 rounded animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="space-y-4">
+          <div class="flex items-start gap-3">
+            <div class="w-9 h-9 rounded-full bg-orange-950/10 dark:bg-white/10 animate-pulse flex-shrink-0"></div>
+            <div class="flex-1 space-y-2">
+              <div class="flex items-center gap-2">
+                <div class="h-3.5 w-20 bg-orange-950/10 dark:bg-white/10 rounded animate-pulse"></div>
+                <div class="h-2.5 w-14 bg-orange-950/10 dark:bg-white/10 rounded animate-pulse"></div>
+              </div>
+              <div class="space-y-1.5">
+                <div class="h-2.5 w-full bg-orange-950/10 dark:bg-white/10 rounded animate-pulse"></div>
+                <div class="h-2.5 w-4/5 bg-orange-950/10 dark:bg-white/10 rounded animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="flex items-start gap-3">
+            <div class="w-9 h-9 rounded-full bg-orange-950/10 dark:bg-white/10 animate-pulse flex-shrink-0"></div>
+            <div class="flex-1 space-y-2">
+              <div class="flex items-center gap-2">
+                <div class="h-3.5 w-16 bg-orange-950/10 dark:bg-white/10 rounded animate-pulse"></div>
+                <div class="h-2.5 w-12 bg-orange-950/10 dark:bg-white/10 rounded animate-pulse"></div>
+              </div>
+              <div class="space-y-1.5">
+                <div class="h-2.5 w-full bg-orange-950/10 dark:bg-white/10 rounded animate-pulse"></div>
+                <div class="h-2.5 w-3/5 bg-orange-950/10 dark:bg-white/10 rounded animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script data-astro-exec>
+      (() => {
+        const getTheme = () =>
+          document.documentElement.classList.contains("dark") ? "dark" : "light";
+
+        const CDN_SOURCES = [
+          { url: "https://cdn.bootcdn.net/ajax/libs/cwd-widget/0.1.7/cwd.umd.js", name: "bootcdn" },
+          { url: "https://cdn.jsdelivr.net/npm/cwd-widget@0.1.7/dist/cwd.umd.js", name: "jsdelivr" },
+          { url: "https://unpkg.com/cwd-widget@0.1.7/dist/cwd.umd.js", name: "unpkg" },
+          { url: "https://cdnjs.cloudflare.com/ajax/libs/cwd-widget/0.1.7/cwd.umd.js", name: "cdnjs" },
+        ];
+
+        const loadScriptFromUrl = (url, timeout = 8000) => {
+          return new Promise((resolve, reject) => {
+            const timer = setTimeout(() => {
+              reject(new Error(`Timeout loading from ${url}`));
+            }, timeout);
+
+            const script = document.createElement("script");
+            script.src = url;
+            script.async = true;
+            script.defer = true;
+            script.dataset.cwdWidget = "true";
+            script.crossOrigin = "anonymous";
+            
+            script.onload = () => {
+              clearTimeout(timer);
+              script.dataset.loaded = "true";
+              resolve();
+            };
+            
+            script.onerror = () => {
+              clearTimeout(timer);
+              reject(new Error(`Failed to load from ${url}`));
+            };
+            
+            document.head.appendChild(script);
+          });
+        };
+
+        const loadScript = async () => {
+          if (window.CWDComments) return Promise.resolve();
+
+          const existing = document.querySelector("script[data-cwd-widget]");   
+          if (existing) {
+            if (existing.dataset.loaded === "true") return Promise.resolve();   
+            return new Promise((resolve, reject) => {
+              const timeout = setTimeout(() => {
+                reject(new Error("Timeout waiting for existing script"));
+              }, 10000);
+              
+              existing.addEventListener("load", () => {
+                clearTimeout(timeout);
+                resolve();
+              }, { once: true });       
+              existing.addEventListener("error", () => {
+                clearTimeout(timeout);
+                reject(new Error("Failed to load CWD widget"));
+              }, { once: true });
+            });
+          }
+
+          let lastError = null;
+          
+          for (const source of CDN_SOURCES) {
+            try {
+              console.log(`[Guestbook] Trying to load from ${source.name}...`);
+              await loadScriptFromUrl(source.url);
+              console.log(`[Guestbook] Successfully loaded from ${source.name}`);
+              sessionStorage.setItem('cwdWidgetLoaded', 'true');
+              sessionStorage.setItem('cwdWidgetSource', source.name);
+              return;
+            } catch (error) {
+              console.warn(`[Guestbook] Failed to load from ${source.name}:`, error.message);
+              lastError = error;
+              
+              const failedScript = document.querySelector(`script[src="${source.url}"]`);
+              if (failedScript && failedScript.parentNode) {
+                failedScript.parentNode.removeChild(failedScript);
+              }
+            }
+          }
+          
+          throw new Error(`Failed to load CWD widget from all CDN sources: ${lastError?.message}`);
+        };
+
+        let guestbookLoaded = false;
+        let preloadTriggered = false;
+
+        const mountGuestbook = async () => {
+          if (guestbookLoaded) return;
+          guestbookLoaded = true;
+
+          const container = document.querySelector("#guestbook-comments");
+          if (!container) return;
+
+          const skeleton = document.querySelector("#guestbook-skeleton");
+          const apiBaseUrl = container.dataset.apiBaseUrl;
+          if (!apiBaseUrl) {
+            if (skeleton && skeleton.parentNode) {
+              skeleton.parentNode.removeChild(skeleton);
+            }
+            container.innerHTML = '<div class="py-8 text-center text-orange-950/60 dark:text-white/60">留言板配置错误</div>';
+            return;
+          }
+          const customCssUrl = container.dataset.customCssUrl;
+          const postSlug = container.dataset.postSlug;
+          const postTitle = container.dataset.postTitle;
+          const postUrl = container.dataset.postUrl;
+
+          try {
+            if (skeleton) {
+              skeleton.classList.add('opacity-75');
+            }
+            
+            await loadScript();
+
+            if (skeleton && skeleton.parentNode) {
+              skeleton.style.transition = 'opacity 0.3s ease-out';
+              skeleton.style.opacity = '0';
+              setTimeout(() => {
+                skeleton.parentNode.removeChild(skeleton);
+              }, 300);
+            }
+
+            const config = {
+              el: container,
+              apiBaseUrl,
+              theme: getTheme(),
+              postSlug,
+              postTitle,
+              postUrl,
+            };
+            if (customCssUrl) {
+              config.customCssUrl = customCssUrl;
+            }
+
+            if (container._guestbookInstance) {
+              if (typeof container._guestbookInstance.updateConfig === "function") {    
+                container._guestbookInstance.updateConfig(config);
+              }
+              return;
+            }
+
+            const instance = new window.CWDComments(config);
+            if (typeof instance.mount === "function") {
+              instance.mount();
+            }
+            container._guestbookInstance = instance;
+          } catch (error) {
+            console.error("[Guestbook] Failed to load:", error);
+            if (skeleton && skeleton.parentNode) {
+              skeleton.parentNode.removeChild(skeleton);
+            }
+            
+            const isNetworkError = error.message.includes('Failed to fetch') || 
+                                   error.message.includes('Network error') ||
+                                   error.message.includes('Timeout') ||
+                                   error.message.includes('all CDN sources');
+            
+            container.innerHTML = `
+              <div class="py-6 text-center text-orange-950/60 dark:text-white/60">
+                <div class="mb-2 text-base font-medium">留言板加载失败</div>
+                <div class="mb-3 text-sm opacity-80">${isNetworkError ? '网络连接不稳定，请检查网络后重试' : '留言板暂时不可用'}</div>
+                <button id="retry-guestbook" class="px-3 py-1.5 bg-[var(--primary)] text-white rounded-lg hover:bg-[var(--primary)]/80 transition-colors text-sm">
+                  重新加载
+                </button>
+              </div>
+            `;
+            
+            const retryBtn = document.getElementById('retry-guestbook');
+            if (retryBtn) {
+              retryBtn.addEventListener('click', () => {
+                guestbookLoaded = false;
+                container.innerHTML = '';
+                mountGuestbook();
+              });
+            }
+          }
+        };
+
+        const preloadGuestbook = () => {
+          if (preloadTriggered) return;
+          preloadTriggered = true;
+          loadScript();
+        };
+
+        const updateTheme = () => {
+          const container = document.querySelector("#guestbook-comments");
+          const instance = container?._guestbookInstance;
+          if (!instance?.updateConfig) return;
+          instance.updateConfig({ theme: getTheme() });
+        };
+
+        const observer = new MutationObserver((mutations) => {
+          for (const mutation of mutations) {
+            if (mutation.attributeName === "class") {
+              updateTheme();
+            }
+          }
+        });
+        observer.observe(document.documentElement, { attributes: true });        
+
+        const setupLazyLoad = () => {
+          const container = document.querySelector("#guestbook-comments");
+          if (!container) return;
+
+          const io = new IntersectionObserver((entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                io.disconnect();
+                mountGuestbook();
+              }
+            }
+          }, {
+            rootMargin: "100px",
+            threshold: 0.05
+          });
+          io.observe(container);
+        };
+
+        setupLazyLoad();
+        
+        document.addEventListener("astro:page-load", () => {
+          guestbookLoaded = false;
+          preloadTriggered = false;
+          setupLazyLoad();
+        });
+
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(() => {
+            preloadGuestbook();
+          }, { timeout: 2000 });
+        } else {
+          setTimeout(() => {
+            preloadGuestbook();
+          }, 2000);
+        }
+        
+        const container = document.querySelector("#guestbook-comments");
+        if (container) {
+          container.addEventListener('mouseenter', preloadGuestbook, { once: true, passive: true });
+          container.addEventListener('touchstart', preloadGuestbook, { once: true, passive: true });
+        }
+      })();
+    </script>
+  </div>
+</div>

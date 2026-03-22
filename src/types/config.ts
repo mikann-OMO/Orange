@@ -131,6 +131,28 @@ export type LicenseConfig = {
 };
 
 /**
+ * 访问量统计配置类型
+ */
+export type VisitorConfig = {
+	// 是否启用访问量统计
+	enable: boolean;
+	// 统计服务类型
+	// 'busuanzi' - 使用不蒜子（免费，无需注册，推荐）
+	// 'leancloud' - 使用 LeanCloud 服务
+	// 'local' - 使用本地存储（仅用于测试）
+	provider: "busuanzi" | "leancloud" | "local";
+	// LeanCloud 配置（仅 provider 为 leancloud 时需要）
+	leancloud?: {
+		// LeanCloud 应用 ID
+		appId: string;
+		// LeanCloud 应用 Key
+		appKey: string;
+		// LeanCloud 服务器地址（可选，国内版需要填写）
+		serverUrl?: string;
+	};
+};
+
+/**
  * 明暗模式类型
  */
 export type LIGHT_DARK_MODE =

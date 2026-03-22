@@ -73,7 +73,7 @@ if (isLocal) {
 const imageClass = "w-full h-full object-cover";
 const imageStyle = `object-position: ${position}`;
 ---
-<div id={id} class:list={['overflow-hidden relative']}>
+<div id={id} class:list={['overflow-hidden relative image-wrapper']}>
     {isLocal && (
         <Image 
             src={img || defaultAvatar} 
@@ -105,3 +105,12 @@ const imageStyle = `object-position: ${position}`;
         />
     )}
 </div>
+
+<style>
+  .image-wrapper img {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+    background: transparent;
+  }
+</style>

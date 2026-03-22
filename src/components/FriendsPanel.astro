@@ -18,10 +18,10 @@ const items = friends.map((friend) => ({
 	status: "online" as const,
 }));
 ---
-<div class="card-base rounded-[var(--radius-large)] p-6">
+<div class="card-base rounded-[var(--radius-large)] p-4 md:p-6">
     <!-- 可编辑文字区域 -->
-    <div class="editable-text mb-10 arknights-tech">
-        <div class="text-left text-3xl font-light mb-4 tech-text"> 
+    <div class="editable-text mb-6 md:mb-10 arknights-tech">
+        <div class="text-left text-xl md:text-3xl font-light mb-3 md:mb-4 tech-text"> 
 Friends Card!
         </div>
         <div class="tech-divider"></div>
@@ -33,7 +33,7 @@ Friends Card!
         }
         
         .tech-text {
-            color: rgba(170, 170, 170, 0.65);
+            color: var(--primary);
             font-family: 'Arial', sans-serif;
             letter-spacing: 1px;
             transition: all 0.3s ease;
@@ -41,6 +41,10 @@ Friends Card!
             background-size: 100% 4px;
             background-attachment: fixed;
             -webkit-background-clip: text;
+        }
+        
+        :global(.dark) .tech-text {
+            color: rgba(255, 248, 225, 0.9);
         }
         
         .tech-text:focus {
@@ -110,38 +114,15 @@ Friends Card!
             background: linear-gradient(90deg, 
                 rgba(255, 255, 255, 0.8) 0%, 
                 transparent 100%);
-            animation: techScan 1.5s ease-out forwards;
-        }
-        
-        @keyframes techScan {
-            0% {
-                left: -100%;
-            }
-            100% {
-                left: 100%;
-            }
         }
 
         .friend-card-wrapper {
-            opacity: 0;
-            transform: translateY(30px) scale(0.9);
-            animation: cardSlideIn 0.8s ease forwards;
-            animation-delay: var(--delay);
-        }
-
-        @keyframes cardSlideIn {
-            0% {
-                opacity: 0;
-                transform: translateY(30px) scale(0.9);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+            opacity: 1;
+            transform: translateY(0) scale(1);
         }
     </style>
     
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 sm:gap-6 md:gap-8 lg:gap-10">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 md:gap-6 lg:gap-8">
         {items.map((item, index) => (
             <div class="friend-card-wrapper" style={`--delay: ${index * 0.1}s`}>
                 <FriendCard

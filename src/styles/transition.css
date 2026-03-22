@@ -1,336 +1,379 @@
-/* Page transition animations with Swup */
-/* 简化的页面过渡动画，移除过渡页效果 */
-html.is-changing .transition-swup-fade {
-    @apply transition-all duration-100 ease-in-out
-}
-html.is-animating .transition-swup-fade {
-    @apply opacity-0
+/* View Transitions API - 丝滑过渡 */
+
+/* 根层过渡 - 瞬间切换 */
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
 }
 
-/* Fade-in animations for components */
-@keyframes fade-in-up {
+::view-transition-group(root) {
+    animation-duration: 0s;
+}
+
+::view-transition-image-pair(root) {
+    isolation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+    background-color: var(--page-bg);
+}
+
+/* 主内容区域过渡 */
+.main-panel {
+    view-transition-name: main-content;
+}
+
+::view-transition-old(main-content) {
+    animation: smoothFadeOut 0.18s ease-out forwards;
+}
+
+::view-transition-new(main-content) {
+    animation: smoothFadeIn 0.25s ease-out forwards;
+}
+
+::view-transition-group(main-content) {
+    animation-duration: 0.28s;
+}
+
+/* 导航栏、侧边栏、Banner 稳定 */
+#navbar-wrapper {
+    view-transition-name: navbar;
+}
+
+#sidebar-sticky {
+    view-transition-name: sidebar;
+}
+
+#banner-wrapper {
+    view-transition-name: banner;
+}
+
+::view-transition-old(navbar),
+::view-transition-new(navbar),
+::view-transition-old(sidebar),
+::view-transition-new(sidebar),
+::view-transition-old(banner),
+::view-transition-new(banner) {
+    animation: none;
+}
+
+/* 移动端禁用 view-transition-name */
+@media (max-width: 768px) {
+    .main-panel,
+    #navbar-wrapper,
+    #sidebar-sticky,
+    #banner-wrapper {
+        view-transition-name: none;
+    }
+}
+
+/* 减少动画偏好 */
+@media (prefers-reduced-motion: reduce) {
+    .main-panel,
+    #navbar-wrapper,
+    #sidebar-sticky,
+    #banner-wrapper {
+        view-transition-name: none;
+    }
+}
+
+/* ========================================
+   核心动画定义
+   ======================================== */
+
+/* 页面整体退出 - 优雅淡出 */
+@keyframes pageExit {
     0% {
-        transform: translateY(2rem);
-        opacity: 0;
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
     }
     100% {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.99);
+        filter: blur(1px);
+    }
+}
+
+/* 卡片退出 - 向上飘散 */
+@keyframes cardExit {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-16px) scale(0.96);
+    }
+}
+
+/* 内容区域退出 - 淡出 */
+@keyframes contentExit {
+    0% {
+        opacity: 1;
         transform: translateY(0);
-        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-12px);
     }
 }
 
-@keyframes fade-in-down {
+/* 平滑淡出 */
+@keyframes smoothFadeOut {
     0% {
-        transform: translateY(-2rem);
-        opacity: 0;
-    }
-    100% {
-        transform: translateY(0);
         opacity: 1;
-    }
-}
-
-@keyframes fade-in-left {
-    0% {
-        transform: translateX(-2rem);
-        opacity: 0;
-    }
-    100% {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-@keyframes fade-in-right {
-    0% {
-        transform: translateX(2rem);
-        opacity: 0;
-    }
-    100% {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-@keyframes zoom-in {
-    0% {
-        transform: scale(0.95);
-        opacity: 0;
-    }
-    100% {
         transform: scale(1);
-        opacity: 1;
-    }
-}
-
-@keyframes slide-up {
-    0% {
-        transform: translateY(3rem);
-        opacity: 0;
+        filter: blur(0);
     }
     100% {
-        transform: translateY(0);
-        opacity: 1;
+        opacity: 0;
+        transform: scale(0.98);
+        filter: blur(2px);
     }
 }
 
-@keyframes fade-in-avatar {
+/* 平滑淡入 */
+@keyframes smoothFadeIn {
     0% {
         opacity: 0;
-        transform: scale(0.85);
+        transform: scale(1.02);
+        filter: blur(2px);
     }
     100% {
         opacity: 1;
         transform: scale(1);
+        filter: blur(0);
     }
 }
 
-@keyframes bounce-in {
-    0%, 20%, 53%, 80%, 100% {
-        animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
-        transform: translate3d(0, 0, 0);
+/* 卡片弹性入场 */
+@keyframes cardBounceIn {
+    0% {
+        opacity: 0;
+        transform: translateY(24px) scale(0.95);
     }
-    40%, 43% {
-        animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
-        transform: translate3d(0, -1rem, 0);
+    50% {
+        opacity: 1;
+        transform: translateY(-3px) scale(1.01);
     }
     70% {
-        animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
-        transform: translate3d(0, -0.5rem, 0);
-    }
-    90% {
-        transform: translate3d(0, -0.125rem, 0);
-    }
-    0% {
-        opacity: 0;
-        transform: scale(0.9);
+        transform: translateY(1px) scale(0.99);
     }
     100% {
         opacity: 1;
-        transform: scale(1);
+        transform: translateY(0) scale(1);
     }
 }
 
-/* Smooth reveal animation */
-@keyframes smooth-reveal {
+/* 友链卡片入场 */
+@keyframes friendCardBounceIn {
     0% {
-        clip-path: inset(0 100% 0 0);
         opacity: 0;
+        transform: translateY(32px) scale(0.94);
+    }
+    50% {
+        opacity: 1;
+        transform: translateY(-4px) scale(1.02);
+    }
+    70% {
+        transform: translateY(2px) scale(0.99);
     }
     100% {
-        clip-path: inset(0 0 0 0);
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* 随记卡片入场 */
+@keyframes noteCardSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateX(-16px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* 侧边栏入场 */
+@keyframes sidebarSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateX(16px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* 内容区域入场 */
+@keyframes contentFadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ========================================
+   动画应用类
+   ======================================== */
+
+/* 页面退出动画 - 全局应用 */
+.page-exit-animation {
+    animation: pageExit 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
+}
+
+.page-exit-animation .post-card-animate,
+.page-exit-animation .friend-card-animate,
+.page-exit-animation .note-card-animate {
+    animation: cardExit 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
+}
+
+.page-exit-animation .post-content-animate {
+    animation: contentExit 0.3s ease-out forwards !important;
+}
+
+/* 卡片退出延迟 */
+.page-exit-animation .post-card-animate:nth-child(1) { animation-delay: 0s; }
+.page-exit-animation .post-card-animate:nth-child(2) { animation-delay: 0.02s; }
+.page-exit-animation .post-card-animate:nth-child(3) { animation-delay: 0.04s; }
+.page-exit-animation .post-card-animate:nth-child(4) { animation-delay: 0.06s; }
+.page-exit-animation .post-card-animate:nth-child(5) { animation-delay: 0.08s; }
+.page-exit-animation .post-card-animate:nth-child(6) { animation-delay: 0.1s; }
+.page-exit-animation .post-card-animate:nth-child(7) { animation-delay: 0.12s; }
+.page-exit-animation .post-card-animate:nth-child(8) { animation-delay: 0.14s; }
+.page-exit-animation .post-card-animate:nth-child(n+9) { animation-delay: 0.16s; }
+
+.page-exit-animation .friend-card-animate:nth-child(1) { animation-delay: 0s; }
+.page-exit-animation .friend-card-animate:nth-child(2) { animation-delay: 0.03s; }
+.page-exit-animation .friend-card-animate:nth-child(3) { animation-delay: 0.06s; }
+.page-exit-animation .friend-card-animate:nth-child(4) { animation-delay: 0.09s; }
+.page-exit-animation .friend-card-animate:nth-child(5) { animation-delay: 0.12s; }
+.page-exit-animation .friend-card-animate:nth-child(6) { animation-delay: 0.15s; }
+.page-exit-animation .friend-card-animate:nth-child(n+7) { animation-delay: 0.18s; }
+
+.page-exit-animation .note-card-animate:nth-child(1) { animation-delay: 0s; }
+.page-exit-animation .note-card-animate:nth-child(2) { animation-delay: 0.04s; }
+.page-exit-animation .note-card-animate:nth-child(3) { animation-delay: 0.08s; }
+.page-exit-animation .note-card-animate:nth-child(n+4) { animation-delay: 0.12s; }
+
+/* 页面入场动画 */
+.page-enter-animation {
+    animation: smoothFadeIn 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* 卡片入场 */
+.card-enter {
+    opacity: 0;
+    animation: cardBounceIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* 友链卡片入场 */
+.friend-card-enter {
+    opacity: 0;
+    animation: friendCardBounceIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* 随记卡片入场 */
+.note-card-enter {
+    opacity: 0;
+    animation: noteCardSlideIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* 内容区域入场 */
+.content-enter {
+    opacity: 0;
+    animation: contentFadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* 侧边栏入场 */
+.sidebar-enter {
+    opacity: 0;
+    animation: sidebarSlideIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ========================================
+   延迟类 - 更紧凑的延迟
+   ======================================== */
+
+.delay-1 { animation-delay: 0.02s; }
+.delay-2 { animation-delay: 0.04s; }
+.delay-3 { animation-delay: 0.06s; }
+.delay-4 { animation-delay: 0.08s; }
+.delay-5 { animation-delay: 0.10s; }
+.delay-6 { animation-delay: 0.12s; }
+.delay-7 { animation-delay: 0.14s; }
+.delay-8 { animation-delay: 0.16s; }
+.delay-9 { animation-delay: 0.18s; }
+.delay-10 { animation-delay: 0.20s; }
+
+/* ========================================
+   响应式优化
+   ======================================== */
+
+@media (max-width: 768px) {
+    .page-enter-animation,
+    .page-exit-animation {
+        animation-duration: 0.25s;
+    }
+    
+    .card-enter,
+    .friend-card-enter,
+    .note-card-enter,
+    .content-enter,
+    .sidebar-enter {
+        animation-duration: 0.3s;
+    }
+    
+    .delay-1, .delay-2, .delay-3, .delay-4, .delay-5,
+    .delay-6, .delay-7, .delay-8, .delay-9, .delay-10 {
+        animation-delay: 0s !important;
+    }
+    
+    .page-exit-animation .post-card-animate,
+    .page-exit-animation .friend-card-animate,
+    .page-exit-animation .note-card-animate {
+        animation-delay: 0s !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .page-enter-animation,
+    .page-exit-animation,
+    .card-enter,
+    .friend-card-enter,
+    .note-card-enter,
+    .content-enter,
+    .sidebar-enter {
+        animation: none;
         opacity: 1;
     }
 }
 
-/* Main components */
+/* 保持兼容性 */
 .onload-animation,
-.animate-fade-in-up {
-    opacity: 0;
-    animation: 400ms fade-in-up;
-    animation-fill-mode: forwards;
-    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.animate-fade-in-down {
-    opacity: 0;
-    animation: 400ms fade-in-down;
-    animation-fill-mode: forwards;
-    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.animate-fade-in-left {
-    opacity: 0;
-    animation: 400ms fade-in-left;
-    animation-fill-mode: forwards;
-    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.animate-fade-in-right {
-    opacity: 0;
-    animation: 400ms fade-in-right;
-    animation-fill-mode: forwards;
-    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.animate-zoom-in {
-    opacity: 0;
-    animation: 400ms zoom-in;
-    animation-fill-mode: forwards;
-    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.animate-slide-up {
-    opacity: 0;
-    animation: 400ms slide-up;
-    animation-fill-mode: forwards;
-    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.animate-bounce-in {
-    opacity: 0;
-    animation: 600ms bounce-in;
-    animation-fill-mode: forwards;
-    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
-}
-
-.animate-fade-in-avatar {
-    opacity: 0;
-    animation: 800ms fade-in-avatar;
-    animation-fill-mode: forwards;
-    animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
+.animate-fade-in-up,
+.animate-fade-in-down,
+.animate-fade-in-left,
+.animate-fade-in-right,
+.animate-zoom-in,
+.animate-slide-up,
+.animate-bounce-in,
+.animate-fade-in-avatar,
 .animate-smooth-reveal {
-    opacity: 0;
-    animation: 600ms smooth-reveal;
-    animation-fill-mode: forwards;
-    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    opacity: 1;
+    animation: none;
 }
 
-.onload-animation.fade-in-down {
-    animation-name: fade-in-down;
-}
-
-.onload-animation.fade-in-left {
-    animation-name: fade-in-left;
-}
-
-.onload-animation.fade-in-right {
-    animation-name: fade-in-right;
-}
-
-.onload-animation.zoom-in {
-    animation-name: zoom-in;
-}
-
-.onload-animation.slide-up {
-    animation-name: slide-up;
-}
-
-.onload-animation.bounce-in {
-    animation-name: bounce-in;
-    animation-duration: 600ms;
-}
-
-.onload-animation.fade-in-avatar {
-    animation-name: fade-in-avatar;
-    animation-duration: 800ms;
-}
-
-.onload-animation.smooth-reveal {
-    animation-name: smooth-reveal;
-    animation-duration: 600ms;
-}
-
-#navbar {
-    animation-delay: 0ms
-}
-#sidebar {
-    animation-delay: 100ms
-}
-#swup-container {
+#content-container {
     outline: none;
 }
-#content-wrapper {
-    animation-delay: var(--content-delay);
-}
-.footer {
-    animation-delay: 250ms;
-}
-#banner-credit {
-    animation-delay: 400ms;
-}
-
-/* Post content */
-#post-container :nth-child(1) { animation-delay: calc(var(--content-delay) + 0ms) }
-#post-container :nth-child(2) { animation-delay: calc(var(--content-delay) + 50ms) }
-#post-container :nth-child(3) { animation-delay: calc(var(--content-delay) + 100ms) }
-#post-container :nth-child(4) { animation-delay: calc(var(--content-delay) + 150ms) }
-#post-container :nth-child(5) { animation-delay: calc(var(--content-delay) + 200ms) }
-#post-container :nth-child(6) { animation-delay: calc(var(--content-delay) + 250ms) }
-
-
-/* Mobile optimizations */
-@media (max-width: 768px) {
-    html.is-changing .transition-swup-fade {
-        @apply duration-300
-    }
-    html.is-changing .transition-swup-slide {
-        @apply duration-300
-    }
-    html.is-changing .transition-swup-zoom {
-        @apply duration-300
-    }
-    
-    .onload-animation,
-    .animate-fade-in-up {
-        animation-duration: 300ms;
-    }
-    
-    .animate-fade-in-down,
-    .animate-fade-in-left,
-    .animate-fade-in-right {
-        animation-duration: 300ms;
-    }
-    
-    .animate-zoom-in,
-    .animate-slide-up {
-        animation-duration: 350ms;
-    }
-    
-    .animate-bounce-in {
-        animation-duration: 450ms;
-    }
-    
-    .animate-fade-in-avatar {
-        animation-duration: 600ms;
-    }
-    
-    .animate-smooth-reveal {
-        animation-duration: 450ms;
-    }
-    
-    /* Reduce animation delays on mobile */
-    #sidebar {
-        animation-delay: 50ms
-    }
-    .footer {
-        animation-delay: 150ms;
-    }
-    #banner-credit {
-        animation-delay: 250ms;
-    }
-    
-    #post-container :nth-child(1) { animation-delay: calc(var(--content-delay) + 0ms) }
-    #post-container :nth-child(2) { animation-delay: calc(var(--content-delay) + 30ms) }
-    #post-container :nth-child(3) { animation-delay: calc(var(--content-delay) + 60ms) }
-    #post-container :nth-child(4) { animation-delay: calc(var(--content-delay) + 90ms) }
-    #post-container :nth-child(5) { animation-delay: calc(var(--content-delay) + 120ms) }
-    #post-container :nth-child(6) { animation-delay: calc(var(--content-delay) + 150ms) }
-}
-
-
-/* Prefers reduced motion */
-@media (prefers-reduced-motion: reduce) {
-    html.is-changing .transition-swup-fade,
-    html.is-changing .transition-swup-slide,
-    html.is-changing .transition-swup-zoom,
-    html.is-changing .transition-swup-overlay {
-        @apply duration-75
-    }
-    
-    .onload-animation,
-    .animate-fade-in-up,
-    .animate-fade-in-down,
-    .animate-fade-in-left,
-    .animate-fade-in-right,
-    .animate-zoom-in,
-    .animate-slide-up,
-    .animate-bounce-in,
-    .animate-fade-in-avatar,
-    .animate-smooth-reveal {
-        animation-duration: 100ms;
-    }
-}
-

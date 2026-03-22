@@ -4,7 +4,7 @@
 import sitemap from "@astrojs/sitemap";
 import svelte from "@astrojs/svelte";
 import tailwind from "@astrojs/tailwind";
-import swup from "@swup/astro";
+
 import yaml from "@rollup/plugin-yaml";
 import icon from "astro-icon";
 import { defineConfig } from "astro/config";
@@ -19,6 +19,8 @@ import remarkGithubAdmonitionsToDirectives from "remark-github-admonitions-to-di
 import remarkMath from "remark-math";
 import remarkSectionize from "remark-sectionize";
 
+// 旧浏览器支持
+import legacy from "@vitejs/plugin-legacy";
 // PWA 支持
 import { VitePWA } from "vite-plugin-pwa";
 
@@ -38,8 +40,11 @@ export default defineConfig({
 	site: "https://mikan.fun",
 	// 网站基础路径，默认为根路径
 	base: "/",
-	// 启用内置预加载
-	prefetch: true,
+	// 启用内置预加载 - 与 View Transitions 兼容
+	prefetch: {
+		prefetchAll: true,
+		defaultStrategy: "hover",
+	},
 
 	// 构建配置
 	build: {
@@ -64,69 +69,7 @@ export default defineConfig({
 		}),
 		// Svelte 集成
 		svelte(),
-		// Swup 页面过渡集成
-		swup({
-			// 禁用默认主题
-			theme: false,
-			// 动画类前缀
-			animationClass: "transition-swup-",
-			// 要更新的容器
-			containers: ["#swup-container", "#toc"],
-			// 启用平滑滚动
-			smoothScrolling: true,
-			// 启用缓存
-			cache: {
-				enabled: true,
-				maxAge: 300000, // 5分钟缓存
-				maxEntries: 10, // 最多缓存10个页面
-			},
-			// 预加载配置
-			preload: {
-				hover: true, // 悬停时预加载
-				focus: true, // 聚焦时预加载
-				top: true, // 顶部预加载
-				topOffset: 1000, // 顶部预加载偏移量
-				delay: 0, // 预加载延迟
-				throttle: 60, // 预加载节流，减少延迟
-				invisible: true, // 预加载视口外的链接
-			},
-			// 无障碍支持
-			accessibility: true,
-			// 更新头部
-			updateHead: true,
-			// 更新 body 类
-			updateBodyClass: true,
-			// 全局实例
-			globalInstance: true,
-			// 动画选择器
-			animationSelector: "[data-swup-animation]",
-			// 忽略访问的条件
-			ignoreVisit: (visit) => {
-				// 忽略外部链接
-				if (visit.url.origin !== window.location.origin) {
-					return true;
-				}
-				// 忽略下载链接
-				if (visit.link?.getAttribute("download")) {
-					return true;
-				}
-				// 忽略锚点链接
-				if (visit.url.hash && visit.url.pathname === window.location.pathname) {
-					return true;
-				}
-				return false;
-			},
-			// 动画持续时间
-			animationDuration: 300, // 动画持续时间（毫秒）
-			// 滚动到顶部
-			scrollToTop: true,
-			// 滚动到锚点
-			scrollToAnchor: true,
-			// 滚动行为
-			scrollBehavior: 'smooth',
-			// 插件
-			plugins: [],
-		}),
+
 		// 图标集成
 		icon({
 			// 包含的图标集
@@ -202,6 +145,15 @@ export default defineConfig({
 		fallbackFormat: "jpeg", //  fallback 格式
 		loading: "lazy", // 懒加载
 		decoding: "async", // 异步解码
+		// 响应式图片配置
+		responsive: true,
+		// 自动生成多种尺寸的图片
+		sizes: {
+			sm: "320px",
+			md: "640px",
+			lg: "768px",
+			xl: "1024px",
+		},
 	},
 
 	// Vite 配置
@@ -210,6 +162,17 @@ export default defineConfig({
 		plugins: [
 			yaml({
 				include: "**/*.yaml",
+			}),
+			// 旧浏览器支持
+			legacy({
+				targets: ["defaults", "not IE 11"],
+				additionalLegacyPolyfills: ["regenerator-runtime/runtime"],
+				polyfills: [
+					"es.object.assign",
+					"es.promise",
+					"es.array.find",
+					"es.array.includes",
+				],
 			}),
 			// PWA 配置
 			VitePWA({
@@ -245,6 +208,8 @@ export default defineConfig({
 					// 缓存模式
 					globPatterns: ["**/*.{js,css,html,ico,png,svg,webp,avif}"],
 					globIgnores: ["**/*.yaml"],
+					// 最大缓存文件大小（字节）
+					maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10 MiB
 					// 运行时缓存
 					runtimeCaching: [
 						{
@@ -309,16 +274,22 @@ export default defineConfig({
 							if (id.includes("overlayscrollbars")) return "overlayscrollbars";
 							if (id.includes("iconify")) return "iconify";
 							if (id.includes("svelte")) return "svelte";
-							if (id.includes("swup")) return "swup";
 							if (id.includes("pagefind")) return "pagefind";
 							if (id.includes("@astrojs")) return "astro";
 							if (id.includes("tailwind")) return "tailwind";
+							if (id.includes("@fontsource")) return "fonts";
+							if (id.includes("rehype")) return "rehype";
+							if (id.includes("remark")) return "remark";
 							return "vendor";
 						}
 					},
 					// 优化输出
 					minifyInternalExports: true,
-					generatedCode: 'es2015',
+					generatedCode: "es2015",
+					// 启用长期缓存
+					chunkFileNames: "chunks/[name].[hash].js",
+					entryFileNames: "[name].[hash].js",
+					assetFileNames: "assets/[name].[hash].[ext]",
 				},
 			},
 			// Terser 配置

@@ -1,0 +1,13 @@
+# 公告配置
+
+# 公告标题
+title: "公告"
+
+# 公告内容
+content: "网站仍在进行修改优化，部分内容无法正常显示。"
+
+# 公告头像路径
+avatar: "/images/奇卡头1.jpg"
+
+# 公告状态（true表示显示，false表示隐藏）
+enabled: true

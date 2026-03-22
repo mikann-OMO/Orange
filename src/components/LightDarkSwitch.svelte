@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { LIGHT_DARK_MODE } from "@/types/config.ts";
-import { DARK_MODE, LIGHT_MODE } from "@constants/constants.ts";
+import { AUTO_MODE, DARK_MODE, LIGHT_MODE } from "@constants/constants.ts";
 import Icon from "@iconify/svelte";
 import {
 	applyThemeToDocument,
@@ -11,10 +11,33 @@ import { onMount } from "svelte";
 
 let mode: LIGHT_DARK_MODE = $state(LIGHT_MODE);
 
-onMount(() => {
-	// 获取存储的主题，如果是 AUTO_MODE 则默认使用 LIGHT_MODE
+function getDisplayMode(): LIGHT_DARK_MODE {
 	const storedTheme = getStoredTheme();
-	mode = storedTheme === LIGHT_MODE ? LIGHT_MODE : DARK_MODE;
+	if (storedTheme === LIGHT_MODE) return LIGHT_MODE;
+	if (storedTheme === DARK_MODE) return DARK_MODE;
+	// AUTO_MODE: 根据系统主题决定显示
+	if (
+		typeof window !== "undefined" &&
+		window.matchMedia("(prefers-color-scheme: dark)").matches
+	) {
+		return DARK_MODE;
+	}
+	return LIGHT_MODE;
+}
+
+onMount(() => {
+	mode = getDisplayMode();
+
+	// 监听系统主题变化
+	const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+	const handleChange = () => {
+		if (getStoredTheme() === AUTO_MODE) {
+			mode = mediaQuery.matches ? DARK_MODE : LIGHT_MODE;
+		}
+	};
+	mediaQuery.addEventListener("change", handleChange);
+
+	return () => mediaQuery.removeEventListener("change", handleChange);
 });
 
 function switchScheme(newMode: LIGHT_DARK_MODE) {

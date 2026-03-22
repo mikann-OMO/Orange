@@ -8,6 +8,7 @@ import type {
 	NavBarConfig,
 	ProfileConfig,
 	SiteConfig,
+	VisitorConfig,
 } from "./types/config";
 import { LinkPreset } from "./types/config";
 
@@ -20,8 +21,8 @@ export const siteConfig: SiteConfig = {
 		fixed: false,
 	},
 	banner: {
-		enable: false,
-		src: "assets/images/chika",
+		enable: true,
+		src: "/images/背景.png",
 		position: "center",
 		credit: {
 			enable: false,
@@ -53,9 +54,9 @@ export const navBarConfig: NavBarConfig = {
 	links: [
 		LinkPreset.Home,
 		LinkPreset.About,
-		LinkPreset.Archive,
-		LinkPreset.Notes,
 		LinkPreset.Works,
+		LinkPreset.Notes,
+		LinkPreset.Archive,
 		LinkPreset.Friends,
 	],
 };
@@ -71,4 +72,20 @@ export const licenseConfig: LicenseConfig = {
 	enable: true,
 	name: "CC BY-NC-SA 4.0",
 	url: "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+};
+
+export const visitorConfig: VisitorConfig = {
+	enable: true,
+	provider: "busuanzi",
+};
+
+/**
+ * 评论系统配置
+ * 支持 Twikoo、CWD、MongoDB 评论系统
+ */
+export const commentConfig = {
+	provider: "mongodb" as const,
+	// 部署 Vercel API 后替换为你的域名
+	// 本地开发可使用 http://localhost:3000
+	apiBaseUrl: "https://comments.mikan.fun",
 };

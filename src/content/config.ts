@@ -1,4 +1,5 @@
 import { defineCollection, z } from "astro:content";
+import { glob } from "astro/loaders";
 
 const postsCollection = defineCollection({
 	schema: z.object({
@@ -20,14 +21,17 @@ const postsCollection = defineCollection({
 	}),
 });
 
-const picturesCollection = defineCollection({
-	type: "data",
+const exhibitionCollection = defineCollection({
+	loader: glob({
+		pattern: "**/*.{yaml,yml,json}",
+		base: "./src/content/exhibition",
+	}),
 	schema: z.object({
 		title: z.string(),
 		date: z.date(),
-		dir: z.string(), // 对应 public/images 下的相册目录名
+		dir: z.string(),
 		description: z.string().optional().default(""),
-		cover: z.string().optional().default(""), // 可选：自定义封面
+		cover: z.string().optional().default(""),
 		tags: z.array(z.string()).optional().default([]),
 		location: z.string().optional().default(""),
 		featured: z.boolean().optional().default(false),
@@ -79,7 +83,7 @@ export const collections: Record<
 	ReturnType<typeof defineCollection>
 > = {
 	posts: postsCollection,
-	pictures: picturesCollection,
+	exhibition: exhibitionCollection,
 	notes: notesCollection,
 	about: aboutCollection,
 	friends: friendsCollection,

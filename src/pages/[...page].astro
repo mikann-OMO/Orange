@@ -1,10 +1,15 @@
 ---
 import type { GetStaticPaths } from "astro";
+import { Icon } from "astro-icon/components";
 import PostPage from "../components/PostPage.astro";
+import TwikooGuestbook from "../components/TwikooGuestbook.astro";
+import VisitorCounter from "../components/VisitorCounter.svelte";
 import Pagination from "../components/control/Pagination.astro";
 import Categories from "../components/widget/Categories.astro";
+import FriendsList from "../components/widget/FriendsList.astro";
 import Profile from "../components/widget/Profile.astro";
 import Tags from "../components/widget/Tags.astro";
+import { commentConfig, profileConfig } from "../config";
 import { PAGE_SIZE } from "../constants/constants";
 import MainGridLayout from "../layouts/MainGridLayout.astro";
 import { getSortedPosts } from "../utils/content-utils";
@@ -16,23 +21,161 @@ export const getStaticPaths = (async ({ paginate }) => {
 // https://github.com/withastro/astro/issues/6507#issuecomment-1489916992
 
 const { page } = Astro.props;
-
 const len = page.data.length;
+const latestPost = page.data[0];
+const lastUpdateTime = latestPost
+	? new Date(latestPost.data.pubDate).toLocaleString("zh-CN", {
+			year: "numeric",
+			month: "2-digit",
+			day: "2-digit",
+			hour: "2-digit",
+			minute: "2-digit",
+		})
+	: "";
 ---
 
-<MainGridLayout fullWidth={true}>
-    <!-- 居中圆形头像资料卡 -->
-    <div class="max-w-6xl mx-auto mb-8">
-        <Profile class="onload-animation fade-in-avatar mx-auto max-w-md" style="animation-delay: 100ms"></Profile>
+<MainGridLayout fullWidth={false}>
+    <!-- 中央主内容区 -->
+    <div class="space-y-4 md:space-y-6">
+        <!-- 用户身份区 -->
+        <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-none shadow-xl p-4 md:p-6">
+            <div class="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-6">
+                <!-- 左侧头像 -->
+                <div class="flex-shrink-0">
+                    <Profile class="max-w-md"></Profile>
+                </div>
+                <!-- 右侧用户信息 -->
+                <div class="flex-1 text-center md:text-left">
+                    <h1 class="text-xl md:text-2xl font-bold mb-1 md:mb-2 text-[var(--primary)] dark:text-white">{profileConfig.name}</h1>
+                    <p class="text-sm md:text-base text-orange-950/60 dark:text-white/60 mb-3 md:mb-4">{profileConfig.bio}</p>
+                    <div class="flex flex-col sm:flex-row gap-2 md:gap-4 justify-center md:justify-start">
+                        <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="bg-white/30 dark:bg-stone-700/30 backdrop-blur-3xl rounded-none px-3 md:px-4 py-1.5 md:py-2 flex items-center gap-2 text-sm">
+                            <Icon name="fa6-brands:github" class="text-orange-950/70 dark:text-white/70" />
+                            <span class="text-orange-950/70 dark:text-white/70">GitHub</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 最新文章 -->
+        <div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl rounded-none shadow-xl overflow-hidden">
+            <!-- 最新文章标题栏 -->
+            <div class="bg-orange-100/80 dark:bg-stone-700/70 backdrop-blur-3xl border-l-4 border-orange-700 p-3 md:p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                <h2 class="text-base md:text-lg font-bold text-orange-700 dark:text-white">最新文章</h2>
+                <div class="text-xs md:text-sm text-orange-950/60 dark:text-white/60">上次更新: {lastUpdateTime}</div>
+            </div>
+            <!-- 文章列表 -->
+            <div class="p-3 md:p-4">
+                <PostPage page={page}></PostPage>
+                <Pagination class="mt-4 md:mt-6" page={page}></Pagination>
+            </div>
+        </div>
+        
+        <!-- 移动端：瀑布式布局 - 分类、标签、统计、友链 -->
+        <div class="md:hidden grid grid-cols-1 xs:grid-cols-2 gap-3">
+            <!-- 统计信息 -->
+            <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-none shadow-xl p-3">
+                <div class="flex justify-around items-center">
+                    <div class="text-center">
+                        <div class="text-lg font-bold text-orange-700 dark:text-white">
+                            <VisitorCounter />
+                        </div>
+                        <div class="text-xs text-orange-950/50 dark:text-white/50">访问量</div>
+                    </div>
+                    <div class="w-px h-6 bg-orange-200/50 dark:bg-stone-600/50"></div>
+                    <div class="text-center">
+                        <div class="text-lg font-bold text-orange-700 dark:text-white">{page.data.length}</div>
+                        <div class="text-xs text-orange-950/50 dark:text-white/50">文章数</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 分类 -->
+            <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-none shadow-xl p-3">
+                <h3 class="text-sm font-bold mb-2 text-orange-700 dark:text-white border-b border-orange-200/50 dark:border-stone-700/50 pb-1.5">分类</h3>
+                <Categories class="space-y-1" />
+            </div>
+            
+            <!-- 标签 -->
+            <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-none shadow-xl p-3">
+                <h3 class="text-sm font-bold mb-2 text-orange-700 dark:text-white border-b border-orange-200/50 dark:border-stone-700/50 pb-1.5">标签</h3>
+                <Tags class="flex flex-wrap gap-1.5" />
+            </div>
+            
+            <!-- 友链 -->
+            <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-none shadow-xl p-3">
+                <h3 class="text-sm font-bold mb-2 text-orange-700 dark:text-white border-b border-orange-200/50 dark:border-stone-700/50 pb-1.5">友链</h3>
+                <FriendsList class="space-y-1" />
+            </div>
+            
+            <!-- 个人详情按钮 -->
+            <a href="/about/" class="col-span-1 xs:col-span-2 block w-full py-2.5 px-3 bg-orange-100/50 dark:bg-stone-700/50 hover:bg-orange-100/80 dark:hover:bg-stone-600/80 text-center font-bold text-orange-700 dark:text-white transition text-sm rounded-none">
+                查看个人详情 →
+            </a>
+        </div>
+        
+        <!-- 底部留言板 -->
+        <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-none shadow-xl overflow-hidden">
+            <div class="bg-orange-50/50 dark:bg-stone-700/30 backdrop-blur-3xl border-l-4 border-orange-700 p-3 md:p-4">
+                <h2 class="text-base md:text-lg font-bold text-orange-700 dark:text-white">留言板</h2>
+            </div>
+            <div class="p-3 md:p-4">
+                {commentConfig.envId && (
+                    <TwikooGuestbook 
+                        envId={commentConfig.envId}
+                        lang={commentConfig.lang}
+                        region={commentConfig.region}
+                    />
+                )}
+            </div>
+        </div>
     </div>
     
-    <!-- 分类和标签组件 -->
-    <div class="max-w-6xl mx-auto mb-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Categories class="onload-animation fade-in-left" style="animation-delay: 300ms"></Categories>
-        <Tags class="onload-animation fade-in-right" style="animation-delay: 350ms"></Tags>
+    <!-- 右侧边栏 - 桌面端 -->
+    <div slot="sidebar" class="hidden md:block space-y-6">
+        <!-- 个人详情按钮 -->
+        <div>
+            <a href="/about/" class="inline-block py-2 px-3 bg-orange-100/50 dark:bg-stone-700/50 hover:bg-orange-100/80 dark:hover:bg-stone-600/80 text-left font-bold text-orange-700 dark:text-white transition text-sm">
+                点击查看个人详情
+            </a>
+        </div>
+        
+        <!-- 网页点击量和文章数量 -->
+        <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-none shadow-xl p-4">
+            <div class="flex flex-col gap-4">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-orange-950/50 dark:text-white/50">网页点击量</span>
+                    <span class="text-xl font-bold text-orange-700 dark:text-white">
+                        <VisitorCounter />
+                    </span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-orange-950/50 dark:text-white/50">文章数量</span>
+                    <span class="text-xl font-bold text-orange-700 dark:text-white">{page.data.length}</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 分类、标签、友链合并卡片 -->
+        <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-none shadow-xl p-4">
+            <!-- 分类 -->
+            <div class="mb-6">
+                <h3 class="text-lg font-bold mb-4 text-orange-700 dark:text-white border-b border-orange-200/50 dark:border-stone-700/50 pb-2">分类</h3>
+                <Categories class="space-y-2" />
+            </div>
+            
+            <!-- 标签 -->
+            <div class="mb-6">
+                <h3 class="text-lg font-bold mb-4 text-orange-700 dark:text-white border-b border-orange-200/50 dark:border-stone-700/50 pb-2">标签</h3>
+                <Tags class="flex flex-wrap gap-2" />
+            </div>
+            
+            <!-- 友链 -->
+            <div>
+                <h3 class="text-lg font-bold mb-4 text-orange-700 dark:text-white border-b border-orange-200/50 dark:border-stone-700/50 pb-2">友链</h3>
+                <FriendsList class="space-y-2" />
+            </div>
+        </div>
     </div>
-    
-    <!-- 博客文章列表 -->
-    <PostPage page={page}></PostPage>
-    <Pagination class="mx-auto onload-animation slide-up" page={page} style={`animation-delay: calc(var(--content-delay) + ${len * 50}ms + 200ms)`}></Pagination>
 </MainGridLayout>

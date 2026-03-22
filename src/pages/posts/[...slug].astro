@@ -1,12 +1,14 @@
 ---
 import path from "node:path";
 import { Icon } from "astro-icon/components";
-import CommentSection from "../../components/CommentSection.astro";
+import MongoComments from "../../components/MongoComments.astro";
+import PageViewCounter from "../../components/PageViewCounter.svelte";
 import PostMetadata from "../../components/PostMeta.astro";
+import Breadcrumb from "../../components/control/Breadcrumb.astro";
 import ImageWrapper from "../../components/misc/ImageWrapper.astro";
 import License from "../../components/misc/License.astro";
 import Markdown from "../../components/misc/Markdown.astro";
-import { licenseConfig } from "../../config";
+import { commentConfig, licenseConfig } from "../../config";
 import { profileConfig, siteConfig } from "../../config";
 import I18nKey from "../../i18n/i18nKey";
 import { i18n } from "../../i18n/translation";
@@ -46,38 +48,52 @@ const jsonLd = {
 	// TODO include cover image here
 };
 ---
-<MainGridLayout banner={entry.data.image} title={entry.data.title} description={entry.data.description} lang={entry.data.lang} setOGTypeArticle={true} headings={headings}>
+<MainGridLayout banner={entry.data.image} title={entry.data.title} description={entry.data.description} lang={entry.data.lang} setOGTypeArticle={true} headings={headings} isPostPage={true}>
     <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
-    <div class="flex max-w-[50rem] mx-auto w-full rounded-[var(--radius-large)] overflow-hidden relative mb-4">
-        <div id="post-container" class:list={["card-base z-10 px-6 md:px-9 pt-6 pb-4 relative w-full ",
-            {}
-        ]}>
+    <div class="flex max-w-[50rem] mx-auto w-full rounded-[var(--radius-large)] overflow-hidden relative mb-3 md:mb-4">
+        <div id="post-container" class:list={["card-base z-10 px-4 md:px-6 lg:px-9 pt-4 md:pt-6 pb-3 md:pb-4 relative w-full post-content-animate", {}]}>
+            <!-- 面包屑导航 -->
+            <Breadcrumb 
+                items={[
+                    { label: "首页", url: "/" },
+                    { label: "归档", url: "/archive" },
+                    { label: entry.data.category || "未分类", url: `/archive/category/${entry.data.category || "uncategorized"}` },
+                    { label: entry.data.title, isActive: true }
+                ]} 
+
+            />
             <!-- word count and reading time -->
-            <div class="flex flex-row text-black/30 dark:text-white/30 gap-5 mb-3 transition onload-animation">
+            <div class="flex flex-row text-orange-950/30 dark:text-white/30 gap-3 md:gap-5 mb-2 md:mb-3 transition">
                 <div class="flex flex-row items-center">
-                    <div class="transition h-6 w-6 rounded-md bg-black/5 dark:bg-white/10 text-black/50 dark:text-white/50 flex items-center justify-center mr-2">
-                        <Icon name="material-symbols:notes-rounded"></Icon>
+                    <div class="transition h-5 md:h-6 w-5 md:w-6 rounded-md bg-orange-950/5 dark:bg-white/10 text-orange-950/50 dark:text-white/50 flex items-center justify-center mr-1.5 md:mr-2">
+                        <Icon name="material-symbols:notes-rounded" class="text-sm md:text-base"></Icon>
                     </div>
-                    <div class="text-sm">{remarkPluginFrontmatter.words} {" " + i18n(I18nKey.wordsCount)}</div>
+                    <div class="text-xs md:text-sm">{remarkPluginFrontmatter.words} {" " + i18n(I18nKey.wordsCount)}</div>
                 </div>
                 <div class="flex flex-row items-center">
-                    <div class="transition h-6 w-6 rounded-md bg-black/5 dark:bg-white/10 text-black/50 dark:text-white/50 flex items-center justify-center mr-2">
-                        <Icon name="material-symbols:schedule-outline-rounded"></Icon>
+                    <div class="transition h-5 md:h-6 w-5 md:w-6 rounded-md bg-orange-950/5 dark:bg-white/10 text-orange-950/50 dark:text-white/50 flex items-center justify-center mr-1.5 md:mr-2">
+                        <Icon name="material-symbols:schedule-outline-rounded" class="text-sm md:text-base"></Icon>
                     </div>
-                    <div class="text-sm">{remarkPluginFrontmatter.minutes} {" " + i18n(I18nKey.minutesCount)}</div>
+                    <div class="text-xs md:text-sm">{remarkPluginFrontmatter.minutes} {" " + i18n(I18nKey.minutesCount)}</div>
+                </div>
+                <div class="flex flex-row items-center">
+                    <div class="transition h-5 md:h-6 w-5 md:w-6 rounded-md bg-orange-950/5 dark:bg-white/10 text-orange-950/50 dark:text-white/50 flex items-center justify-center mr-1.5 md:mr-2">
+                        <Icon name="material-symbols:visibility-outline" class="text-sm md:text-base"></Icon>
+                    </div>
+                    <div class="text-xs md:text-sm"><PageViewCounter slug={entry.slug} /> 次阅读</div>
                 </div>
             </div>
 
             <!-- 标题和图片组合 -->
-            <div class="onload-animation">
-                <div class="flex flex-col md:flex-row items-start gap-6 mb-5">
+            <div>
+                <div class="flex flex-col md:flex-row items-start gap-3 md:gap-6 mb-4 md:mb-5">
                     <!-- 标题 -->
                     <div class="flex-1">
                         <div
                             data-pagefind-body data-pagefind-weight="10" data-pagefind-meta="title"
-                            class="transition w-full block font-bold mb-3
-                            text-3xl md:text-[2.25rem]/[2.75rem]
-                            text-black/90 dark:text-white/90
+                            class="transition w-full block font-bold mb-2 md:mb-3
+                            text-2xl md:text-3xl lg:text-[2.25rem]/[2.75rem]
+                            text-black dark:text-white/90
                             md:before:w-1 before:h-5 before:rounded-md before:bg-[var(--primary)]
                             before:absolute before:top-[0.75rem] before:left-[-1.125rem]
                             font-['SimSun',serif]
@@ -88,20 +104,30 @@ const jsonLd = {
                         
                         <!-- metadata -->
                         <PostMetadata
-                                class="mb-5"
+                                class="mb-3 md:mb-5"
                                 published={entry.data.published}
                                 updated={entry.data.updated}
                                 tags={entry.data.tags}
                                 category={entry.data.category}
                         ></PostMetadata>
-                        <div class="border-[var(--line-divider)] border-dashed border-b-[1px] mb-5"></div>
+                        <div class="border-[var(--line-divider)] border-dashed border-b-[1px] mb-3 md:mb-5"></div>
                     </div>
                     
-                    <!-- 封面图片 - 右侧1:1画框 -->
+                    <!-- 封面图片 - 移动端在标题下方，桌面端在右侧 -->
                     {entry.data.image &&
                         <div class="w-full md:w-1/3 flex-shrink-0">
-                            <!-- 1:1 画框样式 -->
-                            <div class="w-full aspect-square rounded-[var(--radius-large)] overflow-hidden border-2 border-[var(--primary)]/30 shadow-md hover:border-[var(--primary)]/70 transition-all duration-300">
+                            <!-- 移动端：横向封面 -->
+                            <div class="md:hidden w-full h-40 rounded-[var(--radius-large)] overflow-hidden border-2 border-[var(--primary)]/30 shadow-md">
+                                <ImageWrapper 
+                                    id="post-cover" 
+                                    src={entry.data.image} 
+                                    basePath={path.join("content/posts/", getDir(entry.id))} 
+                                    class="w-full h-full object-cover"
+                                    position="center"
+                                />
+                            </div>
+                            <!-- 桌面端：1:1 画框样式 -->
+                            <div class="hidden md:block w-full aspect-square rounded-[var(--radius-large)] overflow-hidden border-2 border-[var(--primary)]/30 shadow-md hover:border-[var(--primary)]/70 transition-all duration-300">
                                 <ImageWrapper 
                                     id="post-cover" 
                                     src={entry.data.image} 
@@ -116,21 +142,21 @@ const jsonLd = {
             </div>
 
 
-            <Markdown class="mb-6 markdown-content onload-animation !max-w-none" class:list={entry.slug === 'travel/jiuhuashan-adventure' ? 'jiuhuashan-gallery' : ''}>
+            <Markdown class="mb-4 md:mb-6 markdown-content !max-w-none" class:list={entry.slug === 'travel/jiuhuashan-adventure' ? 'jiuhuashan-gallery' : ''}>
                 <Content />
             </Markdown>
 
-            {licenseConfig.enable && <License title={entry.data.title} slug={entry.slug} pubDate={entry.data.published} class="mb-6 rounded-xl license-container onload-animation"></License>}
+            {licenseConfig.enable && <License title={entry.data.title} slug={entry.slug} pubDate={entry.data.published} class="mb-4 md:mb-6 rounded-xl license-container"></License>}
 
         </div>
     </div>
 
-    <div class="flex flex-col md:flex-row justify-between mb-4 gap-4 overflow-hidden w-full">
+    <div class="flex flex-col md:flex-row justify-between mb-3 md:mb-4 gap-2 md:gap-4 overflow-hidden w-full">
         <a href={entry.data.nextSlug ? getPostUrlBySlug(entry.data.nextSlug) : "#"}
            class:list={["w-full font-bold overflow-hidden active:scale-95", {"pointer-events-none": !entry.data.nextSlug}]}>
-            {entry.data.nextSlug && <div class="btn-card rounded-2xl w-full h-[3.75rem] max-w-full px-4 flex items-center !justify-start gap-4" >
-                <Icon name="material-symbols:chevron-left-rounded" class="text-[2rem] text-[var(--primary)]" />
-                <div class="overflow-hidden transition overflow-ellipsis whitespace-nowrap max-w-[calc(100%_-_3rem)] text-black/75 dark:text-white/75">
+            {entry.data.nextSlug && <div class="btn-card rounded-xl md:rounded-2xl w-full h-[3rem] md:h-[3.75rem] max-w-full px-3 md:px-4 flex items-center !justify-start gap-2 md:gap-4" >
+                <Icon name="material-symbols:chevron-left-rounded" class="text-[1.5rem] md:text-[2rem] text-[var(--primary)]" />
+                <div class="overflow-hidden transition overflow-ellipsis whitespace-nowrap max-w-[calc(100%_-_2.5rem)] md:max-w-[calc(100%_-_3rem)] text-xs md:text-sm text-orange-950/75 dark:text-white/75">
                     {entry.data.nextTitle}
                 </div>
             </div>}
@@ -138,17 +164,23 @@ const jsonLd = {
 
         <a href={entry.data.prevSlug ? getPostUrlBySlug(entry.data.prevSlug) : "#"}
            class:list={["w-full font-bold overflow-hidden active:scale-95", {"pointer-events-none": !entry.data.prevSlug}]}>
-            {entry.data.prevSlug && <div class="btn-card rounded-2xl w-full h-[3.75rem] max-w-full px-4 flex items-center !justify-end gap-4">
-                <div class="overflow-hidden transition overflow-ellipsis whitespace-nowrap max-w-[calc(100%_-_3rem)] text-black/75 dark:text-white/75">
+            {entry.data.prevSlug && <div class="btn-card rounded-xl md:rounded-2xl w-full h-[3rem] md:h-[3.75rem] max-w-full px-3 md:px-4 flex items-center !justify-end gap-2 md:gap-4">
+                <div class="overflow-hidden transition overflow-ellipsis whitespace-nowrap max-w-[calc(100%_-_2.5rem)] md:max-w-[calc(100%_-_3rem)] text-xs md:text-sm text-orange-950/75 dark:text-white/75">
                     {entry.data.prevTitle}
                 </div>
-                <Icon name="material-symbols:chevron-right-rounded" class="text-[2rem] text-[var(--primary)]" />
+                <Icon name="material-symbols:chevron-right-rounded" class="text-[1.5rem] md:text-[2rem] text-[var(--primary)]" />
             </div>}
         </a>
     </div>
 
     <!-- 评论区 -->
-    <CommentSection entry={entry} />
+    {commentConfig.provider === "mongodb" && commentConfig.apiBaseUrl && (
+        <MongoComments 
+            postSlug={entry.slug}
+            postTitle={entry.data.title}
+            apiBaseUrl={commentConfig.apiBaseUrl}
+        />
+    )}
 
 
 

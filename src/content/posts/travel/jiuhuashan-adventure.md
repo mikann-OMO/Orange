@@ -2,7 +2,6 @@
 title: 向山进发！九华山游记
 published: 2026-01-05T00:00:00.000Z
 description: “二〇二六 新年新气象 三天两夜九华山游记“
-image: '../../pictures/九华山2026.01.01/1.jpg'
 tags:
   - 向山进发
 category: 游记
@@ -29,7 +28,7 @@ draft: false
 从九华山游客中心到迎仙桥站这段路属于是上山了，那个山路真的是十八弯我就算骑自行车都得骑慢点。(ﾟдﾟ;)
 
 <figure style="text-align: center;">
-<img src="/pictures/九华山2026.01.01/2.jpg" alt="九华山" />
+
 <figcaption>迎仙桥检票口附近</figcaption>
 </figure>
 
@@ -75,7 +74,7 @@ draft: false
 
 
 <figure style="text-align: center;">
-<img src="/pictures/九华山2026.01.01/3.jpg" alt="九华山" />
+
 <figcaption>随手抓的一团雪</figcaption>
 </figure>
 
@@ -85,92 +84,7 @@ draft: false
 
 下了雪，走路便比平常艰难些，从路况来看，我跟旅友醒的并不算早。我们一起随便在路边找了家店面吃了饭，我又去买了个雨衣（因为打一把伞实在是不方便），便开始了这段拜佛之路。
 
-<div style="position: relative; width: 100%; height: auto; min-height: 450px; margin: 20px 0; overflow: hidden; border-radius: 8px; padding: 10px 0;">
-  <style>
-    @keyframes explodeEntrance {
-      0% {
-        opacity: 0;
-        transform: scale(0) rotate(var(--start-rotate)) translateY(-200px);
-        left: var(--start-left);
-        top: var(--start-top);
-      }
-      30% {
-        opacity: 0.6;
-        transform: scale(1.2) rotate(var(--mid-rotate)) translateY(20px);
-      }
-      60% {
-        opacity: 0.8;
-        transform: scale(0.95) rotate(var(--end-rotate)) translateY(-10px);
-      }
-      100% {
-        opacity: 1;
-        transform: scale(1) rotate(var(--end-rotate)) translateY(0);
-        left: var(--left);
-        top: var(--top);
-      }
-    }
-    .explosion-image {
-      position: absolute;
-      width: var(--size);
-      max-width: 40%;
-      height: auto;
-      object-fit: cover;
-      border-radius: 10px;
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
-      animation: explodeEntrance 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-      animation-delay: var(--delay);
-      transform-origin: center;
-      z-index: var(--z-index);
-      transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-    }
-    .explosion-image:hover {
-      transform: scale(1.05) rotate(var(--end-rotate)) translateY(-5px);
-      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
-      z-index: 10;
-    }
-  </style>
-  <!-- Compact distribution with reduced gaps, two images hidden behind -->
-  <!-- 1. Top-left - main image -->
-  <img src="/pictures/九华山2026.01.01/7.jpg" alt="九华山" class="explosion-image" 
-       style="--left: 2%; --top: 8%; --size: 34%; --delay: 0.1s; --z-index: 3; 
-              --start-left: -50%; --start-top: -50%; 
-              --start-rotate: -12deg; --mid-rotate: 6deg; --end-rotate: -4deg;" />
-  <!-- 2. Top-right - main image -->
-  <img src="/pictures/九华山2026.01.01/8.jpg" alt="九华山" class="explosion-image" 
-       style="--left: 62%; --top: 6%; --size: 38%; --delay: 0.2s; --z-index: 4; 
-              --start-left: 150%; --start-top: -50%; 
-              --start-rotate: 12deg; --mid-rotate: -6deg; --end-rotate: 3deg;" />
-  <!-- 3. Bottom-left - main image -->
-  <img src="/pictures/九华山2026.01.01/9.jpg" alt="九华山" class="explosion-image" 
-       style="--left: 4%; --top: 55%; --size: 40%; --delay: 0.3s; --z-index: 5; 
-              --start-left: -50%; --start-top: 150%; 
-              --start-rotate: 8deg; --mid-rotate: -10deg; --end-rotate: 2deg;" />
-  <!-- 4. Bottom-right - main image -->
-  <img src="/pictures/九华山2026.01.01/10.jpg" alt="九华山" class="explosion-image" 
-       style="--left: 58%; --top: 52%; --size: 39%; --delay: 0.4s; --z-index: 2; 
-              --start-left: 150%; --start-top: 150%; 
-              --start-rotate: -10deg; --mid-rotate: 8deg; --end-rotate: -5deg;" />
-  <!-- 5. Top-middle - medium image -->
-  <img src="/pictures/九华山2026.01.01/11.jpg" alt="九华山" class="explosion-image" 
-       style="--left: 35%; --top: 10%; --size: 28%; --delay: 0.5s; --z-index: 6; 
-              --start-left: 50%; --start-top: -100%; 
-              --start-rotate: 0deg; --mid-rotate: 15deg; --end-rotate: 0deg;" />
-  <!-- 6. Middle-left - medium image -->
-  <img src="/pictures/九华山2026.01.01/12.jpg" alt="九华山" class="explosion-image" 
-       style="--left: 8%; --top: 32%; --size: 32%; --delay: 0.6s; --z-index: 3; 
-              --start-left: -100%; --start-top: 50%; 
-              --start-rotate: -5deg; --mid-rotate: 12deg; --end-rotate: -3deg;" />
-  <!-- 7. Middle-right - very small, hidden behind -->
-  <img src="/pictures/九华山2026.01.01/13.jpg" alt="九华山" class="explosion-image" 
-       style="--left: 72%; --top: 42%; --size: 16%; --delay: 0.7s; --z-index: 1; 
-              --start-left: 200%; --start-top: 50%; 
-              --start-rotate: 5deg; --mid-rotate: -12deg; --end-rotate: 2deg;" />
-  <!-- 8. Bottom-middle - very small, hidden behind -->
-  <img src="/pictures/九华山2026.01.01/14.jpg" alt="九华山" class="explosion-image" 
-       style="--left: 45%; --top: 65%; --size: 18%; --delay: 0.8s; --z-index: 1; 
-              --start-left: 50%; --start-top: 200%; 
-              --start-rotate: 0deg; --mid-rotate: -15deg; --end-rotate: 0deg;" />
-</div>
+
 
 *（寺庙内禁止拍摄）*
 
@@ -184,98 +98,6 @@ draft: false
 终于爬上山，这个时候**差不多九点半**了我累的气喘吁吁，她好像跟没事人一样继续双手插兜自在的走着。
 
 山上的人有很多，大都是坐缆车上来的，我跟她都不喜人多，烧完香之后就从人群中溜开了。然后有些漫无目的的走着……
-
-<div style="position: relative; width: 100%; height: auto; min-height: 450px; margin: 20px 0; overflow: hidden; border-radius: 8px; padding: 10px 0;">
-  <style>
-    @keyframes explodeEntrance {
-      0% {
-        opacity: 0;
-        transform: scale(0) rotate(var(--start-rotate)) translateY(-200px);
-        left: var(--start-left);
-        top: var(--start-top);
-      }
-      30% {
-        opacity: 0.6;
-        transform: scale(1.2) rotate(var(--mid-rotate)) translateY(20px);
-      }
-      60% {
-        opacity: 0.8;
-        transform: scale(0.95) rotate(var(--end-rotate)) translateY(-10px);
-      }
-      100% {
-        opacity: 1;
-        transform: scale(1) rotate(var(--end-rotate)) translateY(0);
-        left: var(--left);
-        top: var(--top);
-      }
-    }
-    .explosion-image {
-      position: absolute;
-      width: var(--size);
-      max-width: 40%;
-      height: auto;
-      object-fit: cover;
-      border-radius: 10px;
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
-      animation: explodeEntrance 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-      animation-delay: var(--delay);
-      transform-origin: center;
-      z-index: var(--z-index);
-      transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-    }
-    .explosion-image:hover {
-      transform: scale(1.05) rotate(var(--end-rotate)) translateY(-5px);
-      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
-      z-index: 10;
-    }
-  </style>
-  <!-- Compact distribution with reduced gaps, two images hidden behind -->
-  <!-- 1. Top-left - main image -->
-  <img src="/pictures/九华山2026.01.01/15.jpg" alt="九华山" class="explosion-image"  
-       style="--left: 42%; --top: 38%; --size: 20%; --delay: 0.9s; --z-index: 10; 
-              --start-left: 50%; --start-top: 50%; 
-              --start-rotate: -8deg; --mid-rotate: 8deg; --end-rotate: -2deg;" />
-  <!-- 2. Top-right - main image -->
-  <img src="/pictures/九华山2026.01.01/16.jpg" alt="九华山" class="explosion-image" 
-       style="--left: 68%; --top: 12%; --size: 20%; --delay: 0.2s; --z-index: 4; 
-              --start-left: 150%; --start-top: -50%; 
-              --start-rotate: 12deg; --mid-rotate: -6deg; --end-rotate: 3deg;" />
-  <!-- 3. Bottom-left - main image -->
-  <img src="/pictures/九华山2026.01.01/17.jpg" alt="九华山" class="explosion-image" 
-       style="--left: 6%; --top: 58%; --size: 28%; --delay: 0.3s; --z-index: 5; 
-              --start-left: -50%; --start-top: 150%; 
-              --start-rotate: 8deg; --mid-rotate: -10deg; --end-rotate: 2deg;" />
-  <!-- 4. Bottom-right - main image -->
-  <img src="/pictures/九华山2026.01.01/18.jpg" alt="九华山" class="explosion-image" 
-       style="--left: 62%; --top: 55%; --size: 28%; --delay: 0.4s; --z-index: 2; 
-              --start-left: 150%; --start-top: 150%; 
-              --start-rotate: -10deg; --mid-rotate: 8deg; --end-rotate: -5deg;" />
-  <!-- 5. Top-middle - medium image -->
-  <img src="/pictures/九华山2026.01.01/19.jpg" alt="九华山" class="explosion-image" 
-       style="--left: 38%; --top: 12%; --size: 22%; --delay: 0.5s; --z-index: 6; 
-              --start-left: 50%; --start-top: -100%; 
-              --start-rotate: 0deg; --mid-rotate: 15deg; --end-rotate: 0deg;" />
-  <!-- 6. Middle-left - medium image -->
-  <img src="/pictures/九华山2026.01.01/20.jpg" alt="九华山" class="explosion-image" 
-       style="--left: 10%; --top: 38%; --size: 22%; --delay: 0.6s; --z-index: 3; 
-              --start-left: -100%; --start-top: 50%; 
-              --start-rotate: -5deg; --mid-rotate: 12deg; --end-rotate: -3deg;" />
-  <!-- 7. Middle-right - medium image -->
-  <img src="/pictures/九华山2026.01.01/21.jpg" alt="九华山" class="explosion-image" 
-       style="--left: 70%; --top: 45%; --size: 22%; --delay: 0.7s; --z-index: 4; 
-              --start-left: 200%; --start-top: 50%; 
-              --start-rotate: 5deg; --mid-rotate: -12deg; --end-rotate: 2deg;" />
-  <!-- 8. Bottom-middle - small image -->
-  <img src="/pictures/九华山2026.01.01/22.jpg" alt="九华山" class="explosion-image" 
-       style="--left: 44%; --top: 68%; --size: 18%; --delay: 0.8s; --z-index: 1; 
-              --start-left: 50%; --start-top: 200%; 
-              --start-rotate: 0deg; --mid-rotate: -15deg; --end-rotate: 0deg;" />
-  <!-- 9. Center - small image -->
-  <img src="/pictures/九华山2026.01.01/23.jpg" alt="九华山" class="explosion-image" 
-       style="--left: 4%; --top: 10%; --size: 28%; --delay: 0.1s; --z-index: 3; 
-              --start-left: -50%; --start-top: -50%; 
-              --start-rotate: -12deg; --mid-rotate: 6deg; --end-rotate: -4deg;" />
-</div>
 
 
 *（一路上遇到了许多猫猫）*
@@ -297,9 +119,7 @@ draft: false
 中午没吃完，晚上民宿阿姨免费给热了热继续吃，这样一看还是很划算的。
 
 <div style="display: flex; gap: 10px; margin: 20px 0;">
-  <img src="/pictures/九华山2026.01.01/4.jpg" alt="九华山" style="flex: 1; max-width: calc(33.333% - 7px); height: auto;" />
-  <img src="/pictures/九华山2026.01.01/5.jpg" alt="九华山" style="flex: 1; max-width: calc(33.333% - 7px); height: auto;" />
-  <img src="/pictures/九华山2026.01.01/6.jpg" alt="九华山" style="flex: 1; max-width: calc(33.333% - 7px); height: auto;" />
+
 </div>
 
 饭后我们小睡了一个小时，然后继续开始探索附近的路。在此期间我们还遇到了两只热情的小黑狗，有一只还咬烂了我的羽绒服，还好有附近寺庙里的师父过来帮忙驱赶了一下，狗子并无恶意，只是太过于热情下嘴有些没轻重。
@@ -378,84 +198,3 @@ draft: false
 
 ---
 [九华山 2026.01.01 图册](/pictures/jiuhuashan-2026-01-01)
-
-# 沿边
-<div style="display: flex; flex-wrap: nowrap; gap: 5px; margin: 20px 0; overflow-x: auto; padding: 10px 0; scrollbar-width: thin; scrollbar-color: rgba(153, 153, 153, 0.3) transparent;">
-  <!-- 隐藏默认滚动条 -->
-  <style>
-    /* Firefox */
-    div {
-      scrollbar-width: thin;
-      scrollbar-color: rgba(153, 153, 153, 0.3) transparent;
-    }
-    /* Chrome, Safari, Edge */
-    div::-webkit-scrollbar {
-      height: 6px;
-    }
-    div::-webkit-scrollbar-track {
-      background: transparent;
-      border-radius: 3px;
-    }
-    div::-webkit-scrollbar-thumb {
-      background: rgba(153, 153, 153, 0.3);
-      border-radius: 3px;
-    }
-    div::-webkit-scrollbar-thumb:hover {
-      background: rgba(153, 153, 153, 0.6);
-    }
-  </style>
-  <!-- 记录1目录下的图片 -->
-  <img src="/pictures/九华山2026.01.01/29.jpg" alt="九华山" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px; transition: transform 0.2s ease; cursor: pointer; flex-shrink: 0;" onclick="this.style.transform = this.style.transform === 'scale(3)' ? 'scale(1)' : 'scale(3)';" />
-  <img src="/pictures/九华山2026.01.01/30.jpg" alt="九华山" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px; transition: transform 0.2s ease; cursor: pointer; flex-shrink: 0;" onclick="this.style.transform = this.style.transform === 'scale(3)' ? 'scale(1)' : 'scale(3)';" />
-  <img src="/pictures/九华山2026.01.01/31.jpg" alt="九华山" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px; transition: transform 0.2s ease; cursor: pointer; flex-shrink: 0;" onclick="this.style.transform = this.style.transform === 'scale(3)' ? 'scale(1)' : 'scale(3)';" />
-  <img src="/pictures/九华山2026.01.01/32.jpg" alt="九华山" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px; transition: transform 0.2s ease; cursor: pointer; flex-shrink: 0;" onclick="this.style.transform = this.style.transform === 'scale(3)' ? 'scale(1)' : 'scale(3)';" />
-  <img src="/pictures/九华山2026.01.01/33.jpg" alt="九华山" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px; transition: transform 0.2s ease; cursor: pointer; flex-shrink: 0;" onclick="this.style.transform = this.style.transform === 'scale(3)' ? 'scale(1)' : 'scale(3)';" />
-  <img src="/pictures/九华山2026.01.01/34.jpg" alt="九华山" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px; transition: transform 0.2s ease; cursor: pointer; flex-shrink: 0;" onclick="this.style.transform = this.style.transform === 'scale(3)' ? 'scale(1)' : 'scale(3)';" />
-  <!-- 记录2目录下的图片 -->
-  <img src="/pictures/九华山2026.01.01/35.jpg" alt="九华山" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px; transition: transform 0.2s ease; cursor: pointer; flex-shrink: 0;" onclick="this.style.transform = this.style.transform === 'scale(3)' ? 'scale(1)' : 'scale(3)';" />
-  <img src="/pictures/九华山2026.01.01/36.jpg" alt="九华山" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px; transition: transform 0.2s ease; cursor: pointer; flex-shrink: 0;" onclick="this.style.transform = this.style.transform === 'scale(3)' ? 'scale(1)' : 'scale(3)';" />
-  <img src="/pictures/九华山2026.01.01/37.jpg" alt="九华山" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px; transition: transform 0.2s ease; cursor: pointer; flex-shrink: 0;" onclick="this.style.transform = this.style.transform === 'scale(3)' ? 'scale(1)' : 'scale(3)';" />
-  <img src="/pictures/九华山2026.01.01/38.jpg" alt="九华山" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px; transition: transform 0.2s ease; cursor: pointer; flex-shrink: 0;" onclick="this.style.transform = this.style.transform === 'scale(3)' ? 'scale(1)' : 'scale(3)';" />
-  <img src="/pictures/九华山2026.01.01/45.jpg" alt="九华山" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px; transition: transform 0.2s ease; cursor: pointer; flex-shrink: 0;" onclick="this.style.transform = this.style.transform === 'scale(3)' ? 'scale(1)' : 'scale(3)';" />
-  <img src="/pictures/九华山2026.01.01/40.jpg" alt="九华山" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px; transition: transform 0.2s ease; cursor: pointer; flex-shrink: 0;" onclick="this.style.transform = this.style.transform === 'scale(3)' ? 'scale(1)' : 'scale(3)';" />
-</div>
-
-# 美景
-<!-- 路和美景图片展示 -->
-<div style="display: flex; flex-wrap: nowrap; gap: 5px; margin: 20px 0; overflow-x: auto; padding: 10px 0; scrollbar-width: thin; scrollbar-color: rgba(153, 153, 153, 0.3) transparent;">
-  <!-- 隐藏默认滚动条 -->
-  <style>
-    /* Firefox */
-    div {
-      scrollbar-width: thin;
-      scrollbar-color: rgba(153, 153, 153, 0.3) transparent;
-    }
-    /* Chrome, Safari, Edge */
-    div::-webkit-scrollbar {
-      height: 6px;
-    }
-    div::-webkit-scrollbar-track {
-      background: transparent;
-      border-radius: 3px;
-    }
-    div::-webkit-scrollbar-thumb {
-      background: rgba(153, 153, 153, 0.3);
-      border-radius: 3px;
-    }
-    div::-webkit-scrollbar-thumb:hover {
-      background: rgba(153, 153, 153, 0.6);
-    }
-  </style>
-  <!-- 路目录下的图片 -->
-  <img src="/pictures/九华山2026.01.01/24.jpg" alt="九华山路" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px; transition: transform 0.2s ease; cursor: pointer; flex-shrink: 0;" onclick="this.style.transform = this.style.transform === 'scale(3)' ? 'scale(1)' : 'scale(3)';" />
-  <img src="/pictures/九华山2026.01.01/25.jpg" alt="九华山路" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px; transition: transform 0.2s ease; cursor: pointer; flex-shrink: 0;" onclick="this.style.transform = this.style.transform === 'scale(3)' ? 'scale(1)' : 'scale(3)';" />
-  <img src="/pictures/九华山2026.01.01/26.jpg" alt="九华山路" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px; transition: transform 0.2s ease; cursor: pointer; flex-shrink: 0;" onclick="this.style.transform = this.style.transform === 'scale(3)' ? 'scale(1)' : 'scale(3)';" />
-  <img src="/pictures/九华山2026.01.01/27.jpg" alt="九华山路" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px; transition: transform 0.2s ease; cursor: pointer; flex-shrink: 0;" onclick="this.style.transform = this.style.transform === 'scale(3)' ? 'scale(1)' : 'scale(3)';" />
-  <!-- 美景目录下的图片 -->
-  <img src="/pictures/九华山2026.01.01/28.jpg" alt="九华山美景" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px; transition: transform 0.2s ease; cursor: pointer; flex-shrink: 0;" onclick="this.style.transform = this.style.transform === 'scale(3)' ? 'scale(1)' : 'scale(3)';" />
-  <img src="/pictures/九华山2026.01.01/41.jpg" alt="九华山美景" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px; transition: transform 0.2s ease; cursor: pointer; flex-shrink: 0;" onclick="this.style.transform = this.style.transform === 'scale(3)' ? 'scale(1)' : 'scale(3)';" />
-  <img src="/pictures/九华山2026.01.01/42.jpg" alt="九华山美景" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px; transition: transform 0.2s ease; cursor: pointer; flex-shrink: 0;" onclick="this.style.transform = this.style.transform === 'scale(3)' ? 'scale(1)' : 'scale(3)';" />
-  <img src="/pictures/九华山2026.01.01/43.jpg" alt="九华山美景" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px; transition: transform 0.2s ease; cursor: pointer; flex-shrink: 0;" onclick="this.style.transform = this.style.transform === 'scale(3)' ? 'scale(1)' : 'scale(3)';" />
-  <img src="/pictures/九华山2026.01.01/44.jpg" alt="九华山美景" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px; transition: transform 0.2s ease; cursor: pointer; flex-shrink: 0;" onclick="this.style.transform = this.style.transform === 'scale(3)' ? 'scale(1)' : 'scale(3)';" />
-  <img src="/pictures/九华山2026.01.01/39.jpg" alt="九华山美景" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px; transition: transform 0.2s ease; cursor: pointer; flex-shrink: 0;" onclick="this.style.transform = this.style.transform === 'scale(3)' ? 'scale(1)' : 'scale(3)';" />
-</div>

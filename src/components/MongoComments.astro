@@ -1,0 +1,528 @@
+---
+interface Props {
+  postSlug: string;
+  postTitle?: string;
+  apiBaseUrl?: string;
+}
+
+const { postSlug, postTitle = "", apiBaseUrl = "" } = Astro.props;
+---
+
+<div class="mongo-comments-wrapper px-6">
+  <div class="max-w-3xl mx-auto">
+    <div id="mongo-comments" data-post-slug={postSlug} data-api-base-url={apiBaseUrl}>
+      <div id="mongo-comments-skeleton" class="py-8 space-y-6">
+        <div class="bg-white/5 dark:bg-orange-950/5 rounded-lg p-4 shadow-sm">
+          <div class="flex items-start gap-4 mb-4">
+            <div class="w-10 h-10 rounded-full bg-orange-950/10 dark:bg-white/10 animate-pulse flex-shrink-0"></div>
+            <div class="flex-1 space-y-3">
+              <div class="h-4 w-32 bg-orange-950/10 dark:bg-white/10 rounded animate-pulse"></div>
+              <div class="h-24 w-full bg-orange-950/10 dark:bg-white/10 rounded-lg animate-pulse"></div>
+              <div class="flex justify-end">
+                <div class="h-8 w-24 bg-orange-950/10 dark:bg-white/10 rounded animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="space-y-4">
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-full bg-orange-950/10 dark:bg-white/10 animate-pulse flex-shrink-0"></div>
+            <div class="flex-1 space-y-2">
+              <div class="flex items-center gap-2">
+                <div class="h-4 w-24 bg-orange-950/10 dark:bg-white/10 rounded animate-pulse"></div>
+                <div class="h-3 w-16 bg-orange-950/10 dark:bg-white/10 rounded animate-pulse"></div>
+              </div>
+              <div class="space-y-1">
+                <div class="h-3 w-full bg-orange-950/10 dark:bg-white/10 rounded animate-pulse"></div>
+                <div class="h-3 w-3/4 bg-orange-950/10 dark:bg-white/10 rounded animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-full bg-orange-950/10 dark:bg-white/10 animate-pulse flex-shrink-0"></div>
+            <div class="flex-1 space-y-2">
+              <div class="flex items-center gap-2">
+                <div class="h-4 w-20 bg-orange-950/10 dark:bg-white/10 rounded animate-pulse"></div>
+                <div class="h-3 w-14 bg-orange-950/10 dark:bg-white/10 rounded animate-pulse"></div>
+              </div>
+              <div class="space-y-1">
+                <div class="h-3 w-full bg-orange-950/10 dark:bg-white/10 rounded animate-pulse"></div>
+                <div class="h-3 w-2/3 bg-orange-950/10 dark:bg-white/10 rounded animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        const container = document.getElementById("mongo-comments");
+        const skeleton = document.getElementById("mongo-comments-skeleton");
+        if (!container) return;
+
+        const postSlug = container.dataset.postSlug;
+        const apiBaseUrl = container.dataset.apiBaseUrl || "";
+
+        if (!postSlug || !apiBaseUrl) {
+          if (skeleton) skeleton.remove();
+          container.innerHTML =
+            '<div class="py-8 text-center text-orange-950/60 dark:text-white/60">评论系统配置错误</div>';
+          return;
+        }
+
+        let commentsData: any[] = [];
+        let currentPage = 1;
+        let totalPages = 1;
+        let replyTo: string | null = null;
+        let replyToName: string | null = null;
+
+        function escapeHtml(text: string): string {
+          const div = document.createElement("div");
+          div.textContent = text;
+          return div.innerHTML;
+        }
+
+        function formatTime(dateStr: string): string {
+          const date = new Date(dateStr);
+          const now = new Date();
+          const diff = now.getTime() - date.getTime();
+          const minutes = Math.floor(diff / 60000);
+          const hours = Math.floor(diff / 3600000);
+          const days = Math.floor(diff / 86400000);
+
+          if (minutes < 1) return "刚刚";
+          if (minutes < 60) return `${minutes} 分钟前`;
+          if (hours < 24) return `${hours} 小时前`;
+          if (days < 7) return `${days} 天前`;
+
+          return date.toLocaleDateString("zh-CN", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          });
+        }
+
+        function renderCommentForm(parentId: string | null = null, authorName: string | null = null): string {
+          const isReply = parentId !== null;
+          const formId = isReply ? `reply-form-${parentId}` : "main-comment-form";
+          const placeholder = isReply ? `回复 @${authorName}...` : "写下你的评论...";
+
+          return `
+            <form id="${formId}" class="comment-form ${isReply ? "reply-form ml-14 mt-3" : ""}" data-parent-id="${parentId || ""}">
+              ${!isReply ? `
+                <div class="flex items-start gap-4 mb-4">
+                  <div class="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold flex-shrink-0">
+                    ?
+                  </div>
+                  <div class="flex-1 space-y-3">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <input type="text" name="name" placeholder="昵称 *" required
+                        class="w-full px-3 py-2 rounded-lg border border-orange-950/10 dark:border-white/10 bg-white dark:bg-orange-950/20 text-orange-950 dark:text-white placeholder-orange-950/40 dark:placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent transition">
+                      <input type="email" name="email" placeholder="邮箱 *" required
+                        class="w-full px-3 py-2 rounded-lg border border-orange-950/10 dark:border-white/10 bg-white dark:bg-orange-950/20 text-orange-950 dark:text-white placeholder-orange-950/40 dark:placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent transition">
+                    </div>
+                    <input type="url" name="website" placeholder="网站（可选）"
+                      class="w-full px-3 py-2 rounded-lg border border-orange-950/10 dark:border-white/10 bg-white dark:bg-orange-950/20 text-orange-950 dark:text-white placeholder-orange-950/40 dark:placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent transition">
+                  </div>
+                </div>
+              ` : ""}
+              <div class="${isReply ? "" : "ml-14"}">
+                <textarea name="content" placeholder="${placeholder}" required rows="4"
+                  class="w-full px-4 py-3 rounded-lg border border-orange-950/10 dark:border-white/10 bg-white dark:bg-orange-950/20 text-orange-950 dark:text-white placeholder-orange-950/40 dark:placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent transition resize-none"></textarea>
+                <div class="flex items-center justify-between mt-3">
+                  ${isReply ? `
+                    <button type="button" class="cancel-reply text-sm text-orange-950/50 dark:text-white/50 hover:text-orange-950 dark:hover:text-white transition">
+                      取消
+                    </button>
+                  ` : '<div></div>'}
+                  <button type="submit" class="px-6 py-2 bg-[var(--primary)] text-white rounded-lg hover:opacity-90 transition font-medium">
+                    ${isReply ? "回复" : "发表评论"}
+                  </button>
+                </div>
+              </div>
+            </form>
+          `;
+        }
+
+        function renderComment(comment: any): string {
+          const replies = comment.replies || [];
+          const hasReplies = replies.length > 0;
+
+          return `
+            <div class="comment-item" data-comment-id="${comment.id}">
+              <div class="flex items-start gap-4">
+                <img src="${comment.author.avatar}" alt="${escapeHtml(comment.author.name)}"
+                  class="w-10 h-10 rounded-full flex-shrink-0 bg-orange-950/10 dark:bg-white/10">
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    ${comment.author.website
+                      ? `<a href="${escapeHtml(comment.author.website)}" target="_blank" rel="noopener noreferrer"
+                          class="font-medium text-orange-950 dark:text-white hover:text-[var(--primary)] dark:hover:text-[var(--primary)] transition">
+                          ${escapeHtml(comment.author.name)}
+                        </a>`
+                      : `<span class="font-medium text-orange-950 dark:text-white">${escapeHtml(comment.author.name)}</span>`
+                    }
+                    <span class="text-xs text-orange-950/40 dark:text-white/40">${formatTime(comment.createdAt)}</span>
+                  </div>
+                  <div class="mt-2 text-orange-950/80 dark:text-white/80 leading-relaxed break-words whitespace-pre-wrap">
+                    ${escapeHtml(comment.content)}
+                  </div>
+                  <div class="flex items-center gap-4 mt-2 text-sm">
+                    <button class="like-btn flex items-center gap-1 ${comment.isLiked ? "text-[var(--primary)]" : "text-orange-950/50 dark:text-white/50"} hover:text-[var(--primary)] transition" data-comment-id="${comment.id}">
+                      <svg class="w-4 h-4" fill="${comment.isLiked ? "currentColor" : "none"}" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                      </svg>
+                      <span class="like-count">${comment.likes}</span>
+                    </button>
+                    <button class="reply-btn text-orange-950/50 dark:text-white/50 hover:text-[var(--primary)] transition" data-comment-id="${comment.id}" data-author-name="${escapeHtml(comment.author.name)}">
+                      回复
+                    </button>
+                  </div>
+                  ${hasReplies ? `
+                    <div class="replies mt-4 space-y-4 border-l-2 border-orange-950/10 dark:border-white/10 pl-4">
+                      ${replies.map((reply: any) => renderReply(reply)).join("")}
+                    </div>
+                  ` : ""}
+                  <div id="reply-container-${comment.id}" class="reply-container mt-3"></div>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+
+        function renderReply(reply: any): string {
+          return `
+            <div class="reply-item" data-comment-id="${reply.id}">
+              <div class="flex items-start gap-3">
+                <img src="${reply.author.avatar}" alt="${escapeHtml(reply.author.name)}"
+                  class="w-8 h-8 rounded-full flex-shrink-0 bg-orange-950/10 dark:bg-white/10">
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    ${reply.author.website
+                      ? `<a href="${escapeHtml(reply.author.website)}" target="_blank" rel="noopener noreferrer"
+                          class="font-medium text-sm text-orange-950 dark:text-white hover:text-[var(--primary)] dark:hover:text-[var(--primary)] transition">
+                          ${escapeHtml(reply.author.name)}
+                        </a>`
+                      : `<span class="font-medium text-sm text-orange-950 dark:text-white">${escapeHtml(reply.author.name)}</span>`
+                    }
+                    <span class="text-xs text-orange-950/40 dark:text-white/40">${formatTime(reply.createdAt)}</span>
+                  </div>
+                  <div class="mt-1 text-sm text-orange-950/80 dark:text-white/80 leading-relaxed break-words whitespace-pre-wrap">
+                    ${escapeHtml(reply.content)}
+                  </div>
+                  <div class="flex items-center gap-4 mt-1 text-xs">
+                    <button class="like-btn flex items-center gap-1 ${reply.isLiked ? "text-[var(--primary)]" : "text-orange-950/50 dark:text-white/50"} hover:text-[var(--primary)] transition" data-comment-id="${reply.id}">
+                      <svg class="w-3 h-3" fill="${reply.isLiked ? "currentColor" : "none"}" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                      </svg>
+                      <span class="like-count">${reply.likes}</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+
+        function renderCommentsList(): string {
+          if (commentsData.length === 0) {
+            return `
+              <div class="text-center py-8 text-orange-950/50 dark:text-white/50">
+                <svg class="w-12 h-12 mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                </svg>
+                <p>暂无评论，来抢沙发吧~</p>
+              </div>
+            `;
+          }
+
+          return `
+            <div class="comments-list space-y-6">
+              ${commentsData.map((comment) => renderComment(comment)).join("")}
+            </div>
+            ${totalPages > 1 ? renderPagination() : ""}
+          `;
+        }
+
+        function renderPagination(): string {
+          const pages = [];
+          for (let i = 1; i <= totalPages; i++) {
+            pages.push(`
+              <button class="pagination-btn px-3 py-1 rounded ${i === currentPage ? "bg-[var(--primary)] text-white" : "text-orange-950/60 dark:text-white/60 hover:bg-orange-950/5 dark:hover:bg-white/5"}" data-page="${i}">
+                ${i}
+              </button>
+            `);
+          }
+          return `
+            <div class="flex justify-center items-center gap-2 mt-8">
+              ${pages.join("")}
+            </div>
+          `;
+        }
+
+        async function fetchComments(page = 1) {
+          try {
+            const response = await fetch(
+              `${apiBaseUrl}/api/comments?postSlug=${encodeURIComponent(postSlug)}&page=${page}&pageSize=10`
+            );
+            const data = await response.json();
+
+            if (response.ok) {
+              commentsData = data.comments;
+              currentPage = data.pagination.page;
+              totalPages = data.pagination.totalPages;
+              render();
+            } else {
+              throw new Error(data.error || "加载评论失败");
+            }
+          } catch (error) {
+            console.error("Fetch comments error:", error);
+            container.innerHTML = `
+              <div class="text-center py-8 text-orange-950/60 dark:text-white/60">
+                <p>评论加载失败</p>
+                <button id="retry-fetch" class="mt-3 px-4 py-2 bg-[var(--primary)] text-white rounded-lg hover:opacity-90 transition">
+                  重试
+                </button>
+              </div>
+            `;
+          }
+        }
+
+        async function submitComment(formData: FormData, parentId: string | null) {
+          const submitBtn = container.querySelector('button[type="submit"]') as HTMLButtonElement;
+          if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = "提交中...";
+          }
+
+          try {
+            const response = await fetch(`${apiBaseUrl}/api/comments`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                postSlug,
+                parentId,
+                author: {
+                  name: formData.get("name"),
+                  email: formData.get("email"),
+                  website: formData.get("website") || undefined,
+                },
+                content: formData.get("content"),
+              }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              await fetchComments(parentId ? currentPage : 1);
+              cancelReply();
+            } else {
+              alert(data.error || "评论提交失败");
+            }
+          } catch (error) {
+            console.error("Submit comment error:", error);
+            alert("评论提交失败，请稍后重试");
+          } finally {
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.textContent = parentId ? "回复" : "发表评论";
+            }
+          }
+        }
+
+        async function toggleLike(commentId: string) {
+          try {
+            const response = await fetch(`${apiBaseUrl}/api/comments/like`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ commentId }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              const likeBtn = container.querySelector(`[data-comment-id="${commentId}"] .like-btn`);
+              const likeCount = likeBtn?.querySelector(".like-count");
+              if (likeBtn && likeCount) {
+                likeCount.textContent = data.likes;
+                if (data.isLiked) {
+                  likeBtn.classList.remove("text-orange-950/50", "dark:text-white/50");
+                  likeBtn.classList.add("text-[var(--primary)]");
+                  const svg = likeBtn.querySelector("svg");
+                  if (svg) svg.setAttribute("fill", "currentColor");
+                } else {
+                  likeBtn.classList.add("text-orange-950/50", "dark:text-white/50");
+                  likeBtn.classList.remove("text-[var(--primary)]");
+                  const svg = likeBtn.querySelector("svg");
+                  if (svg) svg.setAttribute("fill", "none");
+                }
+              }
+            }
+          } catch (error) {
+            console.error("Like error:", error);
+          }
+        }
+
+        function showReplyForm(commentId: string, authorName: string) {
+          cancelReply();
+          replyTo = commentId;
+          replyToName = authorName;
+
+          const replyContainer = document.getElementById(`reply-container-${commentId}`);
+          if (replyContainer) {
+            replyContainer.innerHTML = renderCommentForm(commentId, authorName);
+            setupFormListeners(replyContainer.querySelector("form"));
+          }
+        }
+
+        function cancelReply() {
+          if (replyTo) {
+            const replyContainer = document.getElementById(`reply-container-${replyTo}`);
+            if (replyContainer) {
+              replyContainer.innerHTML = "";
+            }
+          }
+          replyTo = null;
+          replyToName = null;
+        }
+
+        function setupFormListeners(form: HTMLFormElement | null) {
+          if (!form) return;
+
+          form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const parentId = form.dataset.parentId || null;
+            await submitComment(formData, parentId);
+          });
+
+          const cancelBtn = form.querySelector(".cancel-reply");
+          if (cancelBtn) {
+            cancelBtn.addEventListener("click", cancelReply);
+          }
+        }
+
+        function render() {
+          container.innerHTML = `
+            <div class="comment-section">
+              <h3 class="text-lg font-bold text-orange-950 dark:text-white mb-6 flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
+                </svg>
+                评论 <span class="text-sm font-normal text-orange-950/50 dark:text-white/50">(${commentsData.length})</span>
+              </h3>
+              ${renderCommentForm()}
+              <div class="border-t border-orange-950/10 dark:border-white/10 pt-6 mt-6">
+                ${renderCommentsList()}
+              </div>
+            </div>
+          `;
+
+          setupFormListeners(container.querySelector("#main-comment-form"));
+
+          container.querySelectorAll(".like-btn").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              const commentId = (btn as HTMLElement).dataset.commentId;
+              if (commentId) toggleLike(commentId);
+            });
+          });
+
+          container.querySelectorAll(".reply-btn").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              const commentId = (btn as HTMLElement).dataset.commentId;
+              const authorName = (btn as HTMLElement).dataset.authorName;
+              if (commentId && authorName) showReplyForm(commentId, authorName);
+            });
+          });
+
+          container.querySelectorAll(".pagination-btn").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              const page = Number.parseInt((btn as HTMLElement).dataset.page || "1", 10);
+              fetchComments(page);
+            });
+          });
+        }
+
+        function init() {
+          const observer = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  observer.disconnect();
+                  fetchComments();
+                }
+              });
+            },
+            { rootMargin: "100px", threshold: 0.01 }
+          );
+
+          observer.observe(container);
+        }
+
+        init();
+
+        document.addEventListener("astro:page-load", () => {
+          const newContainer = document.getElementById("mongo-comments");
+          if (newContainer && newContainer !== container) {
+            location.reload();
+          }
+        });
+      })();
+    </script>
+
+    <style>
+      .mongo-comments-wrapper {
+        min-height: 200px;
+      }
+
+      .mongo-comments-wrapper .comment-form input,
+      .mongo-comments-wrapper .comment-form textarea {
+        font-size: 14px;
+      }
+
+      .mongo-comments-wrapper .comment-item {
+        animation: fadeIn 0.3s ease-out;
+      }
+
+      .mongo-comments-wrapper .reply-item {
+        animation: fadeIn 0.3s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .mongo-comments-wrapper .like-btn:hover svg {
+        transform: scale(1.1);
+        transition: transform 0.2s ease;
+      }
+
+      .mongo-comments-wrapper .reply-form {
+        animation: slideDown 0.2s ease-out;
+      }
+
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          max-height: 0;
+        }
+        to {
+          opacity: 1;
+          max-height: 500px;
+        }
+      }
+    </style>
+  </div>
+</div>

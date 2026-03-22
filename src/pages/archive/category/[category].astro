@@ -1,5 +1,6 @@
 ---
 import ArchivePanel from "../../../components/ArchivePanel.astro";
+import Breadcrumb from "../../../components/control/Breadcrumb.astro";
 import I18nKey from "../../../i18n/i18nKey";
 import { i18n } from "../../../i18n/translation";
 import MainGridLayout from "../../../layouts/MainGridLayout.astro";
@@ -41,5 +42,14 @@ const category =
 ---
 
 <MainGridLayout title={i18n(I18nKey.archive)} description={i18n(I18nKey.archive)}>
-    <ArchivePanel categories={[category]}></ArchivePanel>
+    <div class="max-w-[50rem] mx-auto w-full">
+        <Breadcrumb 
+            items={[
+                { label: "首页", url: "/" },
+                { label: "归档", url: "/archive" },
+                { label: category, isActive: true }
+            ]} 
+        />
+        <ArchivePanel categories={[category]}></ArchivePanel>
+    </div>
 </MainGridLayout>

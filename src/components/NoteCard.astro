@@ -35,12 +35,12 @@ if (isValidNote && entry.body) {
 }
 ---
 {!isValidNote ? (
-    <div class="note-card p-6 border border-white/20 shadow-md bg-gray-200 bg-opacity-10 text-white max-w-2xl mx-auto mb-4">Invalid note</div>
+    <div class="note-card note-card-animate p-6 border border-[var(--primary)]/30 shadow-md bg-orange-50/60 text-orange-950/80 max-w-2xl mx-auto mb-4 dark:bg-stone-800/60 dark:text-white/80 dark:border-white/20">Invalid note</div>
 ) : (
-    <div class="note-card p-6 border border-[var(--line-divider)] shadow-md hover:shadow-lg hover:shadow-gray-300/20 transition-all duration-300 bg-white bg-opacity-25 text-[var(--text-primary)] max-w-2xl mx-auto mb-4 dark:bg-gray-200 dark:bg-opacity-10 dark:text-white dark:border-white/20" style={style}>
+    <div class="note-card note-card-animate p-6 border border-[var(--primary)]/30 shadow-md hover:shadow-lg hover:shadow-orange-300/20 transition-all duration-300 bg-orange-50/60 text-orange-950/80 max-w-2xl mx-auto mb-4 dark:bg-stone-800/60 dark:text-white/80 dark:border-white/20" style={style}>
         {/* 时间 - 直接显示标题的原始内容 */}
         {entry.data?.title && (
-            <div class="text-xs text-[var(--text-secondary)] font-mono mb-4 border-b border-[var(--line-divider)] pb-2 dark:text-white/60 dark:border-white/10">
+            <div class="text-xs text-orange-950/50 font-mono mb-4 border-b border-orange-200/50 pb-2 dark:text-white/50 dark:border-white/10">
                 {entry.data.title}
             </div>
         )}
@@ -48,17 +48,19 @@ if (isValidNote && entry.body) {
         {/* 内容和图片容器 */}
         <div class="flex flex-col md:flex-row gap-4">
             {/* 主要内容 */}
-            <div class="text-[var(--text-primary)] text-lg whitespace-pre-wrap break-words p-0 m-0 flex-1 dark:text-white">
+            <div class="text-orange-950/80 text-lg whitespace-pre-wrap break-words p-0 m-0 flex-1 dark:text-white/80" role="article">
                 {noteContent}
             </div>
             
             {/* 图片 */}
             {entry.data?.image && entry.data.image.trim() !== '' && (
-                <div class="note-image flex-shrink-0 overflow-hidden rounded-md">
+                <div class="note-image flex-shrink-0 overflow-hidden rounded-md" role="complementary">
                     <img 
                         src={entry.data.image} 
-                        alt="Note image" 
+                        alt={entry.data.title ? `Image for note: ${entry.data.title}` : "Note image"} 
                         class="w-full h-auto max-w-40 max-h-64 object-contain transition-transform duration-500 hover:scale-102"
+                        loading="lazy"
+                        decoding="async"
                     />
                 </div>
             )}

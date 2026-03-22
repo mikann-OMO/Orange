@@ -29,7 +29,7 @@ const activeStars = config.stars; // 激活的星星数量
     href={props.url} 
     target="_blank" 
     rel="noopener noreferrer"
-    class="friend-card"
+    class="friend-card friend-card-animate"
     data-rarity={props.rarity}
     style={`--rarity-color: ${rarityColor}`}
     aria-label={`访问 ${props.name} 的网站`}
@@ -48,11 +48,6 @@ const activeStars = config.stars; // 激活的星星数量
           loading="lazy"
           decoding="async"
         >
-        {props.status && (
-          <div class={`status-indicator status-${props.status}`}>
-            <span class="status-dot"></span>
-          </div>
-        )}
       </div>
       <div class="info-section">
         <h3 class="friend-name font-['SimSun',serif]">{props.name}</h3>
@@ -72,7 +67,7 @@ const activeStars = config.stars; // 激活的星星数量
 
 <style>
 .friend-card {
-  width: 150px;
+  width: 140px;
   height: 600px;
   perspective: 1000px;
   display: block;
@@ -85,12 +80,15 @@ const activeStars = config.stars; // 激活的星星数量
   border: none;
   border-radius: 0;
   padding: 1.5rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding-top: 160px;
   cursor: pointer;
   overflow: hidden;
   height: 100%;
   width: 100%;
   box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 :root.dark .card-inner {
@@ -128,34 +126,28 @@ const activeStars = config.stars; // 激活的星星数量
   height: 200%;
   background: radial-gradient(circle, var(--rarity-color) 0%, transparent 70%);
   opacity: 0;
-  transition: opacity 0.5s ease;
   pointer-events: none;
 }
 
 .friend-card:hover .card-glow {
   opacity: 0.3;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
 }
 
 .friend-card:hover .card-inner {
-  transform: translateY(-10px) scale(1.02);
   box-shadow: 0 0 30px var(--rarity-color), 0 16px 40px rgba(0, 0, 0, 0.2);
 }
 
 .avatar-section {
   text-align: center;
-  margin-bottom: 1rem;
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 150px;
   z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .avatar {
@@ -164,7 +156,6 @@ const activeStars = config.stars; // 激活的星星数量
   border-radius: 0;
   border: 3px solid var(--rarity-color);
   object-fit: cover;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   background-color: var(--card-bg);
   padding: 2px;
   margin: 0 auto;
@@ -180,44 +171,7 @@ const activeStars = config.stars; // 激活的星星数量
 }
 
 .friend-card:hover .avatar {
-  transform: scale(1.2) translateY(-5px);
   box-shadow: 0 0 20px var(--rarity-color);
-}
-
-.status-indicator {
-  position: absolute;
-  bottom: 5px;
-  right: 50%;
-  width: 20px;
-  height: 20px;
-  background-color: var(--card-bg);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid var(--rarity-color);
-  z-index: 3;
-  transform: translateX(40px);
-}
-
-.status-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-}
-
-.status-online .status-dot {
-  background-color: #4CAF50;
-  box-shadow: 0 0 8px #4CAF50;
-}
-
-.status-offline .status-dot {
-  background-color: #9E9E9E;
-}
-
-.status-busy .status-dot {
-  background-color: #F44336;
-  box-shadow: 0 0 8px #F44336;
 }
 
 .info-section {
@@ -232,7 +186,6 @@ const activeStars = config.stars; // 激活的星星数量
   font-weight: 700;
   margin: 0 0 0.5rem 0;
   color: var(--text-primary);
-  transition: all 0.3s ease;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   white-space: nowrap;
   overflow: hidden;
@@ -244,7 +197,6 @@ const activeStars = config.stars; // 激活的星星数量
 }
 
 .friend-desc {
-  color: var(--text-secondary);
   line-height: 1.5;
   margin: 0;
   height: 60px;
@@ -254,11 +206,22 @@ const activeStars = config.stars; // 激活的星星数量
   -webkit-box-orient: vertical;
   font-size: 0.875rem;
   font-weight: 300;
-  transition: color 0.3s ease;
 }
 
-.friend-card:hover .friend-desc {
+html:not(.dark) .friend-card .friend-desc {
+  color: var(--text-secondary);
+}
+
+html:not(.dark) .friend-card:hover .friend-desc {
   color: var(--text-primary);
+}
+
+html.dark .friend-card .friend-desc {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+html.dark .friend-card:hover .friend-desc {
+  color: rgba(255, 255, 255, 0.8) !important;
 }
 
 .stars-section {
@@ -272,7 +235,6 @@ const activeStars = config.stars; // 激活的星星数量
 .star {
   font-size: 1.25rem;
   margin: 0 2px;
-  transition: all 0.3s ease;
 }
 
 .star-active {
@@ -286,12 +248,7 @@ const activeStars = config.stars; // 激活的星星数量
 }
 
 .friend-card:hover .star-active {
-  transform: scale(1.2) rotate(5deg);
   text-shadow: 0 0 15px var(--rarity-color);
-}
-
-.friend-card:hover .star-inactive {
-  transform: scale(1.1);
 }
 
 .rarity-indicator {
@@ -311,57 +268,143 @@ const activeStars = config.stars; // 激活的星星数量
   text-transform: uppercase;
 }
 
-/* 响应式设计 */
-@media (max-width: 640px) {
+/* 移动端横向卡片 */
+@media (max-width: 768px) {
   .friend-card {
     width: 100%;
-    max-width: 280px;
+    max-width: 100%;
     height: auto;
-    min-height: 280px;
+    min-height: auto;
+    perspective: none;
   }
   
   .card-inner {
-    padding: 1rem;
+    flex-direction: row;
+    align-items: center;
+    padding: 0.6rem;
+    gap: 0.6rem;
     height: auto;
-    min-height: 280px;
-  }
-  
-  .avatar {
-    width: 80px;
-    height: 80px;
-  }
-  
-  .friend-name {
-    font-size: 1rem;
-  }
-  
-  .friend-desc {
-    font-size: 0.75rem;
-    height: 45px;
-  }
-  
-  .star {
-    font-size: 1rem;
+    min-height: auto;
+    border-radius: 0.5rem;
   }
   
   .card-background {
-    height: 120px;
-  }
-}
-
-@media (min-width: 641px) and (max-width: 768px) {
-  .friend-card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 100%;
     width: 100%;
-    height: 320px;
   }
   
-  .card-inner {
-    height: 100%;
+  .avatar-blur {
+    filter: blur(20px) brightness(0.7);
+  }
+  
+  .avatar-section {
+    position: relative;
+    height: auto;
+    flex-shrink: 0;
   }
   
   .avatar {
-    width: 90px;
-    height: 90px;
+    width: 48px;
+    height: 48px;
+    border-width: 2px;
+    border-radius: 0.5rem;
+    margin: 0;
+  }
+  
+  .info-section {
+    flex: 1;
+    text-align: left;
+    margin-bottom: 0;
+    min-width: 0;
+    overflow: hidden;
+  }
+  
+  .friend-name {
+    font-size: 0.85rem;
+    margin-bottom: 0.15rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .friend-desc {
+    font-size: 0.7rem;
+    height: auto;
+    -webkit-line-clamp: 1;
+    line-height: 1.3;
+    color: var(--text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .stars-section {
+    display: none;
+  }
+  
+  .rarity-indicator {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    right: auto;
+    flex-shrink: 0;
+  }
+  
+  .rarity-text {
+    font-size: 0.55rem;
+    padding: 0.15rem 0.3rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 0.25rem;
+  }
+  
+  :global(.dark) .rarity-text {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  
+  .friend-card:hover .card-inner {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .friend-card:hover .avatar {
+    box-shadow: 0 0 10px var(--rarity-color);
+  }
+  
+  .card-glow {
+    display: none;
+  }
+}
+
+/* 超小屏幕优化 */
+@media (max-width: 400px) {
+  .friend-card {
+    width: 100%;
+  }
+  
+  .card-inner {
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+  
+  .avatar {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .friend-name {
+    font-size: 0.8rem;
+  }
+  
+  .friend-desc {
+    font-size: 0.65rem;
+  }
+  
+  .rarity-text {
+    font-size: 0.5rem;
+    padding: 0.1rem 0.25rem;
   }
 }
 </style>

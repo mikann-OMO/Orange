@@ -1,17 +1,8 @@
 ---
-
-import I18nKey from "../../i18n/i18nKey";
-import { i18n } from "../../i18n/translation";
 import { getTagList } from "../../utils/content-utils";
 import { getTagUrl } from "../../utils/url-utils";
-import ButtonTag from "../control/ButtonTag.astro";
-import WidgetLayout from "./WidgetLayout.astro";
 
 const tags = await getTagList();
-
-const COLLAPSED_HEIGHT = "7.5rem";
-
-const isCollapsed = tags.length >= 20;
 
 interface Props {
 	class?: string;
@@ -20,12 +11,15 @@ interface Props {
 const className = Astro.props.class;
 const style = Astro.props.style;
 ---
-<WidgetLayout name={i18n(I18nKey.tags)} id="tags" isCollapsed={isCollapsed} collapsedHeight={COLLAPSED_HEIGHT} class={className} style={style}>
-    <div class="flex gap-2 flex-wrap">
-        {tags.map(t => (
-            <ButtonTag href={getTagUrl(t.name.trim())} label={`View all posts with the ${t.name.trim()} tag`}>
-                {t.name.trim()}
-            </ButtonTag>
-        ))}
-    </div>
-</WidgetLayout>
+
+<div class={className} style={style}>
+    {tags.map((t) => (
+        <a 
+            href={getTagUrl(t.name.trim())} 
+            class="inline-block bg-orange-50/75 dark:bg-stone-700/75 hover:bg-orange-100 dark:hover:bg-stone-600 text-orange-700 dark:text-white hover:text-orange-600 dark:hover:text-white px-2 md:px-3 py-0.5 md:py-1 rounded-full text-xs md:text-sm transition-colors"
+            aria-label={`View all posts with the ${t.name.trim()} tag`}
+        >
+            {t.name.trim()}
+        </a>
+    ))}
+</div>
