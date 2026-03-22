@@ -4,19 +4,19 @@ import { NextRequest } from 'next/server';
 const MONGODB_URI = process.env.MONGODB_URI;
 const MONGODB_DB = process.env.MONGODB_DB || 'blog_comments';
 
-if (!MONGODB_URI) {
-  throw new Error('Please define MONGODB_URI in your environment variables');
-}
-
 let cachedClient: MongoClient | null = null;
 let cachedDb: any = null;
 
 export async function connectToDatabase() {
+  if (!MONGODB_URI) {
+    throw new Error('MONGODB_URI is not defined');
+  }
+
   if (cachedClient && cachedDb) {
     return { client: cachedClient, db: cachedDb };
   }
 
-  const client = new MongoClient(MONGODB_URI!);
+  const client = new MongoClient(MONGODB_URI);
   await client.connect();
   
   const db = client.db(MONGODB_DB);
