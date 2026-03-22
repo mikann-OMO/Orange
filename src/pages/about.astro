@@ -1,7 +1,4 @@
 ---
-
-import MainGridLayout from "../layouts/MainGridLayout.astro";
-
 import { getEntry } from "astro:content";
 import { render } from "astro:content";
 import Markdown from "@components/misc/Markdown.astro";
@@ -11,6 +8,9 @@ import { Icon } from "astro-icon/components";
 import { profileConfig } from "../config";
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
+import MainGridLayout from "../layouts/MainGridLayout.astro";
+import { Image } from "astro:assets";
+import avatarImg from "../assets/images/chikann.png";
 
 const aboutPost = await getEntry("about", "about");
 
@@ -21,50 +21,51 @@ if (!aboutPost) {
 const { Content } = await render(aboutPost);
 ---
 <MainGridLayout title={i18n(I18nKey.about)} description={i18n(I18nKey.about)}>
-    <div class="space-y-4 md:space-y-6">
-        <!-- 移动端：网格布局 - 用户信息 + 友链 -->
-        <div class="md:hidden grid grid-cols-1 xs:grid-cols-2 gap-3">
+    <div class="about-page space-y-4 md:space-y-6">
+        <!-- 移动端布局 -->
+        <div class="md:hidden space-y-3">
             <!-- 用户身份卡片 -->
-            <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-none shadow-xl p-3">
-                <div class="flex flex-col items-center text-center">
-                    <div class="w-20 h-20 xs:w-24 xs:h-24 overflow-hidden rounded-none border-2 border-yellow-100/60 dark:border-stone-700/60 shadow-xl">
-                        <img src={profileConfig.avatar || ""} alt="Profile Image" class="w-full h-full object-cover" loading="eager" />
+            <div class="mobile-profile-card">
+                <div class="flex items-center gap-3">
+                    <div class="avatar-wrapper">
+                        <Image src={avatarImg} alt="Profile Image" class="avatar-img" loading="eager" />
                     </div>
-                    <h1 class="text-base xs:text-lg font-bold mt-2 text-[var(--primary)] dark:text-white">{profileConfig.name}</h1>
-                    <p class="text-xs text-orange-950/60 dark:text-white/60 mt-1 line-clamp-2">{profileConfig.bio}</p>
-                    <div class="flex flex-wrap gap-1 justify-center mt-2">
-                        {profileConfig.links.map((link, index) => (
-                            <a href={link.url} target="_blank" rel="noopener noreferrer" class="bg-white/30 dark:bg-stone-700/30 backdrop-blur-3xl rounded-none p-1.5 flex items-center justify-center">
-                                <Icon name={link.icon} class="text-orange-950/70 dark:text-white/70 text-base" />
-                            </a>
-                        ))}
+                    <div class="flex-1 min-w-0">
+                        <h1 class="profile-name">{profileConfig.name}</h1>
+                        <p class="profile-bio">{profileConfig.bio}</p>
                     </div>
+                </div>
+                <div class="social-links">
+                    {profileConfig.links.map((link) => (
+                        <a href={link.url} target="_blank" rel="noopener noreferrer" class="social-link-btn">
+                            <Icon name={link.icon} class="social-icon" />
+                            <span>{link.name}</span>
+                        </a>
+                    ))}
                 </div>
             </div>
             
             <!-- 友链卡片 -->
-            <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-none shadow-xl p-3">
-                <h3 class="text-sm font-bold mb-2 text-orange-700 dark:text-white border-b border-orange-200/50 dark:border-stone-700/50 pb-1.5">友链</h3>
-                <FriendsList class="space-y-1" />
+            <div class="mobile-friends-card">
+                <h3 class="card-title">友链</h3>
+                <FriendsList class="friends-list" />
             </div>
         </div>
         
-        <!-- 桌面端：用户身份区 -->
-        <div class="hidden md:block bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-none shadow-xl p-4 md:p-6">
+        <!-- 桌面端布局 -->
+        <div class="hidden md:block desktop-profile-card">
             <div class="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-6">
-                <!-- 左侧头像 -->
                 <div class="flex-shrink-0">
                     <Profile class="max-w-md"></Profile>
                 </div>
-                <!-- 右侧用户信息 -->
                 <div class="flex-1 text-center md:text-left">
                     <h1 class="text-xl md:text-2xl font-bold mb-1 md:mb-2 text-[var(--primary)] dark:text-white">{profileConfig.name}</h1>
                     <p class="text-sm md:text-base text-orange-950/60 dark:text-white/60 mb-3 md:mb-4">{profileConfig.bio}</p>
                     <div class="flex flex-col sm:flex-row gap-2 md:gap-4 justify-center md:justify-start">
-                        {profileConfig.links.map((link, index) => (
-                            <a href={link.url} target="_blank" rel="noopener noreferrer" class="bg-white/30 dark:bg-stone-700/30 backdrop-blur-3xl rounded-none px-3 md:px-4 py-1.5 md:py-2 flex items-center gap-2 text-sm">
-                                <Icon name={link.icon} class="text-orange-950/70 dark:text-white/70" />
-                                <span class="text-orange-950/70 dark:text-white/70">{link.name}</span>
+                        {profileConfig.links.map((link) => (
+                            <a href={link.url} target="_blank" rel="noopener noreferrer" class="desktop-social-btn">
+                                <Icon name={link.icon} class="social-icon" />
+                                <span>{link.name}</span>
                             </a>
                         ))}
                     </div>
@@ -72,12 +73,12 @@ const { Content } = await render(aboutPost);
             </div>
         </div>
         
-        <!-- 个人板块原文章 -->
-        <div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl rounded-none shadow-xl overflow-hidden">
-            <div class="bg-orange-100/80 dark:bg-stone-700/70 backdrop-blur-3xl border-l-4 border-orange-700 p-3 md:p-4">
-                <h2 class="text-base md:text-lg font-bold text-orange-700 dark:text-white">关于我</h2>
+        <!-- 关于我内容 -->
+        <div class="about-content-card">
+            <div class="content-header">
+                <h2 class="header-title">关于我</h2>
             </div>
-            <div class="p-4 md:p-6">
+            <div class="content-body">
                 <Markdown class="mt-2">
                     <Content />
                 </Markdown>
@@ -87,10 +88,273 @@ const { Content } = await render(aboutPost);
     
     <!-- 右侧边栏 - 桌面端 -->
     <div slot="sidebar" class="hidden md:block space-y-6">
-        <!-- 友链 -->
-        <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-none shadow-xl p-4">
-            <h3 class="text-lg font-bold mb-4 text-orange-700 dark:text-white border-b border-orange-200/50 dark:border-stone-700/50 pb-2">友链</h3>
+        <div class="desktop-friends-card">
+            <h3 class="sidebar-title">友链</h3>
             <FriendsList class="space-y-2" />
         </div>
     </div>
 </MainGridLayout>
+
+<style>
+.about-page {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.social-icon {
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+}
+
+/* 移动端样式 */
+.mobile-profile-card {
+    background: rgba(255, 248, 240, 0.95);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 12px rgba(230, 74, 25, 0.08);
+    border: 1px solid rgba(255, 152, 0, 0.15);
+}
+
+:global(.dark) .mobile-profile-card {
+    background: rgba(28, 24, 20, 0.95);
+    border-color: rgba(255, 152, 0, 0.1);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+.avatar-wrapper {
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid rgba(255, 152, 0, 0.3);
+    box-shadow: 0 2px 8px rgba(255, 152, 0, 0.2);
+}
+
+:global(.dark) .avatar-wrapper {
+    border-color: rgba(255, 183, 77, 0.3);
+}
+
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-name {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 4px;
+}
+
+:global(.dark) .profile-name {
+    color: #ffb74d;
+}
+
+.profile-bio {
+    font-size: 0.8125rem;
+    color: rgba(0, 0, 0, 0.6);
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+:global(.dark) .profile-bio {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.social-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.social-link-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: rgba(255, 152, 0, 0.1);
+    border-radius: 8px;
+    font-size: 0.8125rem;
+    color: rgba(0, 0, 0, 0.7);
+    transition: all 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+:global(.dark) .social-link-btn {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.social-link-btn:active {
+    transform: scale(0.96);
+    background: rgba(255, 152, 0, 0.2);
+}
+
+:global(.dark) .social-link-btn:active {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.mobile-friends-card {
+    background: rgba(255, 248, 240, 0.95);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 12px rgba(230, 74, 25, 0.08);
+    border: 1px solid rgba(255, 152, 0, 0.15);
+}
+
+:global(.dark) .mobile-friends-card {
+    background: rgba(28, 24, 20, 0.95);
+    border-color: rgba(255, 152, 0, 0.1);
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 152, 0, 0.15);
+}
+
+:global(.dark) .card-title {
+    color: #ffb74d;
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+.about-content-card {
+    background: rgba(255, 243, 224, 0.6);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(230, 74, 25, 0.08);
+    border: 1px solid rgba(255, 152, 0, 0.15);
+}
+
+:global(.dark) .about-content-card {
+    background: rgba(38, 33, 28, 0.6);
+    border-color: rgba(255, 152, 0, 0.1);
+}
+
+.content-header {
+    background: rgba(255, 243, 224, 0.8);
+    padding: 12px 16px;
+    border-left: 4px solid var(--primary);
+}
+
+:global(.dark) .content-header {
+    background: rgba(62, 55, 48, 0.7);
+}
+
+.header-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+:global(.dark) .header-title {
+    color: #ffb74d;
+}
+
+.content-body {
+    padding: 16px;
+}
+
+/* 桌面端样式 */
+.desktop-profile-card {
+    background: rgba(255, 248, 240, 0.1);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+:global(.dark) .desktop-profile-card {
+    background: rgba(28, 24, 20, 0.1);
+}
+
+.desktop-social-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 8px;
+    font-size: 0.875rem;
+    color: rgba(0, 0, 0, 0.7);
+    transition: all 0.2s ease;
+}
+
+:global(.dark) .desktop-social-btn {
+    background: rgba(62, 55, 48, 0.3);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.desktop-social-btn:hover {
+    background: rgba(255, 152, 0, 0.2);
+}
+
+:global(.dark) .desktop-social-btn:hover {
+    background: rgba(255, 183, 77, 0.2);
+}
+
+.desktop-friends-card {
+    background: rgba(255, 248, 240, 0.1);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+:global(.dark) .desktop-friends-card {
+    background: rgba(28, 24, 20, 0.1);
+}
+
+.sidebar-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 152, 0, 0.2);
+}
+
+:global(.dark) .sidebar-title {
+    color: #ffb74d;
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+/* 移动端友链列表样式 */
+@media (max-width: 768px) {
+    .mobile-friends-card :global(.friends-list) {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .mobile-friends-card :global(a) {
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 0.8125rem;
+    }
+}
+</style>

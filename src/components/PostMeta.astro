@@ -26,7 +26,6 @@ const className = Astro.props.class;
 ---
 
 <div class:list={["flex flex-wrap text-neutral-500 dark:text-neutral-400 items-center gap-4 gap-x-4 gap-y-2", className]}>
-    <!-- publish date -->
     <div class="flex items-center">
         <div class="meta-icon">
             <Icon name="material-symbols:calendar-today-outline-rounded" class="text-xl" />
@@ -34,7 +33,6 @@ const className = Astro.props.class;
         <span class="text-50 text-sm font-medium">{formatDateToYYYYMMDD(published)}</span>
     </div>
 
-    <!-- update date -->
     {!hideUpdateDate && updated && updated.getTime() !== published.getTime() && (
         <div class="flex items-center">
             <div class="meta-icon">
@@ -44,7 +42,6 @@ const className = Astro.props.class;
         </div>
     )}
 
-    <!-- categories -->
     <div class="flex items-center">
         <div class="meta-icon">
             <Icon name="material-symbols:book-2-outline-rounded" class="text-xl" />
@@ -60,7 +57,6 @@ const className = Astro.props.class;
         </div>
     </div>
 
-    <!-- tags -->
     <div class:list={["items-center", { "flex": !hideTagsForMobile, "hidden md:flex": hideTagsForMobile }]}>
         <div class="meta-icon">
             <Icon name="material-symbols:tag-rounded" class="text-xl" />
@@ -85,3 +81,41 @@ const className = Astro.props.class;
         </div>
     </div>
 </div>
+
+<style>
+@media (max-width: 768px) {
+    .flex.flex-wrap {
+        gap: 8px 12px;
+    }
+    
+    .meta-icon {
+        width: 24px;
+        height: 24px;
+        margin-right: 6px;
+        border-radius: 6px;
+    }
+    
+    .meta-icon :global(svg) {
+        width: 14px;
+        height: 14px;
+    }
+    
+    .text-sm {
+        font-size: 0.6875rem;
+    }
+    
+    .link-lg {
+        padding: 2px 4px;
+        border-radius: 4px;
+    }
+    
+    .link-lg:active {
+        background: rgba(255, 152, 0, 0.1);
+    }
+    
+    .mx-1\\.5 {
+        margin-left: 4px;
+        margin-right: 4px;
+    }
+}
+</style>

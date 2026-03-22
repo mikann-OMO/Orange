@@ -15,7 +15,6 @@ import {
 } from "../constants/constants";
 import Layout from "./Layout.astro";
 
-// 导入公告配置
 import announcement from "../content/announcement.yaml";
 
 interface AnnouncementConfig {
@@ -51,7 +50,6 @@ const {
 	announcementConfig,
 } = Astro.props;
 
-// 使用传入的公告配置，如果没有则使用默认配置
 const activeAnnouncement = announcementConfig || announcement;
 const hasBannerCredit =
 	siteConfig.banner.enable && siteConfig.banner.credit.enable;
@@ -64,32 +62,27 @@ const mainPanelTop = siteConfig.banner.enable
 
 <Layout title={title} banner={banner} description={description} lang={lang} setOGTypeArticle={setOGTypeArticle}>
 
-<!-- Navbar -->
 <slot slot="head" name="head"></slot>
+
 <div id="top-row" class="z-[999] pointer-events-none fixed top-0 left-0 right-0 w-full">
     <div id="navbar-wrapper" class="pointer-events-auto fixed top-0 left-0 right-0 w-full bg-orange-100 dark:bg-stone-800 shadow-md z-[999]">
         <Navbar></Navbar>
     </div>
 </div>
 
-<!-- Banner -->
 {siteConfig.banner.enable && (
     <div id="banner-wrapper" class="h-screen w-full fixed top-0 left-0 right-0 z-0 hidden md:block" style={`background-image: url(${siteConfig.banner.src}); background-size: cover; background-position: ${siteConfig.banner.position};`}>
     </div>
 )}
 
-<!-- Main content -->
-<div class="relative w-full z-10 min-h-screen">
-    <!-- 高斯模糊背景层 -->
+<div id="main-wrapper" class="relative w-full z-10 min-h-screen">
     <div class:list={[
         "fixed top-0 left-0 right-0 bottom-0 z-[-1] max-w-[calc(var(--page-width)-30px)] mx-auto backdrop-blur-3xl rounded-none shadow-xl",
         isPostPage ? "bg-[#fff8f0]/70 dark:bg-[#1c1814]/90" : "bg-white/10 dark:bg-[#1c1814]/60"
     ]}></div>
     
-    <!-- 内容区域 -->
-    <div class="relative max-w-[var(--page-width)] mx-auto h-full overflow-x-hidden">
-        <div class="w-full left-0 right-0 mx-auto gap-4 md:gap-6 px-3 md:px-6 grid grid-cols-1 md:grid-cols-12 grid-rows-[auto_1fr_auto] h-full max-w-[calc(var(--page-width)-30px)]">
-            <!-- 中央主内容区 -->
+    <div id="content-wrapper" class="relative max-w-[var(--page-width)] mx-auto h-full overflow-x-hidden">
+        <div id="main-grid" class="w-full left-0 right-0 mx-auto gap-4 md:gap-6 px-3 md:px-6 grid grid-cols-1 md:grid-cols-12 grid-rows-[auto_1fr_auto] h-full max-w-[calc(var(--page-width)-30px)]">
             <main id="content-container" class={`${fullWidth ? 'md:col-span-12 lg:col-span-12' : 'md:col-span-8 lg:col-span-8'}`}>
                 <div class="w-full">
                     <slot></slot>
@@ -99,18 +92,14 @@ const mainPanelTop = siteConfig.banner.enable
                 </div>
             </main>
 
-            <!-- 右侧边栏 -->
             {!fullWidth && (
                 <aside class="md:col-span-4 lg:col-span-4">
-                    <!-- 公告卡片 -->
                     {activeAnnouncement.enabled && showAnnouncement && (
                         <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-none shadow-xl p-4 mb-6">
                             <div class="flex items-start gap-4">
-                                <!-- 正圆头像 -->
                                 <div class="flex-shrink-0">
                                     <img src={activeAnnouncement.avatar as string} alt="公告头像" class="w-12 h-12 rounded-full object-cover border-2 border-orange-100 dark:border-stone-700">
                                 </div>
-                                <!-- 公告内容 -->
                                 <div class="flex-1">
                                     <p class="font-bold text-orange-700 dark:text-white">{activeAnnouncement.title}：</p>
                                     <p class="text-gray-600 dark:text-gray-300">{activeAnnouncement.content}</p>
@@ -119,12 +108,10 @@ const mainPanelTop = siteConfig.banner.enable
                         </div>
                     )}
                     
-                    <!-- 文章目录 - 独立容器以确保粘性定位生效 -->
                     {headings.length > 0 && (
                         <SidebarToc headings={headings} />
                     )}
                     
-                    <!-- 其他侧边栏内容 -->
                     <div class="mt-6">
                         <slot name="sidebar"></slot>
                     </div>
@@ -141,3 +128,91 @@ const mainPanelTop = siteConfig.banner.enable
 
 
 </Layout>
+
+<style>
+#main-wrapper {
+    position: relative;
+    width: 100%;
+    z-index: 10;
+    min-height: 100vh;
+}
+
+#content-wrapper {
+    position: relative;
+    max-width: var(--page-width);
+    margin: 0 auto;
+    height: 100%;
+    overflow-x: hidden;
+}
+
+#main-grid {
+    width: 100%;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    height: 100%;
+    max-width: calc(var(--page-width) - 30px);
+}
+
+#content-container {
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    #content-wrapper {
+        padding-top: 56px;
+    }
+    
+    #main-grid {
+        gap: 0;
+        padding: 0 0 0 0;
+        padding-top: 8px;
+    }
+    
+    #content-container {
+        padding: 12px;
+        background: transparent;
+    }
+    
+    aside {
+        display: none;
+    }
+    
+    .footer {
+        padding: 16px 12px;
+        background: transparent;
+    }
+    
+    #top-row {
+        position: fixed;
+    }
+    
+    #navbar-wrapper {
+        background: linear-gradient(180deg, 
+            rgba(255, 248, 240, 0.98) 0%, 
+            rgba(255, 248, 240, 0.95) 100%
+        );
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(255, 152, 0, 0.1);
+    }
+    
+    :global(.dark) #navbar-wrapper {
+        background: linear-gradient(180deg, 
+            rgba(28, 24, 20, 0.98) 0%, 
+            rgba(28, 24, 20, 0.95) 100%
+        );
+        border-bottom-color: rgba(255, 255, 255, 0.05);
+    }
+}
+
+@media (min-width: 769px) {
+    #content-wrapper {
+        padding-top: 1rem;
+    }
+    
+    #main-grid {
+        padding-top: 0;
+    }
+}
+</style>

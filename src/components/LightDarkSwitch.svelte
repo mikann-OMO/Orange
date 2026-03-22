@@ -51,11 +51,11 @@ function toggleScheme() {
 }
 </script>
 
-<button aria-label="Light/Dark Mode" role="menuitem" class="relative btn-plain scale-animation rounded-lg h-11 w-11 active:scale-90" id="scheme-switch" onclick={toggleScheme}>
+<button aria-label="Light/Dark Mode" role="menuitem" class="scheme-switch-btn relative flex items-center justify-center rounded-lg h-11 w-11 active:scale-90 transition-transform" id="scheme-switch" onclick={toggleScheme}>
     <div class="absolute transition-all duration-300 ease-in-out" class:opacity-0={mode !== LIGHT_MODE} class:scale-0={mode !== LIGHT_MODE}>
-        <Icon icon="material-symbols:wb-sunny-outline-rounded" class="text-[1.25rem]"></Icon>
+        <Icon icon="material-symbols:wb-sunny-outline-rounded" class="text-[1.25rem] text-orange-700 dark:text-orange-400"></Icon>
     </div>
     <div class="absolute transition-all duration-300 ease-in-out" class:opacity-0={mode !== DARK_MODE} class:scale-0={mode !== DARK_MODE}>
-        <Icon icon="material-symbols:dark-mode-outline-rounded" class="text-[1.25rem]"></Icon>
+        <Icon icon="material-symbols:dark-mode-outline-rounded" class="text-[1.25rem] text-orange-700 dark:text-orange-400"></Icon>
     </div>
 </button>

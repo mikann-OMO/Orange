@@ -17,6 +17,7 @@ import { url, pathsEqual } from "../utils/url-utils";
 import "katex/dist/katex.css";
 import "photoswipe/style.css";
 import "../styles/transition.css";
+import "../styles/mobile.css";
 import { ViewTransitions } from "astro:transitions";
 import BackToTop from "@components/control/BackToTop.astro";
 import PageProgress from "@components/control/PageProgress.astro";
@@ -493,98 +494,34 @@ import { siteConfig } from '../config';
 
 const bannerEnabled = !!document.getElementById('banner-wrapper');
 
-// Set up click outside to close functionality for panels
-// Optimized: Single event listener for all panels
-// 只在桌面端使用复杂的面板交互，移动端简化
-const isMobile = window.innerWidth <= 768;
+function checkIsMobile() {
+	return window.innerWidth <= 768;
+}
+let isMobile = checkIsMobile();
 
-// 简化的面板配置
 const panelConfigs = {
 	"display-setting": ["display-setting", "display-settings-switch"],
 	"nav-menu-panel": ["nav-menu-panel", "nav-menu-switch"],
 	"search-panel": ["search-panel", "search-bar", "search-switch"]
 };
 
-// 移动端优化：触摸事件处理
+let mobileOptimizationsInitialized = false;
+
 const mobileOptimizations = {
 	init: () => {
+		if (mobileOptimizationsInitialized) return;
+		mobileOptimizationsInitialized = true;
+		
 		if (isMobile) {
-			// 优化触摸事件
-			document.addEventListener('touchstart', (e) => {
-				// 防止双击缩放
-				if (e.touches.length > 1) {
-					e.preventDefault();
-				}
-			}, { passive: false });
-			
-			// 优化触摸滚动
-			document.addEventListener('touchmove', (e) => {
-				// 允许垂直滚动，防止水平滚动
-				if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
-					e.preventDefault();
-				}
-			}, { passive: false });
-			
-			// 优化点击事件
-			mobileOptimizations.optimizeClickEvents();
-			
-			// 优化预加载策略
-			mobileOptimizations.optimizePreloadStrategy();
-			
-			// 优化页面过渡效果
-			mobileOptimizations.optimizePageTransitions();
+			document.documentElement.classList.add('mobile-optimized');
 		}
 	},
 	
-	optimizeClickEvents: () => {
-		// 移除300ms点击延迟
-		const fastClick = (element, callback) => {
-			let startTime = 0;
-			let startX = 0;
-			let startY = 0;
-			
-			element.addEventListener('touchstart', (e) => {
-				startTime = Date.now();
-				startX = e.touches[0].clientX;
-				startY = e.touches[0].clientY;
-			}, { passive: true });
-			
-			element.addEventListener('touchend', (e) => {
-				const endTime = Date.now();
-				const endX = e.changedTouches[0].clientX;
-				const endY = e.changedTouches[0].clientY;
-				const distance = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
-				
-				if (endTime - startTime < 250 && distance < 10) {
-					e.preventDefault();
-					callback(e);
-				}
-			}, { passive: false });
-		};
-		
-		// 应用快速点击到非图片预览相关的链接，避免干扰 PhotoSwipe
-		const links = Array.from(document.querySelectorAll('a'))
-			.filter(link => 
-				!link.closest('.gallery') && 
-				!link.closest('.custom-md') &&
-				!link.closest('#post-cover')
-			);
-		links.forEach(link => {
-			fastClick(link, () => {
-				link.click();
-			});
-		});
-	},
-	
-	optimizePageTransitions: () => {
-		// 优化移动端页面过渡效果
-		document.documentElement.classList.add('mobile-optimized');
-		
-
+	updateIsMobile: () => {
+		isMobile = checkIsMobile();
 	}
 };
 
-// 初始化移动端优化
 mobileOptimizations.init();
 
 // Cache DOM elements for better performance

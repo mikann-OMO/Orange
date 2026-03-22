@@ -45,14 +45,12 @@ const jsonLd = {
 	inLanguage: entry.data.lang
 		? entry.data.lang.replace("_", "-")
 		: siteConfig.lang.replace("_", "-"),
-	// TODO include cover image here
 };
 ---
 <MainGridLayout banner={entry.data.image} title={entry.data.title} description={entry.data.description} lang={entry.data.lang} setOGTypeArticle={true} headings={headings} isPostPage={true}>
     <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
     <div class="flex max-w-[50rem] mx-auto w-full rounded-[var(--radius-large)] overflow-hidden relative mb-3 md:mb-4">
         <div id="post-container" class:list={["card-base z-10 px-4 md:px-6 lg:px-9 pt-4 md:pt-6 pb-3 md:pb-4 relative w-full post-content-animate", {}]}>
-            <!-- 面包屑导航 -->
             <Breadcrumb 
                 items={[
                     { label: "首页", url: "/" },
@@ -62,7 +60,6 @@ const jsonLd = {
                 ]} 
 
             />
-            <!-- word count and reading time -->
             <div class="flex flex-row text-orange-950/30 dark:text-white/30 gap-3 md:gap-5 mb-2 md:mb-3 transition">
                 <div class="flex flex-row items-center">
                     <div class="transition h-5 md:h-6 w-5 md:w-6 rounded-md bg-orange-950/5 dark:bg-white/10 text-orange-950/50 dark:text-white/50 flex items-center justify-center mr-1.5 md:mr-2">
@@ -84,10 +81,8 @@ const jsonLd = {
                 </div>
             </div>
 
-            <!-- 标题和图片组合 -->
             <div>
                 <div class="flex flex-col md:flex-row items-start gap-3 md:gap-6 mb-4 md:mb-5">
-                    <!-- 标题 -->
                     <div class="flex-1">
                         <div
                             data-pagefind-body data-pagefind-weight="10" data-pagefind-meta="title"
@@ -102,7 +97,6 @@ const jsonLd = {
                             {entry.data.title}
                         </div>
                         
-                        <!-- metadata -->
                         <PostMetadata
                                 class="mb-3 md:mb-5"
                                 published={entry.data.published}
@@ -113,10 +107,8 @@ const jsonLd = {
                         <div class="border-[var(--line-divider)] border-dashed border-b-[1px] mb-3 md:mb-5"></div>
                     </div>
                     
-                    <!-- 封面图片 - 移动端在标题下方，桌面端在右侧 -->
                     {entry.data.image &&
                         <div class="w-full md:w-1/3 flex-shrink-0">
-                            <!-- 移动端：横向封面 -->
                             <div class="md:hidden w-full h-40 rounded-[var(--radius-large)] overflow-hidden border-2 border-[var(--primary)]/30 shadow-md">
                                 <ImageWrapper 
                                     id="post-cover" 
@@ -126,7 +118,6 @@ const jsonLd = {
                                     position="center"
                                 />
                             </div>
-                            <!-- 桌面端：1:1 画框样式 -->
                             <div class="hidden md:block w-full aspect-square rounded-[var(--radius-large)] overflow-hidden border-2 border-[var(--primary)]/30 shadow-md hover:border-[var(--primary)]/70 transition-all duration-300">
                                 <ImageWrapper 
                                     id="post-cover" 
@@ -173,7 +164,6 @@ const jsonLd = {
         </a>
     </div>
 
-    <!-- 评论区 -->
     {commentConfig.provider === "mongodb" && commentConfig.apiBaseUrl && (
         <MongoComments 
             postSlug={entry.slug}
@@ -185,3 +175,161 @@ const jsonLd = {
 
 
 </MainGridLayout>
+
+<style>
+@media (max-width: 768px) {
+    .flex.max-w-\\[50rem\\] {
+        max-width: 100%;
+        margin: 0;
+        border-radius: 12px;
+        margin-bottom: 12px;
+    }
+    
+    #post-container {
+        padding: 16px;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(230, 74, 25, 0.08);
+        border: 1px solid rgba(255, 152, 0, 0.1);
+    }
+    
+    :global(.dark) #post-container {
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+    
+    .flex.flex-row.text-orange-950\\/30 {
+        gap: 12px;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+    }
+    
+    .flex.flex-row.items-center {
+        gap: 6px;
+    }
+    
+    .transition.h-5 {
+        width: 24px;
+        height: 24px;
+    }
+    
+    .text-xs {
+        font-size: 0.75rem;
+    }
+    
+    .flex.flex-col.md\\:flex-row.items-start {
+        gap: 16px;
+        margin-bottom: 16px;
+    }
+    
+    .font-bold.mb-2 {
+        font-size: 1.25rem;
+        line-height: 1.4;
+        margin-bottom: 12px;
+    }
+    
+    .mb-3.md\\:mb-5 {
+        margin-bottom: 12px;
+    }
+    
+    .border-\\[var\\(--line-divider\\)\\] {
+        margin-bottom: 12px;
+    }
+    
+    .md\\:hidden.w-full.h-40 {
+        height: 140px;
+        border-radius: 8px;
+        border-width: 1px;
+    }
+    
+    .markdown-content {
+        margin-bottom: 16px;
+    }
+    
+    .markdown-content :global(h1) {
+        font-size: 1.5rem;
+        margin-top: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .markdown-content :global(h2) {
+        font-size: 1.25rem;
+        margin-top: 1.25rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .markdown-content :global(h3) {
+        font-size: 1.125rem;
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .markdown-content :global(p) {
+        font-size: 0.9375rem;
+        line-height: 1.7;
+        margin-bottom: 1rem;
+    }
+    
+    .markdown-content :global(ul),
+    .markdown-content :global(ol) {
+        padding-left: 1.25rem;
+        margin-bottom: 1rem;
+    }
+    
+    .markdown-content :global(li) {
+        font-size: 0.9375rem;
+        line-height: 1.6;
+        margin-bottom: 0.5rem;
+    }
+    
+    .markdown-content :global(blockquote) {
+        padding: 0.75rem 1rem;
+        margin: 1rem 0;
+        border-left: 3px solid var(--primary);
+        background: rgba(255, 152, 0, 0.05);
+        border-radius: 0 8px 8px 0;
+    }
+    
+    .markdown-content :global(pre) {
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 0.8125rem;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .markdown-content :global(code) {
+        font-size: 0.8125rem;
+        padding: 2px 6px;
+    }
+    
+    .markdown-content :global(img) {
+        border-radius: 8px;
+        margin: 1rem 0;
+    }
+    
+    .license-container {
+        margin-bottom: 16px;
+        padding: 12px;
+        border-radius: 8px;
+    }
+    
+    .flex.flex-col.md\\:flex-row.justify-between {
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+    
+    .btn-card {
+        height: 44px;
+        border-radius: 10px;
+        padding: 0 12px;
+    }
+    
+    .btn-card:active {
+        transform: scale(0.98);
+    }
+    
+    .text-\\[1\\.5rem\\] {
+        font-size: 1.25rem;
+    }
+}
+</style>

@@ -1,5 +1,4 @@
 ---
-// 友链数据接口
 interface FriendData {
 	name: string;
 	avatar: string;
@@ -9,10 +8,8 @@ interface FriendData {
 	status?: "online" | "offline" | "busy";
 }
 
-// 组件属性
 const props = Astro.props as FriendData;
 
-// 根据稀有度获取颜色和星星数量
 const rarityConfig = {
 	common: { color: "#9E9E9E", stars: 2 },
 	rare: { color: "#4CAF50", stars: 3 },
@@ -22,389 +19,401 @@ const rarityConfig = {
 
 const config = rarityConfig[props.rarity] || rarityConfig.common;
 const rarityColor = config.color;
-const stars = Array(5).fill(0); // 显示5颗星星
-const activeStars = config.stars; // 激活的星星数量
+const stars = Array(5).fill(0);
+const activeStars = config.stars;
 ---
 <a 
     href={props.url} 
     target="_blank" 
     rel="noopener noreferrer"
-    class="friend-card friend-card-animate"
+    class="friend-card"
     data-rarity={props.rarity}
     style={`--rarity-color: ${rarityColor}`}
     aria-label={`访问 ${props.name} 的网站`}
 >
-  <div class="card-inner">
-    <div class="card-front">
-      <div class="card-background">
-        <div class="avatar-blur" style={`background-image: url(${props.avatar})`}></div>
-      </div>
-      <div class="card-glow"></div>
-      <div class="avatar-section">
-        <img 
-          src={props.avatar} 
-          alt={props.name} 
-          class="avatar"
-          loading="lazy"
-          decoding="async"
-        >
-      </div>
-      <div class="info-section">
-        <h3 class="friend-name font-['SimSun',serif]">{props.name}</h3>
-        <p class="friend-desc">{props.description}</p>
-      </div>
-      <div class="stars-section">
-        {stars.map((_, index) => (
-          <div class={`star ${index < activeStars ? 'star-active' : 'star-inactive'}`}>★</div>
-        ))}
-      </div>
-      <div class="rarity-indicator">
-        <span class="rarity-text">{props.rarity.toUpperCase()}</span>
-      </div>
+    <div class="card-inner">
+        <div class="card-background">
+            <div class="avatar-blur" style={`background-image: url(${props.avatar})`}></div>
+        </div>
+        <div class="card-glow"></div>
+        <div class="avatar-section">
+            <img 
+                src={props.avatar} 
+                alt={props.name} 
+                class="avatar"
+                loading="lazy"
+                decoding="async"
+            >
+        </div>
+        <div class="info-section">
+            <h3 class="friend-name font-['SimSun',serif]">{props.name}</h3>
+            <p class="friend-desc">{props.description}</p>
+        </div>
+        <div class="stars-section">
+            {stars.map((_, index) => (
+                <div class:list={["star", { "star-active": index < activeStars, "star-inactive": index >= activeStars }]}>★</div>
+            ))}
+        </div>
+        <div class="rarity-indicator">
+            <span class="rarity-text">{props.rarity.toUpperCase()}</span>
+        </div>
     </div>
-  </div>
 </a>
 
 <style>
 .friend-card {
-  width: 140px;
-  height: 600px;
-  perspective: 1000px;
-  display: block;
-  margin: 0 auto;
+    width: 140px;
+    height: 600px;
+    perspective: 1000px;
+    display: block;
+    margin: 0 auto;
 }
 
 .card-inner {
-  position: relative;
-  background: rgba(255, 250, 240, 0.4);
-  border: none;
-  border-radius: 0;
-  padding: 1.5rem;
-  padding-top: 160px;
-  cursor: pointer;
-  overflow: hidden;
-  height: 100%;
-  width: 100%;
-  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    position: relative;
+    background: rgba(255, 250, 240, 0.4);
+    border: none;
+    border-radius: 0;
+    padding: 1.5rem;
+    padding-top: 160px;
+    cursor: pointer;
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: box-shadow 0.3s ease;
 }
 
-:root.dark .card-inner {
-  background: rgba(128, 128, 128, 0.25);
+:global(.dark) .card-inner {
+    background: rgba(128, 128, 128, 0.25);
 }
 
 .card-background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 150px;
-  overflow: hidden;
-  opacity: 1;
-}
-
-.avatar-blur {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center top;
-  filter: blur(15px) brightness(0.8);
-  transform: scale(1.2);
-  opacity: 1;
-}
-
-.card-glow {
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, var(--rarity-color) 0%, transparent 70%);
-  opacity: 0;
-  pointer-events: none;
-}
-
-.friend-card:hover .card-glow {
-  opacity: 0.3;
-}
-
-.friend-card:hover .card-inner {
-  box-shadow: 0 0 30px var(--rarity-color), 0 16px 40px rgba(0, 0, 0, 0.2);
-}
-
-.avatar-section {
-  text-align: center;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 150px;
-  z-index: 2;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.avatar {
-  width: 120px;
-  height: 120px;
-  border-radius: 0;
-  border: 3px solid var(--rarity-color);
-  object-fit: cover;
-  background-color: var(--card-bg);
-  padding: 2px;
-  margin: 0 auto;
-  display: block !important;
-  opacity: 1 !important;
-  visibility: visible !important;
-}
-
-.avatar-blur {
-  display: block !important;
-  opacity: 1 !important;
-  visibility: visible !important;
-}
-
-.friend-card:hover .avatar {
-  box-shadow: 0 0 20px var(--rarity-color);
-}
-
-.info-section {
-  text-align: center;
-  margin-bottom: 1rem;
-  z-index: 2;
-  position: relative;
-}
-
-.friend-name {
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin: 0 0 0.5rem 0;
-  color: var(--text-primary);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.friend-card:hover .friend-name {
-  text-shadow: 0 0 15px var(--rarity-color), 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.friend-desc {
-  line-height: 1.5;
-  margin: 0;
-  height: 60px;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  font-size: 0.875rem;
-  font-weight: 300;
-}
-
-html:not(.dark) .friend-card .friend-desc {
-  color: var(--text-secondary);
-}
-
-html:not(.dark) .friend-card:hover .friend-desc {
-  color: var(--text-primary);
-}
-
-html.dark .friend-card .friend-desc {
-  color: rgba(255, 255, 255, 0.5) !important;
-}
-
-html.dark .friend-card:hover .friend-desc {
-  color: rgba(255, 255, 255, 0.8) !important;
-}
-
-.stars-section {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 0.75rem;
-  z-index: 2;
-  position: relative;
-}
-
-.star {
-  font-size: 1.25rem;
-  margin: 0 2px;
-}
-
-.star-active {
-  color: var(--rarity-color);
-  text-shadow: 0 0 10px var(--rarity-color);
-}
-
-.star-inactive {
-  color: var(--text-secondary);
-  opacity: 0.5;
-}
-
-.friend-card:hover .star-active {
-  text-shadow: 0 0 15px var(--rarity-color);
-}
-
-.rarity-indicator {
-  position: absolute;
-  bottom: 1rem;
-  left: 0;
-  right: 0;
-  text-align: center;
-  z-index: 2;
-}
-
-.rarity-text {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--rarity-color);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-/* 移动端横向卡片 */
-@media (max-width: 768px) {
-  .friend-card {
-    width: 100%;
-    max-width: 100%;
-    height: auto;
-    min-height: auto;
-    perspective: none;
-  }
-  
-  .card-inner {
-    flex-direction: row;
-    align-items: center;
-    padding: 0.6rem;
-    gap: 0.6rem;
-    height: auto;
-    min-height: auto;
-    border-radius: 0.5rem;
-  }
-  
-  .card-background {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    bottom: 0;
-    height: 100%;
-    width: 100%;
-  }
-  
-  .avatar-blur {
-    filter: blur(20px) brightness(0.7);
-  }
-  
-  .avatar-section {
-    position: relative;
-    height: auto;
-    flex-shrink: 0;
-  }
-  
-  .avatar {
-    width: 48px;
-    height: 48px;
-    border-width: 2px;
-    border-radius: 0.5rem;
-    margin: 0;
-  }
-  
-  .info-section {
-    flex: 1;
-    text-align: left;
-    margin-bottom: 0;
-    min-width: 0;
+    height: 150px;
     overflow: hidden;
-  }
-  
-  .friend-name {
-    font-size: 0.85rem;
-    margin-bottom: 0.15rem;
+    opacity: 1;
+}
+
+.avatar-blur {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center top;
+    filter: blur(15px) brightness(0.8);
+    transform: scale(1.2);
+    opacity: 1;
+}
+
+.card-glow {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, var(--rarity-color) 0%, transparent 70%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.friend-card:hover .card-glow {
+    opacity: 0.3;
+}
+
+.friend-card:hover .card-inner {
+    box-shadow: 0 0 30px var(--rarity-color), 0 16px 40px rgba(0, 0, 0, 0.2);
+}
+
+.avatar-section {
+    text-align: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 150px;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 0;
+    border: 3px solid var(--rarity-color);
+    object-fit: cover;
+    background-color: var(--card-bg);
+    padding: 2px;
+    margin: 0 auto;
+    display: block;
+    transition: box-shadow 0.3s ease;
+}
+
+.friend-card:hover .avatar {
+    box-shadow: 0 0 20px var(--rarity-color);
+}
+
+.info-section {
+    text-align: center;
+    margin-bottom: 1rem;
+    z-index: 2;
+    position: relative;
+}
+
+.friend-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    color: var(--text-primary);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-  
-  .friend-desc {
-    font-size: 0.7rem;
-    height: auto;
-    -webkit-line-clamp: 1;
-    line-height: 1.3;
-    color: var(--text-secondary);
+    transition: text-shadow 0.3s ease;
+}
+
+.friend-card:hover .friend-name {
+    text-shadow: 0 0 15px var(--rarity-color), 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.friend-desc {
+    line-height: 1.5;
+    margin: 0;
+    height: 60px;
     overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  .stars-section {
-    display: none;
-  }
-  
-  .rarity-indicator {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    font-size: 0.875rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+    transition: color 0.3s ease;
+}
+
+.friend-card:hover .friend-desc {
+    color: var(--text-primary);
+}
+
+:global(.dark) .friend-desc {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+:global(.dark) .friend-card:hover .friend-desc {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.stars-section {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+    z-index: 2;
     position: relative;
-    bottom: auto;
-    left: auto;
-    right: auto;
-    flex-shrink: 0;
-  }
-  
-  .rarity-text {
-    font-size: 0.55rem;
-    padding: 0.15rem 0.3rem;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 0.25rem;
-  }
-  
-  :global(.dark) .rarity-text {
-    background: rgba(255, 255, 255, 0.05);
-  }
-  
-  .friend-card:hover .card-inner {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  }
-  
-  .friend-card:hover .avatar {
-    box-shadow: 0 0 10px var(--rarity-color);
-  }
-  
-  .card-glow {
-    display: none;
-  }
+}
+
+.star {
+    font-size: 1.25rem;
+    margin: 0 2px;
+}
+
+.star-active {
+    color: var(--rarity-color);
+    text-shadow: 0 0 10px var(--rarity-color);
+}
+
+.star-inactive {
+    color: var(--text-secondary);
+    opacity: 0.5;
+}
+
+.friend-card:hover .star-active {
+    text-shadow: 0 0 15px var(--rarity-color);
+}
+
+.rarity-indicator {
+    position: absolute;
+    bottom: 1rem;
+    left: 0;
+    right: 0;
+    text-align: center;
+    z-index: 2;
+}
+
+.rarity-text {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--rarity-color);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+/* 移动端横向卡片 */
+@media (max-width: 768px) {
+    .friend-card {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        min-height: auto;
+        perspective: none;
+    }
+    
+    .card-inner {
+        flex-direction: row;
+        align-items: center;
+        padding: 12px;
+        gap: 12px;
+        height: auto;
+        min-height: auto;
+        border-radius: 10px;
+        background: rgba(255, 248, 240, 0.95);
+        border: 1px solid rgba(255, 152, 0, 0.15);
+        box-shadow: 0 2px 8px rgba(230, 74, 25, 0.08);
+    }
+    
+    :global(.dark) .card-inner {
+        background: rgba(28, 24, 20, 0.95);
+        border-color: rgba(255, 152, 0, 0.1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .card-background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 100%;
+        width: 100%;
+        border-radius: 10px;
+    }
+    
+    .avatar-blur {
+        filter: blur(20px) brightness(0.7);
+        border-radius: 10px;
+    }
+    
+    .avatar-section {
+        position: relative;
+        height: auto;
+        flex-shrink: 0;
+    }
+    
+    .avatar {
+        width: 56px;
+        height: 56px;
+        border-width: 2px;
+        border-radius: 10px;
+        margin: 0;
+    }
+    
+    .info-section {
+        flex: 1;
+        text-align: left;
+        margin-bottom: 0;
+        min-width: 0;
+        overflow: hidden;
+    }
+    
+    .friend-name {
+        font-size: 0.9375rem;
+        margin-bottom: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-shadow: none;
+    }
+    
+    .friend-desc {
+        font-size: 0.75rem;
+        height: auto;
+        -webkit-line-clamp: 2;
+        line-height: 1.4;
+        color: rgba(0, 0, 0, 0.6);
+    }
+    
+    :global(.dark) .friend-desc {
+        color: rgba(255, 255, 255, 0.6);
+    }
+    
+    .stars-section {
+        display: none;
+    }
+    
+    .rarity-indicator {
+        position: relative;
+        bottom: auto;
+        left: auto;
+        right: auto;
+        flex-shrink: 0;
+    }
+    
+    .rarity-text {
+        font-size: 0.625rem;
+        padding: 4px 8px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+    }
+    
+    :global(.dark) .rarity-text {
+        background: rgba(255, 255, 255, 0.05);
+    }
+    
+    .friend-card:hover .card-inner {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .friend-card:active .card-inner {
+        transform: scale(0.98);
+        background: rgba(255, 152, 0, 0.1);
+    }
+    
+    :global(.dark) .friend-card:active .card-inner {
+        background: rgba(255, 255, 255, 0.05);
+    }
+    
+    .friend-card:hover .avatar {
+        box-shadow: 0 0 10px var(--rarity-color);
+    }
+    
+    .card-glow {
+        display: none;
+    }
 }
 
 /* 超小屏幕优化 */
-@media (max-width: 400px) {
-  .friend-card {
-    width: 100%;
-  }
-  
-  .card-inner {
-    padding: 0.5rem;
-    gap: 0.5rem;
-  }
-  
-  .avatar {
-    width: 40px;
-    height: 40px;
-  }
-  
-  .friend-name {
-    font-size: 0.8rem;
-  }
-  
-  .friend-desc {
-    font-size: 0.65rem;
-  }
-  
-  .rarity-text {
-    font-size: 0.5rem;
-    padding: 0.1rem 0.25rem;
-  }
+@media (max-width: 480px) {
+    .card-inner {
+        padding: 10px;
+        gap: 10px;
+    }
+    
+    .avatar {
+        width: 48px;
+        height: 48px;
+    }
+    
+    .friend-name {
+        font-size: 0.875rem;
+    }
+    
+    .friend-desc {
+        font-size: 0.6875rem;
+        -webkit-line-clamp: 1;
+    }
+    
+    .rarity-text {
+        font-size: 0.5625rem;
+        padding: 3px 6px;
+    }
 }
 </style>

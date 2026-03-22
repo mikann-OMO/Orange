@@ -21,17 +21,15 @@ let links: NavBarLink[] = navBarConfig.links.map(
 const currentPath = Astro.url.pathname;
 ---
 <nav id="navbar" class="z-50" role="navigation" aria-label="Main navigation">
-    <div class="max-w-[var(--page-width)] h-[4.5rem] !rounded-t-none mx-auto flex items-center justify-between px-4">
-        <!-- Left: Logo -->
-        <div class="flex">
-            <a href={url('/')} class="btn-plain rounded-lg h-[3.25rem] px-3 md:px-5 font-bold flex items-center" aria-label="Home">
+    <div class="navbar-inner max-w-[var(--page-width)] h-[4.5rem] !rounded-t-none mx-auto flex items-center justify-between px-4">
+        <div class="nav-left flex items-center">
+            <a href={url('/')} class="nav-home-btn rounded-lg h-[3.25rem] px-3 md:px-5 font-bold flex items-center" aria-label="Home">
                 <div class="flex flex-row items-center text-md">
-                    <Icon name="material-symbols:home-outline-rounded" class="text-[1.75rem] mr-1 md:mr-2 text-[var(--primary)]" />
-                    <span class="text-[var(--primary)] font-bold text-sm md:text-base">{siteConfig.title}</span>
+                    <Icon name="material-symbols:home-outline-rounded" class="nav-home-icon text-[1.75rem] mr-1 md:mr-2 text-[var(--primary)]" />
+                    <span class="nav-site-title text-[var(--primary)] font-bold text-sm md:text-base">{siteConfig.title}</span>
                 </div>
             </a>
         </div>
-        <!-- Center: Navigation Links (Desktop) -->
         <div class="hidden lg:flex absolute left-1/2 transform -translate-x-1/2" role="list">
             {links.map((l) => {
                 const isExternal = l.external || false;
@@ -44,7 +42,7 @@ const currentPath = Astro.url.pathname;
                     rel={isExternal ? "noopener noreferrer" : null}
                     class:list={[
                         "nav-link",
-                        "btn-plain rounded-lg h-11 font-bold px-5 font-['SimSun',serif] flex items-center relative",
+                        "rounded-lg h-11 font-bold px-5 font-['SimSun',serif] flex items-center relative",
                         { "nav-link-active": isActive }
                     ]}
                     role="listitem"
@@ -61,26 +59,23 @@ const currentPath = Astro.url.pathname;
                 </a>;
             })}
         </div>
-        <!-- Right: Functional Buttons -->
-        <div class="flex items-center gap-1 md:gap-2 relative">
+        <div class="nav-actions flex items-center gap-1 md:gap-2 relative">
             <Search client:only="svelte"></Search>
             <LightDarkSwitch client:only="svelte"></LightDarkSwitch>
-            <!-- Mobile Menu Button (hidden on PC, visible on mobile/tablet) -->
             <button
                 id="mobile-menu-btn"
-                class="hidden btn-plain scale-animation rounded-lg h-11 w-11 items-center justify-center"
+                class="mobile-menu-btn rounded-lg h-11 w-11 flex items-center justify-center"
                 aria-label="Toggle menu"
                 aria-expanded="false"
             >
-                <Icon name="material-symbols:menu-rounded" class="text-[1.5rem] menu-icon" />
-                <Icon name="material-symbols:close-rounded" class="text-[1.5rem] close-icon hidden" />
+                <Icon name="material-symbols:menu-rounded" class="text-[1.5rem] menu-icon text-orange-700 dark:text-orange-400" />
+                <Icon name="material-symbols:close-rounded" class="text-[1.5rem] close-icon hidden text-orange-700 dark:text-orange-400" />
             </button>
         </div>
     </div>
     
-    <!-- Mobile Menu Panel -->
-    <div id="mobile-menu" class="lg:hidden hidden fixed top-[4.5rem] left-0 right-0 bg-orange-100 dark:bg-stone-800 shadow-lg border-t border-orange-200/50 dark:border-stone-700/50 z-[998]">
-        <div class="max-w-[var(--page-width)] mx-auto px-4 py-4">
+    <div id="mobile-menu" class="mobile-menu lg:hidden hidden">
+        <div class="mobile-menu-content max-w-[var(--page-width)] mx-auto px-4 py-4">
             <div class="flex flex-col gap-1">
                 {links.map((l) => {
                     const isExternal = l.external || false;
@@ -109,9 +104,32 @@ const currentPath = Astro.url.pathname;
 </nav>
 
 <style>
+    .nav-home-btn {
+        background: transparent;
+        transition: background 0.2s ease;
+    }
+    
+    .nav-home-btn:hover {
+        background: rgba(255, 152, 0, 0.08);
+    }
+    
+    :global(.dark) .nav-home-btn:hover {
+        background: rgba(255, 255, 255, 0.08);
+    }
+    
     .nav-link {
         position: relative;
         overflow: visible;
+        background: transparent;
+        transition: background 0.2s ease;
+    }
+    
+    .nav-link:hover {
+        background: rgba(255, 152, 0, 0.08);
+    }
+    
+    :global(.dark) .nav-link:hover {
+        background: rgba(255, 255, 255, 0.08);
     }
     
     .nav-underline {
@@ -145,6 +163,23 @@ const currentPath = Astro.url.pathname;
         color: var(--primary) !important;
     }
     
+    .mobile-menu-btn {
+        background: transparent;
+        transition: all 0.2s ease;
+    }
+    
+    .mobile-menu-btn:hover {
+        background: rgba(255, 152, 0, 0.08);
+    }
+    
+    :global(.dark) .mobile-menu-btn:hover {
+        background: rgba(255, 255, 255, 0.08);
+    }
+    
+    .mobile-menu-btn:active {
+        transform: scale(0.95);
+    }
+    
     @media (prefers-color-scheme: dark) {
         .nav-underline {
             box-shadow: 0 1px 4px rgba(255, 152, 0, 0.3);
@@ -155,14 +190,33 @@ const currentPath = Astro.url.pathname;
         }
     }
     
-    #mobile-menu {
-        animation: slideDown 0.2s ease-out;
+    .mobile-menu {
+        position: fixed;
+        top: 4.5rem;
+        left: 0;
+        right: 0;
+        background: rgba(255, 243, 224, 0.98);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        border-top: 1px solid rgba(255, 152, 0, 0.2);
+        z-index: 998;
+    }
+    
+    :global(.dark) .mobile-menu {
+        background: rgba(38, 33, 28, 0.98);
+        border-top-color: rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+    
+    .mobile-menu:not(.hidden) {
+        animation: slideDown 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
     @keyframes slideDown {
         from {
             opacity: 0;
-            transform: translateY(-10px);
+            transform: translateY(-8px);
         }
         to {
             opacity: 1;
@@ -170,72 +224,180 @@ const currentPath = Astro.url.pathname;
         }
     }
     
+    .mobile-nav-link {
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+    }
+    
     .mobile-nav-link:active {
         transform: scale(0.98);
+        background: rgba(255, 152, 0, 0.15);
     }
-
-    /* 移动端显示菜单按钮，PC端隐藏 */
+    
+    :global(.dark) .mobile-nav-link:active {
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
+    @media (min-width: 1024px) {
+        .mobile-menu-btn {
+            display: none !important;
+        }
+    }
+    
     @media (max-width: 1023px) {
-        #mobile-menu-btn {
+        .mobile-menu-btn {
             display: flex !important;
         }
     }
-    @media (min-width: 1024px) {
-        #mobile-menu-btn {
-            display: none !important;
+    
+    @media (max-width: 768px) {
+        .navbar-inner {
+            height: 56px;
+            padding: 0 12px;
+        }
+        
+        .nav-home-btn {
+            height: 44px;
+            padding: 0 8px;
+        }
+        
+        .nav-home-icon {
+            font-size: 1.5rem;
+        }
+        
+        .nav-site-title {
+            font-size: 0.8125rem;
+        }
+        
+        .nav-actions {
+            gap: 4px;
+        }
+        
+        .mobile-menu-btn {
+            width: 40px;
+            height: 40px;
+        }
+        
+        .mobile-menu-btn svg,
+        .mobile-menu-btn :global(svg) {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+        
+        .mobile-menu {
+            top: 56px;
+        }
+        
+        .mobile-menu-content {
+            padding: 12px;
+        }
+        
+        .mobile-nav-link {
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-size: 0.9375rem;
+        }
+        
+        :global(.scheme-switch-btn) {
+            width: 40px;
+            height: 40px;
         }
     }
 </style>
 
 <script is:inline>
-document.addEventListener('DOMContentLoaded', () => {
-    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-    const mobileMenu = document.getElementById('mobile-menu');
-    const menuIcon = mobileMenuBtn?.querySelector('.menu-icon');
-    const closeIcon = mobileMenuBtn?.querySelector('.close-icon');
-
-    // PC端不执行移动端菜单逻辑
-    const isMobile = window.innerWidth < 1024;
-
-    if (mobileMenuBtn && mobileMenu && isMobile) {
-        mobileMenuBtn.addEventListener('click', () => {
-            const isOpen = !mobileMenu.classList.contains('hidden');
-
-            if (isOpen) {
-                mobileMenu.classList.add('hidden');
-                menuIcon?.classList.remove('hidden');
-                closeIcon?.classList.add('hidden');
-                mobileMenuBtn.setAttribute('aria-expanded', 'false');
-            } else {
-                mobileMenu.classList.remove('hidden');
-                menuIcon?.classList.add('hidden');
-                closeIcon?.classList.remove('hidden');
-                mobileMenuBtn.setAttribute('aria-expanded', 'true');
-            }
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!mobileMenuBtn.contains(e.target) && !mobileMenu.contains(e.target)) {
-                mobileMenu.classList.add('hidden');
-                menuIcon?.classList.remove('hidden');
-                closeIcon?.classList.add('hidden');
-                mobileMenuBtn.setAttribute('aria-expanded', 'false');
-            }
-        });
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                mobileMenu.classList.add('hidden');
-                menuIcon?.classList.remove('hidden');
-                closeIcon?.classList.add('hidden');
-                mobileMenuBtn.setAttribute('aria-expanded', 'false');
-            }
-        });
+(function() {
+    let menuOpen = false;
+    
+    function closeMenu() {
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const menuIcon = mobileMenuBtn ? mobileMenuBtn.querySelector('.menu-icon') : null;
+        const closeIcon = mobileMenuBtn ? mobileMenuBtn.querySelector('.close-icon') : null;
+        
+        if (mobileMenu) mobileMenu.classList.add('hidden');
+        if (menuIcon) menuIcon.classList.remove('hidden');
+        if (closeIcon) closeIcon.classList.add('hidden');
+        if (mobileMenuBtn) mobileMenuBtn.setAttribute('aria-expanded', 'false');
+        menuOpen = false;
     }
-});
+    
+    function openMenu() {
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const menuIcon = mobileMenuBtn ? mobileMenuBtn.querySelector('.menu-icon') : null;
+        const closeIcon = mobileMenuBtn ? mobileMenuBtn.querySelector('.close-icon') : null;
+        
+        if (mobileMenu) mobileMenu.classList.remove('hidden');
+        if (menuIcon) menuIcon.classList.add('hidden');
+        if (closeIcon) closeIcon.classList.remove('hidden');
+        if (mobileMenuBtn) mobileMenuBtn.setAttribute('aria-expanded', 'true');
+        menuOpen = true;
+    }
+    
+    function toggleMenu(e) {
+        e.stopPropagation();
+        if (menuOpen) {
+            closeMenu();
+        } else {
+            openMenu();
+        }
+    }
+    
+    function handleClickOutside(e) {
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        if (menuOpen && mobileMenuBtn && mobileMenu) {
+            if (!mobileMenuBtn.contains(e.target) && !mobileMenu.contains(e.target)) {
+                closeMenu();
+            }
+        }
+    }
+    
+    function handleKeydown(e) {
+        if (e.key === 'Escape' && menuOpen) {
+            closeMenu();
+        }
+    }
+    
+    function handleMenuClick(e) {
+        const target = e.target;
+        if (target && target.closest && target.closest('a')) {
+            closeMenu();
+        }
+    }
+    
+    function setupMobileMenu() {
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        if (!mobileMenuBtn || !mobileMenu) return;
+        
+        mobileMenuBtn.addEventListener('click', toggleMenu);
+        mobileMenu.addEventListener('click', handleMenuClick);
+        
+        closeMenu();
+    }
+    
+    document.addEventListener('click', handleClickOutside);
+    document.addEventListener('keydown', handleKeydown);
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setupMobileMenu);
+    } else {
+        setupMobileMenu();
+    }
+    
+    document.addEventListener('astro:page-load', setupMobileMenu);
+    
+    document.addEventListener('astro:before-preparation', function() {
+        if (menuOpen) {
+            closeMenu();
+        }
+    });
+})();
 </script>
-
-
 
 {import.meta.env.PROD && <script is:inline>
 async function loadPagefind() {
@@ -246,10 +408,9 @@ async function loadPagefind() {
     });
     pagefind.init();
     window.pagefind = pagefind;
-    pagefind.search('');     // speed up the first search
+    pagefind.search('');
 }
 
-// 页面加载完成后设置监听器
 document.addEventListener('DOMContentLoaded', () => {
     loadPagefind();
 });

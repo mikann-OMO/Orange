@@ -1,6 +1,6 @@
 ---
 title: 向山进发！九华山游记
-published: 2026-01-05T00:00:00.000Z
+published: 2026-01-05
 description: “二〇二六 新年新气象 三天两夜九华山游记“
 tags:
   - 向山进发
