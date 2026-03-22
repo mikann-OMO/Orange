@@ -1,5 +1,5 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { MongoClient, ObjectId } from 'mongodb';
+import { NextRequest } from 'next/server';
 
 const MONGODB_URI = process.env.MONGODB_URI;
 const MONGODB_DB = process.env.MONGODB_DB || 'blog_comments';
@@ -96,11 +96,11 @@ export function generateFingerprint(ip: string, userAgent: string): string {
     .substring(0, 16);
 }
 
-export function getClientInfo(req: VercelRequest): { ip: string; userAgent: string } {
-  const ip = (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() ||
-             req.headers['x-real-ip'] as string ||
+export function getClientInfo(req: NextRequest): { ip: string; userAgent: string } {
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+             req.headers.get('x-real-ip') ||
              'unknown';
-  const userAgent = req.headers['user-agent'] || 'unknown';
+  const userAgent = req.headers.get('user-agent') || 'unknown';
   return { ip, userAgent };
 }
 
@@ -126,22 +126,4 @@ export function validateUrl(url: string | undefined): boolean {
   } catch {
     return false;
   }
-}
-
-export function corsHeaders(req: VercelRequest) {
-  const origin = req.headers.origin || '*';
-  return {
-    'Access-Control-Allow-Origin': origin,
-    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Access-Control-Max-Age': '86400',
-  };
-}
-
-export function handleOptions(req: VercelRequest, res: VercelResponse) {
-  res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.setHeader('Access-Control-Max-Age', '86400');
-  return res.status(200).end();
 }
