@@ -1,6 +1,6 @@
-import I18nKey from "../i18n/i18nKey.ts";
-import { i18n } from "../i18n/translation.ts";
-import { LinkPreset, type NavBarLink } from "../types/config.ts";
+import I18nKey from "../i18n/i18nKey";
+import { i18n } from "../i18n/translation";
+import { LinkPreset, type NavBarLink } from "../types/config";
 
 export const LinkPresets: { [key in LinkPreset]: NavBarLink } = {
 	[LinkPreset.Home]: {

@@ -69,8 +69,8 @@ function formatTag(tag: string[]) {
 }
 ---
 
-<div class="archive-container max-w-3xl mx-auto px-2 md:px-0">
-	<div class="stats-bar flex flex-wrap gap-3 md:gap-6 mb-4 md:mb-6 p-3 md:p-4 rounded-lg bg-orange-50/80 dark:bg-stone-800/50 border border-orange-200/50 dark:border-stone-700/50">
+<div class="archive-container post-content-animate w-full flex flex-col items-center px-4 md:px-8">
+	<div class="stats-bar flex flex-wrap gap-3 md:gap-6 mb-4 md:mb-6 p-3 md:p-4 rounded-lg bg-orange-50/80 dark:bg-stone-800/50 border border-orange-200/50 dark:border-stone-700/50 w-full max-w-3xl">
 		<div class="stat-item flex items-center gap-2 md:gap-3">
 			<div class="w-8 h-8 md:w-9 md:h-9 rounded-full bg-orange-100/80 dark:bg-stone-600/80 flex items-center justify-center">
 				<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 md:w-4 md:h-4 text-orange-700 dark:text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -103,18 +103,18 @@ function formatTag(tag: string[]) {
 	</div>
 
 	{groups.length > 1 && (
-		<div class="year-nav flex flex-wrap gap-1.5 md:gap-2 mb-4 md:mb-6">
+		<div class="year-nav flex flex-wrap gap-1.5 md:gap-2 mb-4 md:mb-6 w-full max-w-3xl">
 			{groups.map((group) => (
 				<a href={`#year-${group.year}`} class="year-nav-btn px-2.5 md:px-3 py-1 rounded-full text-xs md:text-sm transition-all duration-200 bg-orange-100/80 dark:bg-stone-700/60 text-orange-800 dark:text-white hover:bg-orange-200 dark:hover:bg-stone-600 hover:text-orange-950 dark:hover:text-white">
-					{group.year}
-				</a>
+				{group.year}
+			</a>
 			))}
 		</div>
 	)}
 
-	<div class="timeline-container card-base px-3 md:px-5 py-3 md:py-5">
+	<div class="timeline-container card-base px-3 md:px-5 py-3 md:py-5 bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden rounded-lg w-full max-w-3xl">
 		{groups.map((group) => (
-			<div id={`year-${group.year}`} class="year-group scroll-mt-20 md:scroll-mt-24">
+			<div id={`year-${group.year}`} class="year-group scroll-mt-20 md:scroll-mt-24 card-enter">
 				<div class="year-header flex items-center gap-2 md:gap-3 mb-2 md:mb-3 pb-1.5 md:pb-2 border-b border-orange-200/70 dark:border-stone-600/50">
 					<span class="text-lg md:text-xl font-semibold text-orange-950 dark:text-white">{group.year}</span>
 					<span class="text-xs md:text-sm text-orange-950/60 dark:text-white/60">{group.posts.length} {i18n(I18nKey.postsCount)}</span>

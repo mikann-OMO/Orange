@@ -1,6 +1,6 @@
-import i18nKey from "../i18n/i18nKey.ts";
-import { i18n } from "../i18n/translation.ts";
-import { encodePathSegment } from "./encoding-utils.ts";
+import i18nKey from "../i18n/i18nKey";
+import { i18n } from "../i18n/translation";
+import { encodePathSegment } from "./encoding-utils";
 
 /**
  * Check if two paths are equal, ignoring leading/trailing slashes and case

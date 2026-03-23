@@ -1,14 +1,14 @@
 ---
 import path from "node:path";
 import { Icon } from "astro-icon/components";
-import MongoComments from "../../components/MongoComments.astro";
 import PageViewCounter from "../../components/PageViewCounter.svelte";
 import PostMetadata from "../../components/PostMeta.astro";
 import Breadcrumb from "../../components/control/Breadcrumb.astro";
 import ImageWrapper from "../../components/misc/ImageWrapper.astro";
 import License from "../../components/misc/License.astro";
 import Markdown from "../../components/misc/Markdown.astro";
-import { commentConfig, licenseConfig } from "../../config";
+import LikeButton from "../../components/LikeButton.astro";
+import { licenseConfig } from "../../config";
 import { profileConfig, siteConfig } from "../../config";
 import I18nKey from "../../i18n/i18nKey";
 import { i18n } from "../../i18n/translation";
@@ -164,13 +164,7 @@ const jsonLd = {
         </a>
     </div>
 
-    {commentConfig.provider === "mongodb" && commentConfig.apiBaseUrl && (
-        <MongoComments 
-            postSlug={entry.slug}
-            postTitle={entry.data.title}
-            apiBaseUrl={commentConfig.apiBaseUrl}
-        />
-    )}
+    <LikeButton />
 
 
 

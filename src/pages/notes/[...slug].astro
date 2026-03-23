@@ -35,8 +35,8 @@ const { Content, headings } = await note.render();
 const jsonLd = {
 	"@context": "https://schema.org",
 	"@type": "NoteDigitalDocument",
-	headline: note.data.title || "随记",
-	description: "随记内容",
+	headline: note.data.title || "私语",
+	description: "私语内容",
 	author: {
 		"@type": "Person",
 		name: profileConfig.name,
@@ -49,12 +49,12 @@ const jsonLd = {
 };
 ---
 
-<MainGridLayout title={note.data.title || "随记"} description="随记内容" lang={note.data.lang} setOGTypeArticle={true} headings={headings}>
+<MainGridLayout title={note.data.title || "私语"} description="私语内容" lang={note.data.lang} setOGTypeArticle={true} headings={headings}>
     <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
     
     <div class="bg-white/15 dark:bg-stone-800/15 backdrop-blur-3xl rounded-none shadow-xl overflow-hidden p-6">
         <div class="max-w-2xl mx-auto w-full">
-            <!-- 随记图片 -->
+            <!-- 私语图片 -->
             {note.data.image && (
                 <div class="note-image w-full mb-4 overflow-hidden rounded-md">
                     <img 
@@ -65,7 +65,7 @@ const jsonLd = {
                 </div>
             )}
             
-            <!-- 随记头部 -->
+            <!-- 私语头部 -->
             <div class="note-header mb-4">
                 <!-- 日期 -->
                 <div class="text-xs text-orange-950/60 dark:text-white/60 font-mono mb-4 border-b border-orange-200/30 dark:border-white/10 pb-2">
@@ -80,14 +80,14 @@ const jsonLd = {
                 )}
             </div>
 
-            <!-- 随记内容 -->
+            <!-- 私语内容 -->
             <div class="note-content whitespace-pre-wrap">
                 <Markdown class="markdown-content prose dark:prose-invert max-w-none">
                     <Content />
                 </Markdown>
             </div>
 
-            <!-- 返回随记列表 -->
+            <!-- 返回私语列表 -->
             <div class="mt-6">
                 <a 
                     href="/notes/"
@@ -103,7 +103,7 @@ const jsonLd = {
     </div>
 
     <style>
-        /* 随记内容样式 */
+        /* 私语内容样式 */
         .note-content {
             overflow: auto;
             max-height: calc(100vh - 400px);

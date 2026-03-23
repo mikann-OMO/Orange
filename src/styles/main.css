@@ -327,13 +327,24 @@
     height: var(--collapsedHeight);
 }
 
-::-webkit-scrollbar-horizontal {
-    display: none;
+/* 为PC端使用浏览器默认滚动条 */
+@media (min-width: 769px) {
+    /* 移除所有自定义滚动条样式，使用浏览器默认样式 */
+    body {
+        overflow-y: auto;
+    }
 }
 
-body {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+/* 移动端保持无滚动条 */
+@media (max-width: 768px) {
+    ::-webkit-scrollbar-horizontal {
+        display: none;
+    }
+    
+    body {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
 }
 
 html, body {
@@ -381,6 +392,8 @@ img[loading="lazy"][complete] {
     --btn-regular-bg-hover: rgba(255, 152, 0, 1);
     --card-border: rgba(255, 152, 0, 0.2);
     --radius-large: 0.75rem;
+    /* 页面宽度 */
+    --page-width: 68rem;
 }
 
 .dark {

@@ -1,11 +1,13 @@
 ---
 import { getCollection } from "astro:content";
+import { Icon } from "astro-icon/components";
 import NoteCard from "../../components/NoteCard.astro";
+import Pagination from "../../components/control/Pagination.astro";
 import I18nKey from "../../i18n/i18nKey";
 import { i18n } from "../../i18n/translation";
 import MainGridLayout from "../../layouts/MainGridLayout.astro";
 
-// 直接获取所有随记，不使用分页
+// 获取所有随记
 const allNotes = await getCollection("notes", ({ data }) => !data.draft);
 
 // 按发布日期降序排序
@@ -15,23 +17,92 @@ const sortedNotes = allNotes.sort((a, b) => {
 	return dateB.getTime() - dateA.getTime();
 });
 
-console.log("Notes count:", sortedNotes.length);
+// 分页配置
+const pageSize = 10; // 每页显示10条随记
+const totalNotes = sortedNotes.length;
+const totalPages = Math.ceil(totalNotes / pageSize);
 
-let delay = 0;
-const interval = 50;
+// 获取当前页码（从URL参数中获取，默认为1）
+const url = new URL(Astro.request.url);
+const currentPage = Number.parseInt(url.searchParams.get("page") || "1");
+const page = Math.max(1, Math.min(currentPage, totalPages));
+
+// 计算当前页显示的笔记范围
+const startIndex = (page - 1) * pageSize;
+const endIndex = startIndex + pageSize;
+const paginatedNotes = sortedNotes.slice(startIndex, endIndex);
+
+console.log(
+	`Notes count: ${totalNotes}, Current page: ${page}, Total pages: ${totalPages}`,
+);
 ---
 
-<MainGridLayout title={i18n(I18nKey.notes)} description={i18n(I18nKey.notes)} showAnnouncement={false} fullWidth={true}>
-    <div class="max-w-2xl mx-auto w-full">
-        {sortedNotes.length > 0 ? (
-            <div class="space-y-6">
-                {sortedNotes.map((note) => (
-                    <NoteCard
-                        entry={note}
-                        style=""
-                    />
-                ))}
+<MainGridLayout title={i18n(I18nKey.notes)} description={i18n(I18nKey.notes)} showAnnouncement={false} fullWidth={false} centerContent={true}>
+    <div class="space-y-6 w-full flex flex-col items-center px-4 md:px-8">
+        <!-- 提示卡片 -->
+        <div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden rounded-lg w-full max-w-3xl">
+            <div class="bg-orange-100/80 dark:bg-stone-700/70 backdrop-blur-3xl border-l-4 border-orange-700 p-4">
+                <div class="flex items-center gap-3">
+                    <Icon name="material-symbols:info-rounded" class="text-xl text-orange-700 dark:text-orange-300" />
+                    <h2 class="text-lg font-bold text-orange-700 dark:text-white">页面说明</h2>
+                </div>
             </div>
+            <div class="p-4">
+                <p class="text-sm text-orange-950/70 dark:text-white/70">
+                    生活中的一些碎碎念，无意义，但想记录下来
+                </p>
+            </div>
+        </div>
+        
+        <!-- 统计卡片 -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-3xl">
+            <div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden rounded-lg">
+                <div class="p-4 flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center flex-shrink-0">
+                        <Icon name="material-symbols:note-rounded" class="text-2xl text-white" />
+                    </div>
+                    <div>
+                        <p class="text-2xl font-bold text-orange-700 dark:text-white">{totalNotes}</p>
+                        <p class="text-sm text-orange-600/70 dark:text-gray-400">篇私语</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden rounded-lg">
+                <div class="p-4 flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center flex-shrink-0">
+                        <Icon name="material-symbols:schedule-rounded" class="text-2xl text-white" />
+                    </div>
+                    <div>
+                        <p class="text-2xl font-bold text-orange-700 dark:text-white">{totalNotes > 0 ? new Date(sortedNotes[0].data.published).toLocaleDateString('zh-CN') : '暂无'}</p>
+                        <p class="text-sm text-orange-600/70 dark:text-gray-400">最近更新</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 私语列表 -->
+        {totalNotes > 0 ? (
+            <>
+                <div class="space-y-6 w-full max-w-3xl">
+                    {paginatedNotes.map((note) => (
+                        <NoteCard
+                            entry={note}
+                            style=""
+                        />
+                    ))}
+                </div>
+                
+                <!-- 分页控件 -->
+                {totalPages > 1 && (
+                    <div class="flex justify-center mt-8">
+                        <Pagination
+                            current={page}
+                            total={totalPages}
+                            url="/notes"
+                        />
+                    </div>
+                )}
+            </>
         ) : (
             <div class="text-center py-16 text-orange-950/60 dark:text-white/60 text-lg">
                 {i18n(I18nKey.no_notes_yet)}

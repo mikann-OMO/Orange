@@ -18,6 +18,7 @@ import "katex/dist/katex.css";
 import "photoswipe/style.css";
 import "../styles/transition.css";
 import "../styles/mobile.css";
+import "../styles/main.css";
 import { ViewTransitions } from "astro:transitions";
 import BackToTop from "@components/control/BackToTop.astro";
 import PageProgress from "@components/control/PageProgress.astro";
@@ -247,8 +248,7 @@ const bannerOffset =
 	</head>
 	<!-- 性能优化：减少不必要的触摸事件延迟 -->
 	<body class="min-h-screen bg-[var(--page-bg)]" class:list={[{"lg:is-home": isHomePage, "enable-banner": enableBanner}]}
-		  data-overlayscrollbars-initialize
-		  style="touch-action: manipulation; -webkit-tap-highlight-color: transparent; -webkit-overflow-scrolling: touch;"
+		  style="touch-action: manipulation; -webkit-tap-highlight-color: transparent; -webkit-overflow-scrolling: touch; overflow: auto;"
 	>
 		<ConfigCarrier></ConfigCarrier>
 		<PageProgress />
@@ -274,6 +274,8 @@ const bannerOffset =
 			let transitionTimeout: number | null = null;
 			
 			function applyTheme() {
+			// 使用 requestAnimationFrame 来批量处理主题切换，减少重绘和回流
+			requestAnimationFrame(() => {
 				const theme = localStorage.getItem('theme') || DEFAULT_THEME;
 				const html = document.documentElement;
 				
@@ -301,7 +303,8 @@ const bannerOffset =
 				
 				const hue = localStorage.getItem('hue') || '0';
 				html.style.setProperty('--hue', hue);
-			}
+			});
+		}
 			
 			function clearTransitionState() {
 				isTransitioning = false;
@@ -336,49 +339,51 @@ const bannerOffset =
 				const mainContent = document.querySelector('.main-panel');
 				if (mainContent) {
 					mainContent.classList.add('page-enter-animation');
-					setTimeout(() => mainContent.classList.remove('page-enter-animation'), 350);
+					setTimeout(() => mainContent.classList.remove('page-enter-animation'), 300);
 				}
 				
-				const postCards = document.querySelectorAll('.post-card-animate');
-				postCards.forEach((card, index) => {
-					card.classList.add('card-enter');
-					card.style.animationDelay = `${Math.min(index * 0.03, 0.18)}s`;
-					setTimeout(() => {
-						card.classList.remove('card-enter');
-						card.style.animationDelay = '';
-					}, 550);
+				// 使用 Intersection Observer 来优化卡片动画，只在卡片进入视口时触发动画
+				const observerOptions = {
+					threshold: 0.1,
+					rootMargin: '20px'
+				};
+				
+				const cardObserver = new IntersectionObserver((entries) => {
+					entries.forEach((entry, index) => {
+						if (entry.isIntersecting) {
+							// 延迟触发动画，避免同时触发所有动画
+							setTimeout(() => {
+								entry.target.classList.add('card-enter');
+								setTimeout(() => {
+									entry.target.classList.remove('card-enter');
+								}, 400);
+							}, index * 0.02 * 1000);
+							// 观察一次后停止观察
+							cardObserver.unobserve(entry.target);
+						}
+					});
 				});
+				
+				// 观察所有卡片元素
+				const postCards = document.querySelectorAll('.post-card-animate');
+				postCards.forEach(card => cardObserver.observe(card));
 				
 				const friendCards = document.querySelectorAll('.friend-card-animate');
-				friendCards.forEach((card, index) => {
-					card.classList.add('friend-card-enter');
-					card.style.animationDelay = `${Math.min(index * 0.04, 0.2)}s`;
-					setTimeout(() => {
-						card.classList.remove('friend-card-enter');
-						card.style.animationDelay = '';
-					}, 600);
-				});
+				friendCards.forEach(card => cardObserver.observe(card));
 				
 				const noteCards = document.querySelectorAll('.note-card-animate');
-				noteCards.forEach((card, index) => {
-					card.classList.add('note-card-enter');
-					card.style.animationDelay = `${Math.min(index * 0.05, 0.15)}s`;
-					setTimeout(() => {
-						card.classList.remove('note-card-enter');
-						card.style.animationDelay = '';
-					}, 450);
-				});
+				noteCards.forEach(card => cardObserver.observe(card));
 				
 				const postContent = document.querySelector('.post-content-animate');
 				if (postContent) {
 					postContent.classList.add('content-enter');
-					setTimeout(() => postContent.classList.remove('content-enter'), 400);
+					setTimeout(() => postContent.classList.remove('content-enter'), 350);
 				}
 				
 				const sidebar = document.querySelector('#sidebar-sticky');
 				if (sidebar) {
 					sidebar.classList.add('sidebar-enter');
-					setTimeout(() => sidebar.classList.remove('sidebar-enter'), 350);
+					setTimeout(() => sidebar.classList.remove('sidebar-enter'), 300);
 				}
 			}
 			
@@ -456,32 +461,6 @@ html {
 
 <script defer is:inline>
 
-// 延迟加载非关键CSS
-const loadOverlayScrollbarsCSS = () => {
-	const link = document.createElement('link');
-	link.rel = 'stylesheet';
-	link.href = 'https://cdn.jsdelivr.net/npm/overlayscrollbars@2.13.0/styles/overlayscrollbars.min.css';
-	link.crossOrigin = 'anonymous';
-	document.head.appendChild(link);
-};
-
-// 只在交互后加载Overlayscrollbars
-let OverlayScrollbarsLoaded = false;
-const loadOverlayScrollbars = async () => {
-	if (!OverlayScrollbarsLoaded) {
-		try {
-			loadOverlayScrollbarsCSS();
-			const { OverlayScrollbars } = await import('overlayscrollbars');
-			OverlayScrollbarsLoaded = true;
-			return OverlayScrollbars;
-		} catch (error) {
-			console.warn('Failed to load OverlayScrollbars:', error);
-			return null;
-		}
-	}
-	return null;
-};
-
 import {getStoredTheme, setTheme} from "../utils/setting-utils";
 import {pathsEqual, url} from "../utils/url-utils";
 import {
@@ -491,6 +470,10 @@ import {
 	MAIN_PANEL_OVERLAPS_BANNER_HEIGHT
 } from "../constants/constants";
 import { siteConfig } from '../config';
+
+// 移除OverlayScrollbars，使用原生滚动条
+// 移除了延迟加载非关键CSS的函数
+// 移除了加载Overlayscrollbars的函数
 
 const bannerEnabled = !!document.getElementById('banner-wrapper');
 
@@ -590,108 +573,39 @@ function loadTheme() {
 	setTheme(theme);
 }
 
-// Initialize custom scrollbar with lazy loading
-// 只在桌面端初始化自定义滚动条，移动端使用原生滚动
-async function initCustomScrollbar() {
-	// 在移动端不使用自定义滚动条
-	if (isMobile) return;
+// 移除自定义滚动条，使用原生滚动条
+// 在所有设备上都使用原生滚动条
+function setupNativeScrollbar() {
+	// 移除可能存在的自定义滚动条初始化属性
+	document.body.removeAttribute('data-overlayscrollbars-initialize');
+	document.documentElement.removeAttribute('data-overlayscrollbars-initialize');
 	
-	const OverlayScrollbars = await loadOverlayScrollbars();
-	if (!OverlayScrollbars) return;
-	
+	// 确保body元素使用原生滚动
 	const bodyElement = document.querySelector('body');
-	if (!bodyElement) return;
-	
-	// 优化滚动条配置
-	OverlayScrollbars(
-		{
-			target: bodyElement,
-			cancel: {
-				nativeScrollbarsOverlaid: true,
-				wheel: true,
-				touch: true,
-			}
-		}, {
-		scrollbars: {
-			theme: 'scrollbar-base scrollbar-auto py-1',
-			autoHide: 'move',
-			autoHideDelay: 800,
-			autoHideSuspend: true,
-		},
-		callbacks: {
-			onInitialized: () => {
-				// 滚动条初始化完成后执行
-			},
-			onDestroyed: () => {
-				// 滚动条销毁时执行清理
-			}
-		}
-	});
-	
-	// 优化：只在有元素时才初始化
-	const preElements = document.querySelectorAll('pre');
-	if (preElements.length > 0) {
-		preElements.forEach((ele) => {
-			OverlayScrollbars(ele, {
-				scrollbars: {
-					theme: 'scrollbar-base scrollbar-dark px-2',
-					autoHide: 'leave',
-					autoHideDelay: 500,
-					autoHideSuspend: false
-				}
-			});
-		});
-	}
-	
-	// 优化：只在有元素时才初始化
-	const katexElements = document.querySelectorAll('.katex-display');
-	if (katexElements.length > 0) {
-		katexElements.forEach((ele) => {
-			OverlayScrollbars(ele, {
-				scrollbars: {
-					theme: 'scrollbar-base scrollbar-auto py-1',
-				}
-			});
-		});
+	if (bodyElement) {
+		bodyElement.style.overflow = 'auto';
 	}
 }
 
-// 添加滚动事件监听器，仅在用户滚动时初始化自定义滚动条
-// 只在桌面端添加这些监听器
-let customScrollbarInitialized = false;
-function lazyInitCustomScrollbar() {
-	if (!customScrollbarInitialized && !isMobile) {
-		customScrollbarInitialized = true;
-		initCustomScrollbar();
-		// 移除事件监听器，避免重复初始化
-		window.removeEventListener('scroll', lazyInitCustomScrollbar);
-		window.removeEventListener('touchstart', lazyInitCustomScrollbar);
-	}
-}
-
-// 监听滚动和触摸事件，触发懒加载
-// 只在桌面端添加这些监听器
-if (!isMobile) {
-	window.addEventListener('scroll', lazyInitCustomScrollbar, { passive: true });
-	window.addEventListener('touchstart', lazyInitCustomScrollbar, { passive: true });
-}
+// 初始化原生滚动条
+setupNativeScrollbar();
 
 
 
 // Calculate banner height (already defined in inline script)
 
 // Initialize on page load
-function init() {
+function initApp() {
 	loadTheme();
 	// 确保navbar元素被正确获取
 	refreshNavbar();
 	// 执行一次scrollFunction以确保初始状态正确
 	scrollFunction();
-	// 不再直接初始化自定义滚动条，改为懒加载
+	// 使用原生滚动条，移除了自定义滚动条的初始化
 }
 
 // Run initial setup
-init();
+initApp();
 
 // 状态保持功能
 (function() {
@@ -773,167 +687,247 @@ function refreshNavbar() {
 }
 
 // Throttle scroll function to improve performance - 使用节流替代防抖，减少计算频率
-let lastScrollTime = 0;
-const SCROLL_THROTTLE_DELAY = isMobile ? 200 : 150; // 移动端增大节流延迟
-let lastScrollPosition = 0;
+			let lastScrollTime = 0;
+			const SCROLL_THROTTLE_DELAY = isMobile ? 250 : 100; // 减少PC端节流延迟，提高响应速度
+			let lastScrollPosition = 0;
+			let lastNavbarState = false;
+			let lastBackToTopState = false;
 
-function scrollFunction() {
-	if (!backToTopBtn || !document.body.contains(backToTopBtn)) {
-		refreshBackToTop();
-	}
-	if (!navbar || !document.body.contains(navbar)) {
-		refreshNavbar();
-	}
-	const currentTime = Date.now();
-	const currentScrollPosition = document.body.scrollTop || document.documentElement.scrollTop;
-	
-	// 节流：只在指定时间间隔后执行
-	if (currentTime - lastScrollTime < SCROLL_THROTTLE_DELAY) {
-		return;
-	}
-	
-	// 避免重复计算：只有当滚动位置变化超过一定阈值时才执行
-	if (Math.abs(currentScrollPosition - lastScrollPosition) < 10) {
-		return;
-	}
-	
-	lastScrollTime = currentTime;
-	lastScrollPosition = currentScrollPosition;
-	
-	// 回到顶部按钮：滚动超过 300px 时显示
-	if (backToTopBtn) {
-		if (currentScrollPosition > 300) {
-			backToTopBtn.classList.add('visible');
-		} else {
-			backToTopBtn.classList.remove('visible');
-		}
-	}
+			// 使用requestAnimationFrame优化滚动处理
+			let requestId = null;
 
-	// Update navbar visibility based on scroll position
-	if (bannerEnabled && navbar) {
-		const NAVBAR_HEIGHT = 72;
-		const MAIN_PANEL_EXCESS_HEIGHT = MAIN_PANEL_OVERLAPS_BANNER_HEIGHT * 16;
+			function scrollFunction() {
+				const currentTime = Date.now();
+				const currentScrollPosition = window.scrollY;
+				
+				// 节流：只在指定时间间隔后执行
+				if (currentTime - lastScrollTime < SCROLL_THROTTLE_DELAY) {
+					return;
+				}
+				
+				// 避免重复计算：只有当滚动位置变化超过一定阈值时才执行
+				if (Math.abs(currentScrollPosition - lastScrollPosition) < 10) {
+					return;
+				}
+				
+				// 取消之前的动画帧请求
+				if (requestId) {
+					cancelAnimationFrame(requestId);
+				}
+				
+				// 使用requestAnimationFrame执行滚动处理
+				requestId = requestAnimationFrame(() => {
+					lastScrollTime = currentTime;
+					lastScrollPosition = currentScrollPosition;
+					
+					// 延迟获取元素，避免频繁的 DOM 查询
+					if (!backToTopBtn) {
+						backToTopBtn = document.getElementById('back-to-top-btn');
+					}
+					if (!navbar) {
+						navbar = document.getElementById('navbar-wrapper');
+					}
+					
+					// 回到顶部按钮：滚动超过 300px 时显示
+					if (backToTopBtn) {
+						const shouldShowBackToTop = currentScrollPosition > 300;
+						if (shouldShowBackToTop !== lastBackToTopState) {
+							if (shouldShowBackToTop) {
+								backToTopBtn.classList.add('visible');
+							} else {
+								backToTopBtn.classList.remove('visible');
+							}
+							lastBackToTopState = shouldShowBackToTop;
+						}
+					}
 
-		let currentBannerHeight = BANNER_HEIGHT;
-		if (document.body.classList.contains('lg:is-home') && window.innerWidth >= 1024) {
-			currentBannerHeight = BANNER_HEIGHT_HOME;
-		}
-		
-		const threshold = window.innerHeight * (currentBannerHeight / 100) - NAVBAR_HEIGHT - MAIN_PANEL_EXCESS_HEIGHT - 16;
-		if (currentScrollPosition >= threshold) {
-			navbar.classList.add('navbar-hidden');
-		} else {
-			navbar.classList.remove('navbar-hidden');
-		}
-	}
-}
+					// Update navbar visibility based on scroll position
+					if (bannerEnabled && navbar) {
+						const NAVBAR_HEIGHT = 72;
+						const MAIN_PANEL_EXCESS_HEIGHT = MAIN_PANEL_OVERLAPS_BANNER_HEIGHT * 16;
+
+						let currentBannerHeight = BANNER_HEIGHT;
+						if (document.body.classList.contains('lg:is-home') && window.innerWidth >= 1024) {
+							currentBannerHeight = BANNER_HEIGHT_HOME;
+						}
+						
+						const threshold = window.innerHeight * (currentBannerHeight / 100) - NAVBAR_HEIGHT - MAIN_PANEL_EXCESS_HEIGHT - 16;
+						const shouldHideNavbar = currentScrollPosition >= threshold;
+						if (shouldHideNavbar !== lastNavbarState) {
+							if (shouldHideNavbar) {
+								navbar.classList.add('navbar-hidden');
+							} else {
+								navbar.classList.remove('navbar-hidden');
+							}
+							lastNavbarState = shouldHideNavbar;
+						}
+					}
+				});
+			}
 
 // Set up scroll and resize event listeners with passive option for better performance
-window.addEventListener('scroll', scrollFunction, { passive: true });
-document.addEventListener('DOMContentLoaded', () => {
-	refreshBackToTop();
-	scrollFunction();
-});
-window.addEventListener('load', () => {
-	refreshBackToTop();
-	scrollFunction();
-}, { once: true });
-
-// 移动端优化：触摸滚动事件
-if (isMobile) {
-	let touchScrollTimeout;
-	
-	window.addEventListener('touchmove', () => {
-		// 防抖处理触摸滚动
-		clearTimeout(touchScrollTimeout);
-		touchScrollTimeout = setTimeout(() => {
-			scrollFunction();
-		}, SCROLL_THROTTLE_DELAY / 2);
-	}, { passive: true });
-}
-
-// Throttle resize function to improve performance
-let lastResizeTime = 0;
-const RESIZE_THROTTLE_DELAY = isMobile ? 400 : 300; // 移动端增大resize节流延迟
-
-function resizeFunction() {
-	const currentTime = Date.now();
-	if (currentTime - lastResizeTime < RESIZE_THROTTLE_DELAY) {
-		return;
-	}
-	lastResizeTime = currentTime;
-	
-	// Recalculate banner height on resize
-	let offset = Math.floor(window.innerHeight * (BANNER_HEIGHT_EXTEND / 100));
-	offset = offset - offset % 4;
-	document.documentElement.style.setProperty('--banner-height-extend', `${offset}px`);
-	
-	// 移动端特殊处理
-	if (isMobile) {
-		// 重新计算移动端布局
-		const bodyElement = document.querySelector('body');
-		if (bodyElement) {
-			// 调整移动端的banner高度
-			if (bannerEnabled) {
-				const mobileBannerHeight = Math.min(window.innerHeight * 0.4, 300);
-				bodyElement.style.setProperty('--mobile-banner-height', `${mobileBannerHeight}px`);
+			window.addEventListener('scroll', scrollFunction, { passive: true });
+			
+			// 统一的初始化函数
+			function initScroll() {
+				refreshBackToTop();
+				scrollFunction();
 			}
-		}
-	}
-}
+			
+			// 只使用 DOMContentLoaded 事件，避免重复初始化
+			document.addEventListener('DOMContentLoaded', initScroll, { once: true });
 
-window.addEventListener('resize', resizeFunction, { passive: true });
+			// 移动端优化：触摸滚动事件
+			let touchScrollTimeout = null;
+			let touchMoveHandler = null;
+			let lastTouchTime = 0;
+			const TOUCH_THROTTLE_DELAY = 150; // 增加节流延迟，进一步减少事件触发频率
+			if (isMobile) {
+				touchMoveHandler = (event) => {
+					// 节流处理触摸滚动，减少事件触发频率
+					const currentTime = Date.now();
+					if (currentTime - lastTouchTime < TOUCH_THROTTLE_DELAY) {
+						return;
+					}
+					lastTouchTime = currentTime;
+					
+					// 防抖处理触摸滚动
+					if (touchScrollTimeout) {
+						clearTimeout(touchScrollTimeout);
+					}
+					touchScrollTimeout = window.setTimeout(() => {
+						// 优化：只在需要时调用scrollFunction
+						const currentScrollPosition = window.scrollY;
+						if (Math.abs(currentScrollPosition - lastScrollPosition) > 10) {
+							scrollFunction();
+						}
+					}, 30); // 减少防抖延迟，提高响应速度
+				};
+				// 使用passive选项，告诉浏览器不会调用preventDefault()
+				window.addEventListener('touchmove', touchMoveHandler, { passive: true });
+			}
 
-// 移动端优化：设备旋转处理
-if (isMobile) {
-	window.addEventListener('orientationchange', () => {
-		// 延迟执行，等待设备旋转完成
-		setTimeout(resizeFunction, 100);
-	}, { passive: true });
-}
+			// Throttle resize function to improve performance
+			let lastResizeTime = 0;
+			const RESIZE_THROTTLE_DELAY = isMobile ? 500 : 350; // 移动端增大resize节流延迟
+			let lastWindowWidth = window.innerWidth;
+			let lastWindowHeight = window.innerHeight;
+
+			function resizeFunction() {
+				const currentTime = Date.now();
+				const currentWidth = window.innerWidth;
+				const currentHeight = window.innerHeight;
+				
+				// 节流：只在指定时间间隔后执行
+				if (currentTime - lastResizeTime < RESIZE_THROTTLE_DELAY) {
+					return;
+				}
+				
+				// 避免重复计算：只有当窗口尺寸变化超过一定阈值时才执行
+				if (Math.abs(currentWidth - lastWindowWidth) < 10 && Math.abs(currentHeight - lastWindowHeight) < 10) {
+					return;
+				}
+				
+				lastResizeTime = currentTime;
+				lastWindowWidth = currentWidth;
+				lastWindowHeight = currentHeight;
+				
+				// Recalculate banner height on resize
+				let offset = Math.floor(window.innerHeight * (BANNER_HEIGHT_EXTEND / 100));
+				offset = offset - offset % 4;
+				document.documentElement.style.setProperty('--banner-height-extend', `${offset}px`);
+				
+				// 移动端特殊处理
+				if (isMobile) {
+					// 重新计算移动端布局
+					const bodyElement = document.querySelector('body');
+					if (bodyElement) {
+						// 调整移动端的banner高度
+						if (bannerEnabled) {
+							const mobileBannerHeight = Math.min(window.innerHeight * 0.4, 300);
+							bodyElement.style.setProperty('--mobile-banner-height', `${mobileBannerHeight}px`);
+						}
+					}
+				}
+			}
+
+			window.addEventListener('resize', resizeFunction, { passive: true });
+
+			// 移动端优化：设备旋转处理
+			let orientationChangeHandler = null;
+			if (isMobile) {
+				orientationChangeHandler = () => {
+					// 延迟执行，等待设备旋转完成
+					setTimeout(resizeFunction, 150);
+				};
+				window.addEventListener('orientationchange', orientationChangeHandler, { passive: true });
+			}
+			
+			// 清理函数，在页面卸载时移除事件监听器
+			window.addEventListener('beforeunload', () => {
+				window.removeEventListener('scroll', scrollFunction);
+				window.removeEventListener('resize', resizeFunction);
+				if (isMobile) {
+					if (touchMoveHandler) {
+						window.removeEventListener('touchmove', touchMoveHandler);
+					}
+					if (orientationChangeHandler) {
+						window.removeEventListener('orientationchange', orientationChangeHandler);
+					}
+					if (touchScrollTimeout) {
+						clearTimeout(touchScrollTimeout);
+					}
+				}
+			}, { once: true });
 
 </script>
 
 <script>
-import PhotoSwipeLightbox from "photoswipe/lightbox";
-import PhotoSwipe from "photoswipe";
+let lightbox: any;
 
-let lightbox = null;
-
-function initPhotoSwipe() {
+async function initPhotoSwipe() {
 	if (lightbox) {
 		lightbox.destroy();
 		lightbox = null;
 	}
 
-	const options = {
-		gallery: ".gallery a, .custom-md img, #post-cover img",
-		pswpModule: PhotoSwipe,
-		closeSVG: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"></line><line x1="18" y1="6" x2="6" y2="18"></line></svg>',
-		zoomSVG: '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff"><path d="M340-540h-40q-17 0-28.5-11.5T260-580q0-17 11.5-28.5T300-620h40v-40q0-17 11.5-28.5T380-700q17 0 28.5 11.5T420-660v40h40q17 0 28.5 11.5T500-580q0 17-11.5 28.5T460-540h-40v40q0 17-11.5 28.5T380-460q-17 0-28.5-11.5T340-500v-40Zm40 220q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l224 224q11 11 11 28t-11 28q-11 11-28 11t-28-11L532-372q-30 24-69 38t-83 14Zm0-80q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg>',
-		padding: { top: 20, bottom: 20, left: 20, right: 20 },
-		wheelToZoom: true,
-		arrowPrev: true,
-		arrowNext: true,
-		imageClickAction: 'zoom',
-		bgClickAction: 'close',
-		tapAction: 'toggle-controls',
-		doubleTapAction: 'zoom',
-	};
+	try {
+		// 动态导入 PhotoSwipe
+		const { default: PhotoSwipeLightbox } = await import('photoswipe/lightbox');
+		const { default: PhotoSwipe } = await import('photoswipe');
 
-	lightbox = new PhotoSwipeLightbox(options);
+		const options: any = {
+			gallery: ".gallery a, .custom-md img, #post-cover img",
+			pswpModule: PhotoSwipe,
+			closeSVG: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"></line><line x1="18" y1="6" x2="6" y2="18"></line></svg>',
+			zoomSVG: '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff"><path d="M340-540h-40q-17 0-28.5-11.5T260-580q0-17 11.5-28.5T300-620h40v-40q0-17 11.5-28.5T380-700q17 0 28.5 11.5T420-660v40h40q17 0 28.5 11.5T500-580q0 17-11.5 28.5T460-540h-40v40q0 17-11.5 28.5T380-460q-17 0-28.5-11.5T340-500v-40Zm40 220q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l224 224q11 11 11 28t-11 28q-11 11-28 11t-28-11L532-372q-30 24-69 38t-83 14Zm0-80q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg>',
+			padding: { top: 20, bottom: 20, left: 20, right: 20 },
+			wheelToZoom: true,
+			arrowPrev: true,
+			arrowNext: true,
+			imageClickAction: false,
+			bgClickAction: 'close',
+			tapAction: 'toggle-controls',
+			doubleTapAction: 'zoom',
+		};
 
-	lightbox.addFilter("domItemData", (itemData, element) => {
-		if (element instanceof HTMLImageElement) {
-			itemData.src = element.src;
-			itemData.w = Number(element.naturalWidth || window.innerWidth);
-			itemData.h = Number(element.naturalHeight || window.innerHeight);
-			itemData.msrc = element.src;
-		}
-		return itemData;
-	});
+		// @ts-ignore
+		lightbox = new PhotoSwipeLightbox(options);
 
-	lightbox.init();
+		lightbox.addFilter("domItemData", (itemData: any, element: any) => {
+			if (element instanceof HTMLImageElement) {
+				itemData.src = element.src;
+				itemData.w = Number(element.naturalWidth || window.innerWidth);
+				itemData.h = Number(element.naturalHeight || window.innerHeight);
+				itemData.msrc = element.src;
+			}
+			return itemData;
+		});
+
+		lightbox.init();
+	} catch (error) {
+		console.error('Failed to load PhotoSwipe:', error);
+	}
 }
 
 document.addEventListener('DOMContentLoaded', initPhotoSwipe);

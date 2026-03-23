@@ -1,16 +1,16 @@
 ---
+import { Image } from "astro:assets";
 import { getEntry } from "astro:content";
 import { render } from "astro:content";
 import Markdown from "@components/misc/Markdown.astro";
 import FriendsList from "@components/widget/FriendsList.astro";
 import Profile from "@components/widget/Profile.astro";
 import { Icon } from "astro-icon/components";
+import avatarImg from "../assets/images/chikann.png";
 import { profileConfig } from "../config";
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
 import MainGridLayout from "../layouts/MainGridLayout.astro";
-import { Image } from "astro:assets";
-import avatarImg from "../assets/images/chikann.png";
 
 const aboutPost = await getEntry("about", "about");
 
@@ -21,78 +21,185 @@ if (!aboutPost) {
 const { Content } = await render(aboutPost);
 ---
 <MainGridLayout title={i18n(I18nKey.about)} description={i18n(I18nKey.about)}>
-    <div class="about-page space-y-4 md:space-y-6">
-        <!-- 移动端布局 -->
-        <div class="md:hidden space-y-3">
-            <!-- 用户身份卡片 -->
-            <div class="mobile-profile-card">
-                <div class="flex items-center gap-3">
-                    <div class="avatar-wrapper">
-                        <Image src={avatarImg} alt="Profile Image" class="avatar-img" loading="eager" />
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <h1 class="profile-name">{profileConfig.name}</h1>
-                        <p class="profile-bio">{profileConfig.bio}</p>
-                    </div>
+    <!-- 移动端布局 -->
+    <div class="md:hidden space-y-3 post-content-animate">
+        <!-- 用户身份卡片 -->
+        <div class="mobile-profile-card">
+            <div class="flex items-center gap-3">
+                <div class="avatar-wrapper">
+                    <Image src={avatarImg} alt="Profile Image" class="avatar-img" loading="eager" />
                 </div>
-                <div class="social-links">
+                <div class="flex-1 min-w-0">
+                    <h1 class="profile-name">{profileConfig.name}</h1>
+                    <p class="profile-bio">{profileConfig.bio}</p>
+                </div>
+            </div>
+            <div class="social-links">
+                {profileConfig.links.map((link) => (
+                    <a href={link.url} target="_blank" rel="noopener noreferrer" class="social-link-btn">
+                        <Icon name={link.icon} class="social-icon" />
+                        <span>{link.name}</span>
+                    </a>
+                ))}
+            </div>
+        </div>
+    </div>
+    
+    <!-- 桌面端布局 -->
+    <div class="hidden md:block desktop-profile-card mb-4 md:mb-6 card-enter backdrop-blur-2xl shadow-xl">
+        <div class="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-6">
+            <div class="flex-shrink-0">
+                <Profile class="max-w-md"></Profile>
+            </div>
+            <div class="flex-1 text-center md:text-left">
+                <h1 class="text-xl md:text-2xl font-bold mb-1 md:mb-2 text-[var(--primary)] dark:text-white">{profileConfig.name}</h1>
+                <p class="text-sm md:text-base text-orange-950/60 dark:text-white/60 mb-3 md:mb-4">{profileConfig.bio}</p>
+                <div class="flex flex-col sm:flex-row gap-2 md:gap-4 justify-center md:justify-start">
                     {profileConfig.links.map((link) => (
-                        <a href={link.url} target="_blank" rel="noopener noreferrer" class="social-link-btn">
+                        <a href={link.url} target="_blank" rel="noopener noreferrer" class="desktop-social-btn">
                             <Icon name={link.icon} class="social-icon" />
                             <span>{link.name}</span>
                         </a>
                     ))}
                 </div>
             </div>
-            
-            <!-- 友链卡片 -->
-            <div class="mobile-friends-card">
-                <h3 class="card-title">友链</h3>
-                <FriendsList class="friends-list" />
-            </div>
         </div>
-        
-        <!-- 桌面端布局 -->
-        <div class="hidden md:block desktop-profile-card">
-            <div class="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-6">
-                <div class="flex-shrink-0">
-                    <Profile class="max-w-md"></Profile>
-                </div>
-                <div class="flex-1 text-center md:text-left">
-                    <h1 class="text-xl md:text-2xl font-bold mb-1 md:mb-2 text-[var(--primary)] dark:text-white">{profileConfig.name}</h1>
-                    <p class="text-sm md:text-base text-orange-950/60 dark:text-white/60 mb-3 md:mb-4">{profileConfig.bio}</p>
-                    <div class="flex flex-col sm:flex-row gap-2 md:gap-4 justify-center md:justify-start">
-                        {profileConfig.links.map((link) => (
-                            <a href={link.url} target="_blank" rel="noopener noreferrer" class="desktop-social-btn">
-                                <Icon name={link.icon} class="social-icon" />
-                                <span>{link.name}</span>
-                            </a>
-                        ))}
-                    </div>
-                </div>
-            </div>
+    </div>
+    
+    <!-- 关于我内容 -->
+    <div class="about-content-card card-enter">
+        <div class="content-header">
+            <h2 class="header-title">关于我</h2>
         </div>
-        
-        <!-- 关于我内容 -->
-        <div class="about-content-card">
-            <div class="content-header">
-                <h2 class="header-title">关于我</h2>
-            </div>
-            <div class="content-body">
-                <Markdown class="mt-2">
-                    <Content />
-                </Markdown>
-            </div>
+        <div class="content-body">
+            <Markdown class="mt-2">
+                <Content />
+            </Markdown>
         </div>
+    </div>
+    
+    <!-- 友链卡片 - 移动端 -->
+    <div class="mobile-friends-card md:hidden">
+        <h3 class="card-title">友链</h3>
+        <FriendsList class="friends-list" />
     </div>
     
     <!-- 右侧边栏 - 桌面端 -->
     <div slot="sidebar" class="hidden md:block space-y-6">
+        <!-- 友链信息卡 -->
+        <div class="desktop-friend-info-card">
+            <h3 class="sidebar-title">我的友链</h3>
+            <div class="friend-info-content">
+                <div class="friend-info-item">
+                    <span class="info-label">站点名称：</span>
+                    <span class="info-value">mikann_OMO</span>
+                </div>
+                <div class="friend-info-item">
+                    <span class="info-label">站点地址：</span>
+                    <span class="info-value">https://www.mikann.fun</span>
+                </div>
+                <div class="friend-info-item">
+                    <span class="info-label">站点头像：</span>
+                    <span class="info-value truncate">https://mikann-1359996823.cos.ap-beijing.myqcloud.com/pic/d21063851cd65685573db96d42f8dbef.png</span>
+                </div>
+                <div class="friend-info-item">
+                    <span class="info-label">站点描述：</span>
+                    <span class="info-value">是一位超级无敌可爱美少女</span>
+                </div>
+                <button class="copy-friend-btn" onclick="copyFriendLink(event)">
+                    一键复制
+                </button>
+            </div>
+        </div>
+        
         <div class="desktop-friends-card">
             <h3 class="sidebar-title">友链</h3>
             <FriendsList class="space-y-2" />
         </div>
     </div>
+    
+    <script>
+        (window as any).copyFriendLink = function(event: MouseEvent) {
+            const friendLink = `const items = [ 
+     { 
+         title: "mikann_OMO", 
+         image: 
+             "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/pic/d21063851cd65685573db96d42f8dbef.png", 
+         desc: "是一位超级无敌可爱美少女", 
+         siteurl: "https://www.mikann.fun", 
+         tags: [""], 
+     }`;
+            
+            const button = event.target as HTMLElement | null;
+            if (!button) return;
+            const originalText = button.textContent;
+            
+            // 显示加载状态
+            button.textContent = '复制中...';
+            button.style.background = '#ffb74d';
+            button.style.color = 'white';
+            
+            // 尝试使用剪贴板 API
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(friendLink).then(() => {
+                    button.textContent = '已成功复制！';
+                    button.style.background = '#4CAF50';
+                    button.style.color = 'white';
+                    
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                        button.style.background = '';
+                        button.style.color = '';
+                    }, 2000);
+                }).catch(err => {
+                    console.error('复制失败:', err);
+                    button.textContent = '复制失败';
+                    button.style.background = '#f44336';
+                    button.style.color = 'white';
+                    
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                        button.style.background = '';
+                        button.style.color = '';
+                    }, 2000);
+                });
+            } else {
+                // 降级方案
+                const textArea = document.createElement("textarea");
+                textArea.value = friendLink;
+                textArea.style.position = "fixed";
+                textArea.style.left = "-999999px";
+                textArea.style.top = "-999999px";
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                
+                try {
+                    const successful = document.execCommand('copy');
+                    if (successful) {
+                        button.textContent = '已成功复制！';
+                        button.style.background = '#4CAF50';
+                        button.style.color = 'white';
+                    } else {
+                        throw new Error('复制失败');
+                    }
+                } catch (err) {
+                    console.error('复制失败:', err);
+                    button.textContent = '复制失败';
+                    button.style.background = '#f44336';
+                    button.style.color = 'white';
+                }
+                
+                document.body.removeChild(textArea);
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = '';
+                    button.style.color = '';
+                }, 2000);
+            }
+        };
+    </script>
 </MainGridLayout>
 
 <style>
@@ -120,7 +227,7 @@ const { Content } = await render(aboutPost);
 /* 移动端样式 */
 .mobile-profile-card {
     background: rgba(255, 248, 240, 0.95);
-    border-radius: 12px;
+    border-radius: 0;
     padding: 16px;
     box-shadow: 0 2px 12px rgba(230, 74, 25, 0.08);
     border: 1px solid rgba(255, 152, 0, 0.15);
@@ -136,7 +243,7 @@ const { Content } = await render(aboutPost);
     width: 64px;
     height: 64px;
     flex-shrink: 0;
-    border-radius: 12px;
+    border-radius: 0;
     overflow: hidden;
     border: 2px solid rgba(255, 152, 0, 0.3);
     box-shadow: 0 2px 8px rgba(255, 152, 0, 0.2);
@@ -190,7 +297,7 @@ const { Content } = await render(aboutPost);
     gap: 6px;
     padding: 8px 12px;
     background: rgba(255, 152, 0, 0.1);
-    border-radius: 8px;
+    border-radius: 0;
     font-size: 0.8125rem;
     color: rgba(0, 0, 0, 0.7);
     transition: all 0.2s ease;
@@ -213,7 +320,7 @@ const { Content } = await render(aboutPost);
 
 .mobile-friends-card {
     background: rgba(255, 248, 240, 0.95);
-    border-radius: 12px;
+    border-radius: 0;
     padding: 16px;
     box-shadow: 0 2px 12px rgba(230, 74, 25, 0.08);
     border: 1px solid rgba(255, 152, 0, 0.15);
@@ -240,7 +347,7 @@ const { Content } = await render(aboutPost);
 
 .about-content-card {
     background: rgba(255, 243, 224, 0.6);
-    border-radius: 12px;
+    border-radius: 0;
     overflow: hidden;
     box-shadow: 0 2px 12px rgba(230, 74, 25, 0.08);
     border: 1px solid rgba(255, 152, 0, 0.15);
@@ -278,10 +385,10 @@ const { Content } = await render(aboutPost);
 /* 桌面端样式 */
 .desktop-profile-card {
     background: rgba(255, 248, 240, 0.1);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border-radius: 16px;
-    padding: 24px;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 0;
+    padding: 16px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
@@ -297,7 +404,7 @@ const { Content } = await render(aboutPost);
     background: rgba(255, 255, 255, 0.3);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border-radius: 8px;
+    border-radius: 0;
     font-size: 0.875rem;
     color: rgba(0, 0, 0, 0.7);
     transition: all 0.2s ease;
@@ -316,11 +423,92 @@ const { Content } = await render(aboutPost);
     background: rgba(255, 183, 77, 0.2);
 }
 
+.desktop-friend-info-card {
+    background: rgba(255, 248, 240, 0.1);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-radius: 0;
+    padding: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+:global(.dark) .desktop-friend-info-card {
+    background: rgba(28, 24, 20, 0.1);
+}
+
+.friend-info-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.friend-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.info-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.6);
+}
+
+:global(.dark) .info-label {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.info-value {
+    font-size: 0.8125rem;
+    color: var(--primary);
+    word-break: break-all;
+    white-space: normal;
+}
+
+:global(.dark) .info-value {
+    color: #ffb74d;
+}
+
+.truncate {
+    /* 移除省略号效果，确保完整显示 */
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+    word-break: break-all;
+}
+
+.copy-friend-btn {
+    margin-top: 8px;
+    padding: 6px 12px;
+    background: rgba(255, 248, 220, 0.6);
+    color: var(--primary);
+    border: 1px solid rgba(255, 152, 0, 0.3);
+    border-radius: 0;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 1px 3px rgba(255, 152, 0, 0.1);
+}
+
+.copy-friend-btn:hover {
+    background: rgba(255, 248, 220, 0.8);
+    border-color: rgba(255, 152, 0, 0.4);
+    box-shadow: 0 2px 6px rgba(255, 152, 0, 0.15);
+    transform: translateY(-1px);
+}
+
+.copy-friend-btn:active {
+    transform: translateY(0);
+    background: rgba(255, 248, 220, 0.9);
+    box-shadow: 0 1px 2px rgba(255, 152, 0, 0.1);
+}
+
 .desktop-friends-card {
     background: rgba(255, 248, 240, 0.1);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
-    border-radius: 16px;
+    border-radius: 0;
     padding: 16px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
@@ -353,7 +541,7 @@ const { Content } = await render(aboutPost);
     
     .mobile-friends-card :global(a) {
         padding: 8px 12px;
-        border-radius: 8px;
+        border-radius: 0;
         font-size: 0.8125rem;
     }
 }

@@ -188,19 +188,29 @@ for (const h of filtered) {
   };
 
   const initSpy = () => {
-    const content = document.getElementById("content-wrapper") || document;
-    const hs = Array.from(content.querySelectorAll("h1, h2, h3, h4"));
+    // 直接在文档中查找所有标题，确保能找到所有文章中的标题
+    const hs = Array.from(document.querySelectorAll("h1, h2, h3, h4"));
     if (hs.length === 0) return;
     const map = hs.map((h) => ({ id: h.id, el: h }));
     const io = new IntersectionObserver(
       (entries) => {
+        // 找出最接近视口顶部的标题
+        let closestHeading = null;
+        let closestDistance = Infinity;
+        
         entries.forEach((en) => {
-          if (en.isIntersecting) {
-            activate(en.target.id);
+          const distance = Math.abs(en.boundingClientRect().top);
+          if (distance < closestDistance) {
+            closestDistance = distance;
+            closestHeading = en.target;
           }
         });
+        
+        if (closestHeading) {
+          activate(closestHeading.id);
+        }
       },
-      { rootMargin: "0px 0px -70% 0px", threshold: 0 }
+      { rootMargin: "-100px 0px -80% 0px", threshold: 0.1 }
     );
     map.forEach((m) => m.el && io.observe(m.el));
   };

@@ -15,6 +15,7 @@ declare global {
 		busuanzi?: {
 			fetch: () => void;
 		};
+		BUSUANZI_SITE_PV?: number;
 	}
 }
 
@@ -55,6 +56,11 @@ function loadBusuanzi(): void {
 	const script = document.createElement("script");
 	script.src = "//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js";
 	script.async = true;
+	script.onload = () => {
+		if (window.busuanzi) {
+			window.busuanzi.fetch();
+		}
+	};
 	document.body.appendChild(script);
 }
 
@@ -67,37 +73,49 @@ onMount(async () => {
 	const provider = getVisitorProvider();
 	useBusuanzi = provider === "busuanzi";
 
-	if (useBusuanzi) {
+	// Check if we're in a local development environment
+	const isLocalDev = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" || window.location.hostname.includes("localhost:");
+
+	if (useBusuanzi && !isLocalDev) {
 		loadBusuanzi();
 		loading = false;
+		// Add a fallback to ensure the count is displayed
+		setTimeout(() => {
+			const busuanziElement = document.getElementById("busuanzi_value_site_pv");
+			if (busuanziElement && busuanziElement.textContent === "---") {
+				busuanziElement.textContent = "0";
+			}
+		}, 2000);
 		return;
-	}
-
-	try {
-		if (shouldTrack()) {
-			const result = await incrementSiteVisitorCount();
-			if (result.success) {
-				count = result.count;
-				markTracked();
+	} else {
+		// Use local storage for local development or when busuanzi is not available
+		useBusuanzi = false;
+		try {
+			if (shouldTrack()) {
+				const result = await incrementSiteVisitorCount();
+				if (result.success) {
+					count = result.count;
+					markTracked();
+				} else {
+					error = true;
+					const getResult = await getSiteVisitorCount();
+					if (getResult.success) {
+						count = getResult.count;
+					}
+				}
 			} else {
-				error = true;
-				const getResult = await getSiteVisitorCount();
-				if (getResult.success) {
-					count = getResult.count;
+				const result = await getSiteVisitorCount();
+				if (result.success) {
+					count = result.count;
+				} else {
+					error = true;
 				}
 			}
-		} else {
-			const result = await getSiteVisitorCount();
-			if (result.success) {
-				count = result.count;
-			} else {
-				error = true;
-			}
+		} catch {
+			error = true;
+		} finally {
+			loading = false;
 		}
-	} catch {
-		error = true;
-	} finally {
-		loading = false;
 	}
 });
 
@@ -106,7 +124,7 @@ $: displayCount = formatCount(count);
 
 <div class="visitor-counter">
 	{#if useBusuanzi}
-		<span id="busuanzi_value_site_pv" class="count">---</span>
+		<span id="busuanzi_value_site_pv" class="count">0</span>
 	{:else if loading}
 		<span class="count loading">---</span>
 	{:else if error}

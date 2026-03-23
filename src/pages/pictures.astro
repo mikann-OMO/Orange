@@ -139,17 +139,7 @@ const totalImages = albumStats.reduce((sum, stat) => sum + stat.total, 0);
 ---
 
 <MainGridLayout title={i18n(I18nKey.works)} description="图册" showAnnouncement={false} fullWidth={true}>
-	<div class="space-y-6">
-		<div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden">
-			<div class="bg-orange-100/80 dark:bg-stone-700/70 backdrop-blur-3xl border-l-4 border-orange-700 p-4">
-				<div class="flex items-center gap-3">
-					<div class="w-10 h-10 rounded-full bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center">
-						<Icon name="material-symbols:photo-library-rounded" class="text-xl text-white" />
-					</div>
-					<h1 class="text-xl font-bold text-orange-700 dark:text-white">图册</h1>
-				</div>
-			</div>
-		</div>
+	<div class="space-y-6 post-content-animate">
 
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 			<div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden rounded-lg">
@@ -196,16 +186,16 @@ const totalImages = albumStats.reduce((sum, stat) => sum + stat.total, 0);
 			</div>
 			<div class="p-4 md:p-6">
 				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-					{sorted.map((a, index) => {
-						const { picks, total } = sampleMosaic(a.data.dir, a.data.cover);
-						return (
-							<a href={`/pictures/${a.id}/`} class="group rounded-xl overflow-hidden bg-white/30 dark:bg-stone-700/30 hover:bg-white/50 dark:hover:bg-stone-600/30 transition-all duration-300 shadow-lg hover:shadow-xl border border-orange-200/30 dark:border-stone-600/30">
+				{sorted.map((a, index) => {
+					const { picks, total } = sampleMosaic(a.data.dir, a.data.cover);
+					return (
+						<a href={`/pictures/${a.id}/`} class="group rounded-xl overflow-hidden bg-white/30 dark:bg-stone-700/30 hover:bg-white/50 dark:hover:bg-stone-600/30 transition-all duration-300 shadow-lg hover:shadow-xl border border-orange-200/30 dark:border-stone-600/30 card-enter">
 								<div class="relative">
 									<div class="aspect-[4/3] overflow-hidden">
 										<div class="grid grid-cols-3 grid-rows-2 gap-[3px] h-full">
-											<img src={picks[0] || placeholder.src} alt={a.data.title} decoding="async" class="col-span-2 row-span-2 w-full h-full object-cover bg-orange-950/5 dark:bg-white/5 transition-transform duration-500 group-hover:scale-105" />
-											<img src={picks[1] || picks[0] || placeholder.src} alt={a.data.title} decoding="async" class="col-span-1 row-span-1 w-full h-full object-cover bg-orange-950/5 dark:bg-white/5 transition-transform duration-300 group-hover:scale-110" />
-											<img src={picks[2] || picks[1] || picks[0] || placeholder.src} alt={a.data.title} decoding="async" class="col-span-1 row-span-1 w-full h-full object-cover bg-orange-950/5 dark:bg-white/5 transition-transform duration-300 group-hover:scale-110" />
+											<img src={picks[0] || placeholder.src} alt={a.data.title} decoding="async" loading="lazy" class="col-span-2 row-span-2 w-full h-full object-cover bg-orange-950/5 dark:bg-white/5 transition-transform duration-500 group-hover:scale-105" />
+											<img src={picks[1] || picks[0] || placeholder.src} alt={a.data.title} decoding="async" loading="lazy" class="col-span-1 row-span-1 w-full h-full object-cover bg-orange-950/5 dark:bg-white/5 transition-transform duration-300 group-hover:scale-110" />
+											<img src={picks[2] || picks[1] || picks[0] || placeholder.src} alt={a.data.title} decoding="async" loading="lazy" class="col-span-1 row-span-1 w-full h-full object-cover bg-orange-950/5 dark:bg-white/5 transition-transform duration-300 group-hover:scale-110" />
 										</div>
 									</div>
 									<div class="absolute top-3 right-3 px-2 py-1 rounded-full bg-black/40 backdrop-blur-sm text-white text-xs font-medium flex items-center gap-1">

@@ -1,6 +1,6 @@
 import { getCollection } from "astro:content";
-import I18nKey from "../i18n/i18nKey.ts";
-import { i18n } from "../i18n/translation.ts";
+import I18nKey from "../i18n/i18nKey";
+import { i18n } from "../i18n/translation";
 
 export async function getSortedPosts(): Promise<
 	Awaited<ReturnType<typeof getCollection<"posts">>>

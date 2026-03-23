@@ -212,7 +212,7 @@ $: debouncedSearch(keyword);
             id="search-input"
             placeholder={i18n(I18nKey.search)}
             bind:value={keyword}
-            class="pl-10 pr-10 text-sm bg-transparent outline-0 h-full w-48 text-orange-900 dark:text-white placeholder:text-orange-500 dark:placeholder:text-orange-400"
+            class="pl-10 pr-10 text-sm bg-transparent outline-0 h-full w-32 sm:w-48 md:w-56 text-orange-900 dark:text-white placeholder:text-orange-500 dark:placeholder:text-orange-400"
             aria-label="搜索"
             on:keydown={handleKeyDown}
             on:focus={() => showSuggestions = keyword.trim() !== ""}

@@ -83,33 +83,33 @@
    核心动画定义
    ======================================== */
 
-/* 页面整体退出 - 优雅淡出 */
+/* 页面整体退出 - 平滑淡出 */
 @keyframes pageExit {
     0% {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: translateY(0);
         filter: blur(0);
     }
     100% {
         opacity: 0;
-        transform: translateY(-8px) scale(0.99);
+        transform: translateY(0);
         filter: blur(1px);
     }
 }
 
-/* 卡片退出 - 向上飘散 */
+/* 卡片退出 - 平滑淡出 */
 @keyframes cardExit {
     0% {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: translateY(0);
     }
     100% {
         opacity: 0;
-        transform: translateY(-16px) scale(0.96);
+        transform: translateY(0);
     }
 }
 
-/* 内容区域退出 - 淡出 */
+/* 内容区域退出 - 平滑淡出 */
 @keyframes contentExit {
     0% {
         opacity: 1;
@@ -117,7 +117,7 @@
     }
     100% {
         opacity: 0;
-        transform: translateY(-12px);
+        transform: translateY(0);
     }
 }
 
@@ -130,7 +130,7 @@
     }
     100% {
         opacity: 0;
-        transform: scale(0.98);
+        transform: scale(1);
         filter: blur(2px);
     }
 }
@@ -139,7 +139,7 @@
 @keyframes smoothFadeIn {
     0% {
         opacity: 0;
-        transform: scale(1.02);
+        transform: scale(1);
         filter: blur(2px);
     }
     100% {
@@ -149,45 +149,31 @@
     }
 }
 
-/* 卡片弹性入场 */
+/* 卡片平滑入场 */
 @keyframes cardBounceIn {
     0% {
         opacity: 0;
-        transform: translateY(24px) scale(0.95);
-    }
-    50% {
-        opacity: 1;
-        transform: translateY(-3px) scale(1.01);
-    }
-    70% {
-        transform: translateY(1px) scale(0.99);
+        transform: translateY(16px);
     }
     100% {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: translateY(0);
     }
 }
 
-/* 友链卡片入场 */
+/* 友链卡片平滑入场 */
 @keyframes friendCardBounceIn {
     0% {
         opacity: 0;
-        transform: translateY(32px) scale(0.94);
-    }
-    50% {
-        opacity: 1;
-        transform: translateY(-4px) scale(1.02);
-    }
-    70% {
-        transform: translateY(2px) scale(0.99);
+        transform: translateY(20px);
     }
     100% {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: translateY(0);
     }
 }
 
-/* 随记卡片入场 */
+/* 私语卡片入场 */
 @keyframes noteCardSlideIn {
     0% {
         opacity: 0;
@@ -229,17 +215,17 @@
 
 /* 页面退出动画 - 全局应用 */
 .page-exit-animation {
-    animation: pageExit 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
+    animation: pageExit 0.3s ease-out forwards !important;
 }
 
 .page-exit-animation .post-card-animate,
 .page-exit-animation .friend-card-animate,
 .page-exit-animation .note-card-animate {
-    animation: cardExit 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
+    animation: cardExit 0.25s ease-out forwards !important;
 }
 
 .page-exit-animation .post-content-animate {
-    animation: contentExit 0.3s ease-out forwards !important;
+    animation: contentExit 0.25s ease-out forwards !important;
 }
 
 /* 卡片退出延迟 */
@@ -268,37 +254,37 @@
 
 /* 页面入场动画 */
 .page-enter-animation {
-    animation: smoothFadeIn 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation: smoothFadeIn 0.25s ease-out forwards;
 }
 
 /* 卡片入场 */
 .card-enter {
     opacity: 0;
-    animation: cardBounceIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    animation: cardBounceIn 0.35s ease-out forwards;
 }
 
 /* 友链卡片入场 */
 .friend-card-enter {
     opacity: 0;
-    animation: friendCardBounceIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    animation: friendCardBounceIn 0.35s ease-out forwards;
 }
 
-/* 随记卡片入场 */
+/* 私语卡片入场 */
 .note-card-enter {
     opacity: 0;
-    animation: noteCardSlideIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation: noteCardSlideIn 0.3s ease-out forwards;
 }
 
 /* 内容区域入场 */
 .content-enter {
     opacity: 0;
-    animation: contentFadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation: contentFadeInUp 0.3s ease-out forwards;
 }
 
 /* 侧边栏入场 */
 .sidebar-enter {
     opacity: 0;
-    animation: sidebarSlideIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation: sidebarSlideIn 0.25s ease-out forwards;
 }
 
 /* ========================================

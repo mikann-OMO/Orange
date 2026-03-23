@@ -21,17 +21,17 @@ let links: NavBarLink[] = navBarConfig.links.map(
 const currentPath = Astro.url.pathname;
 ---
 <nav id="navbar" class="z-50" role="navigation" aria-label="Main navigation">
-    <div class="navbar-inner max-w-[var(--page-width)] h-[4.5rem] !rounded-t-none mx-auto flex items-center justify-between px-4">
+    <div class="navbar-inner max-w-[calc(var(--page-width)-30px)] h-[4.5rem] !rounded-t-none mx-auto flex items-center justify-between px-4">
         <div class="nav-left flex items-center">
-            <a href={url('/')} class="nav-home-btn rounded-lg h-[3.25rem] px-3 md:px-5 font-bold flex items-center" aria-label="Home">
+            <a href={url('/')} class="nav-home-btn rounded-lg h-[3.25rem] px-3 md:px-5 font-bold flex items-center" aria-label="Home" aria-current={currentPath === '/' ? 'page' : 'false'} tabindex="0">
                 <div class="flex flex-row items-center text-md">
                     <Icon name="material-symbols:home-outline-rounded" class="nav-home-icon text-[1.75rem] mr-1 md:mr-2 text-[var(--primary)]" />
                     <span class="nav-site-title text-[var(--primary)] font-bold text-sm md:text-base">{siteConfig.title}</span>
                 </div>
             </a>
         </div>
-        <div class="hidden lg:flex absolute left-1/2 transform -translate-x-1/2" role="list">
-            {links.map((l) => {
+        <div class="hidden lg:flex absolute left-1/2 transform -translate-x-1/2" role="list" aria-label="Main menu">
+            {links.map((l, index) => {
                 const isExternal = l.external || false;
                 const linkUrl = isExternal ? l.url : url(l.url);
                 const isActive = !isExternal && (currentPath === linkUrl || (linkUrl !== '/' && currentPath.startsWith(linkUrl)));
@@ -46,6 +46,8 @@ const currentPath = Astro.url.pathname;
                         { "nav-link-active": isActive }
                     ]}
                     role="listitem"
+                    aria-current={isActive ? 'page' : 'false'}
+                    tabindex="0"
                 >
                     <div class="flex items-center text-orange-700 dark:text-white">
                         {l.name}
@@ -67,6 +69,8 @@ const currentPath = Astro.url.pathname;
                 class="mobile-menu-btn rounded-lg h-11 w-11 flex items-center justify-center"
                 aria-label="Toggle menu"
                 aria-expanded="false"
+                aria-controls="mobile-menu"
+                tabindex="0"
             >
                 <Icon name="material-symbols:menu-rounded" class="text-[1.5rem] menu-icon text-orange-700 dark:text-orange-400" />
                 <Icon name="material-symbols:close-rounded" class="text-[1.5rem] close-icon hidden text-orange-700 dark:text-orange-400" />
@@ -74,10 +78,10 @@ const currentPath = Astro.url.pathname;
         </div>
     </div>
     
-    <div id="mobile-menu" class="mobile-menu lg:hidden hidden">
+    <div id="mobile-menu" class="mobile-menu lg:hidden hidden" role="menu" aria-label="Mobile menu">
         <div class="mobile-menu-content max-w-[var(--page-width)] mx-auto px-4 py-4">
             <div class="flex flex-col gap-1">
-                {links.map((l) => {
+                {links.map((l, index) => {
                     const isExternal = l.external || false;
                     const linkUrl = isExternal ? l.url : url(l.url);
                     const isActive = !isExternal && (currentPath === linkUrl || (linkUrl !== '/' && currentPath.startsWith(linkUrl)));
@@ -93,8 +97,11 @@ const currentPath = Astro.url.pathname;
                                 ? "bg-[var(--primary)]/15 text-[var(--primary)]" 
                                 : "text-orange-950/75 dark:text-white/75 hover:bg-orange-950/5 dark:hover:bg-white/10"
                         ]}
+                        role="menuitem"
+                        aria-current={isActive ? 'page' : 'false'}
+                        tabindex="0"
                     >
-                        <span class="font-['SimSun',serif]">{l.name}</span>
+                        <span>{l.name}</span>
                         {isExternal && <Icon name="fa6-solid:arrow-up-right-from-square" class="text-[0.75rem] opacity-50" />}
                     </a>;
                 })}

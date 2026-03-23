@@ -77,7 +77,7 @@ const totalImages = artistGroups.reduce((sum, g) => sum + g.images.length, 0);
 ---
 
 <MainGridLayout title={title} description={description} showAnnouncement={picturesAnnouncement.enabled} announcementConfig={picturesAnnouncement}>
-	<div class="space-y-6">
+	<div class="space-y-6 post-content-animate">
 		<!-- 顶部标题栏 - 简洁版本 -->
 		<div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden">
 			<div class="bg-orange-100/80 dark:bg-stone-700/70 backdrop-blur-3xl border-l-4 border-orange-700 p-4 flex items-center justify-between">
@@ -90,7 +90,7 @@ const totalImages = artistGroups.reduce((sum, g) => sum + g.images.length, 0);
 
 		<!-- 画师作品区 -->
 		{artistGroups.map((artist, index) => (
-			<div id={`artist-${index}`} class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden scroll-mt-24">
+			<div id={`artist-${index}`} class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden scroll-mt-24 card-enter">
 				<!-- 画师标题栏 -->
 				<div class="bg-orange-100/80 dark:bg-stone-700/70 backdrop-blur-3xl border-l-4 border-orange-700 p-4">
 					<div class="flex items-center gap-3">

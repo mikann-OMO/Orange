@@ -6,7 +6,7 @@ export const zh_CN: Translation = {
 	[Key.about]: "个人",
 	[Key.archive]: "归档",
 	[Key.friends]: "友链",
-	[Key.notes]: "随记",
+	[Key.notes]: "私语",
 	[Key.works]: "图集",
 	[Key.search]: "搜索",
 	[Key.searching]: "搜索中...",
@@ -23,7 +23,7 @@ export const zh_CN: Translation = {
 	[Key.untitled]: "无标题",
 	[Key.uncategorized]: "未分类",
 	[Key.noTags]: "无标签",
-	[Key.no_notes_yet]: "暂无随记",
+	[Key.no_notes_yet]: "暂无私语",
 
 	[Key.wordCount]: "字",
 	[Key.wordsCount]: "字",
@@ -45,5 +45,5 @@ export const zh_CN: Translation = {
 	[Key.author]: "作者",
 	[Key.publishedAt]: "发布于",
 	[Key.license]: "许可协议",
-	[Key.back_to_notes]: "返回随记列表",
+	[Key.back_to_notes]: "返回私语列表",
 };

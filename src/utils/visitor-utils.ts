@@ -143,6 +143,9 @@ export async function getSiteVisitorCount(): Promise<VisitorCountResult> {
 		if (visitorConfig.provider === "leancloud") {
 			const count = await getLeanCloudCount(SITE_VISITOR_KEY);
 			return { success: true, count };
+		} else if (visitorConfig.provider === "busuanzi") {
+			// For busuanzi, we'll let the client-side script handle the count
+			return { success: true, count: 0 };
 		}
 
 		const count = getLocalCount(SITE_VISITOR_KEY);
@@ -161,6 +164,9 @@ export async function incrementSiteVisitorCount(): Promise<VisitorCountResult> {
 		if (visitorConfig.provider === "leancloud") {
 			const count = await incrementLeanCloudCount(SITE_VISITOR_KEY);
 			return { success: true, count };
+		} else if (visitorConfig.provider === "busuanzi") {
+			// For busuanzi, the script automatically increments the count
+			return { success: true, count: 0 };
 		}
 
 		const count = incrementLocalCount(SITE_VISITOR_KEY);
@@ -183,6 +189,9 @@ export async function getPageVisitorCount(
 		if (visitorConfig.provider === "leancloud") {
 			const count = await getLeanCloudCount(key);
 			return { success: true, count };
+		} else if (visitorConfig.provider === "busuanzi") {
+			// For busuanzi, we'll let the client-side script handle the count
+			return { success: true, count: 0 };
 		}
 
 		const count = getLocalCount(key);
@@ -205,6 +214,9 @@ export async function incrementPageVisitorCount(
 		if (visitorConfig.provider === "leancloud") {
 			const count = await incrementLeanCloudCount(key);
 			return { success: true, count };
+		} else if (visitorConfig.provider === "busuanzi") {
+			// For busuanzi, the script automatically increments the count
+			return { success: true, count: 0 };
 		}
 
 		const count = incrementLocalCount(key);

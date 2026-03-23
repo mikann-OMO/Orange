@@ -1,0 +1,37 @@
+---
+import { Icon } from "astro-icon/components";
+import MainGridLayout from "../layouts/MainGridLayout.astro";
+import I18nKey from "../i18n/i18nKey";
+import { i18n } from "../i18n/translation";
+---
+
+<MainGridLayout title="404 - 页面未找到" description="页面未找到">
+	<div class="flex flex-col items-center justify-center min-h-[70vh] text-center p-4">
+		<div class="mb-6">
+			<Icon name="material-symbols:error-outline" class="text-6xl text-orange-500" />
+		</div>
+		<h1 class="text-3xl md:text-4xl font-bold text-orange-700 dark:text-white mb-4">404</h1>
+		<p class="text-lg md:text-xl text-orange-600/70 dark:text-gray-300 mb-8 max-w-md">
+			抱歉，您访问的页面不存在或已被移动
+		</p>
+		<a 
+			href="/" 
+			class="px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-all duration-300 flex items-center gap-2"
+			aria-label="返回首页"
+		>
+			<Icon name="material-symbols:home" />
+			返回首页
+		</a>
+	</div>
+</MainGridLayout>
+
+<style>
+	@media (max-width: 768px) {
+		h1 {
+			font-size: 2.5rem;
+		}
+		p {
+			font-size: 1rem;
+		}
+	}
+</style>

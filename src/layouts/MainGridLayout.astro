@@ -32,9 +32,13 @@ interface Props {
 	setOGTypeArticle?: boolean;
 	headings?: MarkdownHeading[];
 	fullWidth?: boolean;
+	centerContent?: boolean;
 	showAnnouncement?: boolean;
 	isPostPage?: boolean;
 	announcementConfig?: AnnouncementConfig;
+	keywords?: string[];
+	image?: string;
+	canonicalUrl?: string;
 }
 
 const {
@@ -45,9 +49,13 @@ const {
 	setOGTypeArticle,
 	headings = [],
 	fullWidth = false,
+	centerContent = false,
 	showAnnouncement = true,
 	isPostPage = false,
 	announcementConfig,
+	keywords = [],
+	image,
+	canonicalUrl,
 } = Astro.props;
 
 const activeAnnouncement = announcementConfig || announcement;
@@ -77,13 +85,13 @@ const mainPanelTop = siteConfig.banner.enable
 
 <div id="main-wrapper" class="relative w-full z-10 min-h-screen">
     <div class:list={[
-        "fixed top-0 left-0 right-0 bottom-0 z-[-1] max-w-[calc(var(--page-width)-30px)] mx-auto backdrop-blur-3xl rounded-none shadow-xl",
+        "fixed top-0 bottom-0 z-[-1] mx-auto backdrop-blur-3xl rounded-none shadow-xl",
         isPostPage ? "bg-[#fff8f0]/70 dark:bg-[#1c1814]/90" : "bg-white/10 dark:bg-[#1c1814]/60"
-    ]}></div>
+    ]} style="left: 50%; transform: translateX(-50%) scale(1); transform-origin: center center; max-width: var(--page-width); width: 100%;"></div>
     
     <div id="content-wrapper" class="relative max-w-[var(--page-width)] mx-auto h-full overflow-x-hidden">
-        <div id="main-grid" class="w-full left-0 right-0 mx-auto gap-4 md:gap-6 px-3 md:px-6 grid grid-cols-1 md:grid-cols-12 grid-rows-[auto_1fr_auto] h-full max-w-[calc(var(--page-width)-30px)]">
-            <main id="content-container" class={`${fullWidth ? 'md:col-span-12 lg:col-span-12' : 'md:col-span-8 lg:col-span-8'}`}>
+        <div id="main-grid" class="w-full gap-4 md:gap-6 px-3 md:px-6 grid grid-cols-1 md:grid-cols-12 grid-rows-[auto_1fr_auto] h-full max-w-[var(--page-width)] items-start">
+            <main id="content-container" class={`${fullWidth ? 'md:col-span-12 lg:col-span-12' : centerContent ? 'md:col-span-10 lg:col-span-10 md:col-start-2 lg:col-start-2' : 'md:col-span-8 lg:col-span-8'}`}>
                 <div class="w-full">
                     <slot></slot>
                     <div class="footer col-span-2 hidden lg:block">
@@ -93,7 +101,7 @@ const mainPanelTop = siteConfig.banner.enable
             </main>
 
             {!fullWidth && (
-                <aside class="md:col-span-4 lg:col-span-4">
+                <aside class="md:col-span-4 lg:col-span-4 pt-0 mt-0">
                     {activeAnnouncement.enabled && showAnnouncement && (
                         <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-none shadow-xl p-4 mb-6">
                             <div class="flex items-start gap-4">
@@ -151,7 +159,7 @@ const mainPanelTop = siteConfig.banner.enable
     right: 0;
     margin: 0 auto;
     height: 100%;
-    max-width: calc(var(--page-width) - 30px);
+    max-width: var(--page-width);
 }
 
 #content-container {

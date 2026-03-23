@@ -1,0 +1,79 @@
+<div class="like-container">
+  <button id="like-btn">
+    <span class="icon">👍</span>
+    <span id="like-count">加载中...</span>
+  </button>
+</div>
+
+<style>
+  .like-container {
+    text-align: center;
+    margin-top: 2rem;
+  }
+  #like-btn {
+    background: #f0f0f0;
+    border: 1px solid #ddd;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  #like-btn:hover {
+    background: #e0e0e0;
+  }
+  #like-btn.liked {
+    background: #ff4d4f;
+    color: white;
+    border-color: #ff4d4f;
+  }
+</style>
+
+<script>
+  const btn = document.getElementById('like-btn') as HTMLElement | null;
+  const countSpan = document.getElementById('like-count') as HTMLElement | null;
+
+  async function fetchCount() {
+    try {
+      const res = await fetch('/api/like');
+      const data = await res.json();
+      if (countSpan) {
+        (countSpan as HTMLElement).textContent = data.count;
+      }
+    } catch (e) {
+      if (countSpan) {
+        (countSpan as HTMLElement).textContent = '错误';
+      }
+    }
+  }
+
+  if (btn) {
+    btn.addEventListener('click', async () => {
+      if (btn.classList.contains('liked')) return;
+
+      try {
+        const res = await fetch('/api/like', { method: 'POST' });
+        if (res.ok) {
+          const data = await res.json();
+          if (countSpan) {
+            (countSpan as HTMLElement).textContent = data.count;
+          }
+          btn.classList.add('liked');
+          const icon = btn.querySelector('.icon');
+          if (icon) {
+            (icon as HTMLElement).textContent = '❤️';
+          }
+        } else {
+          alert('你已经点过赞了哦！');
+        }
+      } catch (e) {
+        alert('网络错误，请稍后再试');
+      }
+    });
+  }
+
+  fetchCount();
+</script>
