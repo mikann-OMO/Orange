@@ -94,7 +94,7 @@ const lastUpdateDateTime = latestPost ? new Date(latestPost.data.published).toIS
 				</div>
 			</div>
 			<div class="p-3 md:p-4">
-				<PostPage page={{ data: pageData }}></PostPage>
+				<PostPage page={page}></PostPage>
 				<Pagination class="mt-4 md:mt-6" page={page}></Pagination>
 			</div>
 		</div>
