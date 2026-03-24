@@ -1,5 +1,4 @@
 ---
-import type { GetStaticPaths } from "astro";
 import { Icon } from "astro-icon/components";
 import PostPage from "../components/PostPage.astro";
 import VisitorCounter from "../components/VisitorCounter.svelte";
@@ -14,13 +13,20 @@ import announcement from "../content/announcement.yaml";
 import MainGridLayout from "../layouts/MainGridLayout.astro";
 import { getSortedPosts } from "../utils/content-utils";
 
-export const getStaticPaths = (async ({ paginate }) => {
-	const allBlogPosts = await getSortedPosts();
-	return paginate(allBlogPosts, { pageSize: PAGE_SIZE });
-}) satisfies GetStaticPaths;
-
-const { page } = Astro.props;
-const pageData = page?.data || [];
+const allBlogPosts = await getSortedPosts();
+const pageData = allBlogPosts.slice(0, PAGE_SIZE);
+const page = {
+	data: pageData,
+	params: {},
+	props: {},
+	number: 1,
+	total: Math.ceil(allBlogPosts.length / PAGE_SIZE),
+	url: {
+		number: 1,
+		prev: null,
+		next: Math.ceil(allBlogPosts.length / PAGE_SIZE) > 1 ? 2 : null,
+	},
+};
 const len = pageData.length;
 const latestPost = pageData[0];
 
