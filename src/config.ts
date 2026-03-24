@@ -32,20 +32,44 @@ export const siteConfig: SiteConfig = {
 	},
 	favicon: [
 		{
-			src: "/images/chikann-circular.png",
+			src: "/favicon/favicon-light-32.png",
 			sizes: "32x32",
+			theme: "light"
 		},
 		{
-			src: "/images/chikann-circular.png",
+			src: "/favicon/favicon-dark-32.png",
+			sizes: "32x32",
+			theme: "dark"
+		},
+		{
+			src: "/favicon/favicon-light-128.png",
 			sizes: "128x128",
+			theme: "light"
 		},
 		{
-			src: "/images/chikann-circular.png",
+			src: "/favicon/favicon-dark-128.png",
+			sizes: "128x128",
+			theme: "dark"
+		},
+		{
+			src: "/favicon/favicon-light-180.png",
 			sizes: "180x180",
+			theme: "light"
 		},
 		{
-			src: "/images/chikann-circular.png",
+			src: "/favicon/favicon-dark-180.png",
+			sizes: "180x180",
+			theme: "dark"
+		},
+		{
+			src: "/favicon/favicon-light-192.png",
 			sizes: "192x192",
+			theme: "light"
+		},
+		{
+			src: "/favicon/favicon-dark-192.png",
+			sizes: "192x192",
+			theme: "dark"
 		},
 	],
 };

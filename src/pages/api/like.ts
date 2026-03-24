@@ -61,18 +61,16 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     }
   }
   
+  // 设置cookie
+  cookies.set('has_liked', 'true', {
+    path: '/',
+    maxAge: 31536000,
+    httpOnly: true,
+  });
+  
   const response = new Response(JSON.stringify({ count: newCount }), {
     headers: { 'Content-Type': 'application/json' }
   });
-  
-  // 确保response对象存在
-  if (response && response.cookies) {
-    response.cookies.set('has_liked', 'true', {
-      path: '/',
-      maxAge: 31536000,
-      httpOnly: true,
-    });
-  }
 
   return response;
 };

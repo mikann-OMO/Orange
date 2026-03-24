@@ -160,6 +160,8 @@ export default defineConfig({
 			lg: "768px",
 			xl: "1024px",
 		},
+		// 禁用 sharp 以兼容 Vercel 服务器less环境
+		sharpen: false,
 	},
 
 	// Vite 配置
