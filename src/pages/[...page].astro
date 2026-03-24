@@ -21,9 +21,10 @@ export const getStaticPaths = (async ({ paginate }) => {
 
 export const prerender = true;
 
-const { page = { data: [] } } = Astro.props;
-const len = page.data.length;
-const latestPost = page.data[0];
+const { page } = Astro.props;
+const pageData = page?.data || [];
+const len = pageData.length;
+const latestPost = pageData[0];
 
 function formatLastUpdateTime(date: Date): string {
 	const now = new Date();
@@ -107,7 +108,7 @@ const lastUpdateDateTime = latestPost
                 </div>
             </div>
             <div class="p-3 md:p-4">
-                <PostPage page={page}></PostPage>
+                <PostPage page={{ data: pageData }}></PostPage>
                 <Pagination class="mt-4 md:mt-6" page={page}></Pagination>
             </div>
         </div>
