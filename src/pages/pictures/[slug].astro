@@ -1,228 +1,60 @@
 ---
-import { getCollection } from "astro:content";
-import type { CollectionEntry } from "astro:content";
 import type { GetStaticPaths } from "astro";
 import { Icon } from "astro-icon/components";
+import { getCollection } from "astro:content";
 import MainGridLayout from "../../layouts/MainGridLayout.astro";
 
-// 图册页面专用公告配置
-const picturesAnnouncement = {
-	title: "公告",
-	content: "内容还在建设中",
-	avatar: "/images/奇卡头1.jpg",
-	enabled: true,
-};
+export const getStaticPaths = (async () => {
+  const exhibitions = await getCollection("exhibition");
+  
+  const paths = exhibitions.map((exhibition) => ({
+    params: { slug: exhibition.slug },
+  }));
+  
+  return paths;
+}) satisfies GetStaticPaths;
 
-export const getStaticPaths: GetStaticPaths = async () => {
-	const pictures = await getCollection("exhibition");
-	return pictures.map((a) => ({
-		params: { slug: a.id },
-		props: { album: a },
-	}));
-};
+export const prerender = true;
 
-interface Props {
-	album: CollectionEntry<"exhibition">;
-}
-const { album } = Astro.props as unknown as Props;
-const albumName: string = album.data.dir;
-const title: string = album.data.title || album.id;
-const description: string = album.data.description || "相册";
-
-const exhibitionImages = import.meta.glob<{ default: ImageMetadata }>(
-	"../../content/exhibition/**/*.{jpg,jpeg,png,gif,webp}",
-	{ eager: true },
+const { slug } = Astro.params;
+const exhibition = await getCollection("exhibition").then((exhibitions) =>
+  exhibitions.find((exhibition) => exhibition.slug === slug)
 );
 
-interface ArtistGroup {
-	name: string;
-	images: { src: string; alt: string; width: number; height: number }[];
+if (!exhibition) {
+  return Astro.redirect("/pictures/");
 }
-
-function getExhibitionImagesByArtist(dir: string): ArtistGroup[] {
-	const artistMap = new Map<
-		string,
-		{ src: string; alt: string; width: number; height: number }[]
-	>();
-	const dirNormalized = dir.replace(/\\/g, "/");
-
-	for (const [path, module] of Object.entries(exhibitionImages)) {
-		const pathNormalized = path.replace(/\\/g, "/");
-		if (pathNormalized.includes(`/exhibition/${dirNormalized}/`)) {
-			const img = module.default;
-			const segments = pathNormalized.split("/");
-			const exhibitionIdx = segments.findIndex((s) => s === "exhibition");
-			const artistName = segments[exhibitionIdx + 2] || "未知画师";
-
-			if (!artistMap.has(artistName)) {
-				artistMap.set(artistName, []);
-			}
-			artistMap.get(artistName)!.push({
-				src: img.src,
-				alt: title,
-				width: img.width,
-				height: img.height,
-			});
-		}
-	}
-
-	return Array.from(artistMap.entries()).map(([name, images]) => ({
-		name,
-		images,
-	}));
-}
-
-const artistGroups = getExhibitionImagesByArtist(albumName);
-const totalImages = artistGroups.reduce((sum, g) => sum + g.images.length, 0);
 ---
 
-<MainGridLayout title={title} description={description} showAnnouncement={picturesAnnouncement.enabled} announcementConfig={picturesAnnouncement}>
-	<div class="space-y-6 post-content-animate">
-		<!-- 顶部标题栏 - 简洁版本 -->
-		<div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden">
-			<div class="bg-orange-100/80 dark:bg-stone-700/70 backdrop-blur-3xl border-l-4 border-orange-700 p-4 flex items-center justify-between">
-				<h1 class="text-xl font-bold text-orange-700 dark:text-white">{title}</h1>
-				<a href="/pictures/" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/50 dark:bg-stone-600/50 hover:bg-white/80 dark:hover:bg-stone-500/50 transition-colors">
-					<Icon name="material-symbols:arrow-back-rounded" class="text-xl text-orange-700 dark:text-white" />
-				</a>
-			</div>
-		</div>
-
-		<!-- 画师作品区 -->
-		{artistGroups.map((artist, index) => (
-			<div id={`artist-${index}`} class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden scroll-mt-24 card-enter">
-				<!-- 画师标题栏 -->
-				<div class="bg-orange-100/80 dark:bg-stone-700/70 backdrop-blur-3xl border-l-4 border-orange-700 p-4">
-					<div class="flex items-center gap-3">
-						<div class="w-8 h-8 rounded-full bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center text-white font-bold text-sm">
-							{artist.name.charAt(0)}
-						</div>
-						<h2 class="text-lg font-bold text-orange-700 dark:text-white">{artist.name}</h2>
-					</div>
-				</div>
-				
-				<!-- 图片瀑布流 -->
-				<div class="p-4 md:p-6">
-					<div class="gallery-masonry columns-2 md:columns-3 gap-3 md:gap-4">
-						{artist.images.map((img) => (
-							<div class="break-inside-avoid mb-3 md:mb-4">
-								<div class="overflow-hidden rounded-sm shadow-md hover:shadow-xl transition-shadow duration-300 bg-white/50 dark:bg-stone-700/50">
-									<a href={img.src} target="_blank" rel="noopener noreferrer" class="block relative group">
-										<img 
-											src={img.src} 
-											alt={img.alt} 
-											loading="lazy" 
-											decoding="async"
-											class="w-full h-auto object-cover"
-										/>
-										<div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300 flex items-center justify-center">
-											<div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-												<div class="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
-													<Icon name="material-symbols:open-in-new-rounded" class="text-lg text-orange-700" />
-												</div>
-											</div>
-										</div>
-									</a>
-									</div>
-								</div>
-							))}
-						</div>
-					</div>
-				</div>
-			))}
-
-		<!-- 空状态 -->
-		{artistGroups.length === 0 && (
-			<div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden">
-				<div class="bg-orange-100/80 dark:bg-stone-700/70 backdrop-blur-3xl border-l-4 border-orange-700 p-4">
-					<h2 class="text-lg font-bold text-orange-700 dark:text-white">暂无图片</h2>
-				</div>
-				<div class="p-12 text-center">
-					<Icon name="material-symbols:image-rounded" class="text-5xl text-orange-300 dark:text-stone-600 mb-4" />
-					<p class="text-sm text-orange-600/70 dark:text-gray-400">请将图片放入 src/content/exhibition/{albumName}/ 目录</p>
-				</div>
-			</div>
-		)}
-	</div>
-
-	<!-- 右侧边栏 -->
-	<div slot="sidebar" class="space-y-6">
-		<!-- 统计信息 -->
-		<div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden">
-			<div class="bg-orange-100/80 dark:bg-stone-700/70 backdrop-blur-3xl border-l-4 border-orange-700 p-4">
-				<h3 class="text-base font-bold text-orange-700 dark:text-white">统计</h3>
-			</div>
-			<div class="p-4 space-y-3">
-				<div class="flex items-center gap-3">
-					<div class="w-10 h-10 rounded-lg bg-orange-200/50 dark:bg-stone-600/50 flex items-center justify-center">
-						<Icon name="material-symbols:photo-library-rounded" class="text-xl text-orange-700 dark:text-orange-300" />
-					</div>
-					<div>
-						<p class="text-2xl font-bold text-orange-700 dark:text-white">{totalImages}</p>
-						<p class="text-xs text-orange-600/70 dark:text-gray-400">张图片</p>
-					</div>
-				</div>
-				<div class="flex items-center gap-3">
-					<div class="w-10 h-10 rounded-lg bg-orange-200/50 dark:bg-stone-600/50 flex items-center justify-center">
-						<Icon name="material-symbols:person-rounded" class="text-xl text-orange-700 dark:text-orange-300" />
-					</div>
-					<div>
-						<p class="text-2xl font-bold text-orange-700 dark:text-white">{artistGroups.length}</p>
-						<p class="text-xs text-orange-600/70 dark:text-gray-400">位画师</p>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<!-- 画师列表 -->
-		{artistGroups.length > 0 && (
-			<div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden">
-				<div class="bg-orange-100/80 dark:bg-stone-700/70 backdrop-blur-3xl border-l-4 border-orange-700 p-4">
-					<h3 class="text-base font-bold text-orange-700 dark:text-white">画师</h3>
-				</div>
-				<div class="p-2">
-					{artistGroups.map((artist, index) => (
-						<a 
-							href={`#artist-${index}`}
-							class="flex items-center gap-3 p-3 rounded-lg hover:bg-orange-200/30 dark:hover:bg-stone-600/30 transition-colors group"
-						>
-							<div class="w-8 h-8 rounded-full bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
-								{artist.name.charAt(0)}
-							</div>
-							<div class="flex-1 min-w-0">
-								<p class="text-sm font-medium text-orange-700 dark:text-white truncate group-hover:text-orange-800 dark:group-hover:text-orange-200">
-									{artist.name}
-								</p>
-								<p class="text-xs text-orange-600/60 dark:text-gray-500">{artist.images.length} 张</p>
-							</div>
-							<Icon name="material-symbols:chevron-right-rounded" class="text-lg text-orange-400 dark:text-stone-500 flex-shrink-0" />
-						</a>
-					))}
-				</div>
-			</div>
-		)}
-	</div>
+<MainGridLayout title={exhibition.data.title} description={exhibition.data.description}>
+  <div class="space-y-6">
+    <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-2xl rounded-none shadow-xl p-4 md:p-6">
+      <h1 class="text-2xl md:text-3xl font-bold mb-6 text-[var(--primary)] dark:text-white">{exhibition.data.title}</h1>
+      
+      {exhibition.data.description && (
+        <p class="text-orange-950/70 dark:text-white/70 mb-6">
+          {exhibition.data.description}
+        </p>
+      )}
+      
+      {exhibition.data.works && (
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+          {exhibition.data.works.map((work: any, index: number) => (
+            <div key={index} class="bg-orange-50 dark:bg-stone-700/50 rounded-lg overflow-hidden shadow-md">
+              <img 
+                src={work.image} 
+                alt={work.title || `作品 ${index + 1}`} 
+                class="w-full h-auto object-cover hover:opacity-90 transition-opacity"
+              />
+              {work.title && (
+                <div class="p-3">
+                  <h3 class="font-medium text-orange-700 dark:text-white">{work.title}</h3>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
 </MainGridLayout>
-
-<style>
-	.gallery-masonry {
-		column-gap: 0.75rem;
-	}
-	
-	@media (min-width: 768px) {
-		.gallery-masonry {
-			column-gap: 1rem;
-		}
-	}
-	
-	.gallery-masonry > div {
-		break-inside: avoid;
-		margin-bottom: 0.75rem;
-	}
-	
-	@media (min-width: 768px) {
-		.gallery-masonry > div {
-			margin-bottom: 1rem;
-		}
-	}
-</style>

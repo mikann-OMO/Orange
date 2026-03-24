@@ -1,55 +1,47 @@
 ---
-import ArchivePanel from "../../../components/ArchivePanel.astro";
-import Breadcrumb from "../../../components/control/Breadcrumb.astro";
-import I18nKey from "../../../i18n/i18nKey";
-import { i18n } from "../../../i18n/translation";
+import type { GetStaticPaths } from "astro";
+import { Icon } from "astro-icon/components";
+import PostPage from "../../../components/PostPage.astro";
+import Pagination from "../../../components/control/Pagination.astro";
 import MainGridLayout from "../../../layouts/MainGridLayout.astro";
-import { getCategoryList } from "../../../utils/content-utils";
+import { getSortedPosts } from "../../../utils/content-utils";
+import { PAGE_SIZE } from "../../../constants/constants";
 
-export async function getStaticPaths() {
-	const categories = await getCategoryList();
+export const getStaticPaths = (async ({ paginate, params }) => {
+  const allPosts = await getSortedPosts();
+  const categories = [...new Set(allPosts.map(post => post.data.category))];
+  
+  const paths = categories.map(category => ({
+    params: { category },
+  }));
+  
+  return paths;
+}) satisfies GetStaticPaths;
 
-	const standardPaths = categories.map((category) => {
-		return {
-			params: {
-				category: encodeURIComponent(category.name.trim()),
-			},
-			props: {
-				decodedCategory: category.name.trim(),
-			},
-		};
-	});
+export const prerender = true;
 
-	const nonEncodedCJKPaths = categories
-		.filter((category) =>
-			/[\u3000-\u9fff\uac00-\ud7af\u4e00-\u9faf]/.test(category.name),
-		)
-		.map((category) => ({
-			params: {
-				category: category.name.trim(), // Do not encode CJK characters
-			},
-			props: {
-				decodedCategory: category.name.trim(),
-			},
-		}));
-
-	return [...standardPaths, ...nonEncodedCJKPaths];
-}
-
-const { decodedCategory } = Astro.props;
-const category =
-	decodedCategory || decodeURIComponent(Astro.params.category as string);
+const { category } = Astro.params;
+const allPosts = await getSortedPosts();
+const filteredPosts = allPosts.filter(post => post.data.category === category);
+const { page } = Astro.props;
 ---
 
-<MainGridLayout title={i18n(I18nKey.archive)} description={i18n(I18nKey.archive)}>
-    <div class="max-w-[50rem] mx-auto w-full">
-        <Breadcrumb 
-            items={[
-                { label: "首页", url: "/" },
-                { label: "归档", url: "/archive" },
-                { label: category, isActive: true }
-            ]} 
-        />
-        <ArchivePanel categories={[category]}></ArchivePanel>
+<MainGridLayout title={`分类: ${category}`}>
+  <div class="space-y-4 md:space-y-6">
+    <div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl rounded-none shadow-xl overflow-hidden">
+      <div class="bg-orange-100/80 dark:bg-stone-700/70 backdrop-blur-2xl border-l-4 border-orange-700 p-3 md:p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+        <h1 class="text-xl md:text-2xl font-bold text-orange-700 dark:text-white">
+          <Icon name="fa6-solid:folder" class="inline-block mr-2 mb-1" />
+          分类: {category}
+        </h1>
+        <span class="text-xs md:text-sm text-orange-950/60 dark:text-white/60">
+          共 {filteredPosts.length} 篇文章
+        </span>
+      </div>
+      <div class="p-3 md:p-4">
+        <PostPage page={page} />
+        <Pagination class="mt-4 md:mt-6" page={page} />
+      </div>
     </div>
+  </div>
 </MainGridLayout>

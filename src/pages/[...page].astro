@@ -19,7 +19,9 @@ export const getStaticPaths = (async ({ paginate }) => {
 	return paginate(allBlogPosts, { pageSize: PAGE_SIZE });
 }) satisfies GetStaticPaths;
 
-const { page } = Astro.props;
+export const prerender = true;
+
+const { page = { data: [] } } = Astro.props;
 const len = page.data.length;
 const latestPost = page.data[0];
 
@@ -197,18 +199,18 @@ const lastUpdateDateTime = latestPost
         gap: 12px;
     }
     
-    .bg-white\\/10,
-    .bg-orange-100\\/60 {
+    .bg-white\/10,
+    .bg-orange-100\/60 {
         border-radius: 12px;
         margin: 0;
         box-shadow: 0 2px 12px rgba(230, 74, 25, 0.08);
         border: 1px solid rgba(255, 152, 0, 0.12);
     }
     
-    :global(.dark) .bg-white\\/10,
-    :global(.dark) .bg-orange-100\\/60,
-    :global(.dark) .bg-stone-800\\/40,
-    :global(.dark) .bg-stone-800\\/10 {
+    :global(.dark) .bg-white\/10,
+    :global(.dark) .bg-orange-100\/60,
+    :global(.dark) .bg-stone-800\/40,
+    :global(.dark) .bg-stone-800\/10 {
         border-radius: 12px;
         box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
         border: 1px solid rgba(255, 255, 255, 0.05);
@@ -222,7 +224,7 @@ const lastUpdateDateTime = latestPost
         padding: 12px;
     }
     
-    .grid-cols-1.xs\\:grid-cols-2 {
+    .grid-cols-1.xs\:grid-cols-2 {
         gap: 10px;
     }
     
@@ -270,7 +272,7 @@ const lastUpdateDateTime = latestPost
         border-left-width: 3px;
     }
     
-    .py-2\\.5 {
+    .py-2\.5 {
         padding-top: 10px;
         padding-bottom: 10px;
     }
@@ -279,7 +281,7 @@ const lastUpdateDateTime = latestPost
         gap: 12px;
     }
     
-    .flex-col.sm\\:flex-row {
+    .flex-col.sm\:flex-row {
         flex-direction: column;
         gap: 8px;
     }

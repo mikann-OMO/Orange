@@ -1,147 +1,76 @@
 ---
-
+import type { GetStaticPaths } from "astro";
+import { Icon } from "astro-icon/components";
 import { getCollection } from "astro:content";
 import Markdown from "../../components/misc/Markdown.astro";
-import { profileConfig, siteConfig } from "../../config";
-import I18nKey from "../../i18n/i18nKey";
-import { i18n } from "../../i18n/translation";
 import MainGridLayout from "../../layouts/MainGridLayout.astro";
-import { formatDate, formatDateToYYYYMMDD } from "../../utils/date-utils";
+import { getSortedPosts } from "../../utils/content-utils";
 
-// 获取所有随记并生成静态路径
-export async function getStaticPaths() {
-	const notes = await getCollection("notes");
-	// 严格过滤有效且非草稿的note
-	const validNotes = notes.filter((note) => {
-		return (
-			note &&
-			typeof note === "object" &&
-			note.data &&
-			typeof note.data === "object" &&
-			!note.data.draft
-		);
-	});
-	return validNotes.map((note) => ({
-		params: { slug: note.slug },
-		props: { note },
-	}));
+export const getStaticPaths = (async () => {
+  const notes = await getCollection("notes");
+  
+  const paths = notes.map((note) => ({
+    params: { slug: note.slug.split("/") },
+  }));
+  
+  return paths;
+}) satisfies GetStaticPaths;
+
+export const prerender = true;
+
+const { slug } = Astro.params;
+const note = await getCollection("notes").then((notes) =>
+  notes.find((note) => note.slug === slug.join("/"))
+);
+
+if (!note) {
+  return Astro.redirect("/notes/");
 }
 
-// 获取当前随记数据
-const { note } = Astro.props;
-const { Content, headings } = await note.render();
-
-// 生成结构化数据
-const jsonLd = {
-	"@context": "https://schema.org",
-	"@type": "NoteDigitalDocument",
-	headline: note.data.title || "私语",
-	description: "私语内容",
-	author: {
-		"@type": "Person",
-		name: profileConfig.name,
-		url: Astro.site,
-	},
-	datePublished: formatDateToYYYYMMDD(note.data.published),
-	inLanguage: note.data.lang
-		? note.data.lang.replace("_", "-")
-		: siteConfig.lang.replace("_", "-"),
-};
+const relatedNotes = (await getSortedPosts("notes"))
+  .filter((relatedNote) => relatedNote.slug !== note.slug)
+  .slice(0, 5);
 ---
 
-<MainGridLayout title={note.data.title || "私语"} description="私语内容" lang={note.data.lang} setOGTypeArticle={true} headings={headings}>
-    <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
-    
-    <div class="bg-white/15 dark:bg-stone-800/15 backdrop-blur-3xl rounded-none shadow-xl overflow-hidden p-6">
-        <div class="max-w-2xl mx-auto w-full">
-            <!-- 私语图片 -->
-            {note.data.image && (
-                <div class="note-image w-full mb-4 overflow-hidden rounded-md">
-                    <img 
-                        src={note.data.image} 
-                        alt="Note image" 
-                        class="w-full h-auto max-h-64 object-contain transition-transform duration-500 hover:scale-102"
-                    />
-                </div>
-            )}
-            
-            <!-- 私语头部 -->
-            <div class="note-header mb-4">
-                <!-- 日期 -->
-                <div class="text-xs text-orange-950/60 dark:text-white/60 font-mono mb-4 border-b border-orange-200/30 dark:border-white/10 pb-2">
-                    {formatDate(note.data.published)}
-                </div>
-                
-                <!-- 标题 -->
-                {note.data.title && (
-                    <h1 class="text-xl md:text-2xl font-medium text-orange-950 dark:text-white font-['SimSun',serif]">
-                        {note.data.title}
-                    </h1>
-                )}
-            </div>
-
-            <!-- 私语内容 -->
-            <div class="note-content whitespace-pre-wrap">
-                <Markdown class="markdown-content prose dark:prose-invert max-w-none">
-                    <Content />
-                </Markdown>
-            </div>
-
-            <!-- 返回私语列表 -->
-            <div class="mt-6">
-                <a 
-                    href="/notes/"
-                    class="inline-flex items-center gap-2 px-5 py-2 rounded-md font-medium transition-all duration-300 bg-[var(--btn-regular-bg)] hover:bg-[var(--btn-regular-bg-hover)] border border-orange-200/30 dark:border-white/30 text-white hover:shadow-md hover:-translate-y-1"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M19 12H5M12 19l-7-7 7-7"/>
-                    </svg>
-                    {i18n(I18nKey.back_to_notes)}
-                </a>
-            </div>
+<MainGridLayout title={note.data.title} description={note.data.description}>
+  <div class="space-y-6">
+    <article class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-2xl rounded-none shadow-xl p-4 md:p-6">
+      <header class="mb-6">
+        <h1 class="text-2xl md:text-3xl font-bold mb-4 text-[var(--primary)] dark:text-white">{note.data.title}</h1>
+        <div class="flex flex-wrap items-center gap-2 text-sm text-orange-950/60 dark:text-white/60">
+          <time datetime={note.data.date}>
+            <Icon name="fa6-regular:calendar" class="inline-block mr-1" />
+            {new Date(note.data.date).toLocaleDateString("zh-CN")}
+          </time>
         </div>
-    </div>
-
-    <style>
-        /* 私语内容样式 */
-        .note-content {
-            overflow: auto;
-            max-height: calc(100vh - 400px);
-            line-height: 1.8;
-        }
-        
-        /* Markdown 内容美化 */
-        .markdown-content {
-            color: var(--text-primary);
-        }
-        
-        .markdown-content p {
-            margin-bottom: 0.875rem;
-        }
-        
-        /* 图片样式优化 */
-        .markdown-content img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 6px;
-            margin: 1rem 0;
-        }
-        
-        /* 响应式设计 */
-        @media (max-width: 768px) {
-            .note-content {
-                max-height: calc(100vh - 350px);
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .note-header h1 {
-                font-size: 1.5rem;
-            }
-            
-            .note-content {
-                max-height: calc(100vh - 300px);
-            }
-        }
-    </style>
+      </header>
+      
+      <div class="prose prose-orange dark:prose-invert max-w-none">
+        <Markdown content={note.body} />
+      </div>
+    </article>
+    
+    {relatedNotes.length > 0 && (
+      <div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl rounded-none shadow-xl overflow-hidden">
+        <div class="bg-orange-100/80 dark:bg-stone-700/70 backdrop-blur-2xl border-l-4 border-orange-700 p-3 md:p-4">
+          <h2 class="text-lg font-bold text-orange-700 dark:text-white">相关笔记</h2>
+        </div>
+        <div class="p-4">
+          <ul class="space-y-2">
+            {relatedNotes.map((relatedNote) => (
+              <li key={relatedNote.slug}>
+                <a 
+                  href={`/notes/${relatedNote.slug}`} 
+                  class="flex items-center gap-2 hover:text-orange-700 dark:hover:text-white transition-colors"
+                >
+                  <Icon name="fa6-regular:file-lines" class="w-4 h-4 flex-shrink-0" />
+                  <span>{relatedNote.data.title}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    )}
+  </div>
 </MainGridLayout>
