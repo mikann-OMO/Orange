@@ -1,35 +1,35 @@
 ---
+import { getCollection } from "astro:content";
 import type { GetStaticPaths } from "astro";
 import { Icon } from "astro-icon/components";
-import { getCollection } from "astro:content";
 import Markdown from "../../components/misc/Markdown.astro";
 import MainGridLayout from "../../layouts/MainGridLayout.astro";
 import { getSortedPosts } from "../../utils/content-utils";
 
 export const getStaticPaths = (async () => {
-  const notes = await getCollection("notes");
-  
-  const paths = notes.map((note) => ({
-    params: { slug: note.slug.split("/") },
-  }));
-  
-  return paths;
+	const notes = await getCollection("notes");
+
+	const paths = notes.map((note) => ({
+		params: { slug: note.slug },
+	}));
+
+	return paths;
 }) satisfies GetStaticPaths;
 
 export const prerender = true;
 
 const { slug } = Astro.params;
 const note = await getCollection("notes").then((notes) =>
-  notes.find((note) => note.slug === slug.join("/"))
+	notes.find((note) => note.slug === slug),
 );
 
 if (!note) {
-  return Astro.redirect("/notes/");
+	return Astro.redirect("/notes/");
 }
 
 const relatedNotes = (await getSortedPosts("notes"))
-  .filter((relatedNote) => relatedNote.slug !== note.slug)
-  .slice(0, 5);
+	.filter((relatedNote) => relatedNote.slug !== note.slug)
+	.slice(0, 5);
 ---
 
 <MainGridLayout title={note.data.title} description={note.data.description}>

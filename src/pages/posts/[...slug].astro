@@ -1,43 +1,47 @@
 ---
+import { getCollection } from "astro:content";
 import type { GetStaticPaths } from "astro";
 import { Icon } from "astro-icon/components";
-import { getCollection } from "astro:content";
-import Markdown from "../../components/misc/Markdown.astro";
 import PostMeta from "../../components/PostMeta.astro";
+import Markdown from "../../components/misc/Markdown.astro";
 import MainGridLayout from "../../layouts/MainGridLayout.astro";
 
 export const getStaticPaths = (async () => {
-  const posts = await getCollection("posts");
-  
-  const paths = posts.map((post) => ({
-    params: { slug: post.slug.split("/") },
-  }));
-  
-  return paths;
+	const posts = await getCollection("posts");
+
+	const paths = posts.map((post) => ({
+		params: { slug: post.slug },
+	}));
+
+	return paths;
 }) satisfies GetStaticPaths;
 
 export const prerender = true;
 
 const { slug } = Astro.params;
 const post = await getCollection("posts").then((posts) =>
-  posts.find((post) => post.slug === slug.join("/"))
+	posts.find((post) => post.slug === slug),
 );
 
 if (!post) {
-  return Astro.redirect("/");
+	return Astro.redirect("/");
 }
 
 const prevNext = await getCollection("posts").then((posts) => {
-  const sortedPosts = posts
-    .filter((p) => p.slug !== post.slug)
-    .sort((a, b) => new Date(b.data.published).getTime() - new Date(a.data.published).getTime());
-  
-  const currentIndex = sortedPosts.findIndex((p) => p.slug === post.slug);
-  
-  return {
-    prev: sortedPosts[currentIndex - 1],
-    next: sortedPosts[currentIndex + 1],
-  };
+	const sortedPosts = posts
+		.filter((p) => p.slug !== post.slug)
+		.sort(
+			(a, b) =>
+				new Date(b.data.published).getTime() -
+				new Date(a.data.published).getTime(),
+		);
+
+	const currentIndex = sortedPosts.findIndex((p) => p.slug === post.slug);
+
+	return {
+		prev: sortedPosts[currentIndex - 1],
+		next: sortedPosts[currentIndex + 1],
+	};
 });
 ---
 
