@@ -51,6 +51,8 @@ export default defineConfig({
 
 	// 构建配置
 	build: {
+		// 输出目录
+		outDir: "dist",
 		// 静态资源目录
 		assetsDir: "_astro",
 		// 启用构建缓存
