@@ -658,6 +658,18 @@ setupNativeScrollbar();
 
 // Calculate banner height (already defined in inline script)
 
+// Initialize scroll elements
+let backToTopBtn = document.getElementById('back-to-top-btn');
+let navbar = document.getElementById('navbar-wrapper');
+
+function refreshBackToTop() {
+	backToTopBtn = document.getElementById('back-to-top-btn');
+}
+
+function refreshNavbar() {
+	navbar = document.getElementById('navbar-wrapper');
+}
+
 // Initialize on page load
 function initApp() {
 	loadTheme();
@@ -737,18 +749,6 @@ initApp();
 		restoreFilterState();
 	});
 })();
-
-// Initialize scroll elements
-let backToTopBtn = document.getElementById('back-to-top-btn');
-let navbar = document.getElementById('navbar-wrapper');
-
-function refreshBackToTop() {
-	backToTopBtn = document.getElementById('back-to-top-btn');
-}
-
-function refreshNavbar() {
-	navbar = document.getElementById('navbar-wrapper');
-}
 
 // Throttle scroll function to improve performance - 使用节流替代防抖，减少计算频率
 			let lastScrollTime = 0;
