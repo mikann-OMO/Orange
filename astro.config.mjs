@@ -1,10 +1,10 @@
 // Astro 配置文件
 // 用于配置 Astro 项目的各种设置，包括构建选项、集成、Markdown 处理等
 
-import node from "@astrojs/node";
 import sitemap from "@astrojs/sitemap";
 import svelte from "@astrojs/svelte";
 import tailwind from "@astrojs/tailwind";
+import vercel from "@astrojs/vercel/serverless";
 
 import yaml from "@rollup/plugin-yaml";
 import icon from "astro-icon";
@@ -41,6 +41,8 @@ export default defineConfig({
 	site: "https://www.mikann.fun",
 	// 网站基础路径，默认为根路径
 	base: "/",
+	// 输出模式：server 用于 SSR
+	output: "server",
 	// 启用内置预加载 - 与 View Transitions 兼容
 	prefetch: {
 		prefetchAll: false, // 只预加载用户悬停的链接，减少资源消耗
@@ -337,5 +339,9 @@ export default defineConfig({
 	},
 
 	// 适配器配置
-	adapter: node({ mode: "standalone" }),
+	adapter: vercel({
+		webAnalytics: {
+			enabled: true,
+		},
+	}),
 });
