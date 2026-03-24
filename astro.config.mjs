@@ -144,24 +144,12 @@ export default defineConfig({
 	// 启用 HTML 压缩
 	compressHTML: true,
 
-	// 图片处理配置
+	// 图片处理配置 - 禁用 sharp 以兼容 Vercel 服务器less环境
 	image: {
-		quality: 80, // 图片质量（0-100）
-		formats: ["avif", "webp", "jpeg"], // 支持的图片格式
-		fallbackFormat: "jpeg", //  fallback 格式
-		loading: "lazy", // 懒加载
-		decoding: "async", // 异步解码
-		// 响应式图片配置
-		responsive: true,
-		// 自动生成多种尺寸的图片
-		sizes: {
-			sm: "320px",
-			md: "640px",
-			lg: "768px",
-			xl: "1024px",
-		},
-		// 禁用 sharp 以兼容 Vercel 服务器less环境
-		sharpen: false,
+		// 禁用所有需要 sharp 的功能
+		responsive: false,
+		formats: ["jpeg"],
+		quality: 80,
 	},
 
 	// Vite 配置
