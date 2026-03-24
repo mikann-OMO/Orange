@@ -38,9 +38,9 @@ const relatedNotes = (await getSortedPosts("notes"))
       <header class="mb-6">
         <h1 class="text-2xl md:text-3xl font-bold mb-4 text-[var(--primary)] dark:text-white">{note.data.title}</h1>
         <div class="flex flex-wrap items-center gap-2 text-sm text-orange-950/60 dark:text-white/60">
-          <time datetime={note.data.date}>
+          <time datetime={note.data.published}>
             <Icon name="fa6-regular:calendar" class="inline-block mr-1" />
-            {new Date(note.data.date).toLocaleDateString("zh-CN")}
+            {new Date(note.data.published).toLocaleDateString("zh-CN")}
           </time>
         </div>
       </header>
