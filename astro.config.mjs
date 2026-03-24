@@ -38,7 +38,7 @@ import { remarkReadingTime } from "./src/plugins/remark-reading-time.mjs";
  */
 export default defineConfig({
 	// 网站域名配置 - 请替换为你的实际域名
-	site: "https://www.mikann.fun",
+	site: "https://mikann.fun",
 	// 网站基础路径，默认为根路径
 	base: "/",
 	// 输出模式：server 用于 SSR
@@ -62,6 +62,9 @@ export default defineConfig({
 		// 是否生成 sourcemap
 		sourcemap: false,
 	},
+
+	// 公共路径配置
+	publicDir: "public",
 
 	// 集成配置
 	integrations: [
