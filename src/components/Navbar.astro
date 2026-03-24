@@ -406,7 +406,8 @@ const currentPath = Astro.url.pathname;
 })();
 </script>
 
-{import.meta.env.PROD && <script is:inline>
+{/* 在 SSR 模式下禁用 Pagefind */}
+{/* import.meta.env.PROD && <script is:inline>
 async function loadPagefind() {
     const scriptUrl = '/pagefind/pagefind.js';
     const pagefind = await import(scriptUrl);
@@ -421,4 +422,4 @@ async function loadPagefind() {
 document.addEventListener('DOMContentLoaded', () => {
     loadPagefind();
 });
-</script>}
+</script> */}

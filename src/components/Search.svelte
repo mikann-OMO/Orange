@@ -40,36 +40,8 @@ const loadPostsIndex = async () => {
 };
 
 const loadPagefind = async () => {
-	if (pagefindLoaded) return;
-	if (import.meta.env.DEV) return;
-
-	try {
-		if (typeof window !== "undefined") {
-			if ("pagefind" in window) {
-				pagefindLoaded = true;
-				return;
-			}
-
-			const scriptUrl = url("/pagefind/pagefind.js");
-			const script = document.createElement("script");
-			script.src = scriptUrl;
-
-			await new Promise<void>((resolve, reject) => {
-				script.onload = () => {
-					if ("pagefind" in window) {
-						pagefindLoaded = true;
-						resolve();
-					} else {
-						reject(new Error("Pagefind loaded but not available"));
-					}
-				};
-				script.onerror = () => reject(new Error("Failed to load Pagefind"));
-				document.head.appendChild(script);
-			});
-		}
-	} catch (error) {
-		console.error("Error loading Pagefind:", error);
-	}
+	// 在 SSR 模式下禁用 Pagefind
+	return;
 };
 
 const search = async (searchKeyword: string): Promise<void> => {
@@ -82,56 +54,25 @@ const search = async (searchKeyword: string): Promise<void> => {
 	isSearching = true;
 
 	try {
-		if (import.meta.env.PROD && pagefindLoaded) {
-			if (typeof window !== "undefined" && "pagefind" in window) {
-				try {
-					const pagefindObj = (
-						window as Window & {
-							pagefind: {
-								search: (query: string) => Promise<{
-									results: Array<{
-										title: string;
-										url: string;
-										excerpt?: string;
-									}>;
-								}>;
-							};
-						}
-					).pagefind;
-					const results = await pagefindObj.search(searchKeyword);
-					suggestions = results.results
-						.slice(0, 5)
-						.map(
-							(result: { title: string; url: string; excerpt?: string }) => ({
-								title: result.title,
-								url: result.url,
-								excerpt: result.excerpt || "",
-							}),
-						);
-					showSuggestions = suggestions.length > 0;
-				} catch (error) {
-					console.error("Pagefind search error:", error);
-				}
-			}
-		} else {
-			const lowerKeyword = searchKeyword.toLowerCase();
-			suggestions = postsIndex
-				.filter(
-					(item) =>
-						item.title.toLowerCase().includes(lowerKeyword) ||
-						item.description.toLowerCase().includes(lowerKeyword) ||
-						item.category.toLowerCase().includes(lowerKeyword) ||
-						item.tags.some((tag) => tag.toLowerCase().includes(lowerKeyword)) ||
-						item.body.toLowerCase().includes(lowerKeyword),
-				)
-				.slice(0, 5)
-				.map((item) => ({
-					title: item.title,
-					url: item.url,
-					excerpt: item.description || item.body.substring(0, 100),
-				}));
-			showSuggestions = suggestions.length > 0;
-		}
+		// 在所有环境下都使用本地 postsIndex 进行搜索
+		await loadPostsIndex();
+		const lowerKeyword = searchKeyword.toLowerCase();
+		suggestions = postsIndex
+			.filter(
+				(item) =>
+					item.title.toLowerCase().includes(lowerKeyword) ||
+					item.description.toLowerCase().includes(lowerKeyword) ||
+					item.category.toLowerCase().includes(lowerKeyword) ||
+					item.tags.some((tag) => tag.toLowerCase().includes(lowerKeyword)) ||
+					item.body.toLowerCase().includes(lowerKeyword),
+			)
+			.slice(0, 5)
+			.map((item) => ({
+				title: item.title,
+				url: item.url,
+				excerpt: item.description || item.body.substring(0, 100),
+			}));
+		showSuggestions = suggestions.length > 0;
 	} catch (error) {
 		console.error("Search error:", error);
 	} finally {
@@ -185,11 +126,8 @@ const handleClickOutside = (event: MouseEvent) => {
 };
 
 onMount(async () => {
-	pagefindLoaded = typeof window !== "undefined" && "pagefind" in window;
-
-	if (import.meta.env.DEV) {
-		await loadPostsIndex();
-	}
+	// 在所有环境下都加载 postsIndex
+	await loadPostsIndex();
 
 	document.addEventListener("click", handleClickOutside);
 });
