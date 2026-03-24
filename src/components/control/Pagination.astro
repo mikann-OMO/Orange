@@ -17,19 +17,16 @@ const className = Astro.props.class;
 const ADJ_DIST = 2;
 const VISIBLE = ADJ_DIST * 2 + 1;
 
-// 检查 page 是否为 undefined
-const isPageValid = !!page;
-
 // for test
 let count = 1;
 let l = 1;
 let r = 1;
 let pages: number[] = [];
 
-if (isPageValid) {
-	l = page.number;
-	r = page.number;
-	while (0 < l - 1 && r + 1 <= page.total && count + 2 <= VISIBLE) {
+if (page) {
+	l = page.currentPage;
+	r = page.currentPage;
+	while (0 < l - 1 && r + 1 <= page.lastPage && count + 2 <= VISIBLE) {
 		count += 2;
 		l--;
 		r++;
@@ -38,7 +35,7 @@ if (isPageValid) {
 		count++;
 		l--;
 	}
-	while (r + 1 <= page.total && count < VISIBLE) {
+	while (r + 1 <= page.lastPage && count < VISIBLE) {
 		count++;
 		r++;
 	}
@@ -47,9 +44,9 @@ if (isPageValid) {
 	if (l === 3) pages.push(2);
 	if (l > 3) pages.push(HIDDEN);
 	for (let i = l; i <= r; i++) pages.push(i);
-	if (r < page.total - 2) pages.push(HIDDEN);
-	if (r === page.total - 2) pages.push(page.total - 1);
-	if (r < page.total) pages.push(page.total);
+	if (r < page.lastPage - 2) pages.push(HIDDEN);
+	if (r === page.lastPage - 2) pages.push(page.lastPage - 1);
+	if (r < page.lastPage) pages.push(page.lastPage);
 }
 
 const getPageUrl = (p: number) => {
@@ -58,28 +55,36 @@ const getPageUrl = (p: number) => {
 };
 ---
 
-{isPageValid && (
-	<div class={`${className || ''} flex flex-row gap-1 sm:gap-3 justify-center`} style={style}>
-		<a href={page.url.prev || ""} aria-label={page.url.prev ? "Previous Page" : null}
-			class={`btn-card overflow-hidden rounded-lg text-[var(--primary)] w-9 h-9 sm:w-11 sm:h-11 ${page.url.prev == undefined ? 'disabled' : ''}`}>
-			<Icon name="material-symbols:chevron-left-rounded" class="text-[1.5rem] sm:text-[1.75rem]"></Icon>
-		</a>
-		<div class="flex flex-row rounded-lg items-center text-orange-950/75 dark:text-white/75 font-bold">
-			{pages.map((p) => {
-				if (p == HIDDEN)
-					return <Icon name="material-symbols:more-horiz" class="mx-0.5 sm:mx-1"/>;
-				if (p == page.number)
-					return <div class="h-9 w-9 sm:h-11 sm:w-11 rounded-lg bg-[var(--primary)] flex items-center justify-center
-						font-bold text-white dark:text-white/70 text-sm sm:text-base">
-						{p}
-					</div>;
-				return <a href={url(getPageUrl(p))} aria-label={`Page ${p}`}
-					class="btn-card w-9 h-9 sm:w-11 sm:h-11 rounded-lg overflow-hidden active:scale-[0.85] text-sm sm:text-base">{p}</a>;
-			})}
-		</div>
-		<a href={page.url.next || ""} aria-label={page.url.next ? "Next Page" : null}
-			class={`btn-card overflow-hidden rounded-lg text-[var(--primary)] w-9 h-9 sm:w-11 sm:h-11 ${page.url.next == undefined ? 'disabled' : ''}`}>
-			<Icon name="material-symbols:chevron-right-rounded" class="text-[1.5rem] sm:text-[1.75rem]"></Icon>
-		</a>
-	</div>
+{page && (
+<div class:list={[className, "flex flex-row gap-1 sm:gap-3 justify-center"]} style={style}>
+    <a href={page.url.prev || ""} aria-label={page.url.prev ? "Previous Page" : null}
+       class:list={["btn-card overflow-hidden rounded-lg text-[var(--primary)] w-9 h-9 sm:w-11 sm:h-11",
+           {"disabled": page.url.prev == undefined}
+       ]}
+    >
+        <Icon name="material-symbols:chevron-left-rounded" class="text-[1.5rem] sm:text-[1.75rem]"></Icon>
+    </a>
+    <div class="flex flex-row rounded-lg items-center text-orange-950/75 dark:text-white/75 font-bold">
+        {pages.map((p) => {
+            if (p == HIDDEN)
+                return <Icon name="material-symbols:more-horiz" class="mx-0.5 sm:mx-1"/>;
+            if (p == page.currentPage)
+                return <div class="h-9 w-9 sm:h-11 sm:w-11 rounded-lg bg-[var(--primary)] flex items-center justify-center
+                    font-bold text-white dark:text-white/70 text-sm sm:text-base"
+                >
+                    {p}
+                </div>
+            return <a href={url(getPageUrl(p))} aria-label={`Page ${p}`}
+                class="btn-card w-9 h-9 sm:w-11 sm:h-11 rounded-lg overflow-hidden active:scale-[0.85] text-sm sm:text-base"
+            >{p}</a>
+        })}
+    </div>
+    <a href={page.url.next || ""} aria-label={page.url.next ? "Next Page" : null}
+       class:list={["btn-card overflow-hidden rounded-lg text-[var(--primary)] w-9 h-9 sm:w-11 sm:h-11",
+           {"disabled": page.url.next == undefined}
+       ]}
+    >
+        <Icon name="material-symbols:chevron-right-rounded" class="text-[1.5rem] sm:text-[1.75rem]"></Icon>
+    </a>
+</div>
 )}
