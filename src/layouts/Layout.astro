@@ -459,17 +459,81 @@ html {
 }
 </style>
 
-<script defer type="module">
+<script defer is:inline>
 
-import {getStoredTheme, setTheme} from "../utils/setting-utils";
-import {pathsEqual, url} from "../utils/url-utils";
-import {
-	BANNER_HEIGHT,
-	BANNER_HEIGHT_HOME,
-	BANNER_HEIGHT_EXTEND,
-	MAIN_PANEL_OVERLAPS_BANNER_HEIGHT
-} from "../constants/constants";
-import { siteConfig } from '../config';
+// 主题相关常量
+const LIGHT_MODE = 'light';
+const DARK_MODE = 'dark';
+const AUTO_MODE = 'auto';
+const DEFAULT_THEME = 'auto';
+
+// 布局相关常量
+const BANNER_HEIGHT = 70;
+const BANNER_HEIGHT_HOME = 80;
+const BANNER_HEIGHT_EXTEND = 120;
+const MAIN_PANEL_OVERLAPS_BANNER_HEIGHT = 6;
+
+// 主题相关函数
+function getStoredTheme() {
+	return localStorage.getItem('theme') || DEFAULT_THEME;
+}
+
+function setTheme(theme) {
+	// 先存储主题，再应用
+	localStorage.setItem('theme', theme);
+	applyThemeToDocument(theme);
+}
+
+function applyThemeToDocument(theme) {
+	// 使用 requestAnimationFrame 来批量处理主题切换，减少重绘和回流
+	requestAnimationFrame(() => {
+		switch (theme) {
+			case LIGHT_MODE:
+				document.documentElement.classList.remove("dark");
+				break;
+			case DARK_MODE:
+				document.documentElement.classList.add("dark");
+				break;
+			case AUTO_MODE:
+				// Auto mode: check system preference
+				if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+					document.documentElement.classList.add("dark");
+				} else {
+					document.documentElement.classList.remove("dark");
+				}
+				break;
+		}
+
+		// 触发主题变化事件
+		const event = new CustomEvent("themeChange", { detail: { theme } });
+		window.dispatchEvent(event);
+	});
+}
+
+// URL 相关函数
+function pathsEqual(path1, path2) {
+	// 移除尾部斜杠并转换为小写进行比较
+	const normalizedPath1 = path1.replace(/\/$/, "").toLowerCase();
+	const normalizedPath2 = path2.replace(/\/$/, "").toLowerCase();
+	return normalizedPath1 === normalizedPath2;
+}
+
+function url(path) {
+	// 确保路径以斜杠开头
+	if (!path.startsWith("/")) {
+		path = "/" + path;
+	}
+	return path;
+}
+
+// 站点配置
+const siteConfig = {
+	banner: {
+		enable: true,
+		src: "/images/背景.png",
+		position: "center"
+	}
+};
 
 // 移除OverlayScrollbars，使用原生滚动条
 // 移除了延迟加载非关键CSS的函数
