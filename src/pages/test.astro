@@ -1,0 +1,20 @@
+---
+// 加载所有展览图片
+const exhibitionImageModules = import.meta.glob<{ default: import("astro").ImageMetadata }>(
+	"../content/exhibition/**/*.{jpg,jpeg,png,gif,webp}",
+	{ eager: true },
+);
+
+console.log("exhibitionImageModules:", exhibitionImageModules);
+console.log("exhibitionImageModules keys:", Object.keys(exhibitionImageModules));
+---
+
+<html>
+<head>
+	<title>Test Page</title>
+</head>
+<body>
+	<h1>Test Page</h1>
+	<p>Check the browser console for debug information.</p>
+</body>
+</html>

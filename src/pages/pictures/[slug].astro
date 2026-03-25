@@ -24,7 +24,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 interface Props {
 	album: CollectionEntry<"exhibition">;
 }
-const { album } = Astro.props as unknown as Props;
+const { album } = Astro.props;
 const albumName: string = album.data.dir;
 const title: string = album.data.title || album.id;
 const description: string = album.data.description || "相册";

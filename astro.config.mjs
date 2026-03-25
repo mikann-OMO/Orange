@@ -1,10 +1,10 @@
 // Astro 配置文件
 // 用于配置 Astro 项目的各种设置，包括构建选项、集成、Markdown 处理等
 
-import node from "@astrojs/node";
 import sitemap from "@astrojs/sitemap";
 import svelte from "@astrojs/svelte";
 import tailwind from "@astrojs/tailwind";
+import vercel from "@astrojs/vercel";
 
 import yaml from "@rollup/plugin-yaml";
 import icon from "astro-icon";
@@ -337,5 +337,5 @@ export default defineConfig({
 	},
 
 	// 适配器配置
-	adapter: node({ mode: "standalone" }),
+	adapter: vercel(),
 });
