@@ -25,16 +25,25 @@ const totalPages = Math.ceil(totalNotes / pageSize);
 // 获取当前页码（从URL参数中获取，默认为1）
 const url = new URL(Astro.request.url);
 const currentPage = Number.parseInt(url.searchParams.get("page") || "1");
-const page = Math.max(1, Math.min(currentPage, totalPages));
+const currentPageNum = Math.max(1, Math.min(currentPage, totalPages));
 
 // 计算当前页显示的笔记范围
-const startIndex = (page - 1) * pageSize;
+const startIndex = (currentPageNum - 1) * pageSize;
 const endIndex = startIndex + pageSize;
 const paginatedNotes = sortedNotes.slice(startIndex, endIndex);
 
-console.log(
-	`Notes count: ${totalNotes}, Current page: ${page}, Total pages: ${totalPages}`,
-);
+// 创建分页对象
+const page = {
+	currentPage: currentPageNum,
+	lastPage: totalPages,
+	url: {
+		prev: currentPageNum > 1 ? `/notes?page=${currentPageNum - 1}` : undefined,
+		next:
+			currentPageNum < totalPages
+				? `/notes?page=${currentPageNum + 1}`
+				: undefined,
+	},
+};
 ---
 
 <MainGridLayout title={i18n(I18nKey.notes)} description={i18n(I18nKey.notes)} showAnnouncement={false} fullWidth={false} centerContent={true}>
@@ -96,9 +105,7 @@ console.log(
                 {totalPages > 1 && (
                     <div class="flex justify-center mt-8">
                         <Pagination
-                            current={page}
-                            total={totalPages}
-                            url="/notes"
+                            page={page}
                         />
                     </div>
                 )}

@@ -55,7 +55,6 @@ if (isLocal) {
 	for (const normalizedPath of pathsToTry) {
 		const file = files[normalizedPath];
 		if (file) {
-			console.log(`Found image at: ${normalizedPath}`);
 			img = await file();
 			found = true;
 			break;

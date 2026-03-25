@@ -121,9 +121,7 @@ const { title = "留言板" } = Astro.props;
           
           for (const source of CDN_SOURCES) {
             try {
-              console.log(`[Guestbook] Trying to load from ${source.name}...`);
               await loadScriptFromUrl(source.url);
-              console.log(`[Guestbook] Successfully loaded from ${source.name}`);
               sessionStorage.setItem('cwdWidgetLoaded', 'true');
               sessionStorage.setItem('cwdWidgetSource', source.name);
               return;

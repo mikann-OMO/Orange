@@ -57,12 +57,15 @@ function getExhibitionImagesByArtist(dir: string): ArtistGroup[] {
 			if (!artistMap.has(artistName)) {
 				artistMap.set(artistName, []);
 			}
-			artistMap.get(artistName)!.push({
-				src: img.src,
-				alt: title,
-				width: img.width,
-				height: img.height,
-			});
+			const images = artistMap.get(artistName);
+			if (images) {
+				images.push({
+					src: img.src,
+					alt: title,
+					width: img.width,
+					height: img.height,
+				});
+			}
 		}
 	}
 
