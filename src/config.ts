@@ -86,11 +86,12 @@ export const visitorConfig: VisitorConfig = {
 
 /**
  * 评论系统配置
- * 支持 Twikoo、CWD、MongoDB 评论系统
+ * 支持 Twikoo 评论系统
  */
 export const commentConfig = {
-	provider: "mongodb" as const,
-	// 部署 Vercel API 后替换为你的域名
-	// 本地开发可使用 http://localhost:3000
-	apiBaseUrl: import.meta.env.VITE_COMMENT_API_URL || "https://comments.mikan.fun",
+	provider: "twikoo" as const,
+	// Twikoo Cloudflare Worker 地址
+	envId:
+		import.meta.env.VITE_TWIKOO_ENV_ID ||
+		"https://twikoo.2744167586.workers.dev",
 };

@@ -1,0 +1,125 @@
+---
+// Twikoo 评论组件
+// 用于在博客文章中显示 Twikoo 评论系统
+
+interface Props {
+	envId: string;
+	path?: string;
+}
+
+const { envId, path } = Astro.props;
+---
+
+<div class="max-w-[50rem] mx-auto w-full rounded-[var(--radius-large)] overflow-hidden relative mb-3 md:mb-4">
+	<div class="card-base z-10 px-4 md:px-6 lg:px-9 pt-4 md:pt-6 pb-3 md:pb-4 relative w-full">
+		<div id="twikoo-container"></div>
+	</div>
+</div>
+
+<script is:inline define:vars={{ envId, path }}>
+	(function () {
+		// 获取当前主题
+		const getTheme = () =>
+			document.documentElement.classList.contains("dark") ? "dark" : "light";
+
+		// 加载 Twikoo 脚本
+		const loadTwikoo = () => {
+			return new Promise((resolve, reject) => {
+				if (window.twikoo) {
+					resolve(window.twikoo);
+					return;
+				}
+
+				const script = document.createElement("script");
+				script.src = "https://cdn.jsdelivr.net/npm/twikoo@1.6.41/dist/twikoo.all.min.js";
+				script.async = true;
+				script.defer = true;
+				script.crossOrigin = "anonymous";
+
+				script.onload = () => resolve(window.twikoo);
+				script.onerror = () => reject(new Error("Failed to load Twikoo"));
+
+				document.head.appendChild(script);
+			});
+		};
+
+		// 初始化 Twikoo
+		const initTwikoo = async () => {
+			const container = document.querySelector("#twikoo-container");
+			if (!container) return;
+
+			try {
+				await loadTwikoo();
+
+				window.twikoo.init({
+					envId: envId,
+					el: "#twikoo-container",
+					path: path || window.location.pathname,
+					lang: "zh-CN",
+				});
+			} catch (error) {
+				console.error("[Twikoo] Failed to initialize:", error);
+				container.innerHTML = `
+					<div class="py-6 text-center text-orange-950/60 dark:text-white/60">
+						<div class="mb-2 text-base font-medium">评论加载失败</div>
+						<div class="mb-3 text-sm opacity-80">请检查网络连接或稍后重试</div>
+						<button id="retry-twikoo" class="px-3 py-1.5 bg-[var(--primary)] text-white rounded-lg hover:bg-[var(--primary)]/80 transition-colors text-sm">
+							重新加载
+						</button>
+					</div>
+				`;
+
+				const retryBtn = document.getElementById("retry-twikoo");
+				if (retryBtn) {
+					retryBtn.addEventListener("click", () => {
+						container.innerHTML = "";
+						initTwikoo();
+					});
+				}
+			}
+		};
+
+		// 监听主题变化
+		const observer = new MutationObserver((mutations) => {
+			for (const mutation of mutations) {
+				if (
+					mutation.attributeName === "class" &&
+					window.twikoo &&
+					typeof window.twikoo.getCommentsCount === "function"
+				) {
+					// Twikoo 会自动适应主题变化
+				}
+			}
+		});
+		observer.observe(document.documentElement, { attributes: true });
+
+		// 延迟加载，提高页面性能
+		if ("IntersectionObserver" in window) {
+			const io = new IntersectionObserver(
+				(entries) => {
+					for (const entry of entries) {
+						if (entry.isIntersecting) {
+							io.disconnect();
+							initTwikoo();
+						}
+					}
+				},
+				{
+					rootMargin: "100px",
+					threshold: 0.05,
+				}
+			);
+
+			const container = document.querySelector("#twikoo-container");
+			if (container) io.observe(container);
+		} else {
+			// 降级处理
+			initTwikoo();
+		}
+
+		// Astro 页面加载完成后重新初始化
+		document.addEventListener("astro:page-load", () => {
+			initTwikoo();
+		});
+	})();
+</script>
