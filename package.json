@@ -6,7 +6,8 @@
 	"scripts": {
 		"dev": "astro dev",
 		"start": "astro dev",
-		"build": "astro build && pagefind --site dist",
+		"build": "astro build && pagefind --site dist || echo 'Pagefind index build failed, continuing deployment'",
+		"build-only": "astro build",
 		"preview": "astro preview",
 		"astro": "astro",
 		"new-post": "node scripts/new-post.js",

@@ -147,6 +147,7 @@ export default defineConfig({
 		formats: ["avif", "webp", "jpeg"], // 支持的图片格式
 		fallbackFormat: "jpeg", //  fallback 格式
 		loading: "lazy", // 懒加载
+		sharp: false // 禁用sharp，以兼容@astrojs/vercel/serverless适配器
 		decoding: "async", // 异步解码
 		// 响应式图片配置
 		responsive: true,
