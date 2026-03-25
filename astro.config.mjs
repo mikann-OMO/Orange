@@ -4,7 +4,6 @@
 import sitemap from "@astrojs/sitemap";
 import svelte from "@astrojs/svelte";
 import tailwind from "@astrojs/tailwind";
-import vercel from "@astrojs/vercel/serverless";
 
 import yaml from "@rollup/plugin-yaml";
 import icon from "astro-icon";
@@ -20,8 +19,6 @@ import remarkGithubAdmonitionsToDirectives from "remark-github-admonitions-to-di
 import remarkMath from "remark-math";
 import remarkSectionize from "remark-sectionize";
 
-// 旧浏览器支持
-import legacy from "@vitejs/plugin-legacy";
 // PWA 支持 - 暂时禁用
 // import { VitePWA } from "vite-plugin-pwa";
 
@@ -41,8 +38,8 @@ export default defineConfig({
 	site: "https://mikan.fun",
 	// 网站基础路径，默认为根路径
 	base: "/",
-	// 输出模式，server支持服务器端渲染和API路由
-	output: "server",
+	// 输出模式，使用静态模式以兼容Cloudflare Pages
+	output: "static",
 	// 启用内置预加载 - 与 View Transitions 兼容
 	prefetch: {
 		prefetchAll: false, // 只预加载用户悬停的链接，减少资源消耗
@@ -147,7 +144,6 @@ export default defineConfig({
 		formats: ["avif", "webp", "jpeg"], // 支持的图片格式
 		fallbackFormat: "jpeg", //  fallback 格式
 		loading: "lazy", // 懒加载
-		sharp: false, // 禁用sharp，以兼容@astrojs/vercel/serverless适配器
 		decoding: "async", // 异步解码
 		// 响应式图片配置
 		responsive: true,
@@ -166,17 +162,6 @@ export default defineConfig({
 		plugins: [
 			yaml({
 				include: "**/*.yaml",
-			}),
-			// 旧浏览器支持
-			legacy({
-				targets: ["defaults", "not IE 11"],
-				additionalLegacyPolyfills: ["regenerator-runtime/runtime"],
-				polyfills: [
-					"es.object.assign",
-					"es.promise",
-					"es.array.find",
-					"es.array.includes",
-				],
 			}),
 			// PWA 配置 - 暂时禁用
 			// VitePWA({
@@ -297,7 +282,7 @@ export default defineConfig({
 				},
 			},
 			// Terser 配置
-			terserOptions: {
+			treeserOptions: {
 				compress: {
 					drop_console: true, // 移除 console
 					drop_debugger: true, // 移除 debugger
@@ -338,7 +323,4 @@ export default defineConfig({
 			},
 		},
 	},
-
-	// 适配器配置
-	adapter: vercel(),
 });
