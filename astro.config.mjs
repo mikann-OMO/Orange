@@ -19,6 +19,9 @@ import remarkGithubAdmonitionsToDirectives from "remark-github-admonitions-to-di
 import remarkMath from "remark-math";
 import remarkSectionize from "remark-sectionize";
 
+// PWA 支持 - 暂时禁用
+// import { VitePWA } from "vite-plugin-pwa";
+
 // 自定义插件
 import { AdmonitionComponent } from "./src/plugins/rehype-component-admonition.mjs";
 import { GithubCardComponent } from "./src/plugins/rehype-component-github-card.mjs";
@@ -160,6 +163,77 @@ export default defineConfig({
 			yaml({
 				include: "**/*.yaml",
 			}),
+			// PWA 配置 - 暂时禁用
+			// VitePWA({
+			// 注册类型
+			// registerType: "autoUpdate",
+			// 包含的静态资源
+			// includeAssets: ["favicon/**/*", "images/**/*"],
+			// 应用清单
+			// manifest: {
+			// name: "我的博客", // 应用名称
+			// short_name: "博客", // 应用短名称
+			// description: "我的个人技术博客", // 应用描述
+			// theme_color: "#ffffff", // 主题颜色
+			// background_color: "#ffffff", // 背景颜色
+			// 应用图标
+			// icons: [
+			// {
+			// src: "favicon/favicon-light-192.webp",
+			// sizes: "192x192",
+			// type: "image/webp",
+			// purpose: "any maskable",
+			// },
+			// {
+			// src: "favicon/favicon-light-512.webp",
+			// sizes: "512x512",
+			// type: "image/webp",
+			// purpose: "any maskable",
+			// },
+			// ],
+			// },
+			// Workbox 配置
+			// workbox: {
+			// 缓存模式
+			// globPatterns: ["**/*.{js,css,html,ico,png,svg,webp,avif}"],
+			// globIgnores: ["**/*.yaml"],
+			// 最大缓存文件大小（字节）
+			// maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10 MiB
+			// 运行时缓存
+			// runtimeCaching: [
+			// {
+			// Google 字体缓存
+			// urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+			// handler: "CacheFirst",
+			// options: {
+			// cacheName: "google-fonts-cache",
+			// expiration: {
+			// maxEntries: 10,
+			// maxAgeSeconds: 60 * 60 * 24 * 365, // 1 年
+			// },
+			// cacheableResponse: {
+			// statuses: [0, 200],
+			// },
+			// },
+			// },
+			// {
+			// Google 字体静态资源缓存
+			// urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
+			// handler: "CacheFirst",
+			// options: {
+			// cacheName: "google-fonts-static-cache",
+			// expiration: {
+			// maxEntries: 10,
+			// maxAgeSeconds: 60 * 60 * 24 * 365, // 1 年
+			// },
+			// cacheableResponse: {
+			// statuses: [0, 200],
+			// },
+			// },
+			// },
+			// ],
+			// },
+			// }),
 		],
 
 		// 路径别名配置
