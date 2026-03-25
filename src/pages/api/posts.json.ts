@@ -1,7 +1,7 @@
 import { getCollection } from "astro:content";
-import type { APIRoute } from "astro";
 
-export const GET: APIRoute = async () => {
+// 静态生成搜索索引JSON文件
+export async function get() {
 	const posts = await getCollection("posts", ({ data }) => {
 		return import.meta.env.PROD ? data.draft !== true : true;
 	});
@@ -15,10 +15,13 @@ export const GET: APIRoute = async () => {
 		body: post.body || "",
 	}));
 
-	return new Response(JSON.stringify(searchIndex), {
-		status: 200,
+	return {
+		body: JSON.stringify(searchIndex),
 		headers: {
 			"Content-Type": "application/json",
 		},
-	});
-};
+	};
+}
+
+// 预渲染为静态文件
+export const prerender = true;

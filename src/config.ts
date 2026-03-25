@@ -77,6 +77,11 @@ export const licenseConfig: LicenseConfig = {
 export const visitorConfig: VisitorConfig = {
 	enable: true,
 	provider: "busuanzi",
+	leancloud: {
+		appId: import.meta.env.VITE_APP_ID || "",
+		appKey: import.meta.env.VITE_APP_KEY || "",
+		serverUrl: import.meta.env.VITE_LEANCLOUD_SERVER_URL || "",
+	},
 };
 
 /**
@@ -87,5 +92,5 @@ export const commentConfig = {
 	provider: "mongodb" as const,
 	// 部署 Vercel API 后替换为你的域名
 	// 本地开发可使用 http://localhost:3000
-	apiBaseUrl: "https://comments.mikan.fun",
+	apiBaseUrl: import.meta.env.VITE_COMMENT_API_URL || "https://comments.mikan.fun",
 };

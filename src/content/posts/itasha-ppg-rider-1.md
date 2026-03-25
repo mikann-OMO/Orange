@@ -20,11 +20,11 @@ draft: false
 
 **首先找到车身图片以及车型数据** [宝骏悦也plus26版](https://www.autohome.com.cn/7574/#pvareaid=100125)
 
-<div style="display: flex; gap: 10px; flex-wrap: nowrap; align-items: center;"><img src="/images/毛毛痛车/数据.png" alt="数据图" style="width: 65%; height: auto;"></div>
+<div style="display: flex; gap: 10px; flex-wrap: nowrap; align-items: center;"><img src="/images/itasha/data.png" alt="数据图" style="width: 65%; height: auto;"></div>
 
 已知痛车的主题的ip是**飞天小女警**，车主的主推是**毛毛（buttercup）**，代表色是**绿色**。由于我并没有看过这部动画片，于是我上网查阅了这个角色的设定。但认识一个角色不能这么片面，于是我又上了各大平台搜索了相关词条去深入了解这个角色，为设计寻找思路。更多看的都是图文。（大多是从小红书上看到的，小红书的图文做的相当好，很适合找一些IP资料图片）
 
-<div style="display: flex; gap: 10px; flex-wrap: nowrap; align-items: center;"><img src="/images/毛毛痛车/毛毛.png" alt="毛毛" style="width: 65%; height: auto;"></div>
+<div style="display: flex; gap: 10px; flex-wrap: nowrap; align-items: center;"><img src="/images/itasha/momo.png" alt="毛毛" style="width: 65%; height: auto;"></div>
 
 ## 理解内容
 
@@ -48,7 +48,7 @@ draft: false
 
 （草图绘制我使用的是手机上的画世界pro，冬天太冷了，在被窝里揣手机做更舒服方便一些）
 
-<img src="/images/毛毛痛车/草稿.jpg" alt="草稿" style="width: 100%; height: auto;">
+<img src="/images/itasha/draft.jpg" alt="草稿" style="width: 100%; height: auto;">
 
 飞天小女警是部画风简单的动画片，不像动漫那样在人物上有丰富的元素，如果只是把毛毛放在这么一个巨大的车身上就会显得很单调，于是我想到可以让背景更加丰富，与人物去做繁简对比。我想到以动画片中出现过的场景为背景，从而增加设计的故事感，再加上ip中其他重要的角色增加趣味性。
 
@@ -58,6 +58,6 @@ draft: false
 
 **预计需要调整的有**：车身元素，部分小元素，物体的排列，颜色上的调整。如图所示素材堆砌没有美感需要更换。字体没有现成可用的字体，需要在大后期再去进行设计。
 
-<img src="/images/毛毛痛车/乱.png" alt="乱" style="width: 30%; height: auto;">
+<img src="/images/itasha/mess.png" alt="乱" style="width: 30%; height: auto;">
 
 ------
