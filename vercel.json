@@ -3,7 +3,6 @@
   "outputDirectory": "dist",
   "framework": "astro",
   "installCommand": "pnpm install --frozen-lockfile",
-  "nodeVersion": "22.x",
   "env": {
     "NODE_ENV": "production"
   }
