@@ -4,7 +4,6 @@
 import sitemap from "@astrojs/sitemap";
 import svelte from "@astrojs/svelte";
 import tailwind from "@astrojs/tailwind";
-import vercel from "@astrojs/vercel";
 
 import yaml from "@rollup/plugin-yaml";
 import icon from "astro-icon";
@@ -335,7 +334,4 @@ export default defineConfig({
 			},
 		},
 	},
-
-	// 适配器配置
-	adapter: vercel(),
 });

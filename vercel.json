@@ -1,8 +1,8 @@
 {
-	"buildCommand": "pnpm astro build",
+	"buildCommand": "npm run build",
 	"outputDirectory": "dist",
 	"framework": "astro",
-	"installCommand": "pnpm install --frozen-lockfile",
+	"installCommand": "npm install",
 	"env": {
 		"NODE_ENV": "production"
 	}
