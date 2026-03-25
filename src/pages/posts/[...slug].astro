@@ -1,13 +1,13 @@
 ---
 import path from "node:path";
 import { Icon } from "astro-icon/components";
+import LikeButton from "../../components/LikeButton.astro";
 import PageViewCounter from "../../components/PageViewCounter.svelte";
 import PostMetadata from "../../components/PostMeta.astro";
 import Breadcrumb from "../../components/control/Breadcrumb.astro";
 import ImageWrapper from "../../components/misc/ImageWrapper.astro";
 import License from "../../components/misc/License.astro";
 import Markdown from "../../components/misc/Markdown.astro";
-import LikeButton from "../../components/LikeButton.astro";
 import { licenseConfig } from "../../config";
 import { profileConfig, siteConfig } from "../../config";
 import I18nKey from "../../i18n/i18nKey";
@@ -24,6 +24,9 @@ export async function getStaticPaths() {
 		props: { entry },
 	}));
 }
+
+// 预渲染为静态HTML
+export const prerender = true;
 
 const { entry } = Astro.props;
 const { Content, headings } = await entry.render();

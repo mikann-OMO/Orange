@@ -38,6 +38,9 @@ export async function getStaticPaths(): Promise<GetStaticPathsResult> {
 	return [...standardPaths, ...nonEncodedCJKPaths];
 }
 
+// 预渲染为静态HTML
+export const prerender = true;
+
 const { decodedCategory } = Astro.props;
 const category = String(
 	decodedCategory || decodeURIComponent(Astro.params.category as string)

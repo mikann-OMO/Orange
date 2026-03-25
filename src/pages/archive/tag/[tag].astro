@@ -59,6 +59,9 @@ export async function getStaticPaths() {
 	return [...standardPaths, ...nonEncodedCJKPaths];
 }
 
+// 预渲染为静态HTML
+export const prerender = true;
+
 const { decodedTag } = Astro.props;
 const tag = decodedTag || decodePathSegment(Astro.params.tag as string);
 ---

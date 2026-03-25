@@ -27,6 +27,9 @@ export async function getStaticPaths() {
 	}));
 }
 
+// 预渲染为静态HTML
+export const prerender = true;
+
 // 获取当前随记数据
 const { note } = Astro.props;
 const { Content, headings } = await note.render();
