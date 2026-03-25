@@ -1,6 +1,6 @@
 {
 	"buildCommand": "pnpm build",
-	"outputDirectory": "dist",
+	"outputDirectory": "vercel/output",
 	"installCommand": "pnpm install",
 	"env": {
 		"NODE_ENV": "production"
