@@ -1,8 +1,8 @@
 {
-	"buildCommand": "npm run build",
+	"buildCommand": "pnpm build",
 	"outputDirectory": "dist",
 	"framework": "astro",
-	"installCommand": "npm install",
+	"installCommand": "pnpm install",
 	"env": {
 		"NODE_ENV": "production"
 	}
