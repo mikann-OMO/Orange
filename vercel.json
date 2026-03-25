@@ -1,7 +1,6 @@
 {
 	"buildCommand": "pnpm build",
 	"outputDirectory": "dist",
-	"framework": "astro",
 	"installCommand": "pnpm install",
 	"env": {
 		"NODE_ENV": "production"
