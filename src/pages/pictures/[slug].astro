@@ -21,6 +21,9 @@ export const getStaticPaths: GetStaticPaths = async () => {
 	}));
 };
 
+// 预渲染为静态HTML
+export const prerender = true;
+
 interface Props {
 	album: CollectionEntry<"exhibition">;
 }
