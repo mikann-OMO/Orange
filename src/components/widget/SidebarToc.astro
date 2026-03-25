@@ -199,7 +199,7 @@ for (const h of filtered) {
         let closestDistance = Infinity;
         
         entries.forEach((en) => {
-          const distance = Math.abs(en.boundingClientRect().top);
+          const distance = Math.abs(en.boundingClientRect.top);
           if (distance < closestDistance) {
             closestDistance = distance;
             closestHeading = en.target;
