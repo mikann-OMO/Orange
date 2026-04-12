@@ -58,133 +58,129 @@
 </style>
 
 <script>
-    const progressEl = document.getElementById('page-progress');
-    const progressBar = progressEl?.querySelector('.page-progress-bar');
-    const progressGlow = progressEl?.querySelector('.page-progress-glow');
-    
-    let isLoading = false;
-    let showTimeout: number | null = null;
-    let progressAnimation: number | null = null;
-    let safetyTimeout: number | null = null;
-    let currentProgress = 0;
-    let targetProgress = 0;
-    
-    const MAX_LOAD_TIME = 1500;
+    (function () {
+        const w = window;
+        if ((w as any).__pageProgressInstalled) return;
+        (w as any).__pageProgressInstalled = true;
 
-    function setProgress(value: number) {
-        currentProgress = value;
-        if (progressBar) {
-            progressBar.style.width = `${value}%`;
-        }
-        if (progressGlow) {
-            progressGlow.style.width = `${value}%`;
-        }
-    }
+        let isLoading = false;
+        let showTimeout: number | null = null;
+        let progressAnimation: number | null = null;
+        let safetyTimeout: number | null = null;
+        let currentProgress = 0;
+        let targetProgress = 0;
 
-    function animateProgress() {
-        if (currentProgress < targetProgress) {
-            const diff = targetProgress - currentProgress;
-            const step = Math.max(diff * 0.1, 1);
-            currentProgress = Math.min(currentProgress + step, targetProgress);
-            setProgress(currentProgress);
-            progressAnimation = requestAnimationFrame(animateProgress);
-        }
-    }
+        const MAX_LOAD_TIME = 1500;
 
-    function clearAllTimers() {
-        if (showTimeout) {
-            clearTimeout(showTimeout);
-            showTimeout = null;
-        }
-        if (progressAnimation) {
-            cancelAnimationFrame(progressAnimation);
-            progressAnimation = null;
-        }
-        if (safetyTimeout) {
-            clearTimeout(safetyTimeout);
-            safetyTimeout = null;
-        }
-    }
-
-    function resetProgress() {
-        clearAllTimers();
-        if (progressEl) {
-            progressEl.classList.remove('loading');
-        }
-        setProgress(0);
-        currentProgress = 0;
-        targetProgress = 0;
-        isLoading = false;
-    }
-
-    function startProgress() {
-        if (!progressEl || isLoading) return;
-        isLoading = true;
-        currentProgress = 0;
-        targetProgress = 0;
-        
-        clearAllTimers();
-        
-        showTimeout = window.setTimeout(() => {
-            if (!isLoading) return;
-            progressEl.classList.add('loading');
-            
-            targetProgress = 30;
-            progressAnimation = requestAnimationFrame(animateProgress);
-            
-            setTimeout(() => {
-                if (isLoading && targetProgress < 60) {
-                    targetProgress = 60;
-                    progressAnimation = requestAnimationFrame(animateProgress);
-                }
-            }, 200);
-            
-            setTimeout(() => {
-                if (isLoading && targetProgress < 80) {
-                    targetProgress = 80;
-                    progressAnimation = requestAnimationFrame(animateProgress);
-                }
-            }, 400);
-        }, 50);
-        
-        safetyTimeout = window.setTimeout(() => {
-            if (isLoading) {
-                completeProgress();
-            }
-        }, MAX_LOAD_TIME);
-    }
-
-    function completeProgress() {
-        if (!progressEl) return;
-        
-        clearAllTimers();
-        
-        targetProgress = 100;
-        
-        const finishAnimation = () => {
-            if (currentProgress < 100) {
-                currentProgress = Math.min(currentProgress + 5, 100);
-                setProgress(currentProgress);
-                requestAnimationFrame(finishAnimation);
-            } else {
-                setTimeout(() => {
-                    resetProgress();
-                }, 100);
-            }
+        const getEls = () => {
+            const progressEl = document.getElementById('page-progress');
+            const progressBar = progressEl?.querySelector('.page-progress-bar') as HTMLElement | null;
+            const progressGlow = progressEl?.querySelector('.page-progress-glow') as HTMLElement | null;
+            return { progressEl, progressBar, progressGlow };
         };
-        
-        requestAnimationFrame(finishAnimation);
-    }
 
-    document.addEventListener('astro:page-load', () => {
-        completeProgress();
-    });
+        function setProgress(value: number) {
+            currentProgress = value;
+            const { progressBar, progressGlow } = getEls();
+            if (progressBar) progressBar.style.width = `${value}%`;
+            if (progressGlow) progressGlow.style.width = `${value}%`;
+        }
 
-    document.addEventListener('astro:before-preparation', () => {
-        startProgress();
-    });
+        function animateProgress() {
+            if (currentProgress < targetProgress) {
+                const diff = targetProgress - currentProgress;
+                const step = Math.max(diff * 0.1, 1);
+                currentProgress = Math.min(currentProgress + step, targetProgress);
+                setProgress(currentProgress);
+                progressAnimation = requestAnimationFrame(animateProgress);
+            }
+        }
 
-    document.addEventListener('astro:after-swap', () => {
-        completeProgress();
-    });
+        function clearAllTimers() {
+            if (showTimeout) {
+                clearTimeout(showTimeout);
+                showTimeout = null;
+            }
+            if (progressAnimation) {
+                cancelAnimationFrame(progressAnimation);
+                progressAnimation = null;
+            }
+            if (safetyTimeout) {
+                clearTimeout(safetyTimeout);
+                safetyTimeout = null;
+            }
+        }
+
+        function resetProgress() {
+            clearAllTimers();
+            const { progressEl } = getEls();
+            if (progressEl) progressEl.classList.remove('loading');
+            setProgress(0);
+            currentProgress = 0;
+            targetProgress = 0;
+            isLoading = false;
+        }
+
+        function startProgress() {
+            const { progressEl } = getEls();
+            if (!progressEl || isLoading) return;
+
+            isLoading = true;
+            currentProgress = 0;
+            targetProgress = 0;
+
+            clearAllTimers();
+
+            showTimeout = window.setTimeout(() => {
+                const { progressEl: el } = getEls();
+                if (!isLoading || !el) return;
+
+                el.classList.add('loading');
+                targetProgress = 30;
+                progressAnimation = requestAnimationFrame(animateProgress);
+
+                setTimeout(() => {
+                    if (isLoading && targetProgress < 60) {
+                        targetProgress = 60;
+                        progressAnimation = requestAnimationFrame(animateProgress);
+                    }
+                }, 200);
+
+                setTimeout(() => {
+                    if (isLoading && targetProgress < 80) {
+                        targetProgress = 80;
+                        progressAnimation = requestAnimationFrame(animateProgress);
+                    }
+                }, 400);
+            }, 50);
+
+            safetyTimeout = window.setTimeout(() => {
+                if (isLoading) completeProgress();
+            }, MAX_LOAD_TIME);
+        }
+
+        function completeProgress() {
+            const { progressEl } = getEls();
+            if (!progressEl) return;
+
+            clearAllTimers();
+            targetProgress = 100;
+
+            const finishAnimation = () => {
+                if (currentProgress < 100) {
+                    currentProgress = Math.min(currentProgress + 5, 100);
+                    setProgress(currentProgress);
+                    requestAnimationFrame(finishAnimation);
+                } else {
+                    setTimeout(() => resetProgress(), 100);
+                }
+            };
+
+            requestAnimationFrame(finishAnimation);
+        }
+
+        document.addEventListener('astro:page-load', completeProgress);
+        document.addEventListener('astro:before-preparation', startProgress);
+        document.addEventListener('astro:after-swap', completeProgress);
+    })();
 </script>

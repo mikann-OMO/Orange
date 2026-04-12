@@ -4,13 +4,11 @@ import { Icon } from "astro-icon/components";
 import LikeButton from "../../components/LikeButton.astro";
 import PageViewCounter from "../../components/PageViewCounter.svelte";
 import PostMetadata from "../../components/PostMeta.astro";
-import Twikoo from "../../components/Twikoo.astro";
 import Breadcrumb from "../../components/control/Breadcrumb.astro";
 import ImageWrapper from "../../components/misc/ImageWrapper.astro";
 import License from "../../components/misc/License.astro";
 import Markdown from "../../components/misc/Markdown.astro";
-import { commentConfig, licenseConfig } from "../../config";
-import { profileConfig, siteConfig } from "../../config";
+import { licenseConfig, profileConfig, siteConfig } from "../../config";
 import I18nKey from "../../i18n/i18nKey";
 import { i18n } from "../../i18n/translation";
 import MainGridLayout from "../../layouts/MainGridLayout.astro";
@@ -89,7 +87,6 @@ const jsonLd = {
                 <div class="flex flex-col md:flex-row items-start gap-3 md:gap-6 mb-4 md:mb-5">
                     <div class="flex-1">
                         <div
-                            data-pagefind-body data-pagefind-weight="10" data-pagefind-meta="title"
                             class="transition w-full block font-bold mb-2 md:mb-3
                             text-2xl md:text-3xl lg:text-[2.25rem]/[2.75rem]
                             text-black dark:text-white/90
@@ -150,7 +147,7 @@ const jsonLd = {
         <a href={entry.data.nextSlug ? getPostUrlBySlug(entry.data.nextSlug) : "#"}
            class:list={["w-full font-bold overflow-hidden active:scale-95", {"pointer-events-none": !entry.data.nextSlug}]}>
             {entry.data.nextSlug && <div class="btn-card rounded-xl md:rounded-2xl w-full h-[3rem] md:h-[3.75rem] max-w-full px-3 md:px-4 flex items-center !justify-start gap-2 md:gap-4" >
-                <Icon name="material-symbols:chevron-left-rounded" class="text-[1.5rem] md:text-[2rem] text-[var(--primary)]" />
+                <Icon name="material-symbols:chevron-left-rounded" class="text-[1.5rem] md:text-[2rem] text-[var(--accent-text)] dark:text-[var(--primary)]" />
                 <div class="overflow-hidden transition overflow-ellipsis whitespace-nowrap max-w-[calc(100%_-_2.5rem)] md:max-w-[calc(100%_-_3rem)] text-xs md:text-sm text-orange-950/75 dark:text-white/75">
                     {entry.data.nextTitle}
                 </div>
@@ -163,21 +160,18 @@ const jsonLd = {
                 <div class="overflow-hidden transition overflow-ellipsis whitespace-nowrap max-w-[calc(100%_-_2.5rem)] md:max-w-[calc(100%_-_3rem)] text-xs md:text-sm text-orange-950/75 dark:text-white/75">
                     {entry.data.prevTitle}
                 </div>
-                <Icon name="material-symbols:chevron-right-rounded" class="text-[1.5rem] md:text-[2rem] text-[var(--primary)]" />
+                <Icon name="material-symbols:chevron-right-rounded" class="text-[1.5rem] md:text-[2rem] text-[var(--accent-text)] dark:text-[var(--primary)]" />
             </div>}
         </a>
     </div>
 
-    <LikeButton />
-
-    <!-- Twikoo 评论系统 -->
-    <Twikoo envId={commentConfig.envId} path={entry.slug} />
+    <LikeButton slug={entry.slug} />
 
 </MainGridLayout>
 
 <style>
 @media (max-width: 768px) {
-    .flex.max-w-\\[50rem\\] {
+    .flex.max-w-\[50rem\] {
         max-width: 100%;
         margin: 0;
         border-radius: 12px;
@@ -196,7 +190,7 @@ const jsonLd = {
         border-color: rgba(255, 255, 255, 0.05);
     }
     
-    .flex.flex-row.text-orange-950\\/30 {
+    .flex.flex-row.text-orange-950\/30 {
         gap: 12px;
         margin-bottom: 12px;
         flex-wrap: wrap;
@@ -215,7 +209,7 @@ const jsonLd = {
         font-size: 0.75rem;
     }
     
-    .flex.flex-col.md\\:flex-row.items-start {
+    .flex.flex-col.md\:flex-row.items-start {
         gap: 16px;
         margin-bottom: 16px;
     }
@@ -226,15 +220,15 @@ const jsonLd = {
         margin-bottom: 12px;
     }
     
-    .mb-3.md\\:mb-5 {
+    .mb-3.md\:mb-5 {
         margin-bottom: 12px;
     }
     
-    .border-\\[var\\(--line-divider\\)\\] {
+    .border-\[var\(--line-divider\)\] {
         margin-bottom: 12px;
     }
     
-    .md\\:hidden.w-full.h-40 {
+    .md\:hidden.w-full.h-40 {
         height: 140px;
         border-radius: 8px;
         border-width: 1px;
@@ -312,7 +306,7 @@ const jsonLd = {
         border-radius: 8px;
     }
     
-    .flex.flex-col.md\\:flex-row.justify-between {
+    .flex.flex-col.md\:flex-row.justify-between {
         gap: 8px;
         margin-bottom: 12px;
     }
@@ -327,7 +321,7 @@ const jsonLd = {
         transform: scale(0.98);
     }
     
-    .text-\\[1\\.5rem\\] {
+    .text-\[1\.5rem\] {
         font-size: 1.25rem;
     }
 }

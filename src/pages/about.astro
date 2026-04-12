@@ -6,7 +6,7 @@ import Markdown from "@components/misc/Markdown.astro";
 import FriendsList from "@components/widget/FriendsList.astro";
 import Profile from "@components/widget/Profile.astro";
 import { Icon } from "astro-icon/components";
-import avatarImg from "../assets/images/chikann.png";
+
 import { profileConfig } from "../config";
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
@@ -27,7 +27,7 @@ const { Content } = await render(aboutPost);
         <div class="mobile-profile-card">
             <div class="flex items-center gap-3">
                 <div class="avatar-wrapper">
-                    <Image src={avatarImg} alt="Profile Image" class="avatar-img" loading="eager" />
+                    <img src="https://mikann-1359996823.cos.ap-beijing.myqcloud.com/OMO.jpg" alt="Profile Image" class="avatar-img" loading="eager" />
                 </div>
                 <div class="flex-1 min-w-0">
                     <h1 class="profile-name">{profileConfig.name}</h1>
@@ -52,7 +52,7 @@ const { Content } = await render(aboutPost);
                 <Profile class="max-w-md"></Profile>
             </div>
             <div class="flex-1 text-center md:text-left">
-                <h1 class="text-xl md:text-2xl font-bold mb-1 md:mb-2 text-[var(--primary)] dark:text-white">{profileConfig.name}</h1>
+                <h1 class="text-xl md:text-2xl font-bold mb-1 md:mb-2 text-[var(--accent-text)] dark:text-white">{profileConfig.name}</h1>
                 <p class="text-sm md:text-base text-orange-950/60 dark:text-white/60 mb-3 md:mb-4">{profileConfig.bio}</p>
                 <div class="flex flex-col sm:flex-row gap-2 md:gap-4 justify-center md:justify-start">
                     {profileConfig.links.map((link) => (
@@ -100,13 +100,13 @@ const { Content } = await render(aboutPost);
                 </div>
                 <div class="friend-info-item">
                     <span class="info-label">站点头像：</span>
-                    <span class="info-value truncate">https://mikann-1359996823.cos.ap-beijing.myqcloud.com/pic/d21063851cd65685573db96d42f8dbef.png</span>
+                    <span class="info-value truncate">https://mikann-1359996823.cos.ap-beijing.myqcloud.com/OMO.jpg</span>
                 </div>
                 <div class="friend-info-item">
                     <span class="info-label">站点描述：</span>
                     <span class="info-value">是一位超级无敌可爱美少女</span>
                 </div>
-                <button class="copy-friend-btn" onclick="copyFriendLink(event)">
+                <button class="copy-friend-btn" type="button">
                     一键复制
                 </button>
             </div>
@@ -119,104 +119,66 @@ const { Content } = await render(aboutPost);
     </div>
     
     <script>
-        (window as any).copyFriendLink = function(event: MouseEvent) {
-            const friendLink = `const items = [ 
+        const friendLink = `const items = [ 
      { 
          title: "mikann_OMO", 
          image: 
-             "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/pic/d21063851cd65685573db96d42f8dbef.png", 
+              "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/OMO.jpg", 
          desc: "是一位超级无敌可爱美少女", 
          siteurl: "https://www.mikann.fun", 
          tags: [""], 
      }`;
-            
-            const button = event.target as HTMLElement | null;
-            if (!button) return;
-            const originalText = button.textContent;
-            
-            // 显示加载状态
-            button.textContent = '复制中...';
-            button.style.background = '#ffb74d';
-            button.style.color = 'white';
-            
-            // 尝试使用剪贴板 API
-            if (navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(friendLink).then(() => {
-                    button.textContent = '已成功复制！';
-                    button.style.background = '#4CAF50';
-                    button.style.color = 'white';
-                    
-                    setTimeout(() => {
-                        button.textContent = originalText;
-                        button.style.background = '';
-                        button.style.color = '';
-                    }, 2000);
-                }).catch(err => {
-                    console.error('复制失败:', err);
-                    button.textContent = '复制失败';
-                    button.style.background = '#f44336';
-                    button.style.color = 'white';
-                    
-                    setTimeout(() => {
-                        button.textContent = originalText;
-                        button.style.background = '';
-                        button.style.color = '';
-                    }, 2000);
-                });
-            } else {
-                // 降级方案
-                const textArea = document.createElement("textarea");
-                textArea.value = friendLink;
-                textArea.style.position = "fixed";
-                textArea.style.left = "-999999px";
-                textArea.style.top = "-999999px";
-                document.body.appendChild(textArea);
-                textArea.focus();
-                textArea.select();
-                
-                try {
-                    const successful = document.execCommand('copy');
-                    if (successful) {
-                        button.textContent = '已成功复制！';
-                        button.style.background = '#4CAF50';
-                        button.style.color = 'white';
-                    } else {
-                        throw new Error('复制失败');
+
+        function setButtonState(button: HTMLButtonElement, text: string, bg: string) {
+            button.textContent = text;
+            button.style.background = bg;
+            button.style.color = "white";
+        }
+
+        async function copyFriendLink(button: HTMLButtonElement) {
+            const originalText = button.textContent || "一键复制";
+            setButtonState(button, "复制中...", "#ffb74d");
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    try {
+                        await navigator.clipboard.writeText(friendLink);
+                        setButtonState(button, "已成功复制！", "#4CAF50");
+                    } catch (_err) {
+                        window.prompt("复制下面内容", friendLink);
+                        setButtonState(button, "已打开复制框", "#4CAF50");
                     }
-                } catch (err) {
-                    console.error('复制失败:', err);
-                    button.textContent = '复制失败';
-                    button.style.background = '#f44336';
-                    button.style.color = 'white';
+                } else {
+                    window.prompt("复制下面内容", friendLink);
+                    setButtonState(button, "已打开复制框", "#4CAF50");
                 }
-                
-                document.body.removeChild(textArea);
-                
+            } catch (_err) {
+                setButtonState(button, "复制失败", "#f44336");
+            } finally {
                 setTimeout(() => {
                     button.textContent = originalText;
-                    button.style.background = '';
-                    button.style.color = '';
+                    button.style.background = "";
+                    button.style.color = "";
                 }, 2000);
             }
-        };
+        }
+
+        function setupCopyButton() {
+            const button = document.querySelector<HTMLButtonElement>(".copy-friend-btn");
+            if (!button) return;
+            button.addEventListener("click", () => copyFriendLink(button));
+        }
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", setupCopyButton);
+        } else {
+            setupCopyButton();
+        }
+
+        document.addEventListener("astro:page-load", setupCopyButton);
     </script>
 </MainGridLayout>
 
 <style>
-.about-page {
-    animation: fadeIn 0.3s ease-out;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
 
 .social-icon {
     width: 1rem;
@@ -262,7 +224,7 @@ const { Content } = await render(aboutPost);
 .profile-name {
     font-size: 1.125rem;
     font-weight: 700;
-    color: var(--primary);
+    color: var(--accent-text);
     margin-bottom: 4px;
 }
 
@@ -334,7 +296,7 @@ const { Content } = await render(aboutPost);
 .card-title {
     font-size: 1rem;
     font-weight: 700;
-    color: var(--primary);
+    color: var(--accent-text);
     margin-bottom: 12px;
     padding-bottom: 8px;
     border-bottom: 1px solid rgba(255, 152, 0, 0.15);
@@ -361,7 +323,7 @@ const { Content } = await render(aboutPost);
 .content-header {
     background: rgba(255, 243, 224, 0.8);
     padding: 12px 16px;
-    border-left: 4px solid var(--primary);
+    border-left: 4px solid var(--accent-text);
 }
 
 :global(.dark) .content-header {
@@ -371,7 +333,7 @@ const { Content } = await render(aboutPost);
 .header-title {
     font-size: 1rem;
     font-weight: 700;
-    color: var(--primary);
+    color: var(--accent-text);
 }
 
 :global(.dark) .header-title {
@@ -460,7 +422,7 @@ const { Content } = await render(aboutPost);
 
 .info-value {
     font-size: 0.8125rem;
-    color: var(--primary);
+    color: var(--accent-text);
     word-break: break-all;
     white-space: normal;
 }
@@ -481,7 +443,7 @@ const { Content } = await render(aboutPost);
     margin-top: 8px;
     padding: 6px 12px;
     background: rgba(255, 248, 220, 0.6);
-    color: var(--primary);
+    color: var(--accent-text);
     border: 1px solid rgba(255, 152, 0, 0.3);
     border-radius: 0;
     font-size: 0.75rem;
@@ -520,7 +482,7 @@ const { Content } = await render(aboutPost);
 .sidebar-title {
     font-size: 1.125rem;
     font-weight: 700;
-    color: var(--primary);
+    color: var(--accent-text);
     margin-bottom: 16px;
     padding-bottom: 8px;
     border-bottom: 1px solid rgba(255, 152, 0, 0.2);

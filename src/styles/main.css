@@ -12,61 +12,9 @@
         @apply shadow-xl;
     }
     
-    a, button, input, select, textarea, .btn-plain, .btn-card, .btn-regular, .link, .link-lg, .arknights-card {
-        @apply transition duration-200;
-    }
+
     
-    @media (max-width: 768px) {
-        .arknights-card:hover {
-            @apply shadow-lg;
-        }
-        
-        .link, .link-lg {
-            @apply before:transition-all before:duration-150;
-        }
-        
-        .btn-plain.scale-animation, .btn-card, .btn-regular {
-            @apply transition-all duration-150;
-        }
-        
-        .search-panel a {
-            animation: fadeIn 0.15s ease-out;
-        }
-    }
-    
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(5px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    @keyframes explodeEntrance {
-        0% {
-            opacity: 0;
-            transform: scale(0) rotate(var(--start-rotate)) translateY(-200px);
-            left: var(--start-left);
-            top: var(--start-top);
-        }
-        30% {
-            opacity: 0.6;
-            transform: scale(1.2) rotate(var(--mid-rotate)) translateY(20px);
-        }
-        60% {
-            opacity: 0.8;
-            transform: scale(0.95) rotate(var(--end-rotate)) translateY(-10px);
-        }
-        100% {
-            opacity: 1;
-            transform: scale(1) rotate(var(--end-rotate)) translateY(0);
-            left: var(--left);
-            top: var(--top);
-        }
-    }
+
     
     .card-shadow {
         @apply drop-shadow-[0_2px_4px_rgba(0,0,0,0.005)]
@@ -100,10 +48,6 @@
     
     #nav-menu-panel {
         @apply right-4 border rounded-xl shadow-lg bg-white dark:bg-stone-800
-    }
-    
-    .search-panel mark {
-        @apply bg-transparent text-orange-700
     }
 
     .btn-card {
@@ -261,40 +205,7 @@
         flex-shrink: 0 !important;
     }
     
-    /* 九华山游记中的爆炸效果图片容器 */
-    .jiuhuashan-gallery div[style*="position: relative"] {
-        position: relative !important;
-        width: 100% !important;
-        height: auto !important;
-        min-height: 450px !important;
-        margin: 20px 0 !important;
-        overflow: hidden !important;
-        border-radius: 8px !important;
-        padding: 10px 0 !important;
-    }
-    
-    /* 九华山游记中的爆炸效果图片 */
-    .jiuhuashan-gallery .explosion-image {
-        position: absolute !important;
-        width: var(--size) !important;
-        max-width: 40% !important;
-        height: auto !important;
-        object-fit: cover !important;
-        border-radius: 10px !important;
-        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3) !important;
-        animation: explodeEntrance 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards !important;
-        animation-delay: var(--delay) !important;
-        transform-origin: center !important;
-        z-index: var(--z-index) !important;
-        transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1) !important;
-    }
-    
-    /* 九华山游记中的爆炸效果图片悬停 */
-    .jiuhuashan-gallery .explosion-image:hover {
-        transform: scale(1.05) rotate(var(--end-rotate)) translateY(-5px) !important;
-        box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4) !important;
-        z-index: 10 !important;
-    }
+
 }
 
 ::selection {
@@ -383,6 +294,7 @@ img[loading="lazy"][complete] {
     --page-bg: #fff8f0;
     --primary: #ff9800;
     --secondary: #e64a19;
+    --accent-text: #c2410c;
     /* 按钮相关CSS变量 */
     --btn-plain-bg-hover: rgba(255, 152, 0, 0.05);
     --btn-plain-bg-active: rgba(255, 152, 0, 0.1);
@@ -398,6 +310,7 @@ img[loading="lazy"][complete] {
 
 .dark {
     --page-bg: #1c1814;
+    --accent-text: #ff9800;
 }
 
 html {

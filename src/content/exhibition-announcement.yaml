@@ -1,0 +1,13 @@
+# 图集公告配置
+
+# 公告标题
+title: "公告"
+
+# 公告内容
+content: "内容建设中"
+
+# 公告头像路径
+avatar: "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/chika.png"
+
+# 公告状态（true表示显示，false表示隐藏）
+enabled: true

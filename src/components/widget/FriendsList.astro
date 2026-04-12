@@ -1,5 +1,6 @@
 ---
 import { getCollection } from "astro:content";
+import ImageWrapper from "../misc/ImageWrapper.astro";
 
 // 获取所有友链数据
 const friends = await getCollection("friends");
@@ -14,7 +15,7 @@ const items = friends.map((friend) => ({
 ---
 
 <div class="space-y-2 md:space-y-3">
-    {items.map((item, index) => (
+    {items.map((item) => (
         <a 
             href={item.url} 
             target="_blank" 
@@ -22,10 +23,11 @@ const items = friends.map((friend) => ({
             class="flex items-center gap-2 md:gap-3 p-1.5 md:p-2 hover:bg-orange-100/50 dark:hover:bg-stone-700/50 rounded-lg transition-colors"
             aria-label={`Visit ${item.name}'s website`}
         >
-            <img 
+            <ImageWrapper 
                 src={item.avatar} 
                 alt={item.name} 
-                class="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover border-2 border-orange-100 dark:border-stone-600"
+                class="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover border-2 border-orange-100 dark:border-stone-600" 
+                loading="lazy"
             />
             <div class="flex-1 min-w-0">
                 <div class="text-xs md:text-sm font-medium text-orange-950/80 dark:text-white/80 truncate">{item.name}</div>

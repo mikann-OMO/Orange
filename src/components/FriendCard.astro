@@ -84,7 +84,6 @@ const activeStars = config.stars;
     display: flex;
     flex-direction: column;
     align-items: center;
-    transition: box-shadow 0.3s ease;
 }
 
 :global(.dark) .card-inner {
@@ -123,15 +122,6 @@ const activeStars = config.stars;
     background: radial-gradient(circle, var(--rarity-color) 0%, transparent 70%);
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s ease;
-}
-
-.friend-card:hover .card-glow {
-    opacity: 0.3;
-}
-
-.friend-card:hover .card-inner {
-    box-shadow: 0 0 30px var(--rarity-color), 0 16px 40px rgba(0, 0, 0, 0.2);
 }
 
 .avatar-section {
@@ -157,11 +147,6 @@ const activeStars = config.stars;
     padding: 2px;
     margin: 0 auto;
     display: block;
-    transition: box-shadow 0.3s ease;
-}
-
-.friend-card:hover .avatar {
-    box-shadow: 0 0 20px var(--rarity-color);
 }
 
 .info-section {
@@ -180,11 +165,6 @@ const activeStars = config.stars;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    transition: text-shadow 0.3s ease;
-}
-
-.friend-card:hover .friend-name {
-    text-shadow: 0 0 15px var(--rarity-color), 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .friend-desc {
@@ -198,19 +178,10 @@ const activeStars = config.stars;
     font-size: 0.8rem;
     font-weight: 300;
     color: var(--text-secondary);
-    transition: color 0.3s ease;
-}
-
-.friend-card:hover .friend-desc {
-    color: var(--text-primary);
 }
 
 :global(.dark) .friend-desc {
     color: rgba(255, 255, 255, 0.5);
-}
-
-:global(.dark) .friend-card:hover .friend-desc {
-    color: rgba(255, 255, 255, 0.8);
 }
 
 .stars-section {
@@ -234,10 +205,6 @@ const activeStars = config.stars;
 .star-inactive {
     color: var(--text-secondary);
     opacity: 0.5;
-}
-
-.friend-card:hover .star-active {
-    text-shadow: 0 0 15px var(--rarity-color);
 }
 
 .rarity-indicator {

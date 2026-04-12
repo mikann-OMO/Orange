@@ -1,18 +1,13 @@
 ---
 import { getCollection } from "astro:content";
 import { Icon } from "astro-icon/components";
-import placeholder from "../assets/images/chikann-640.webp";
+
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
 import MainGridLayout from "../layouts/MainGridLayout.astro";
 
 // 图册页面专用公告配置
-const picturesAnnouncement = {
-	title: "公告",
-	content: "内容还在建设中",
-	avatar: "/images/奇卡头1.jpg",
-	enabled: true,
-};
+import picturesAnnouncement from "../content/exhibition-announcement.yaml";
 
 const pictures = await getCollection("exhibition");
 const sorted = pictures.slice().sort((a, b) => {
@@ -34,9 +29,115 @@ const exhibitionImageModules = import.meta.glob<{ default: ImageMetadata }>(
 	{ eager: true },
 );
 
-function sampleMosaic(dir: string, cover?: string) {
-	const dirNormalized = dir.replace(/\\/g, "/");
+// 从 Markdown 内容中提取图片 URL
+function extractImagesFromMarkdown(content: string): string[] {
+	const urls: string[] = [];
+	const lines = content.split("\n");
 
+	const urlRegex = /^(https?:\/\/[^\s]+\.(jpg|jpeg|png|gif|webp|avif))$/i;
+	const markdownImageRegex =
+		/!\[.*?\]\((https?:\/\/[^\s]+\.(jpg|jpeg|png|gif|webp|avif))\)/gi;
+
+	for (const line of lines) {
+		const trimmedLine = line.trim();
+		if (!trimmedLine) continue;
+
+		const urlMatch = trimmedLine.match(urlRegex);
+		if (urlMatch) {
+			urls.push(urlMatch[0]);
+			continue;
+		}
+
+		let match;
+		while ((match = markdownImageRegex.exec(trimmedLine)) !== null) {
+			urls.push(match[1]);
+		}
+	}
+
+	return urls;
+}
+
+function sampleMosaic(album: any, cover?: string) {
+	const dir = album.data.dir;
+	const dirNormalized = dir.replace(/\\/g, "/");
+	const hasMarkdownContent = album.body && album.body.trim().length > 0;
+
+	// 优先级 1: 使用 Markdown 内容中的图片
+	if (hasMarkdownContent) {
+		const imageUrls = extractImagesFromMarkdown(album.body);
+		if (imageUrls.length > 0) {
+			function shuffle<T>(arr: T[]): T[] {
+				const a = arr.slice();
+				for (let i = a.length - 1; i > 0; i--) {
+					const j = Math.floor(Math.random() * (i + 1));
+					[a[i], a[j]] = [a[j], a[i]];
+				}
+				return a;
+			}
+			let list = imageUrls.map((url) => ({
+				k: url,
+				url: url,
+			}));
+			list = shuffle(list);
+
+			const preferred = (cover || "").trim();
+			if (preferred) {
+				const coverIdx = list.findIndex((e) => {
+					const base = (
+						e.k.split("/").pop() ||
+						e.k.split("\\").pop() ||
+						""
+					).toString();
+					return base === preferred;
+				});
+				if (coverIdx !== -1) {
+					const [p] = list.splice(coverIdx, 1);
+					list = [p, ...list];
+				}
+			}
+
+			const picks = list.slice(0, 3).map((e) => e.url);
+			return { picks, total: imageUrls.length };
+		}
+	}
+
+	// 优先级 2: 使用 YAML 配置中的图片
+	if (album.data.images && album.data.images.length > 0) {
+		function shuffle<T>(arr: T[]): T[] {
+			const a = arr.slice();
+			for (let i = a.length - 1; i > 0; i--) {
+				const j = Math.floor(Math.random() * (i + 1));
+				[a[i], a[j]] = [a[j], a[i]];
+			}
+			return a;
+		}
+		let list = album.data.images.map((img: any) => ({
+			k: img.file,
+			url: img.file,
+		}));
+		list = shuffle(list);
+
+		const preferred = (cover || "").trim();
+		if (preferred) {
+			const coverIdx = list.findIndex((e) => {
+				const base = (
+					e.k.split("/").pop() ||
+					e.k.split("\\").pop() ||
+					""
+				).toString();
+				return base === preferred;
+			});
+			if (coverIdx !== -1) {
+				const [p] = list.splice(coverIdx, 1);
+				list = [p, ...list];
+			}
+		}
+
+		const picks = list.slice(0, 3).map((e) => e.url);
+		return { picks, total: album.data.images.length };
+	}
+
+	// 优先级 3: 使用本地图片
 	const exhibitionEntries = Object.entries(exhibitionImageModules).filter(
 		([k]) => {
 			const pathNormalized = k.replace(/\\/g, "/");
@@ -133,7 +234,7 @@ function sampleMosaic(dir: string, cover?: string) {
 	return { picks, total: entries.length };
 }
 
-const albumStats = sorted.map((a) => sampleMosaic(a.data.dir, a.data.cover));
+const albumStats = sorted.map((a) => sampleMosaic(a, a.data.cover));
 const totalAlbums = sorted.length;
 const totalImages = albumStats.reduce((sum, stat) => sum + stat.total, 0);
 ---
@@ -186,16 +287,16 @@ const totalImages = albumStats.reduce((sum, stat) => sum + stat.total, 0);
 			</div>
 			<div class="p-4 md:p-6">
 				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-				{sorted.map((a, index) => {
-					const { picks, total } = sampleMosaic(a.data.dir, a.data.cover);
+				{sorted.map((a) => {
+					const { picks, total } = sampleMosaic(a, a.data.cover);
 					return (
 						<a href={`/pictures/${a.id}/`} class="group rounded-xl overflow-hidden bg-white/30 dark:bg-stone-700/30 hover:bg-white/50 dark:hover:bg-stone-600/30 transition-all duration-300 shadow-lg hover:shadow-xl border border-orange-200/30 dark:border-stone-600/30 card-enter">
 								<div class="relative">
 									<div class="aspect-[4/3] overflow-hidden">
 										<div class="grid grid-cols-3 grid-rows-2 gap-[3px] h-full">
-											<img src={picks[0] || placeholder.src} alt={a.data.title} decoding="async" loading="lazy" class="col-span-2 row-span-2 w-full h-full object-cover bg-orange-950/5 dark:bg-white/5 transition-transform duration-500 group-hover:scale-105" />
-											<img src={picks[1] || picks[0] || placeholder.src} alt={a.data.title} decoding="async" loading="lazy" class="col-span-1 row-span-1 w-full h-full object-cover bg-orange-950/5 dark:bg-white/5 transition-transform duration-300 group-hover:scale-110" />
-											<img src={picks[2] || picks[1] || picks[0] || placeholder.src} alt={a.data.title} decoding="async" loading="lazy" class="col-span-1 row-span-1 w-full h-full object-cover bg-orange-950/5 dark:bg-white/5 transition-transform duration-300 group-hover:scale-110" />
+											<img src={picks[0] || "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/chika.png"} alt={a.data.title} decoding="async" loading="lazy" class="col-span-2 row-span-2 w-full h-full object-cover bg-orange-950/5 dark:bg-white/5 transition-transform duration-500 group-hover:scale-105" />
+											<img src={picks[1] || picks[0] || "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/chika.png"} alt={a.data.title} decoding="async" loading="lazy" class="col-span-1 row-span-1 w-full h-full object-cover bg-orange-950/5 dark:bg-white/5 transition-transform duration-300 group-hover:scale-110" />
+											<img src={picks[2] || picks[1] || picks[0] || "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/chika.png"} alt={a.data.title} decoding="async" loading="lazy" class="col-span-1 row-span-1 w-full h-full object-cover bg-orange-950/5 dark:bg-white/5 transition-transform duration-300 group-hover:scale-110" />
 										</div>
 									</div>
 									<div class="absolute top-3 right-3 px-2 py-1 rounded-full bg-black/40 backdrop-blur-sm text-white text-xs font-medium flex items-center gap-1">

@@ -8,17 +8,10 @@ export const en: Translation = {
 	[Key.friends]: "Friends",
 	[Key.notes]: "Notes",
 	[Key.works]: "Works",
-	[Key.search]: "Search",
-	[Key.searching]: "Searching...",
-	[Key.noResults]: "No results found",
-	[Key.tryDifferentKeywords]: "Try different keywords",
-	[Key.enterKeywordsToSearch]: "Enter keywords to search",
 
 	[Key.tags]: "Tags",
 	[Key.categories]: "Categories",
 	[Key.recentPosts]: "Recent Posts",
-
-	[Key.comments]: "Comments",
 
 	[Key.untitled]: "Untitled",
 	[Key.uncategorized]: "Uncategorized",

@@ -126,7 +126,6 @@ export default defineConfig({
 						tagName: "span",
 						properties: {
 							className: ["anchor-icon"],
-							"data-pagefind-ignore": true, // 忽略 pagefind 索引
 						},
 						children: [{ type: "text", value: "#" }],
 					},
@@ -263,12 +262,9 @@ export default defineConfig({
 							if (id.includes("overlayscrollbars")) return "overlayscrollbars";
 							if (id.includes("iconify")) return "iconify";
 							if (id.includes("svelte")) return "svelte";
-							if (id.includes("pagefind")) return "pagefind";
 							if (id.includes("@astrojs")) return "astro";
 							if (id.includes("tailwind")) return "tailwind";
 							if (id.includes("@fontsource")) return "fonts";
-							if (id.includes("rehype")) return "rehype";
-							if (id.includes("remark")) return "remark";
 							return "vendor";
 						}
 					},

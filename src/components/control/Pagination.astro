@@ -58,7 +58,7 @@ const getPageUrl = (p: number) => {
 
 <div class:list={[className, "flex flex-row gap-1 sm:gap-3 justify-center"]} style={style}>
     <a href={page.url.prev || ""} aria-label={page.url.prev ? "Previous Page" : null}
-       class:list={["btn-card overflow-hidden rounded-lg text-[var(--primary)] w-9 h-9 sm:w-11 sm:h-11",
+       class:list={["btn-card overflow-hidden rounded-lg text-[var(--accent-text)] dark:text-[var(--primary)] w-9 h-9 sm:w-11 sm:h-11",
            {"disabled": page.url.prev == undefined}
        ]}
     >
@@ -69,7 +69,7 @@ const getPageUrl = (p: number) => {
             if (p == HIDDEN)
                 return <Icon name="material-symbols:more-horiz" class="mx-0.5 sm:mx-1"/>;
             if (p == page.currentPage)
-                return <div class="h-9 w-9 sm:h-11 sm:w-11 rounded-lg bg-[var(--primary)] flex items-center justify-center
+                return <div class="h-9 w-9 sm:h-11 sm:w-11 rounded-lg bg-[var(--accent-text)] dark:bg-[var(--primary)] flex items-center justify-center
                     font-bold text-white dark:text-white/70 text-sm sm:text-base"
                 >
                     {p}
@@ -80,7 +80,7 @@ const getPageUrl = (p: number) => {
         })}
     </div>
     <a href={page.url.next || ""} aria-label={page.url.next ? "Next Page" : null}
-       class:list={["btn-card overflow-hidden rounded-lg text-[var(--primary)] w-9 h-9 sm:w-11 sm:h-11",
+       class:list={["btn-card overflow-hidden rounded-lg text-[var(--accent-text)] dark:text-[var(--primary)] w-9 h-9 sm:w-11 sm:h-11",
            {"disabled": page.url.next == undefined}
        ]}
     >

@@ -16,8 +16,16 @@
           "default": ""
         },
         "image": {
-          "type": "string",
-          "format": "uri"
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "type": "string",
+              "pattern": "^\\/"
+            }
+          ]
         },
         "rss": {
           "type": "string",

@@ -22,7 +22,7 @@ export const siteConfig: SiteConfig = {
 	},
 	banner: {
 		enable: true,
-		src: "/images/背景.png",
+		src: "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/orange.png",
 		position: "center",
 		credit: {
 			enable: false,
@@ -32,19 +32,19 @@ export const siteConfig: SiteConfig = {
 	},
 	favicon: [
 		{
-			src: "/images/chikann-circular.png",
+			src: "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/chika.png",
 			sizes: "32x32",
 		},
 		{
-			src: "/images/chikann-circular.png",
+			src: "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/chika.png",
 			sizes: "128x128",
 		},
 		{
-			src: "/images/chikann-circular.png",
+			src: "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/chika.png",
 			sizes: "180x180",
 		},
 		{
-			src: "/images/chikann-circular.png",
+			src: "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/chika.png",
 			sizes: "192x192",
 		},
 	],
@@ -62,7 +62,7 @@ export const navBarConfig: NavBarConfig = {
 };
 
 export const profileConfig: ProfileConfig = {
-	avatar: "assets/images/chikann.png",
+	avatar: "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/OMO.jpg",
 	name: "mikann-OMO",
 	bio: "这个人不是很精彩呢",
 	links: [],
@@ -82,16 +82,4 @@ export const visitorConfig: VisitorConfig = {
 		appKey: import.meta.env.VITE_APP_KEY || "",
 		serverUrl: import.meta.env.VITE_LEANCLOUD_SERVER_URL || "",
 	},
-};
-
-/**
- * 评论系统配置
- * 支持 Twikoo 评论系统
- */
-export const commentConfig = {
-	provider: "twikoo" as const,
-	// Twikoo Cloudflare Worker 地址
-	envId:
-		import.meta.env.VITE_TWIKOO_ENV_ID ||
-		"https://twikoo.2744167586.workers.dev",
 };

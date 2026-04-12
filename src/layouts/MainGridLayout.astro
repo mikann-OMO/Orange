@@ -3,16 +3,9 @@ import Footer from "@components/Footer.astro";
 import Navbar from "@components/Navbar.astro";
 
 import type { MarkdownHeading } from "astro";
-import { Icon } from "astro-icon/components";
-import Toc from "../components/control/Toc.astro";
 import ImageWrapper from "../components/misc/ImageWrapper.astro";
 import SidebarToc from "../components/widget/SidebarToc.astro";
 import { siteConfig } from "../config";
-import {
-	BANNER_HEIGHT,
-	BANNER_HEIGHT_EXTEND,
-	MAIN_PANEL_OVERLAPS_BANNER_HEIGHT,
-} from "../constants/constants";
 import Layout from "./Layout.astro";
 
 import announcement from "../content/announcement.yaml";
@@ -53,19 +46,9 @@ const {
 	showAnnouncement = true,
 	isPostPage = false,
 	announcementConfig,
-	keywords = [],
-	image,
-	canonicalUrl,
 } = Astro.props;
 
 const activeAnnouncement = announcementConfig || announcement;
-const hasBannerCredit =
-	siteConfig.banner.enable && siteConfig.banner.credit.enable;
-const hasBannerLink = !!siteConfig.banner.credit.url;
-
-const mainPanelTop = siteConfig.banner.enable
-	? `calc(${BANNER_HEIGHT}vh - ${MAIN_PANEL_OVERLAPS_BANNER_HEIGHT}rem)`
-	: "5.5rem";
 ---
 
 <Layout title={title} banner={banner} description={description} lang={lang} setOGTypeArticle={setOGTypeArticle}>
@@ -79,7 +62,14 @@ const mainPanelTop = siteConfig.banner.enable
 </div>
 
 {siteConfig.banner.enable && (
-    <div id="banner-wrapper" class="h-screen w-full fixed top-0 left-0 right-0 z-0 hidden md:block" style={`background-image: url(${siteConfig.banner.src}); background-size: cover; background-position: ${siteConfig.banner.position};`}>
+    <div id="banner-wrapper" class="h-screen w-full fixed top-0 left-0 right-0 z-0 hidden md:block">
+        <ImageWrapper 
+            src={siteConfig.banner.src} 
+            alt="Banner Image" 
+            class="w-full h-full object-cover" 
+            position={siteConfig.banner.position} 
+            loading="eager"
+        />
     </div>
 )}
 
@@ -106,7 +96,12 @@ const mainPanelTop = siteConfig.banner.enable
                         <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-none shadow-xl p-4 mb-6">
                             <div class="flex items-start gap-4">
                                 <div class="flex-shrink-0">
-                                    <img src={activeAnnouncement.avatar as string} alt="公告头像" class="w-12 h-12 rounded-full object-cover border-2 border-orange-100 dark:border-stone-700">
+                                    <ImageWrapper 
+                                        src={activeAnnouncement.avatar as string} 
+                                        alt="公告头像" 
+                                        class="w-12 h-12 rounded-full object-cover border-2 border-orange-100 dark:border-stone-700" 
+                                        loading="lazy"
+                                    />
                                 </div>
                                 <div class="flex-1">
                                     <p class="font-bold text-orange-700 dark:text-white">{activeAnnouncement.title}：</p>

@@ -6,11 +6,9 @@ import { Icon } from "astro-icon/components";
     <button 
         aria-label="Back to Top" 
         class="btn-card h-11 w-11 md:h-12 md:w-12 rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:ring-offset-2" 
-        onclick="backToTop()"
-        onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); backToTop(); }"
         tabindex="0"
     >
-        <Icon name="material-symbols:keyboard-arrow-up-rounded" class="text-xl md:text-2xl text-[var(--primary)]"></Icon>
+        <Icon name="material-symbols:keyboard-arrow-up-rounded" class="text-xl md:text-2xl text-[var(--accent-text)] dark:text-[var(--primary)]"></Icon>
     </button>
 </div>
 
@@ -23,7 +21,6 @@ import { Icon } from "astro-icon/components";
     opacity: 1;
     transform: translateY(0);
     pointer-events: auto;
-    transition: all 0.3s ease;
 }
 
 .back-to-top-btn button {
@@ -37,23 +34,6 @@ import { Icon } from "astro-icon/components";
     border-color: rgba(255, 255, 255, 0.1);
 }
 
-.back-to-top-btn button:hover {
-    background: rgba(255, 255, 255, 1);
-    border-color: rgba(255, 152, 0, 0.4);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 152, 0, 0.2);
-}
-
-:global(.dark) .back-to-top-btn button:hover {
-    background: rgba(80, 80, 80, 0.95);
-    border-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-.back-to-top-btn button:active {
-    transform: scale(0.95);
-}
-
 @media (min-width: 768px) {
     .back-to-top-btn {
         bottom: 2rem;
@@ -62,8 +42,19 @@ import { Icon } from "astro-icon/components";
 }
 </style>
 
-<script is:raw is:inline>
-function backToTop() {
-    window.scroll({ top: 0, behavior: 'smooth' });
-}
+<script is:inline>
+    const backToTop = () => {
+        window.scroll({ top: 0, behavior: 'auto' });
+    };
+
+    const btn = document.querySelector<HTMLButtonElement>('#back-to-top-btn button');
+    if (btn) {
+        btn.addEventListener('click', backToTop);
+        btn.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                backToTop();
+            }
+        });
+    }
 </script>

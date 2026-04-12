@@ -1,5 +1,6 @@
 ---
 import path from "node:path";
+import type { ImageMetadata } from "astro";
 interface Props {
 	id?: string;
 	src: string;
@@ -12,7 +13,6 @@ interface Props {
 	loading?: "eager" | "lazy";
 }
 import { Image } from "astro:assets";
-import defaultAvatar from "../../assets/images/chikann.png";
 import { url } from "../../utils/url-utils";
 
 const {
@@ -34,11 +34,13 @@ const isLocal = !(
 	src.startsWith("data:")
 );
 const isPublic = src.startsWith("/");
+const isRemote =
+	src.startsWith("http://") || src.startsWith("https://") || src.startsWith("data:");
 
 // TODO temporary workaround for images dynamic import
 // https://github.com/withastro/astro/issues/3373
 // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
-let img;
+let img: ImageMetadata | undefined;
 if (isLocal) {
 	// 尝试不同的路径模式
 	const pathsToTry = [
@@ -47,9 +49,18 @@ if (isLocal) {
 		path.normalize(path.join("../../", src)).replace(/\\/g, "/"),
 	];
 
-	const files = import.meta.glob<ImageMetadata>("../../**", {
+	const files = import.meta.glob<ImageMetadata>(
+		"../../**/*.{png,jpg,jpeg,gif,webp,avif}",
+		{
 		import: "default",
-	});
+		},
+	);
+	const fallbackFile = files["../../assets/images/chikann.png"];
+	if (!fallbackFile) {
+		throw new Error("Fallback image not found: ../../assets/images/chikann.png");
+	}
+	const fallbackAvatar = await fallbackFile();
+	img = fallbackAvatar;
 
 	let found = false;
 	for (const normalizedPath of pathsToTry) {
@@ -69,13 +80,12 @@ if (isLocal) {
 	}
 }
 
-const imageClass = "w-full h-full object-cover";
 const imageStyle = `object-position: ${position}`;
 ---
 <div id={id} class:list={['overflow-hidden relative image-wrapper']}>
     {isLocal && (
         <Image 
-            src={img || defaultAvatar} 
+            src={img!} 
             alt={alt || ""} 
             class={className} 
             style={imageStyle}
@@ -91,7 +101,7 @@ const imageStyle = `object-position: ${position}`;
     )}
     {!isLocal && (
         <img 
-            src={isPublic ? src : url(src)} 
+            src={isPublic ? src : isRemote ? src : url(src)} 
             alt={alt || ""} 
             class={className} 
             style={imageStyle}
@@ -100,7 +110,6 @@ const imageStyle = `object-position: ${position}`;
             height={height}
             decoding="async"
             fetchpriority={loading === "eager" ? "high" : "auto"}
-            onerror="console.error('Image failed to load:', this.src)"
         />
     )}
 </div>

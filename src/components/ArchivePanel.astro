@@ -125,12 +125,12 @@ function formatTag(tag: string[]) {
 						<a href={getPostUrlBySlug(post.slug)} aria-label={post.data.title} class="post-item group flex items-start gap-2 md:gap-3 py-2 md:py-2.5 relative">
 							<div class="timeline-dot absolute left-[-1.1rem] md:left-[-1.35rem] w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-orange-400 dark:bg-stone-400 group-hover:bg-[var(--primary)] transition-colors duration-200"></div>
 							
-							<div class="post-date flex-shrink-0 w-10 md:w-12 text-xs md:text-sm text-orange-950/60 dark:text-white/60 group-hover:text-[var(--primary)] transition-colors">
+							<div class="post-date flex-shrink-0 w-10 md:w-12 text-xs md:text-sm text-orange-950/60 dark:text-white/60 group-hover:text-[var(--accent-text)] dark:group-hover:text-[var(--primary)] transition-colors">
 								{formatDate(post.data.published)}
 							</div>
 							
 							<div class="post-content flex-1 min-w-0">
-								<div class="post-title text-sm md:text-base text-orange-950 dark:text-white group-hover:text-[var(--primary)] transition-colors truncate">
+								<div class="post-title text-sm md:text-base text-orange-950 dark:text-white group-hover:text-[var(--accent-text)] dark:group-hover:text-[var(--primary)] transition-colors truncate">
 									{post.data.title}
 								</div>
 								{post.data.tags && post.data.tags.length > 0 && (

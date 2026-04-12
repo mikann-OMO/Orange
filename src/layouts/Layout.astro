@@ -14,14 +14,21 @@ import {
 import { defaultFavicons } from "../constants/icon";
 import type { Favicon } from "../types/config";
 import { url, pathsEqual } from "../utils/url-utils";
-import "katex/dist/katex.css";
 import "photoswipe/style.css";
 import "../styles/transition.css";
 import "../styles/mobile.css";
 import "../styles/main.css";
-import { ViewTransitions } from "astro:transitions";
+import "../styles/markdown.css";
+import { ClientRouter } from "astro:transitions";
 import BackToTop from "@components/control/BackToTop.astro";
 import PageProgress from "@components/control/PageProgress.astro";
+
+// 自托管字体优化
+import "@fontsource/roboto/300.css";
+import "@fontsource/roboto/400.css";
+import "@fontsource/roboto/500.css";
+import "@fontsource/roboto/700.css";
+import "@fontsource-variable/jetbrains-mono";
 
 interface Props {
 	title?: string;
@@ -39,9 +46,6 @@ const configHue = siteConfig.themeColor.hue;
 if (!banner || typeof banner !== "string" || banner.trim() === "") {
 	banner = siteConfig.banner.src;
 }
-
-// TODO don't use post cover as banner for now
-banner = siteConfig.banner.src;
 
 const enableBanner = siteConfig.banner.enable;
 
@@ -68,6 +72,58 @@ const bannerOffsetByPosition = {
 };
 const bannerOffset =
 	bannerOffsetByPosition[siteConfig.banner.position || "center"];
+
+const canonicalHref = Astro.url.href;
+const siteHref = Astro.site?.toString() || canonicalHref;
+
+const toOgImagePath = (src: string): string => {
+	if (!src)
+		return "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/orange.png";
+	if (src.startsWith("http://") || src.startsWith("https://")) return src;
+	if (src.startsWith("/")) return src;
+	if (src.startsWith("assets/images/"))
+		return `/images/${src.slice("assets/images/".length)}`;
+	return `/${src}`;
+};
+
+const toAbsoluteUrl = (input: string): string => {
+	try {
+		return new URL(input, siteHref).href;
+	} catch {
+		return input;
+	}
+};
+
+const ogUrl = canonicalHref;
+const ogImage = toAbsoluteUrl(toOgImagePath(banner));
+const rawLogo = favicons[0]?.src || "";
+const logoUrl = toAbsoluteUrl(
+	rawLogo.startsWith("http://") || rawLogo.startsWith("https://")
+		? rawLogo
+		: rawLogo.startsWith("/")
+			? rawLogo
+			: `/${rawLogo}`,
+);
+
+const jsonLd = {
+	"@context": "https://schema.org",
+	"@type": "WebSite",
+	name: siteConfig.title,
+	url: siteHref,
+	description: siteConfig.subtitle,
+	inLanguage: siteLang,
+	image: ogImage,
+	publisher: {
+		"@type": "Person",
+		name: profileConfig.name,
+		logo: {
+			"@type": "ImageObject",
+			url: logoUrl,
+			width: 192,
+			height: 192,
+		},
+	},
+};
 ---
 
 <!DOCTYPE html>
@@ -95,10 +151,14 @@ const bannerOffset =
 	const hue = localStorage.getItem('hue') || configHue;
 	document.documentElement.style.setProperty('--hue', hue);
 
-	// Set page background color immediately to prevent flash
-	const isDark = document.documentElement.classList.contains('dark');
-	document.documentElement.style.setProperty('--page-bg', isDark ? '#1c1814' : '#fff8f0');
-	document.documentElement.style.backgroundColor = isDark ? '#1c1814' : '#fff8f0';
+	// Set page background color and image immediately to prevent flash
+		const isDark = document.documentElement.classList.contains('dark');
+		document.documentElement.style.setProperty('--page-bg', isDark ? '#1c1814' : '#fff8f0');
+		document.documentElement.style.backgroundColor = isDark ? '#1c1814' : '#fff8f0';
+		document.documentElement.style.backgroundImage = 'url("https://mikann-1359996823.cos.ap-beijing.myqcloud.com/orange.png")';
+		document.documentElement.style.backgroundSize = 'cover';
+		document.documentElement.style.backgroundPosition = 'center';
+		document.documentElement.style.backgroundAttachment = 'fixed';
 
 	// Calculate the --banner-height-extend, which needs to be a multiple of 4 to avoid blurry text
 	const calculateBannerHeight = () => {
@@ -108,31 +168,42 @@ const bannerOffset =
 	};
 	calculateBannerHeight();
 </script>
-<html lang={siteLang} class="text-[14px] md:text-[16px]"
-	  data-overlayscrollbars-initialize
->
+<html lang={siteLang} class="text-[14px] md:text-[16px]">
 	<head>
 		
 		<!-- 性能优化：尽早设置字符集 -->
 		<meta charset="UTF-8" />
+		<meta name="color-scheme" content="light dark" />
 		<!-- 性能优化：优化视口设置，减少布局偏移 -->
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 		<!-- 性能优化：设置主题色 -->
 		<meta name="theme-color" content="#ff9800">
+		<style is:inline>
+		html {
+			background-color: #fff8f0;
+			background-image: url('https://mikann-1359996823.cos.ap-beijing.myqcloud.com/orange.png');
+			background-size: cover;
+			background-position: center;
+			background-attachment: fixed;
+		}
+		@media (prefers-color-scheme: dark) {
+			html {
+				background-color: #1c1814;
+				background-image: url('https://mikann-1359996823.cos.ap-beijing.myqcloud.com/orange.png');
+				background-size: cover;
+				background-position: center;
+				background-attachment: fixed;
+			}
+		}
+		body { background-color: inherit; }
+	</style>
 		<!-- 性能优化：减少DNS查找时间 -->
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 		<link rel="preconnect" href="https://unpkg.com" crossorigin>
 		<!-- 性能优化：预加载关键资源 -->
 		<link rel="preload" href="/favicon/favicon-light-32.png" as="image" fetchpriority="high">
 		<link rel="preload" href="/favicon/favicon-dark-32.png" as="image" media="(prefers-color-scheme: dark)">
-		<!-- 性能优化：预加载主要字体 -->
-		<link rel="preload" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" as="style" fetchpriority="high">
-		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
 		<!-- 性能优化：DNS预解析 -->
-		<link rel="dns-prefetch" href="https://fonts.googleapis.com">
-		<link rel="dns-prefetch" href="https://fonts.gstatic.com">
 		<link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
 		<link rel="dns-prefetch" href="https://unpkg.com">
 
@@ -149,10 +220,10 @@ const bannerOffset =
 
 		<!-- Open Graph Meta Tags -->
 		<meta property="og:site_name" content={siteConfig.title}>
-		<meta property="og:url" content={Astro.url}>
+		<meta property="og:url" content={ogUrl}>
 		<meta property="og:title" content={pageTitle}>
 		<meta property="og:description" content={description || pageTitle}>
-		<meta property="og:image" content={banner}>
+		<meta property="og:image" content={ogImage}>
 		<meta property="og:image:alt" content={`${siteConfig.title} banner`}>
 		<meta property="og:image:width" content="1200">
 		<meta property="og:image:height" content="630">
@@ -165,50 +236,17 @@ const bannerOffset =
 
 		<!-- Twitter Card Meta Tags -->
 		<meta name="twitter:card" content="summary_large_image">
-		<meta name="twitter:site" content="">
-		<meta name="twitter:creator" content="">
-		<meta property="twitter:url" content={Astro.url}>
+		<meta property="twitter:url" content={ogUrl}>
 		<meta name="twitter:title" content={pageTitle}>
 		<meta name="twitter:description" content={description || pageTitle}>
-		<meta name="twitter:image" content={banner}>
+		<meta name="twitter:image" content={ogImage}>
 		<meta name="twitter:image:alt" content={`${siteConfig.title} banner`}>
 
 		<!-- Canonical URL -->
-		<link rel="canonical" href={Astro.url}>
+		<link rel="canonical" href={canonicalHref}>
 
 		<!-- Structured Data (JSON-LD) -->
-		<script is:inline type="application/ld+json">
-		{
-			"@context": "https://schema.org",
-			"@type": "${setOGTypeArticle ? 'Article' : 'WebSite'}",
-			"name": "${siteConfig.title}",
-			"headline": "${title || siteConfig.title}",
-			"description": "${description || pageTitle}",
-			"url": "${Astro.url}",
-			"image": "${banner}",
-			"author": {
-				"@type": "Person",
-				"name": "${profileConfig.name}",
-				"url": "${Astro.url}"
-			},
-			"publisher": {
-				"@type": "Person",
-				"name": "${profileConfig.name}",
-				"logo": {
-					"@type": "ImageObject",
-					"url": "${favicons[0]?.src || ''}",
-					"width": 192,
-					"height": 192
-				}
-			}${setOGTypeArticle ? `,
-			"datePublished": "2024-01-01",
-			"dateModified": "2024-01-01",
-			"mainEntityOfPage": {
-				"@type": "WebPage",
-				"@id": "${Astro.url}"
-			}` : ''}
-		}
-		</script>
+		<script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
 
 		<meta name="generator" content={Astro.generator} />
 		{favicons.map(favicon => (
@@ -223,10 +261,10 @@ const bannerOffset =
 		<style define:vars={{
 			configHue,
 			'page-width': `${PAGE_WIDTH}rem`,
-			'primary': '#e64a19',
-		}}></style>  <!-- defines global css variables. This will be applied to <html> <body> and some other elements idk why -->
+			'primary': '#ff9800',
+		}}></style> <!-- defines global css variables -->
 
-		<ViewTransitions />
+		<ClientRouter />
 		<slot name="head"></slot>
 
 		<link rel="alternate" type="application/rss+xml" title={profileConfig.name} href={`${Astro.site}rss.xml`}/>
@@ -262,142 +300,146 @@ const bannerOffset =
 		</script>
 		<!-- View Transitions 主题和动画处理 -->
 		<script>
-			const LIGHT_MODE = 'light';
-			const DARK_MODE = 'dark';
-			const AUTO_MODE = 'auto';
-			const DEFAULT_THEME = 'auto';
-			
-			const MAX_TRANSITION_TIME = 1500;
-			const EXIT_ANIMATION_TIME = 400;
-			
-			let isTransitioning = false;
-			let transitionTimeout: number | null = null;
-			
-			function applyTheme() {
-			// 使用 requestAnimationFrame 来批量处理主题切换，减少重绘和回流
-			requestAnimationFrame(() => {
-				const theme = localStorage.getItem('theme') || DEFAULT_THEME;
-				const html = document.documentElement;
+			(function () {
+				const w = window;
+				if ((w as any).__vtHooksInstalled) return;
+				(w as any).__vtHooksInstalled = true;
+
+				const LIGHT_MODE = 'light';
+				const DARK_MODE = 'dark';
+				const AUTO_MODE = 'auto';
+				const DEFAULT_THEME = 'auto';
 				
-				switch (theme) {
-					case LIGHT_MODE:
-						html.classList.remove('dark');
-						break;
-					case DARK_MODE:
-						html.classList.add('dark');
-						break;
-					case AUTO_MODE:
-						if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-							html.classList.add('dark');
-						} else {
-							html.classList.remove('dark');
+				const MAX_TRANSITION_TIME = 1500;
+				
+				let isTransitioning = false;
+				let transitionTimeout: number | null = null;
+				
+				function applyTheme() {
+					requestAnimationFrame(() => {
+						const theme = localStorage.getItem('theme') || DEFAULT_THEME;
+						const html = document.documentElement;
+						
+						switch (theme) {
+							case LIGHT_MODE:
+								html.classList.remove('dark');
+								break;
+							case DARK_MODE:
+								html.classList.add('dark');
+								break;
+							case AUTO_MODE:
+								if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+									html.classList.add('dark');
+								} else {
+									html.classList.remove('dark');
+								}
+								break;
 						}
-						break;
-				}
-				
-				const isDark = html.classList.contains('dark');
-				const pageBg = isDark ? '#1c1814' : '#fff8f0';
-				
-				html.style.setProperty('--page-bg', pageBg);
-				html.style.backgroundColor = pageBg;
-				
-				const hue = localStorage.getItem('hue') || '0';
-				html.style.setProperty('--hue', hue);
-			});
-		}
+						
+						const isDark = html.classList.contains('dark');
+			const pageBg = isDark ? '#1c1814' : '#fff8f0';
 			
-			function clearTransitionState() {
-				isTransitioning = false;
-				if (transitionTimeout) {
-					clearTimeout(transitionTimeout);
-					transitionTimeout = null;
-				}
-				document.body.style.pointerEvents = '';
-				const mainContent = document.querySelector('.main-panel');
-				if (mainContent) {
-					mainContent.classList.remove('page-exit-animation', 'page-enter-animation');
-				}
-			}
-			
-			function triggerExitAnimations() {
-				if (isTransitioning) return;
-				isTransitioning = true;
-				
-				const mainContent = document.querySelector('.main-panel');
-				if (mainContent) {
-					mainContent.classList.add('page-exit-animation');
-				}
-				
-				transitionTimeout = window.setTimeout(() => {
-					clearTransitionState();
-				}, MAX_TRANSITION_TIME);
-			}
-			
-			function triggerEnterAnimations() {
-				clearTransitionState();
-				
-				const mainContent = document.querySelector('.main-panel');
-				if (mainContent) {
-					mainContent.classList.add('page-enter-animation');
-					setTimeout(() => mainContent.classList.remove('page-enter-animation'), 300);
-				}
-				
-				// 使用 Intersection Observer 来优化卡片动画，只在卡片进入视口时触发动画
-				const observerOptions = {
-					threshold: 0.1,
-					rootMargin: '20px'
-				};
-				
-				const cardObserver = new IntersectionObserver((entries) => {
-					entries.forEach((entry, index) => {
-						if (entry.isIntersecting) {
-							// 延迟触发动画，避免同时触发所有动画
-							setTimeout(() => {
-								entry.target.classList.add('card-enter');
-								setTimeout(() => {
-									entry.target.classList.remove('card-enter');
-								}, 400);
-							}, index * 0.02 * 1000);
-							// 观察一次后停止观察
-							cardObserver.unobserve(entry.target);
-						}
+			html.style.setProperty('--page-bg', pageBg);
+			html.style.backgroundColor = pageBg;
+			html.style.backgroundImage = 'url("https://mikann-1359996823.cos.ap-beijing.myqcloud.com/orange.png")';
+			html.style.backgroundSize = 'cover';
+			html.style.backgroundPosition = 'center';
+			html.style.backgroundAttachment = 'fixed';
+						
+						const hue = localStorage.getItem('hue') || '0';
+						html.style.setProperty('--hue', hue);
 					});
+				}
+				
+				function clearTransitionState() {
+					isTransitioning = false;
+					if (transitionTimeout) {
+						clearTimeout(transitionTimeout);
+						transitionTimeout = null;
+					}
+					document.body.style.pointerEvents = '';
+					const mainContent = document.querySelector('.main-panel');
+					if (mainContent) {
+						mainContent.classList.remove('page-exit-animation', 'page-enter-animation');
+					}
+				}
+				
+				function triggerExitAnimations() {
+					if (isTransitioning) return;
+					isTransitioning = true;
+					
+					const mainContent = document.querySelector('.main-panel');
+					if (mainContent) {
+						mainContent.classList.add('page-exit-animation');
+					}
+					
+					transitionTimeout = window.setTimeout(() => {
+						clearTransitionState();
+					}, MAX_TRANSITION_TIME);
+				}
+				
+				function triggerEnterAnimations() {
+					clearTransitionState();
+					
+					const mainContent = document.querySelector('.main-panel');
+					if (mainContent) {
+						mainContent.classList.add('page-enter-animation');
+						setTimeout(() => mainContent.classList.remove('page-enter-animation'), 300);
+					}
+					
+					const observerOptions = {
+						threshold: 0.1,
+						rootMargin: '20px'
+					};
+					
+					const cardObserver = new IntersectionObserver((entries) => {
+						entries.forEach((entry, index) => {
+							if (entry.isIntersecting) {
+								setTimeout(() => {
+									entry.target.classList.add('card-enter');
+									setTimeout(() => {
+										entry.target.classList.remove('card-enter');
+									}, 400);
+								}, index * 0.02 * 1000);
+								cardObserver.unobserve(entry.target);
+							}
+						});
+					}, observerOptions);
+					
+					const postCards = document.querySelectorAll('.post-card-animate');
+					postCards.forEach(card => cardObserver.observe(card));
+					
+					const friendCards = document.querySelectorAll('.friend-card-animate');
+					friendCards.forEach(card => cardObserver.observe(card));
+					
+					const noteCards = document.querySelectorAll('.note-card-animate');
+					noteCards.forEach(card => cardObserver.observe(card));
+					
+					const postContent = document.querySelector('.post-content-animate');
+					if (postContent) {
+						postContent.classList.add('content-enter');
+						setTimeout(() => postContent.classList.remove('content-enter'), 350);
+					}
+					
+					const sidebar = document.querySelector('#sidebar-sticky');
+					if (sidebar) {
+						sidebar.classList.add('sidebar-enter');
+						setTimeout(() => sidebar.classList.remove('sidebar-enter'), 300);
+					}
+				}
+				
+				document.addEventListener('astro:page-load', () => {
+					applyTheme();
+					requestAnimationFrame(triggerEnterAnimations);
 				});
 				
-				// 观察所有卡片元素
-				const postCards = document.querySelectorAll('.post-card-animate');
-				postCards.forEach(card => cardObserver.observe(card));
+				document.addEventListener('astro:before-preparation', triggerExitAnimations);
 				
-				const friendCards = document.querySelectorAll('.friend-card-animate');
-				friendCards.forEach(card => cardObserver.observe(card));
-				
-				const noteCards = document.querySelectorAll('.note-card-animate');
-				noteCards.forEach(card => cardObserver.observe(card));
-				
-				const postContent = document.querySelector('.post-content-animate');
-				if (postContent) {
-					postContent.classList.add('content-enter');
-					setTimeout(() => postContent.classList.remove('content-enter'), 350);
-				}
-				
-				const sidebar = document.querySelector('#sidebar-sticky');
-				if (sidebar) {
-					sidebar.classList.add('sidebar-enter');
-					setTimeout(() => sidebar.classList.remove('sidebar-enter'), 300);
-				}
-			}
-			
-			document.addEventListener('astro:page-load', () => {
-				applyTheme();
-				requestAnimationFrame(triggerEnterAnimations);
-			});
-			
-			document.addEventListener('astro:before-preparation', triggerExitAnimations);
-			
-			document.addEventListener('astro:after-swap', () => {
-				applyTheme();
-				clearTransitionState();
-			});
+				document.addEventListener('astro:after-swap', () => {
+					applyTheme();
+					clearTransitionState();
+				});
+			})();
 		</script>
 	</body>
 </html>
@@ -440,7 +482,11 @@ const bannerOffset =
 	/* 移动端背景 */
 	@media (max-width: 768px) {
 		body {
-			@apply bg-[#fff8f0] dark:bg-[#1c1814]
+			@apply bg-[#fff8f0] dark:bg-[#1c1814];
+			background-image: url('https://mikann-1359996823.cos.ap-beijing.myqcloud.com/orange.png');
+			background-size: cover;
+			background-position: center;
+			background-attachment: fixed;
 		}
 	}
 }
@@ -459,483 +505,252 @@ html {
 }
 </style>
 
-<script defer is:inline>
-
-import {getStoredTheme, setTheme} from "../utils/setting-utils";
-import {pathsEqual, url} from "../utils/url-utils";
+<script>
+import { getStoredTheme, setTheme } from "../utils/setting-utils";
 import {
 	BANNER_HEIGHT,
 	BANNER_HEIGHT_HOME,
 	BANNER_HEIGHT_EXTEND,
-	MAIN_PANEL_OVERLAPS_BANNER_HEIGHT
+	MAIN_PANEL_OVERLAPS_BANNER_HEIGHT,
 } from "../constants/constants";
-import { siteConfig } from '../config';
 
-// 移除OverlayScrollbars，使用原生滚动条
-// 移除了延迟加载非关键CSS的函数
-// 移除了加载Overlayscrollbars的函数
-
-const bannerEnabled = !!document.getElementById('banner-wrapper');
-
-function checkIsMobile() {
-	return window.innerWidth <= 768;
-}
-let isMobile = checkIsMobile();
-
-const panelConfigs = {
-	"display-setting": ["display-setting", "display-settings-switch"],
-	"nav-menu-panel": ["nav-menu-panel", "nav-menu-switch"],
-	"search-panel": ["search-panel", "search-bar", "search-switch"]
+type Runtime = {
+	isMobile: boolean;
+	bannerEnabled: boolean;
+	backToTopBtn: HTMLElement | null;
+	navbar: HTMLElement | null;
+	lastScrollY: number;
+	lastNavbarHidden: boolean;
+	lastBackToTopVisible: boolean;
+	scrollScheduled: boolean;
+	onPageLoad: () => void;
 };
 
-let mobileOptimizationsInitialized = false;
+const w = window as any;
 
-const mobileOptimizations = {
-	init: () => {
-		if (mobileOptimizationsInitialized) return;
-		mobileOptimizationsInitialized = true;
-		
-		if (isMobile) {
-			document.documentElement.classList.add('mobile-optimized');
+function createRuntime(): Runtime {
+	const rt: Runtime = {
+		isMobile: false,
+		bannerEnabled: false,
+		backToTopBtn: null,
+		navbar: null,
+		lastScrollY: 0,
+		lastNavbarHidden: false,
+		lastBackToTopVisible: false,
+		scrollScheduled: false,
+		onPageLoad: () => {},
+	};
+
+	const panelConfigs: Record<string, string[]> = {
+		"display-setting": ["display-setting", "display-settings-switch"],
+		"nav-menu-panel": ["nav-menu-panel", "nav-menu-switch"],
+	};
+
+	const refreshBasics = () => {
+		rt.isMobile = window.innerWidth <= 768;
+		rt.bannerEnabled = !!document.getElementById("banner-wrapper");
+		rt.navbar = document.getElementById("navbar-wrapper");
+		rt.backToTopBtn = document.getElementById("back-to-top-btn");
+
+		document.body.style.overflow = "auto";
+		setTheme(getStoredTheme());
+
+		let offset = Math.floor(window.innerHeight * (BANNER_HEIGHT_EXTEND / 100));
+		offset = offset - (offset % 4);
+		document.documentElement.style.setProperty("--banner-height-extend", `${offset}px`);
+	};
+
+	const updateScroll = () => {
+		const y = window.scrollY;
+		rt.lastScrollY = y;
+
+		if (rt.backToTopBtn) {
+			const shouldShow = y > 300;
+			if (shouldShow !== rt.lastBackToTopVisible) {
+				rt.backToTopBtn.classList.toggle("visible", shouldShow);
+				rt.lastBackToTopVisible = shouldShow;
+			}
 		}
-	},
-	
-	updateIsMobile: () => {
-		isMobile = checkIsMobile();
-	}
-};
 
-mobileOptimizations.init();
+		if (rt.bannerEnabled && rt.navbar) {
+			const NAVBAR_HEIGHT = 72;
+			const MAIN_PANEL_EXCESS_HEIGHT = MAIN_PANEL_OVERLAPS_BANNER_HEIGHT * 16;
 
-// Cache DOM elements for better performance
-const cachedElements = {};
+			let currentBannerHeight = BANNER_HEIGHT;
+			if (
+				document.body.classList.contains("lg:is-home") &&
+				window.innerWidth >= 1024
+			) {
+				currentBannerHeight = BANNER_HEIGHT_HOME;
+			}
 
-function getCachedElement(id) {
-	if (!cachedElements[id]) {
-		cachedElements[id] = document.getElementById(id);
-	}
-	return cachedElements[id];
-}
+			const threshold =
+				window.innerHeight * (currentBannerHeight / 100) -
+				NAVBAR_HEIGHT -
+				MAIN_PANEL_EXCESS_HEIGHT -
+				16;
+			const shouldHide = y >= threshold;
+			if (shouldHide !== rt.lastNavbarHidden) {
+				rt.navbar.classList.toggle("navbar-hidden", shouldHide);
+				rt.lastNavbarHidden = shouldHide;
+			}
+		}
+	};
 
-// 只在桌面端添加复杂的点击事件处理
-if (!isMobile) {
-	document.addEventListener("click", (event) => {
+	const scheduleScrollUpdate = () => {
+		if (rt.scrollScheduled) return;
+		rt.scrollScheduled = true;
+		requestAnimationFrame(() => {
+			rt.scrollScheduled = false;
+			updateScroll();
+		});
+	};
+
+	const onResize = () => {
+		refreshBasics();
+		scheduleScrollUpdate();
+	};
+
+	const onScroll = () => scheduleScrollUpdate();
+
+	const onDocumentClick = (event: MouseEvent) => {
+		if (rt.isMobile) return;
 		const target = event.target;
 		if (!(target instanceof Node)) return;
-		
-		// Check all panels
+
 		for (const [panelId, ignoreIds] of Object.entries(panelConfigs)) {
-			const panel = getCachedElement(panelId);
+			const panel = document.getElementById(panelId);
 			if (!panel) continue;
-			
-			// Check if click is inside any ignored elements
+
 			let isInsideIgnored = false;
 			for (const ignoreId of ignoreIds) {
-				const ignoreElement = getCachedElement(ignoreId);
-				if (ignoreElement && (ignoreElement === target || ignoreElement.contains(target))) {
+				const ignoreEl = document.getElementById(ignoreId);
+				if (ignoreEl && (ignoreEl === target || ignoreEl.contains(target))) {
 					isInsideIgnored = true;
 					break;
 				}
 			}
-			
-			// Check if click is inside the panel itself
-			const isInsidePanel = panel.contains(target);
-			
-			// For nav-menu-panel, only close if clicked outside both the panel and the switch
-			if (panelId === "nav-menu-panel") {
-				if (!isInsideIgnored && !isInsidePanel) {
-					panel.classList.add("float-panel-closed");
-				}
-			} else {
-				// For other panels, keep existing behavior
-				if (!isInsideIgnored) {
-					panel.classList.add("float-panel-closed");
-				}
+
+			if (!isInsideIgnored) {
+				panel.classList.add("float-panel-closed");
 			}
 		}
-	});
-}
+	};
 
-// Add click event listener for nav menu switch - Optimized with caching
-const navMenuSwitch = getCachedElement("nav-menu-switch");
-const navMenuPanel = getCachedElement("nav-menu-panel");
+	const bindNavMenuSwitch = () => {
+		const navMenuSwitch = document.getElementById("nav-menu-switch");
+		const navMenuPanel = document.getElementById("nav-menu-panel");
+		if (!navMenuSwitch || !navMenuPanel) return;
 
-if (navMenuSwitch && navMenuPanel) {
-    navMenuSwitch.addEventListener("click", (e) => {
-        e.stopPropagation(); // Prevent immediate closing by click outside listener
-        navMenuPanel.classList.toggle("float-panel-closed");
-    }, { passive: true });
-}
+		if ((navMenuSwitch as any).dataset.bound === "true") return;
+		(navMenuSwitch as any).dataset.bound = "true";
 
-// Load theme from storage
-function loadTheme() {
-	const theme = getStoredTheme();
-	setTheme(theme);
-}
+		navMenuSwitch.addEventListener(
+			"click",
+			(e) => {
+				e.stopPropagation();
+				navMenuPanel.classList.toggle("float-panel-closed");
+			},
+			{ passive: true },
+		);
+	};
 
-// 移除自定义滚动条，使用原生滚动条
-// 在所有设备上都使用原生滚动条
-function setupNativeScrollbar() {
-	// 移除可能存在的自定义滚动条初始化属性
-	document.body.removeAttribute('data-overlayscrollbars-initialize');
-	document.documentElement.removeAttribute('data-overlayscrollbars-initialize');
-	
-	// 确保body元素使用原生滚动
-	const bodyElement = document.querySelector('body');
-	if (bodyElement) {
-		bodyElement.style.overflow = 'auto';
+	rt.onPageLoad = () => {
+		refreshBasics();
+		bindNavMenuSwitch();
+		scheduleScrollUpdate();
+	};
+
+	window.addEventListener("scroll", onScroll, { passive: true });
+	window.addEventListener("resize", onResize, { passive: true });
+	document.addEventListener("click", onDocumentClick);
+
+	document.addEventListener("astro:page-load", rt.onPageLoad);
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", rt.onPageLoad, { once: true });
+	} else {
+		rt.onPageLoad();
 	}
+
+	return rt;
 }
 
-// 初始化原生滚动条
-setupNativeScrollbar();
-
-
-
-// Calculate banner height (already defined in inline script)
-
-// Initialize on page load
-function initApp() {
-	loadTheme();
-	// 确保navbar元素被正确获取
-	refreshNavbar();
-	// 执行一次scrollFunction以确保初始状态正确
-	scrollFunction();
-	// 使用原生滚动条，移除了自定义滚动条的初始化
-}
-
-// Run initial setup
-initApp();
-
-// 状态保持功能
-(function() {
-	// 存储滚动位置
-	function saveScrollPosition() {
-		const scrollPosition = {
-			x: window.scrollX,
-			y: window.scrollY
-		};
-		sessionStorage.setItem('scrollPosition', JSON.stringify(scrollPosition));
-	}
-	
-	// 恢复滚动位置
-	function restoreScrollPosition() {
-		const savedPosition = sessionStorage.getItem('scrollPosition');
-		if (savedPosition) {
-			try {
-				const position = JSON.parse(savedPosition);
-				window.scrollTo(position.x, position.y);
-				sessionStorage.removeItem('scrollPosition');
-			} catch (e) {
-				// 忽略解析错误
-			}
-		}
-	}
-	
-	// 存储筛选条件
-	function saveFilterState() {
-		// 这里可以根据具体的筛选组件进行扩展
-		// 例如存储搜索关键词、选中的标签、分类等
-		const filterState = {
-			search: document.querySelector('input[type="search"]')?.value || '',
-			// 其他筛选条件...
-		};
-		sessionStorage.setItem('filterState', JSON.stringify(filterState));
-	}
-	
-	// 恢复筛选条件
-	function restoreFilterState() {
-		const savedState = sessionStorage.getItem('filterState');
-		if (savedState) {
-			try {
-				const state = JSON.parse(savedState);
-				// 恢复搜索框的值
-				const searchInput = document.querySelector('input[type="search"]');
-				if (searchInput) {
-					searchInput.value = state.search;
-				}
-				// 恢复其他筛选条件...
-			} catch (e) {
-				// 忽略解析错误
-			}
-		}
-	}
-	
-	// 监听页面卸载事件，保存状态
-	window.addEventListener('beforeunload', function() {
-		saveScrollPosition();
-		saveFilterState();
-	});
-	
-	// 监听页面加载事件，恢复状态
-	document.addEventListener('DOMContentLoaded', function() {
-		restoreScrollPosition();
-		restoreFilterState();
-	});
-})();
-
-// Initialize scroll elements
-let backToTopBtn = document.getElementById('back-to-top-btn');
-let navbar = document.getElementById('navbar-wrapper');
-
-function refreshBackToTop() {
-	backToTopBtn = document.getElementById('back-to-top-btn');
-}
-
-function refreshNavbar() {
-	navbar = document.getElementById('navbar-wrapper');
-}
-
-// Throttle scroll function to improve performance - 使用节流替代防抖，减少计算频率
-			let lastScrollTime = 0;
-			const SCROLL_THROTTLE_DELAY = isMobile ? 250 : 100; // 减少PC端节流延迟，提高响应速度
-			let lastScrollPosition = 0;
-			let lastNavbarState = false;
-			let lastBackToTopState = false;
-
-			// 使用requestAnimationFrame优化滚动处理
-			let requestId = null;
-
-			function scrollFunction() {
-				const currentTime = Date.now();
-				const currentScrollPosition = window.scrollY;
-				
-				// 节流：只在指定时间间隔后执行
-				if (currentTime - lastScrollTime < SCROLL_THROTTLE_DELAY) {
-					return;
-				}
-				
-				// 避免重复计算：只有当滚动位置变化超过一定阈值时才执行
-				if (Math.abs(currentScrollPosition - lastScrollPosition) < 10) {
-					return;
-				}
-				
-				// 取消之前的动画帧请求
-				if (requestId) {
-					cancelAnimationFrame(requestId);
-				}
-				
-				// 使用requestAnimationFrame执行滚动处理
-				requestId = requestAnimationFrame(() => {
-					lastScrollTime = currentTime;
-					lastScrollPosition = currentScrollPosition;
-					
-					// 延迟获取元素，避免频繁的 DOM 查询
-					if (!backToTopBtn) {
-						backToTopBtn = document.getElementById('back-to-top-btn');
-					}
-					if (!navbar) {
-						navbar = document.getElementById('navbar-wrapper');
-					}
-					
-					// 回到顶部按钮：滚动超过 300px 时显示
-					if (backToTopBtn) {
-						const shouldShowBackToTop = currentScrollPosition > 300;
-						if (shouldShowBackToTop !== lastBackToTopState) {
-							if (shouldShowBackToTop) {
-								backToTopBtn.classList.add('visible');
-							} else {
-								backToTopBtn.classList.remove('visible');
-							}
-							lastBackToTopState = shouldShowBackToTop;
-						}
-					}
-
-					// Update navbar visibility based on scroll position
-					if (bannerEnabled && navbar) {
-						const NAVBAR_HEIGHT = 72;
-						const MAIN_PANEL_EXCESS_HEIGHT = MAIN_PANEL_OVERLAPS_BANNER_HEIGHT * 16;
-
-						let currentBannerHeight = BANNER_HEIGHT;
-						if (document.body.classList.contains('lg:is-home') && window.innerWidth >= 1024) {
-							currentBannerHeight = BANNER_HEIGHT_HOME;
-						}
-						
-						const threshold = window.innerHeight * (currentBannerHeight / 100) - NAVBAR_HEIGHT - MAIN_PANEL_EXCESS_HEIGHT - 16;
-						const shouldHideNavbar = currentScrollPosition >= threshold;
-						if (shouldHideNavbar !== lastNavbarState) {
-							if (shouldHideNavbar) {
-								navbar.classList.add('navbar-hidden');
-							} else {
-								navbar.classList.remove('navbar-hidden');
-							}
-							lastNavbarState = shouldHideNavbar;
-						}
-					}
-				});
-			}
-
-// Set up scroll and resize event listeners with passive option for better performance
-			window.addEventListener('scroll', scrollFunction, { passive: true });
-			
-			// 统一的初始化函数
-			function initScroll() {
-				refreshBackToTop();
-				scrollFunction();
-			}
-			
-			// 只使用 DOMContentLoaded 事件，避免重复初始化
-			document.addEventListener('DOMContentLoaded', initScroll, { once: true });
-
-			// 移动端优化：触摸滚动事件
-			let touchScrollTimeout = null;
-			let touchMoveHandler = null;
-			let lastTouchTime = 0;
-			const TOUCH_THROTTLE_DELAY = 150; // 增加节流延迟，进一步减少事件触发频率
-			if (isMobile) {
-				touchMoveHandler = (event) => {
-					// 节流处理触摸滚动，减少事件触发频率
-					const currentTime = Date.now();
-					if (currentTime - lastTouchTime < TOUCH_THROTTLE_DELAY) {
-						return;
-					}
-					lastTouchTime = currentTime;
-					
-					// 防抖处理触摸滚动
-					if (touchScrollTimeout) {
-						clearTimeout(touchScrollTimeout);
-					}
-					touchScrollTimeout = window.setTimeout(() => {
-						// 优化：只在需要时调用scrollFunction
-						const currentScrollPosition = window.scrollY;
-						if (Math.abs(currentScrollPosition - lastScrollPosition) > 10) {
-							scrollFunction();
-						}
-					}, 30); // 减少防抖延迟，提高响应速度
-				};
-				// 使用passive选项，告诉浏览器不会调用preventDefault()
-				window.addEventListener('touchmove', touchMoveHandler, { passive: true });
-			}
-
-			// Throttle resize function to improve performance
-			let lastResizeTime = 0;
-			const RESIZE_THROTTLE_DELAY = isMobile ? 500 : 350; // 移动端增大resize节流延迟
-			let lastWindowWidth = window.innerWidth;
-			let lastWindowHeight = window.innerHeight;
-
-			function resizeFunction() {
-				const currentTime = Date.now();
-				const currentWidth = window.innerWidth;
-				const currentHeight = window.innerHeight;
-				
-				// 节流：只在指定时间间隔后执行
-				if (currentTime - lastResizeTime < RESIZE_THROTTLE_DELAY) {
-					return;
-				}
-				
-				// 避免重复计算：只有当窗口尺寸变化超过一定阈值时才执行
-				if (Math.abs(currentWidth - lastWindowWidth) < 10 && Math.abs(currentHeight - lastWindowHeight) < 10) {
-					return;
-				}
-				
-				lastResizeTime = currentTime;
-				lastWindowWidth = currentWidth;
-				lastWindowHeight = currentHeight;
-				
-				// Recalculate banner height on resize
-				let offset = Math.floor(window.innerHeight * (BANNER_HEIGHT_EXTEND / 100));
-				offset = offset - offset % 4;
-				document.documentElement.style.setProperty('--banner-height-extend', `${offset}px`);
-				
-				// 移动端特殊处理
-				if (isMobile) {
-					// 重新计算移动端布局
-					const bodyElement = document.querySelector('body');
-					if (bodyElement) {
-						// 调整移动端的banner高度
-						if (bannerEnabled) {
-							const mobileBannerHeight = Math.min(window.innerHeight * 0.4, 300);
-							bodyElement.style.setProperty('--mobile-banner-height', `${mobileBannerHeight}px`);
-						}
-					}
-				}
-			}
-
-			window.addEventListener('resize', resizeFunction, { passive: true });
-
-			// 移动端优化：设备旋转处理
-			let orientationChangeHandler = null;
-			if (isMobile) {
-				orientationChangeHandler = () => {
-					// 延迟执行，等待设备旋转完成
-					setTimeout(resizeFunction, 150);
-				};
-				window.addEventListener('orientationchange', orientationChangeHandler, { passive: true });
-			}
-			
-			// 清理函数，在页面卸载时移除事件监听器
-			window.addEventListener('beforeunload', () => {
-				window.removeEventListener('scroll', scrollFunction);
-				window.removeEventListener('resize', resizeFunction);
-				if (isMobile) {
-					if (touchMoveHandler) {
-						window.removeEventListener('touchmove', touchMoveHandler);
-					}
-					if (orientationChangeHandler) {
-						window.removeEventListener('orientationchange', orientationChangeHandler);
-					}
-					if (touchScrollTimeout) {
-						clearTimeout(touchScrollTimeout);
-					}
-				}
-			}, { once: true });
-
+w.__layoutRuntime = w.__layoutRuntime || createRuntime();
+w.__layoutRuntime.onPageLoad();
 </script>
 
 <script>
-let lightbox: any;
+	(function () {
+		const w = window as any;
+		if (w.__photoswipeInstalled) return;
+		w.__photoswipeInstalled = true;
 
-async function initPhotoSwipe() {
-	if (lightbox) {
-		lightbox.destroy();
-		lightbox = null;
-	}
+		let lightbox: any;
 
-	try {
-		// 动态导入 PhotoSwipe
-		const { default: PhotoSwipeLightbox } = await import('photoswipe/lightbox');
-		const { default: PhotoSwipe } = await import('photoswipe');
+		const hasGalleryItems = () =>
+			!!document.querySelector(".gallery a, .custom-md img, #post-cover img");
 
-		const options: any = {
-			gallery: ".gallery a, .custom-md img, #post-cover img",
-			pswpModule: PhotoSwipe,
-			closeSVG: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"></line><line x1="18" y1="6" x2="6" y2="18"></line></svg>',
-			zoomSVG: '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff"><path d="M340-540h-40q-17 0-28.5-11.5T260-580q0-17 11.5-28.5T300-620h40v-40q0-17 11.5-28.5T380-700q17 0 28.5 11.5T420-660v40h40q17 0 28.5 11.5T500-580q0 17-11.5 28.5T460-540h-40v40q0 17-11.5 28.5T380-460q-17 0-28.5-11.5T340-500v-40Zm40 220q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l224 224q11 11 11 28t-11 28q-11 11-28 11t-28-11L532-372q-30 24-69 38t-83 14Zm0-80q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg>',
-			padding: { top: 20, bottom: 20, left: 20, right: 20 },
-			wheelToZoom: true,
-			arrowPrev: true,
-			arrowNext: true,
-			imageClickAction: false,
-			bgClickAction: 'close',
-			tapAction: 'toggle-controls',
-			doubleTapAction: 'zoom',
-		};
-
-		// @ts-ignore
-		lightbox = new PhotoSwipeLightbox(options);
-
-		lightbox.addFilter("domItemData", (itemData: any, element: any) => {
-			if (element instanceof HTMLImageElement) {
-				itemData.src = element.src;
-				itemData.w = Number(element.naturalWidth || window.innerWidth);
-				itemData.h = Number(element.naturalHeight || window.innerHeight);
-				itemData.msrc = element.src;
+		async function initPhotoSwipe() {
+			if (!hasGalleryItems()) {
+				if (lightbox) {
+					lightbox.destroy();
+					lightbox = null;
+				}
+				return;
 			}
-			return itemData;
-		});
 
-		lightbox.init();
-	} catch (error) {
-		console.error('Failed to load PhotoSwipe:', error);
-	}
-}
+			if (lightbox) {
+				lightbox.destroy();
+				lightbox = null;
+			}
 
-document.addEventListener('DOMContentLoaded', initPhotoSwipe);
-window.addEventListener('load', initPhotoSwipe, { once: true });
+			try {
+				const { default: PhotoSwipeLightbox } = await import("photoswipe/lightbox");
+				const { default: PhotoSwipe } = await import("photoswipe");
 
-document.addEventListener('astro:page-load', initPhotoSwipe);
+				const options: any = {
+					gallery: ".gallery a, .custom-md img, #post-cover img",
+					pswpModule: PhotoSwipe,
+					closeSVG:
+						'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"></line><line x1="18" y1="6" x2="6" y2="18"></line></svg>',
+					zoomSVG:
+						'<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff"><path d="M340-540h-40q-17 0-28.5-11.5T260-580q0-17 11.5-28.5T300-620h40v-40q0-17 11.5-28.5T380-700q17 0 28.5 11.5T420-660v40h40q17 0 28.5 11.5T500-580q0 17-11.5 28.5T460-540h-40v40q0 17-11.5 28.5T380-460q-17 0-28.5-11.5T340-500v-40Zm40 220q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l224 224q11 11 11 28t-11 28q-11 11-28 11t-28-11L532-372q-30 24-69 38t-83 14Zm0-80q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg>',
+					padding: { top: 20, bottom: 20, left: 20, right: 20 },
+					wheelToZoom: true,
+					arrowPrev: true,
+					arrowNext: true,
+					imageClickAction: false,
+					bgClickAction: "close",
+					tapAction: "toggle-controls",
+					doubleTapAction: "zoom",
+				};
 
+				lightbox = new PhotoSwipeLightbox(options);
 
+				lightbox.addFilter("domItemData", (itemData: any, element: any) => {
+					if (element instanceof HTMLImageElement) {
+						itemData.src = element.src;
+						itemData.w = Number(element.naturalWidth || window.innerWidth);
+						itemData.h = Number(element.naturalHeight || window.innerHeight);
+						itemData.msrc = element.src;
+					}
+					return itemData;
+				});
+
+				lightbox.init();
+			} catch (_error) {}
+		}
+
+		const boot = () => requestAnimationFrame(initPhotoSwipe);
+
+		if (document.readyState === "loading") {
+			document.addEventListener("DOMContentLoaded", boot, { once: true });
+		} else {
+			boot();
+		}
+
+		document.addEventListener("astro:page-load", boot);
+	})();
 </script>
 
 <style is:global>

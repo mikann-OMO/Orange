@@ -1,4 +1,6 @@
 ---
+import fs from "fs";
+import path from "path";
 import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 import type { GetStaticPaths } from "astro";
@@ -6,12 +8,7 @@ import { Icon } from "astro-icon/components";
 import MainGridLayout from "../../layouts/MainGridLayout.astro";
 
 // 图册页面专用公告配置
-const picturesAnnouncement = {
-	title: "公告",
-	content: "内容还在建设中",
-	avatar: "/images/奇卡头1.jpg",
-	enabled: true,
-};
+import picturesAnnouncement from "../../content/exhibition-announcement.yaml";
 
 export const getStaticPaths: GetStaticPaths = async () => {
 	const pictures = await getCollection("exhibition");
@@ -32,17 +29,160 @@ const albumName: string = album.data.dir;
 const title: string = album.data.title || album.id;
 const description: string = album.data.description || "相册";
 
-const exhibitionImages = import.meta.glob<{ default: ImageMetadata }>(
-	"../../content/exhibition/**/*.{jpg,jpeg,png,gif,webp}",
-	{ eager: true },
-);
+// 读取原始 Markdown 文件内容
+function getRawMarkdownContent(slug: string): string | null {
+	const projectRoot = path.resolve(process.cwd());
+	const exhibitionDir = path.join(projectRoot, "src/content/exhibition");
+	const possibleExtensions = [".md", ".mdx"];
+	for (const ext of possibleExtensions) {
+		const filePath = path.join(exhibitionDir, slug + ext);
+		if (fs.existsSync(filePath)) {
+			return fs.readFileSync(filePath, "utf-8");
+		}
+	}
+	return null;
+}
+
+const rawMarkdown = getRawMarkdownContent(album.id);
+const hasMarkdownContent =
+	rawMarkdown &&
+	typeof rawMarkdown === "string" &&
+	rawMarkdown.trim().length > 0;
 
 interface ArtistGroup {
 	name: string;
-	images: { src: string; alt: string; width: number; height: number }[];
+	images: { src: string; alt: string; width?: number; height?: number }[];
 }
 
-function getExhibitionImagesByArtist(dir: string): ArtistGroup[] {
+// 从 Markdown 内容中按 ## 标题分组提取图片
+function extractImagesByArtistFromMarkdown(): ArtistGroup[] {
+	const groups: ArtistGroup[] = [];
+	if (!rawMarkdown) return groups;
+
+	// 移除 frontmatter 部分
+	let content = rawMarkdown;
+	const frontmatterMatch = rawMarkdown.match(/^---[\s\S]*?---/);
+	if (frontmatterMatch) {
+		content = rawMarkdown.substring(frontmatterMatch[0].length);
+	}
+
+	const lines = content.split("\n");
+
+	// 正则匹配 http/https 开头的图片 URL
+	const urlRegex = /^(https?:\/\/[^\s]+\.(jpg|jpeg|png|gif|webp|avif))$/i;
+
+	// 正则匹配 Markdown 图片语法 ![alt](url)
+	const markdownImageRegex =
+		/!\[.*?\]\((https?:\/\/[^\s]+\.(jpg|jpeg|png|gif|webp|avif))\)/gi;
+
+	// 正则匹配二级标题 ## 作为画师名称
+	const headingRegex = /^##\s+(.+)$/;
+
+	// 初始画师名称从 tags 中获取（tags[1] 是画师）
+	let initialArtistName = "未知画师";
+	if (album.data.tags && album.data.tags.length >= 2) {
+		initialArtistName = album.data.tags[1];
+	}
+	let currentArtistName = initialArtistName;
+	let currentImages: ArtistGroup["images"] = [];
+
+	// 检查每行
+	for (const line of lines) {
+		const trimmedLine = line.trim();
+		if (!trimmedLine) continue;
+
+		// 检查是否是二级标题
+		const headingMatch = trimmedLine.match(headingRegex);
+		if (headingMatch) {
+			// 如果已有图片，保存当前画师组
+			if (currentImages.length > 0) {
+				groups.push({ name: currentArtistName, images: currentImages });
+			}
+			// 开始新的画师组
+			currentArtistName = headingMatch[1];
+			currentImages = [];
+			continue;
+		}
+
+		// 尝试匹配完整的 URL 行
+		const urlMatch = trimmedLine.match(urlRegex);
+		if (urlMatch) {
+			currentImages.push({
+				src: urlMatch[0],
+				alt: title,
+			});
+			continue;
+		}
+
+		// 尝试匹配 Markdown 图片语法
+		let match;
+		while ((match = markdownImageRegex.exec(trimmedLine)) !== null) {
+			currentImages.push({
+				src: match[1],
+				alt: title,
+			});
+		}
+	}
+
+	// 保存最后一个画师组
+	if (currentImages.length > 0) {
+		groups.push({ name: currentArtistName, images: currentImages });
+	}
+
+	// 如果没有找到任何画师标题，返回一个默认组
+	if (groups.length === 0) {
+		// 简单提取所有图片
+		const allUrls: string[] = [];
+		for (const line of lines) {
+			const trimmedLine = line.trim();
+			if (!trimmedLine) continue;
+			const urlMatch = trimmedLine.match(urlRegex);
+			if (urlMatch) {
+				allUrls.push(urlMatch[0]);
+				continue;
+			}
+			let match;
+			while ((match = markdownImageRegex.exec(trimmedLine)) !== null) {
+				allUrls.push(match[1]);
+			}
+		}
+		if (allUrls.length > 0) {
+			groups.push({
+				name: initialArtistName,
+				images: allUrls.map((url) => ({ src: url, alt: title })),
+			});
+		}
+	}
+
+	return groups;
+}
+
+// 获取 Markdown 中的图片
+function getImagesFromMarkdown(): ArtistGroup[] {
+	return extractImagesByArtistFromMarkdown();
+}
+
+// 获取配置的图片（优先使用YAML配置的远程图片）
+function getConfiguredImages(): ArtistGroup[] {
+	// 从 tags 中获取画师名称（tags[1] 是画师）
+	let artistName = "酸素海豹";
+	if (album.data.tags && album.data.tags.length >= 2) {
+		artistName = album.data.tags[1];
+	}
+	const images = album.data.images.map((img) => ({
+		src: img.file,
+		alt: img.title || title,
+	}));
+	return [{ name: artistName, images }];
+}
+
+// 获取本地图片（备用方案）
+function getLocalImagesByArtist(dir: string): ArtistGroup[] {
+	const exhibitionImages = import.meta.glob<{ default: ImageMetadata }>(
+		"../../content/exhibition/**/*.{jpg,jpeg,png,gif,webp}",
+		{ eager: true },
+	);
+
 	const artistMap = new Map<
 		string,
 		{ src: string; alt: string; width: number; height: number }[]
@@ -78,7 +218,16 @@ function getExhibitionImagesByArtist(dir: string): ArtistGroup[] {
 	}));
 }
 
-const artistGroups = getExhibitionImagesByArtist(albumName);
+// 根据优先级选择获取图片的方式
+let artistGroups: ArtistGroup[];
+if (hasMarkdownContent) {
+	artistGroups = getImagesFromMarkdown();
+} else if (album.data.images && album.data.images.length > 0) {
+	artistGroups = getConfiguredImages();
+} else {
+	artistGroups = getLocalImagesByArtist(albumName);
+}
+
 const totalImages = artistGroups.reduce((sum, g) => sum + g.images.length, 0);
 ---
 

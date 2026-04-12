@@ -40,12 +40,12 @@ const items = shuffledFriends.map((friend) => ({
             <div class="apply-friend-card" data-rarity="legendary" style="--rarity-color: #FF6B35">
                 <div class="card-inner">
                     <div class="card-background">
-                        <div class="avatar-blur" style="background-image: url(https://mikann-1359996823.cos.ap-beijing.myqcloud.com/pic/d21063851cd65685573db96d42f8dbef.png)"></div>
+                        <div class="avatar-blur" style="background-image: url(https://mikann-1359996823.cos.ap-beijing.myqcloud.com/OMO.jpg)"></div>
                     </div>
                     <div class="card-glow"></div>
                     <div class="avatar-section">
                         <img 
-                            src="https://mikann-1359996823.cos.ap-beijing.myqcloud.com/pic/d21063851cd65685573db96d42f8dbef.png" 
+                            src="https://mikann-1359996823.cos.ap-beijing.myqcloud.com/OMO.jpg" 
                             alt="我的头像" 
                             class="avatar"
                             loading="lazy"
@@ -64,7 +64,7 @@ const items = shuffledFriends.map((friend) => ({
                     <div class="rarity-indicator">
                         <span class="rarity-text">LEGENDARY</span>
                     </div>
-                    <button class="copy-button" onclick="copyFriendLink(event)">
+                    <button class="copy-button" type="button">
                         一键复制
                     </button>
                 </div>
@@ -86,86 +86,62 @@ const items = shuffledFriends.map((friend) => ({
     </div>
     
     <script>
-        (window as any).copyFriendLink = function(event: MouseEvent) {
-            const friendLink = `const items = [ 
+        const friendLink = `const items = [ 
      { 
          title: "mikann_OMO", 
          image: 
-             "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/pic/d21063851cd65685573db96d42f8dbef.png", 
+             "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/OMO.jpg", 
          desc: "是一位超级无敌可爱美少女", 
          siteurl: "https://www.mikann.fun", 
          tags: [""], 
      }`;
-            
-            const button = event.target as HTMLElement | null;
-            if (!button) return;
-            const originalText = button.textContent;
-            
-            // 显示加载状态
-            button.textContent = '复制中...';
-            button.style.background = '#ffb74d';
-            button.style.color = 'white';
-            
-            // 尝试使用剪贴板 API
-            if (navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(friendLink).then(() => {
-                    button.textContent = '成功复制';
-                    button.style.background = '#4CAF50';
-                    button.style.color = 'white';
-                    
-                    setTimeout(() => {
-                        button.textContent = originalText;
-                        button.style.background = '';
-                        button.style.color = '';
-                    }, 2000);
-                }).catch(err => {
-                    console.error('复制失败:', err);
-                    button.textContent = '复制失败';
-                    button.style.background = '#f44336';
-                    button.style.color = 'white';
-                    
-                    setTimeout(() => {
-                        button.textContent = originalText;
-                        button.style.background = '';
-                        button.style.color = '';
-                    }, 2000);
-                });
-            } else {
-                // 降级方案
-                const textArea = document.createElement("textarea");
-                textArea.value = friendLink;
-                textArea.style.position = "fixed";
-                textArea.style.left = "-999999px";
-                textArea.style.top = "-999999px";
-                document.body.appendChild(textArea);
-                textArea.focus();
-                textArea.select();
-                
-                try {
-                    const successful = document.execCommand('copy');
-                    if (successful) {
-                        button.textContent = '已成功复制！';
-                        button.style.background = '#4CAF50';
-                        button.style.color = 'white';
-                    } else {
-                        throw new Error('复制失败');
+
+        function setButtonState(button: HTMLButtonElement, text: string, bg: string) {
+            button.textContent = text;
+            button.style.background = bg;
+            button.style.color = "white";
+        }
+
+        async function copyFriendLink(button: HTMLButtonElement) {
+            const originalText = button.textContent || "一键复制";
+            setButtonState(button, "复制中...", "#ffb74d");
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    try {
+                        await navigator.clipboard.writeText(friendLink);
+                        setButtonState(button, "成功复制", "#4CAF50");
+                    } catch (_err) {
+                        window.prompt("复制下面内容", friendLink);
+                        setButtonState(button, "已打开复制框", "#4CAF50");
                     }
-                } catch (err) {
-                    console.error('复制失败:', err);
-                    button.textContent = '复制失败';
-                    button.style.background = '#f44336';
-                    button.style.color = 'white';
+                } else {
+                    window.prompt("复制下面内容", friendLink);
+                    setButtonState(button, "已打开复制框", "#4CAF50");
                 }
-                
-                document.body.removeChild(textArea);
-                
+            } catch (_err) {
+                setButtonState(button, "复制失败", "#f44336");
+            } finally {
                 setTimeout(() => {
                     button.textContent = originalText;
-                    button.style.background = '';
-                    button.style.color = '';
+                    button.style.background = "";
+                    button.style.color = "";
                 }, 2000);
             }
-        };
+        }
+
+        function setupCopyButton() {
+            const button = document.querySelector<HTMLButtonElement>(".copy-button");
+            if (!button) return;
+            button.addEventListener("click", () => copyFriendLink(button));
+        }
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", setupCopyButton);
+        } else {
+            setupCopyButton();
+        }
+
+        document.addEventListener("astro:page-load", setupCopyButton);
     </script>
 </div>
 
@@ -230,7 +206,7 @@ const items = shuffledFriends.map((friend) => ({
 .header-title {
     font-size: 1.25rem;
     font-weight: 700;
-    color: var(--primary);
+    color: var(--accent-text);
     margin: 0 0 4px 0;
     letter-spacing: 0.5px;
     transition: color 0.3s ease;
@@ -274,7 +250,7 @@ const items = shuffledFriends.map((friend) => ({
     display: block;
     font-size: 1.25rem;
     font-weight: 700;
-    color: var(--primary);
+    color: var(--accent-text);
     line-height: 1;
     transition: color 0.3s ease;
 }

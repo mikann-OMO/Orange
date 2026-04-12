@@ -8,6 +8,7 @@ import {
 	getSiteVisitorCount,
 	incrementSiteVisitorCount,
 } from "@utils/visitor-utils";
+import { ensureBusuanziLoaded, shouldUseBusuanzi } from "@utils/busuanzi-utils";
 import { onMount } from "svelte";
 
 declare global {
@@ -45,23 +46,9 @@ function markTracked(): void {
 function loadBusuanzi(): void {
 	if (typeof window === "undefined") return;
 
-	const existingScript = document.querySelector('script[src*="busuanzi"]');
-	if (existingScript) {
-		if (window.busuanzi) {
-			window.busuanzi.fetch();
-		}
-		return;
-	}
-
-	const script = document.createElement("script");
-	script.src = "//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js";
-	script.async = true;
-	script.onload = () => {
-		if (window.busuanzi) {
-			window.busuanzi.fetch();
-		}
-	};
-	document.body.appendChild(script);
+	ensureBusuanziLoaded().then(() => {
+		window.busuanzi?.fetch?.();
+	});
 }
 
 onMount(async () => {
@@ -73,10 +60,7 @@ onMount(async () => {
 	const provider = getVisitorProvider();
 	useBusuanzi = provider === "busuanzi";
 
-	// Check if we're in a local development environment
-	const isLocalDev = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" || window.location.hostname.includes("localhost:");
-
-	if (useBusuanzi && !isLocalDev) {
+	if (useBusuanzi && shouldUseBusuanzi()) {
 		loadBusuanzi();
 		loading = false;
 		// Add a fallback to ensure the count is displayed

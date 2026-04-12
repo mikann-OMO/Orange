@@ -1,14 +1,12 @@
-/* View Transitions API - 丝滑过渡 */
+/* View Transitions API */
 
-/* 根层过渡 - 瞬间切换 */
 ::view-transition-old(root),
 ::view-transition-new(root) {
-    animation: none;
     mix-blend-mode: normal;
 }
 
 ::view-transition-group(root) {
-    animation-duration: 0s;
+    animation-duration: 0.35s;
 }
 
 ::view-transition-image-pair(root) {
@@ -20,346 +18,74 @@
     background-color: var(--page-bg);
 }
 
-/* 主内容区域过渡 */
-.main-panel {
-    view-transition-name: main-content;
+/* 页面滑入动画 */
+.page-enter-animation {
+    animation: pageSlideIn 0.35s ease-out forwards;
 }
 
-::view-transition-old(main-content) {
-    animation: smoothFadeOut 0.18s ease-out forwards;
-}
-
-::view-transition-new(main-content) {
-    animation: smoothFadeIn 0.25s ease-out forwards;
-}
-
-::view-transition-group(main-content) {
-    animation-duration: 0.28s;
-}
-
-/* 导航栏、侧边栏、Banner 稳定 */
-#navbar-wrapper {
-    view-transition-name: navbar;
-}
-
-#sidebar-sticky {
-    view-transition-name: sidebar;
-}
-
-#banner-wrapper {
-    view-transition-name: banner;
-}
-
-::view-transition-old(navbar),
-::view-transition-new(navbar),
-::view-transition-old(sidebar),
-::view-transition-new(sidebar),
-::view-transition-old(banner),
-::view-transition-new(banner) {
-    animation: none;
-}
-
-/* 移动端禁用 view-transition-name */
-@media (max-width: 768px) {
-    .main-panel,
-    #navbar-wrapper,
-    #sidebar-sticky,
-    #banner-wrapper {
-        view-transition-name: none;
-    }
-}
-
-/* 减少动画偏好 */
-@media (prefers-reduced-motion: reduce) {
-    .main-panel,
-    #navbar-wrapper,
-    #sidebar-sticky,
-    #banner-wrapper {
-        view-transition-name: none;
-    }
-}
-
-/* ========================================
-   核心动画定义
-   ======================================== */
-
-/* 页面整体退出 - 平滑淡出 */
-@keyframes pageExit {
-    0% {
-        opacity: 1;
-        transform: translateY(0);
-        filter: blur(0);
-    }
-    100% {
-        opacity: 0;
-        transform: translateY(0);
-        filter: blur(1px);
-    }
-}
-
-/* 卡片退出 - 平滑淡出 */
-@keyframes cardExit {
-    0% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    100% {
-        opacity: 0;
-        transform: translateY(0);
-    }
-}
-
-/* 内容区域退出 - 平滑淡出 */
-@keyframes contentExit {
-    0% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    100% {
-        opacity: 0;
-        transform: translateY(0);
-    }
-}
-
-/* 平滑淡出 */
-@keyframes smoothFadeOut {
-    0% {
-        opacity: 1;
-        transform: scale(1);
-        filter: blur(0);
-    }
-    100% {
-        opacity: 0;
-        transform: scale(1);
-        filter: blur(2px);
-    }
-}
-
-/* 平滑淡入 */
-@keyframes smoothFadeIn {
-    0% {
-        opacity: 0;
-        transform: scale(1);
-        filter: blur(2px);
-    }
-    100% {
-        opacity: 1;
-        transform: scale(1);
-        filter: blur(0);
-    }
-}
-
-/* 卡片平滑入场 */
-@keyframes cardBounceIn {
-    0% {
-        opacity: 0;
-        transform: translateY(16px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* 友链卡片平滑入场 */
-@keyframes friendCardBounceIn {
-    0% {
+@keyframes pageSlideIn {
+    from {
         opacity: 0;
         transform: translateY(20px);
     }
-    100% {
+    to {
         opacity: 1;
         transform: translateY(0);
     }
 }
 
-/* 私语卡片入场 */
-@keyframes noteCardSlideIn {
-    0% {
-        opacity: 0;
-        transform: translateX(-16px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-/* 侧边栏入场 */
-@keyframes sidebarSlideIn {
-    0% {
-        opacity: 0;
-        transform: translateX(16px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-/* 内容区域入场 */
-@keyframes contentFadeInUp {
-    0% {
-        opacity: 0;
-        transform: translateY(12px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* ========================================
-   动画应用类
-   ======================================== */
-
-/* 页面退出动画 - 全局应用 */
-.page-exit-animation {
-    animation: pageExit 0.3s ease-out forwards !important;
-}
-
-.page-exit-animation .post-card-animate,
-.page-exit-animation .friend-card-animate,
-.page-exit-animation .note-card-animate {
-    animation: cardExit 0.25s ease-out forwards !important;
-}
-
-.page-exit-animation .post-content-animate {
-    animation: contentExit 0.25s ease-out forwards !important;
-}
-
-/* 卡片退出延迟 */
-.page-exit-animation .post-card-animate:nth-child(1) { animation-delay: 0s; }
-.page-exit-animation .post-card-animate:nth-child(2) { animation-delay: 0.02s; }
-.page-exit-animation .post-card-animate:nth-child(3) { animation-delay: 0.04s; }
-.page-exit-animation .post-card-animate:nth-child(4) { animation-delay: 0.06s; }
-.page-exit-animation .post-card-animate:nth-child(5) { animation-delay: 0.08s; }
-.page-exit-animation .post-card-animate:nth-child(6) { animation-delay: 0.1s; }
-.page-exit-animation .post-card-animate:nth-child(7) { animation-delay: 0.12s; }
-.page-exit-animation .post-card-animate:nth-child(8) { animation-delay: 0.14s; }
-.page-exit-animation .post-card-animate:nth-child(n+9) { animation-delay: 0.16s; }
-
-.page-exit-animation .friend-card-animate:nth-child(1) { animation-delay: 0s; }
-.page-exit-animation .friend-card-animate:nth-child(2) { animation-delay: 0.03s; }
-.page-exit-animation .friend-card-animate:nth-child(3) { animation-delay: 0.06s; }
-.page-exit-animation .friend-card-animate:nth-child(4) { animation-delay: 0.09s; }
-.page-exit-animation .friend-card-animate:nth-child(5) { animation-delay: 0.12s; }
-.page-exit-animation .friend-card-animate:nth-child(6) { animation-delay: 0.15s; }
-.page-exit-animation .friend-card-animate:nth-child(n+7) { animation-delay: 0.18s; }
-
-.page-exit-animation .note-card-animate:nth-child(1) { animation-delay: 0s; }
-.page-exit-animation .note-card-animate:nth-child(2) { animation-delay: 0.04s; }
-.page-exit-animation .note-card-animate:nth-child(3) { animation-delay: 0.08s; }
-.page-exit-animation .note-card-animate:nth-child(n+4) { animation-delay: 0.12s; }
-
-/* 页面入场动画 */
-.page-enter-animation {
-    animation: smoothFadeIn 0.25s ease-out forwards;
-}
-
-/* 卡片入场 */
+/* 卡片进入动画 */
 .card-enter {
-    opacity: 0;
-    animation: cardBounceIn 0.35s ease-out forwards;
+    animation: cardSlideIn 0.35s ease-out forwards;
 }
 
-/* 友链卡片入场 */
-.friend-card-enter {
-    opacity: 0;
-    animation: friendCardBounceIn 0.35s ease-out forwards;
-}
-
-/* 私语卡片入场 */
-.note-card-enter {
-    opacity: 0;
-    animation: noteCardSlideIn 0.3s ease-out forwards;
-}
-
-/* 内容区域入场 */
-.content-enter {
-    opacity: 0;
-    animation: contentFadeInUp 0.3s ease-out forwards;
-}
-
-/* 侧边栏入场 */
-.sidebar-enter {
-    opacity: 0;
-    animation: sidebarSlideIn 0.25s ease-out forwards;
-}
-
-/* ========================================
-   延迟类 - 更紧凑的延迟
-   ======================================== */
-
-.delay-1 { animation-delay: 0.02s; }
-.delay-2 { animation-delay: 0.04s; }
-.delay-3 { animation-delay: 0.06s; }
-.delay-4 { animation-delay: 0.08s; }
-.delay-5 { animation-delay: 0.10s; }
-.delay-6 { animation-delay: 0.12s; }
-.delay-7 { animation-delay: 0.14s; }
-.delay-8 { animation-delay: 0.16s; }
-.delay-9 { animation-delay: 0.18s; }
-.delay-10 { animation-delay: 0.20s; }
-
-/* ========================================
-   响应式优化
-   ======================================== */
-
-@media (max-width: 768px) {
-    .page-enter-animation,
-    .page-exit-animation {
-        animation-duration: 0.25s;
+@keyframes cardSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px) scale(0.98);
     }
-    
-    .card-enter,
-    .friend-card-enter,
-    .note-card-enter,
-    .content-enter,
-    .sidebar-enter {
-        animation-duration: 0.3s;
-    }
-    
-    .delay-1, .delay-2, .delay-3, .delay-4, .delay-5,
-    .delay-6, .delay-7, .delay-8, .delay-9, .delay-10 {
-        animation-delay: 0s !important;
-    }
-    
-    .page-exit-animation .post-card-animate,
-    .page-exit-animation .friend-card-animate,
-    .page-exit-animation .note-card-animate {
-        animation-delay: 0s !important;
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .page-enter-animation,
-    .page-exit-animation,
-    .card-enter,
-    .friend-card-enter,
-    .note-card-enter,
-    .content-enter,
-    .sidebar-enter {
-        animation: none;
+    to {
         opacity: 1;
+        transform: translateY(0) scale(1);
     }
 }
 
-/* 保持兼容性 */
-.onload-animation,
-.animate-fade-in-up,
-.animate-fade-in-down,
-.animate-fade-in-left,
-.animate-fade-in-right,
-.animate-zoom-in,
-.animate-slide-up,
-.animate-bounce-in,
-.animate-fade-in-avatar,
-.animate-smooth-reveal {
-    opacity: 1;
-    animation: none;
+/* 内容进入动画 */
+.content-enter {
+    animation: contentSlideIn 0.35s ease-out forwards;
 }
 
-#content-container {
-    outline: none;
+@keyframes contentSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 侧边栏进入动画 */
+.sidebar-enter {
+    animation: sidebarSlideIn 0.35s ease-out forwards;
+}
+
+@keyframes sidebarSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* 启用 view-transition-name */
+.main-panel,
+#navbar-wrapper,
+#sidebar-sticky,
+#banner-wrapper {
+    view-transition-name: auto;
 }

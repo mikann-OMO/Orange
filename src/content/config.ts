@@ -23,7 +23,7 @@ const postsCollection = defineCollection({
 
 const exhibitionCollection = defineCollection({
 	loader: glob({
-		pattern: "**/*.{yaml,yml,json}",
+		pattern: "**/*.{yaml,yml,json,md}",
 		base: "./src/content/exhibition",
 	}),
 	schema: z.object({
@@ -73,7 +73,7 @@ const friendsCollection = defineCollection({
 		title: z.string(),
 		siteurl: z.string().url(),
 		desc: z.string().optional().default(""),
-		image: z.string().url(),
+		image: z.union([z.string().url(), z.string().startsWith("/")]),
 		rss: z.string().url().optional(),
 	}),
 });

@@ -1,7 +1,15 @@
-<div class="like-container">
-  <button id="like-btn">
-    <span class="icon">👍</span>
-    <span id="like-count">加载中...</span>
+---
+interface Props {
+	slug?: string;
+}
+
+const { slug } = Astro.props;
+---
+
+<div class="like-container" data-like-slug={slug || ""}>
+  <button class="like-btn" type="button" aria-pressed="false">
+    <span class="icon" aria-hidden="true">👍</span>
+    <span class="like-count">0</span>
   </button>
 </div>
 
@@ -10,7 +18,7 @@
     text-align: center;
     margin-top: 2rem;
   }
-  #like-btn {
+  .like-btn {
     background: #f0f0f0;
     border: 1px solid #ddd;
     padding: 10px 20px;
@@ -22,82 +30,70 @@
     align-items: center;
     gap: 8px;
   }
-  #like-btn:hover {
+  .like-btn:hover {
     background: #e0e0e0;
   }
-  #like-btn.liked {
+  .like-btn.liked {
     background: #ff4d4f;
     color: white;
     border-color: #ff4d4f;
   }
 </style>
 
-<script>
-  const btn = document.getElementById('like-btn');
-  const countSpan = document.getElementById('like-count');
+<script is:inline define:vars={{ slug }}>
+  const container = document.currentScript?.closest?.(".like-container");
+  const btn = container?.querySelector?.(".like-btn");
+  const countSpan = container?.querySelector?.(".like-count");
+  const icon = container?.querySelector?.(".icon");
 
-  // 从本地存储获取点赞数
+  const safeSlug = typeof slug === "string" && slug ? slug : "";
+  const countKey = safeSlug ? `like_count_${safeSlug}` : "like_count_site";
+  const likedKey = safeSlug ? `like_liked_${safeSlug}` : "like_liked_site";
+
   function getLikeCount() {
-    const count = localStorage.getItem('likeCount');
-    return count ? parseInt(count) : 0;
+    const count = localStorage.getItem(countKey);
+    return count ? Number.parseInt(count, 10) : 0;
   }
 
-  // 保存点赞数到本地存储
   function setLikeCount(count) {
-    localStorage.setItem('likeCount', count.toString());
+    localStorage.setItem(countKey, String(count));
   }
 
-  // 检查用户是否已经点过赞
   function hasLiked() {
-    return localStorage.getItem('hasLiked') === 'true';
+    return localStorage.getItem(likedKey) === "true";
   }
 
-  // 标记用户已经点过赞
   function markAsLiked() {
-    localStorage.setItem('hasLiked', 'true');
+    localStorage.setItem(likedKey, "true");
   }
 
-  // 显示点赞数
   function displayCount() {
-    if (countSpan) {
-      countSpan.textContent = getLikeCount().toString();
-    }
+    if (!countSpan) return;
+    countSpan.textContent = String(getLikeCount());
   }
 
-  // 初始化
+  function applyLikedUI(liked) {
+    if (!btn) return;
+    btn.classList.toggle("liked", liked);
+    btn.setAttribute("aria-pressed", liked ? "true" : "false");
+    if (icon) icon.textContent = liked ? "❤️" : "👍";
+  }
+
   function init() {
+    if (!btn) return;
     displayCount();
-    
-    // 检查用户是否已经点过赞
-    if (hasLiked() && btn) {
-      btn.classList.add('liked');
-      const icon = btn.querySelector('.icon');
-      if (icon) {
-        icon.textContent = '❤️';
-      }
-    }
-  }
+    applyLikedUI(hasLiked());
 
-  // 点赞功能
-  if (btn) {
-    btn.addEventListener('click', () => {
-      if (btn.classList.contains('liked')) return;
-
-      // 增加点赞数
+    btn.addEventListener("click", () => {
+      if (hasLiked()) return;
       const newCount = getLikeCount() + 1;
       setLikeCount(newCount);
-      displayCount();
-      
-      // 标记为已点赞
       markAsLiked();
-      btn.classList.add('liked');
-      const icon = btn.querySelector('.icon');
-      if (icon) {
-        icon.textContent = '❤️';
-      }
+      displayCount();
+      applyLikedUI(true);
+      if (navigator.vibrate) navigator.vibrate(10);
     });
   }
 
-  // 初始化
   init();
 </script>

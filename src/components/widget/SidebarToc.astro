@@ -63,7 +63,7 @@ for (const h of filtered) {
 ---
 
 {level1.length > 0 && (
-  <div id="sidebar-toc-wrapper" class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-none shadow-xl p-4">
+  <div id="sidebar-toc-wrapper" class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-none shadow-xl p-4" style="position: sticky; top: var(--toc-offset, 96px);">
     <div class="px-2 pb-2">
       <h3 class="text-lg font-bold mb-4 text-orange-700 dark:text-white border-b border-gray-200/50 dark:border-gray-700/50 pb-2">{title}</h3>
       {level1.map((g) => (
@@ -152,7 +152,7 @@ for (const h of filtered) {
   };
 
   const enableSmooth = () => {
-    document.querySelectorAll('[data-toc-id] a[href^="#"]').forEach((a) => {
+    document.querySelectorAll('a[data-toc-id][href^="#"]').forEach((a) => {
       a.addEventListener("click", (e) => {
         const href = a.getAttribute("href");
         if (!href) return;
@@ -166,100 +166,67 @@ for (const h of filtered) {
     });
   };
 
-  const activate = (id) => {
-    const nodes = document.querySelectorAll("[data-toc-id]");
-    nodes.forEach((n) => {
-      n.classList.remove("bg-orange-950/5", "dark:bg-white/10");
-      n.removeAttribute("data-active");
-    });
-    const current = document.querySelector(`[data-toc-id="${id}"]`);
-    if (current) {
-      current.classList.add("bg-orange-950/5", "dark:bg-white/10");
-      current.setAttribute("data-active", "true");
-      const parentId = current.getAttribute("data-parent-id");
-      if (parentId) {
-        const parent = document.querySelector(`[data-toc-id="${parentId}"]`);
-        if (parent) {
-          parent.classList.add("bg-orange-950/5", "dark:bg-white/10");
-          parent.setAttribute("data-active", "true");
+  const activate = (() => {
+    let activeId = "";
+    const activeClass = ["bg-orange-950/5", "dark:bg-white/10"];
+    const clear = () => {
+      document.querySelectorAll("[data-toc-id]").forEach((n) => {
+        n.classList.remove(...activeClass);
+        n.removeAttribute("data-active");
+      });
+    };
+    return (id) => {
+      if (!id || id === activeId) return;
+      activeId = id;
+      clear();
+      const current = document.querySelector(`[data-toc-id="${id}"]`);
+      if (current) {
+        current.classList.add(...activeClass);
+        current.setAttribute("data-active", "true");
+        const parentId = current.getAttribute("data-parent-id");
+        if (parentId) {
+          const parent = document.querySelector(`[data-toc-id="${parentId}"]`);
+          if (parent) {
+            parent.classList.add(...activeClass);
+            parent.setAttribute("data-active", "true");
+          }
         }
       }
-    }
-  };
+    };
+  })();
 
   const initSpy = () => {
-    // 直接在文档中查找所有标题，确保能找到所有文章中的标题
-    const hs = Array.from(document.querySelectorAll("h1, h2, h3, h4"));
-    if (hs.length === 0) return;
-    const map = hs.map((h) => ({ id: h.id, el: h }));
-    const io = new IntersectionObserver(
-      (entries) => {
-        // 找出最接近视口顶部的标题
-        let closestHeading = null;
-        let closestDistance = Infinity;
-        
-        entries.forEach((en) => {
-          const distance = Math.abs(en.boundingClientRect.top);
-          if (distance < closestDistance) {
-            closestDistance = distance;
-            closestHeading = en.target;
-          }
-        });
-        
-        if (closestHeading) {
-          activate(closestHeading.id);
-        }
-      },
-      { rootMargin: "-100px 0px -80% 0px", threshold: 0.1 }
-    );
-    map.forEach((m) => m.el && io.observe(m.el));
-  };
+    const container = document.querySelector(".markdown-content");
+    if (!container) return;
 
-  const initSticky = () => {
-    const toc = document.getElementById('sidebar-toc-wrapper');
-    if (!toc) return;
-    
-    const offset = getOffset();
-    let initialTop = null;
-    let tocWidth = null;
-    let isFixed = false;
-    
-    const calc = () => {
-      const rect = toc.getBoundingClientRect();
-      initialTop = rect.top + window.scrollY;
-      tocWidth = rect.width;
-    };
-    
+    const headings = Array.from(
+      container.querySelectorAll("h1, h2, h3, h4")
+    ).filter((h) => h instanceof HTMLElement && h.id);
+
+    if (headings.length === 0) return;
+
+    let ticking = false;
     const update = () => {
-      if (initialTop === null) calc();
-      
-      const scrollY = window.scrollY;
-      const shouldFix = scrollY + offset >= initialTop;
-      
-      if (shouldFix && !isFixed) {
-        toc.style.position = 'fixed';
-        toc.style.top = offset + 'px';
-        toc.style.width = tocWidth + 'px';
-        isFixed = true;
-      } else if (!shouldFix && isFixed) {
-        toc.style.position = '';
-        toc.style.top = '';
-        toc.style.width = '';
-        isFixed = false;
+      ticking = false;
+      const offset = getOffset() + 6;
+      let currentId = headings[0].id;
+      for (const h of headings) {
+        const top = h.getBoundingClientRect().top;
+        if (top - offset <= 0) currentId = h.id;
+        else break;
       }
+      activate(currentId);
     };
-    
-    window.addEventListener('scroll', update, { passive: true });
-    window.addEventListener('resize', () => { 
-      initialTop = null;
-      isFixed = false;
-      toc.style.position = '';
-      toc.style.top = '';
-      toc.style.width = '';
-      update();
-    }, { passive: true });
-    
-    setTimeout(update, 50);
+
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    onScroll();
   };
 
   const boot = () => {
@@ -267,7 +234,6 @@ for (const h of filtered) {
     document.documentElement.style.setProperty('--toc-offset', off + 'px');
     enableSmooth();
     initSpy();
-    initSticky();
   };
 
   if (document.readyState === "loading") {

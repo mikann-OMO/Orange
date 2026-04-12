@@ -44,6 +44,7 @@ async function getLeanCloudCount(key: string): Promise<number> {
 	if (!leancloud) return 0;
 
 	const { appId, appKey, serverUrl } = leancloud;
+	if (!appId || !appKey) return 0;
 	const baseUrl = serverUrl || "https://leancloud.cn";
 	const className = "VisitorCount";
 
@@ -76,6 +77,7 @@ async function incrementLeanCloudCount(key: string): Promise<number> {
 	if (!leancloud) return 0;
 
 	const { appId, appKey, serverUrl } = leancloud;
+	if (!appId || !appKey) return getLocalCount(key);
 	const baseUrl = serverUrl || "https://leancloud.cn";
 	const className = "VisitorCount";
 
