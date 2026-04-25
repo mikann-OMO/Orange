@@ -3,8 +3,8 @@ import Footer from "@components/Footer.astro";
 import Navbar from "@components/Navbar.astro";
 
 import type { MarkdownHeading } from "astro";
+import Toc from "../components/Toc.astro";
 import ImageWrapper from "../components/misc/ImageWrapper.astro";
-import SidebarToc from "../components/widget/SidebarToc.astro";
 import { siteConfig } from "../config";
 import Layout from "./Layout.astro";
 
@@ -56,6 +56,7 @@ const activeAnnouncement = announcementConfig || announcement;
 <slot slot="head" name="head"></slot>
 
 <div id="top-row" class="z-[999] pointer-events-none fixed top-0 left-0 right-0 w-full">
+    <div id="reading-progress" class="fixed top-0 left-0 right-0 h-1 bg-[var(--primary)] z-[1000] transform-origin-left scale-x-0 transition-transform duration-300"></div>
     <div id="navbar-wrapper" class="pointer-events-auto fixed top-0 left-0 right-0 w-full bg-orange-100 dark:bg-stone-800 shadow-md z-[999]">
         <Navbar></Navbar>
     </div>
@@ -65,7 +66,7 @@ const activeAnnouncement = announcementConfig || announcement;
     <div id="banner-wrapper" class="h-screen w-full fixed top-0 left-0 right-0 z-0 hidden md:block">
         <ImageWrapper 
             src={siteConfig.banner.src} 
-            alt="Banner Image" 
+            alt="页面横幅"
             class="w-full h-full object-cover" 
             position={siteConfig.banner.position} 
             loading="eager"
@@ -112,7 +113,9 @@ const activeAnnouncement = announcementConfig || announcement;
                     )}
                     
                     {headings.length > 0 && (
-                        <SidebarToc headings={headings} />
+                        <div class="sticky top-24">
+                            <Toc headings={headings} />
+                        </div>
                     )}
                     
                     <div class="mt-6">
@@ -131,6 +134,152 @@ const activeAnnouncement = announcementConfig || announcement;
 
 
 </Layout>
+
+<script is:inline>
+  const initToc = () => {
+	 const links = [...document.querySelectorAll(".toc a")];
+	 const headings = [...document.querySelectorAll(".markdown-content h1, h2, h3")];
+
+	 if (!links.length || !headings.length) return;
+
+	 const linkMap = {};
+	 links.forEach((l) => {
+		 linkMap[l.dataset.id] = l;
+	 });
+
+	 const getOffset = () => {
+		 const nav = document.getElementById("navbar-wrapper");
+		 return nav ? nav.offsetHeight + 12 : 80;
+	 };
+
+	 // ===== 激活（含父级）=====
+	 const activate = (id) => {
+		 links.forEach((l) => l.classList.remove("active"));
+
+		 let current = linkMap[id];
+		 while (current) {
+			 current.classList.add("active");
+
+			 const parentId = current.closest("ul")?.dataset.children;
+			 if (!parentId) break;
+
+			 current = linkMap[parentId];
+		 }
+	 };
+
+	 // ===== 自动展开 =====
+	 const expandPath = (id) => {
+		 let el = linkMap[id];
+		 while (el) {
+			 const parentId = el.closest("ul")?.dataset.children;
+			 if (!parentId) break;
+
+			 const ul = document.querySelector(`[data-children="${parentId}"]`);
+			 if (ul) ul.removeAttribute("data-collapsed");
+
+			 const toggle = document.querySelector(`[data-toggle="${parentId}"]`);
+			 if (toggle) toggle.classList.remove("collapsed");
+
+			 el = linkMap[parentId];
+		 }
+	 };
+
+	 // ===== scroll spy =====
+	 let activeId = "";
+
+	 const observer = new IntersectionObserver(
+		 (entries) => {
+			 entries.forEach((entry) => {
+				 if (entry.isIntersecting) {
+					 const id = entry.target.id;
+					 if (id !== activeId) {
+						 activeId = id;
+						 activate(id);
+						 expandPath(id);
+					 }
+				 }
+			 });
+		 },
+		 {
+			 rootMargin: "0px 0px -70% 0px",
+		 }
+	 );
+
+	 headings.forEach((h) => observer.observe(h));
+
+	 // ===== 平滑滚动 =====
+	 links.forEach((link) => {
+		 link.addEventListener("click", (e) => {
+			 e.preventDefault();
+
+			 const id = link.dataset.id;
+			 const el = document.getElementById(id);
+			 if (!el) return;
+
+			 window.scrollTo({
+				 top: el.getBoundingClientRect().top + window.scrollY - getOffset(),
+				 behavior: "smooth",
+			 });
+
+			 history.replaceState(null, "", `#${id}`);
+		 });
+	 });
+
+	 // ===== 折叠功能 =====
+	 document.querySelectorAll("[data-toggle]").forEach((btn) => {
+		 btn.addEventListener("click", (e) => {
+			 e.stopPropagation();
+
+			 const id = btn.dataset.toggle;
+			 const ul = document.querySelector(`[data-children="${id}"]`);
+			 if (!ul) return;
+
+			 const collapsed = ul.hasAttribute("data-collapsed");
+
+			 if (collapsed) {
+				 ul.removeAttribute("data-collapsed");
+				 btn.classList.remove("collapsed");
+			 } else {
+				 ul.setAttribute("data-collapsed", "true");
+				 btn.classList.add("collapsed");
+			 }
+		 });
+	 });
+
+	 // ===== 初始化 hash =====
+	 const hash = location.hash.replace("#", "");
+	 if (hash && linkMap[hash]) {
+		 activate(hash);
+		 expandPath(hash);
+	 }
+};
+
+  const initReadingProgress = () => {
+    const update = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = scrollTop / docHeight;
+      const bar = document.getElementById('reading-progress');
+      if (bar) {
+        bar.style.transform = `scaleX(${Math.max(0, Math.min(1, progress))})`;
+      }
+    };
+
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
+      initReadingProgress();
+      initToc();
+    });
+  } else {
+    initReadingProgress();
+    initToc();
+  }
+</script>
 
 <style>
 #main-wrapper {

@@ -2,9 +2,10 @@
 import path from "node:path";
 import { Icon } from "astro-icon/components";
 import Comment from "../../components/Comment.astro";
-import LikeButton from "../../components/LikeButton.astro";
+
 import PageViewCounter from "../../components/PageViewCounter.svelte";
 import PostMetadata from "../../components/PostMeta.astro";
+import Toc from "../../components/Toc.astro";
 import Breadcrumb from "../../components/control/Breadcrumb.astro";
 import ImageWrapper from "../../components/misc/ImageWrapper.astro";
 import License from "../../components/misc/License.astro";
@@ -54,6 +55,30 @@ const jsonLd = {
     <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
     <div class="flex max-w-[50rem] mx-auto w-full rounded-[var(--radius-large)] overflow-hidden relative mb-3 md:mb-4">
         <div id="post-container" class:list={["card-base z-10 px-4 md:px-6 lg:px-9 pt-4 md:pt-6 pb-3 md:pb-4 relative w-full post-content-animate", {}]}>
+            <!-- 移动端目录按钮 -->
+            <div class="lg:hidden fixed bottom-6 right-6 z-50">
+                <button id="mobile-toc-toggle" class="w-12 h-12 rounded-full bg-[var(--primary)] text-white shadow-lg flex items-center justify-center">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+            <!-- 移动端目录面板 -->
+            <div id="mobile-toc-panel" class="lg:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm flex items-end justify-center translate-y-full transition-transform duration-300">
+                <div class="bg-white dark:bg-stone-800 w-full max-h-[80vh] overflow-y-auto rounded-t-2xl shadow-xl">
+                    <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                        <h3 class="text-lg font-bold text-orange-700 dark:text-white">文章目录</h3>
+                        <button id="mobile-toc-close" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        <Toc headings={headings} />
+                    </div>
+                </div>
+            </div>
             <Breadcrumb 
                 items={[
                     { label: "首页", url: "/" },
@@ -145,32 +170,67 @@ const jsonLd = {
     </div>
 
     <div class="flex flex-col md:flex-row justify-between mb-3 md:mb-4 gap-2 md:gap-4 overflow-hidden w-full">
-        <a href={entry.data.nextSlug ? getPostUrlBySlug(entry.data.nextSlug) : "#"}
-           class:list={["w-full font-bold overflow-hidden active:scale-95", {"pointer-events-none": !entry.data.nextSlug}]}>
-            {entry.data.nextSlug && <div class="btn-card rounded-xl md:rounded-2xl w-full h-[3rem] md:h-[3.75rem] max-w-full px-3 md:px-4 flex items-center !justify-start gap-2 md:gap-4" >
-                <Icon name="material-symbols:chevron-left-rounded" class="text-[1.5rem] md:text-[2rem] text-[var(--accent-text)] dark:text-[var(--primary)]" />
-                <div class="overflow-hidden transition overflow-ellipsis whitespace-nowrap max-w-[calc(100%_-_2.5rem)] md:max-w-[calc(100%_-_3rem)] text-xs md:text-sm text-orange-950/75 dark:text-white/75">
-                    {entry.data.nextTitle}
+        {entry.data.nextSlug && (
+            <a href={getPostUrlBySlug(entry.data.nextSlug)}
+               class="w-full font-bold overflow-hidden active:scale-95">
+                <div class="btn-card rounded-xl md:rounded-2xl w-full h-[3rem] md:h-[3.75rem] max-w-full px-3 md:px-4 flex items-center !justify-start gap-2 md:gap-4" >
+                    <Icon name="material-symbols:chevron-left-rounded" class="text-[1.5rem] md:text-[2rem] text-[var(--accent-text)] dark:text-[var(--primary)]" />
+                    <div class="overflow-hidden transition overflow-ellipsis whitespace-nowrap max-w-[calc(100%_-_2.5rem)] md:max-w-[calc(100%_-_3rem)] text-xs md:text-sm text-orange-950/75 dark:text-white/75">
+                        {entry.data.nextTitle}
+                    </div>
                 </div>
-            </div>}
-        </a>
+            </a>
+        )}
+        {!entry.data.nextSlug && (
+            <div class="w-full font-bold overflow-hidden pointer-events-none"></div>
+        )}
 
-        <a href={entry.data.prevSlug ? getPostUrlBySlug(entry.data.prevSlug) : "#"}
-           class:list={["w-full font-bold overflow-hidden active:scale-95", {"pointer-events-none": !entry.data.prevSlug}]}>
-            {entry.data.prevSlug && <div class="btn-card rounded-xl md:rounded-2xl w-full h-[3rem] md:h-[3.75rem] max-w-full px-3 md:px-4 flex items-center !justify-end gap-2 md:gap-4">
-                <div class="overflow-hidden transition overflow-ellipsis whitespace-nowrap max-w-[calc(100%_-_2.5rem)] md:max-w-[calc(100%_-_3rem)] text-xs md:text-sm text-orange-950/75 dark:text-white/75">
-                    {entry.data.prevTitle}
+        {entry.data.prevSlug && (
+            <a href={getPostUrlBySlug(entry.data.prevSlug)}
+               class="w-full font-bold overflow-hidden active:scale-95">
+                <div class="btn-card rounded-xl md:rounded-2xl w-full h-[3rem] md:h-[3.75rem] max-w-full px-3 md:px-4 flex items-center !justify-end gap-2 md:gap-4">
+                    <div class="overflow-hidden transition overflow-ellipsis whitespace-nowrap max-w-[calc(100%_-_2.5rem)] md:max-w-[calc(100%_-_3rem)] text-xs md:text-sm text-orange-950/75 dark:text-white/75">
+                        {entry.data.prevTitle}
+                    </div>
+                    <Icon name="material-symbols:chevron-right-rounded" class="text-[1.5rem] md:text-[2rem] text-[var(--accent-text)] dark:text-[var(--primary)]" />
                 </div>
-                <Icon name="material-symbols:chevron-right-rounded" class="text-[1.5rem] md:text-[2rem] text-[var(--accent-text)] dark:text-[var(--primary)]" />
-            </div>}
-        </a>
+            </a>
+        )}
+        {!entry.data.prevSlug && (
+            <div class="w-full font-bold overflow-hidden pointer-events-none"></div>
+        )}
     </div>
 
-    <LikeButton slug={entry.slug} />
+
 
     <Comment slug={entry.slug} />
 
 </MainGridLayout>
+
+<script is:inline>
+  // 移动端目录控制 - 使用 classList.toggle
+  (function() {
+    const toggleBtn = document.getElementById('mobile-toc-toggle');
+    const closeBtn = document.getElementById('mobile-toc-close');
+    const panel = document.getElementById('mobile-toc-panel');
+
+    if (!toggleBtn || !closeBtn || !panel) return;
+
+    const openPanel = () => panel.classList.remove('translate-y-full');
+    const closePanel = () => panel.classList.add('translate-y-full');
+
+    toggleBtn.addEventListener('click', openPanel);
+    closeBtn.addEventListener('click', closePanel);
+
+    panel.addEventListener('click', (e) => {
+      if (e.target === panel) closePanel();
+    });
+
+    panel.querySelectorAll('a[data-id]').forEach(link => {
+      link.addEventListener('click', closePanel);
+    });
+  })();
+</script>
 
 <style>
 @media (max-width: 768px) {

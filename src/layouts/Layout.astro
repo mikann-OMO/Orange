@@ -200,10 +200,7 @@ const jsonLd = {
 		<!-- 性能优化：减少DNS查找时间 -->
 		<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 		<link rel="preconnect" href="https://unpkg.com" crossorigin>
-		<!-- 性能优化：预加载关键资源 -->
-		<link rel="preload" href="/favicon/favicon-light-32.png" as="image" fetchpriority="high">
-		<link rel="preload" href="/favicon/favicon-dark-32.png" as="image" media="(prefers-color-scheme: dark)">
-		<!-- 性能优化：DNS预解析 -->
+		<!-- DNS预解析 -->
 		<link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
 		<link rel="dns-prefetch" href="https://unpkg.com">
 

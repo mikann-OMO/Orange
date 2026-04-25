@@ -40,8 +40,8 @@ export default defineConfig({
 	site: "https://mikan.fun",
 	// 网站基础路径，默认为根路径
 	base: "/",
-	// 输出模式，使用混合模式以支持 API 路由和静态页面
-	output: "hybrid",
+	// 输出模式，使用服务端模式以支持 API 路由
+	output: "server",
 	// 启用内置预加载 - 与 View Transitions 兼容
 	prefetch: {
 		prefetchAll: false, // 只预加载用户悬停的链接，减少资源消耗

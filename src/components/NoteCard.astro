@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from "astro:content";
+import ImageWrapper from "./misc/ImageWrapper.astro";
 
 interface Props {
 	entry: CollectionEntry<"notes">;
@@ -55,14 +56,13 @@ if (isValidNote && entry.body) {
             {/* 图片 */}
             {entry.data?.image && entry.data.image.trim() !== '' && (
                 <div class="note-image flex-shrink-0 overflow-hidden rounded-md" role="complementary">
-                    <img 
-                        src={entry.data.image} 
-                        alt={entry.data.title ? `Image for note: ${entry.data.title}` : "Note image"} 
+                    <ImageWrapper
+                        src={entry.data.image}
+                        alt={entry.data.title ? `${entry.data.title}` : "随记图片"}
                         class="w-full h-auto max-w-40 max-h-64 object-contain transition-transform duration-300 hover:scale-102"
                         loading="lazy"
-                        decoding="async"
-                        width="200"
-                        height="150"
+                        width={200}
+                        height={150}
                     />
                 </div>
             )}

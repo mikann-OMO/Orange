@@ -5,10 +5,21 @@ import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 import type { GetStaticPaths } from "astro";
 import { Icon } from "astro-icon/components";
+import ImageWrapper from "../../components/misc/ImageWrapper.astro";
 import MainGridLayout from "../../layouts/MainGridLayout.astro";
 
 // 图册页面专用公告配置
 import picturesAnnouncement from "../../content/exhibition-announcement.yaml";
+
+interface AnnouncementConfig {
+	title: string;
+	content: string;
+	avatar: string;
+	enabled: boolean;
+}
+
+const typedPicturesAnnouncement =
+	picturesAnnouncement as unknown as AnnouncementConfig;
 
 export const getStaticPaths: GetStaticPaths = async () => {
 	const pictures = await getCollection("exhibition");
@@ -53,6 +64,9 @@ interface ArtistGroup {
 	name: string;
 	images: { src: string; alt: string; width?: number; height?: number }[];
 }
+
+// 声明艺术家分组变量
+let artistGroups: ArtistGroup[] = [];
 
 // 从 Markdown 内容中按 ## 标题分组提取图片
 function extractImagesByArtistFromMarkdown(): ArtistGroup[] {
@@ -169,10 +183,12 @@ function getConfiguredImages(): ArtistGroup[] {
 	if (album.data.tags && album.data.tags.length >= 2) {
 		artistName = album.data.tags[1];
 	}
-	const images = album.data.images.map((img) => ({
-		src: img.file,
-		alt: img.title || title,
-	}));
+	const images = album.data.images.map(
+		(img: { file: string; title?: string; alt?: string }) => ({
+			src: img.file,
+			alt: img.title || img.alt || title,
+		}),
+	);
 	return [{ name: artistName, images }];
 }
 
@@ -218,8 +234,6 @@ function getLocalImagesByArtist(dir: string): ArtistGroup[] {
 	}));
 }
 
-// 根据优先级选择获取图片的方式
-let artistGroups: ArtistGroup[];
 if (hasMarkdownContent) {
 	artistGroups = getImagesFromMarkdown();
 } else if (album.data.images && album.data.images.length > 0) {
@@ -228,10 +242,13 @@ if (hasMarkdownContent) {
 	artistGroups = getLocalImagesByArtist(albumName);
 }
 
-const totalImages = artistGroups.reduce((sum, g) => sum + g.images.length, 0);
+const totalImages = artistGroups.reduce(
+	(sum: number, g: ArtistGroup) => sum + g.images.length,
+	0,
+);
 ---
 
-<MainGridLayout title={title} description={description} showAnnouncement={picturesAnnouncement.enabled} announcementConfig={picturesAnnouncement}>
+<MainGridLayout title={title} description={description} showAnnouncement={typedPicturesAnnouncement.enabled} announcementConfig={typedPicturesAnnouncement}>
 	<div class="space-y-6 post-content-animate">
 		<!-- 顶部标题栏 - 简洁版本 -->
 		<div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden">
@@ -244,7 +261,7 @@ const totalImages = artistGroups.reduce((sum, g) => sum + g.images.length, 0);
 		</div>
 
 		<!-- 画师作品区 -->
-		{artistGroups.map((artist, index) => (
+		{artistGroups.map((artist: ArtistGroup, index: number) => (
 			<div id={`artist-${index}`} class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden scroll-mt-24 card-enter">
 				<!-- 画师标题栏 -->
 				<div class="bg-orange-100/80 dark:bg-stone-700/70 backdrop-blur-3xl border-l-4 border-orange-700 p-4">
@@ -259,16 +276,17 @@ const totalImages = artistGroups.reduce((sum, g) => sum + g.images.length, 0);
 				<!-- 图片瀑布流 -->
 				<div class="p-4 md:p-6">
 					<div class="gallery-masonry columns-2 md:columns-3 gap-3 md:gap-4">
-						{artist.images.map((img) => (
+						{artist.images.map((img: { src: string; alt: string; width?: number; height?: number }) => (
 							<div class="break-inside-avoid mb-3 md:mb-4">
 								<div class="overflow-hidden rounded-sm shadow-md hover:shadow-xl transition-shadow duration-300 bg-white/50 dark:bg-stone-700/50">
 									<a href={img.src} target="_blank" rel="noopener noreferrer" class="block relative group">
-										<img 
-											src={img.src} 
-											alt={img.alt} 
-											loading="lazy" 
-											decoding="async"
+										<ImageWrapper
+											src={img.src}
+											alt={img.alt}
 											class="w-full h-auto object-cover"
+											loading="lazy"
+											width={img.width}
+											height={img.height}
 										/>
 										<div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300 flex items-center justify-center">
 											<div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -336,7 +354,7 @@ const totalImages = artistGroups.reduce((sum, g) => sum + g.images.length, 0);
 					<h3 class="text-base font-bold text-orange-700 dark:text-white">画师</h3>
 				</div>
 				<div class="p-2">
-					{artistGroups.map((artist, index) => (
+					{artistGroups.map((artist: ArtistGroup, index: number) => (
 						<a 
 							href={`#artist-${index}`}
 							class="flex items-center gap-3 p-3 rounded-lg hover:bg-orange-200/30 dark:hover:bg-stone-600/30 transition-colors group"

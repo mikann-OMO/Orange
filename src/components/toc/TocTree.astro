@@ -1,0 +1,111 @@
+---
+import { buildTocTree } from "@utils/toc";
+import type { MarkdownHeading } from "astro";
+
+interface Props {
+	headings?: MarkdownHeading[];
+	title?: string;
+}
+
+const { headings = [], title } = Astro.props;
+
+const tree = buildTocTree(headings);
+---
+
+{tree.map((g) => (
+  <div class="mb-1">
+    <div class="flex items-center">
+      <a
+        href={`#${g.id}`}
+        data-toc-id={g.id}
+        class="toc-item px-2 flex gap-2 relative transition w-full min-h-9 rounded-xl py-2 group hover:bg-orange-950/5 dark:hover:bg-white/10 active:bg-orange-950/10 dark:active:bg-white/20 mt-[2px]"
+      >
+        <div class="transition w-5 h-5 shrink-0 rounded-lg text-xs flex items-center justify-center font-bold bg-orange-950/5 dark:bg-white/10 text-[var(--btn-content)]">
+          {g.num ?? "•"}
+        </div>
+        <div class="transition text-sm overflow-hidden text-ellipsis whitespace-nowrap text-orange-950/60 dark:text-white/60 group-hover:text-orange-950/80 dark:group-hover:text-white/80" title={g.text}>
+          {g.text}
+        </div>
+        <div class="active-indicator absolute right-2 top-1/2 -translate-y-1/2 w-1 h-5 rounded bg-[var(--primary)] opacity-0 transition-opacity"></div>
+      </a>
+      {g.children.length > 0 && (
+        <button
+          data-toggle-for={g.id}
+          class="toc-toggle absolute right-12 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full hover:bg-orange-950/10 dark:hover:bg-white/20 transition-colors"
+        >
+          <svg class="w-4 h-4 text-orange-950/60 dark:text-white/60 transition-transform toc-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 9l6 6 6-6"/>
+          </svg>
+        </button>
+      )}
+    </div>
+
+    {g.children.length > 0 && (
+      <div class="ml-6 pl-2 border-l border-[var(--line-divider)] toc-children" data-children-for={g.id}>
+        {g.children.map((c) => (
+          <div class="mb-1">
+            <div class="flex items-center">
+              <a
+                href={`#${c.id}`}
+                data-toc-id={c.id}
+                data-parent-id={g.id}
+                class="toc-item px-2 flex gap-2 relative transition w-full min-h-9 rounded-xl py-2 group hover:bg-orange-950/5 dark:hover:bg-white/10 active:bg-orange-950/10 dark:active:bg-white/20 mt-1"
+              >
+                <div class="transition w-5 h-5 shrink-0 rounded-lg text-xs flex items-center justify-center font-bold bg-orange-950/5 dark:bg-white/10 text-[var(--btn-content)] opacity-60">
+                  •
+                </div>
+                <div class="transition text-[0.9rem] overflow-hidden text-ellipsis whitespace-nowrap text-orange-950/60 dark:text-white/60 group-hover:text-orange-950/80 dark:group-hover:text-white/80" title={c.text}>
+                  {c.text}
+                </div>
+                <div class="active-indicator absolute right-2 top-1/2 -translate-y-1/2 w-1 h-5 rounded bg-[var(--primary)] opacity-0 transition-opacity"></div>
+              </a>
+              {c.children.length > 0 && (
+                <button
+                  data-toggle-for={c.id}
+                  class="toc-toggle absolute right-12 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full hover:bg-orange-950/10 dark:hover:bg-white/20 transition-colors"
+                >
+                  <svg class="w-4 h-4 text-orange-950/60 dark:text-white/60 transition-transform toc-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M6 9l6 6 6-6"/>
+                  </svg>
+                </button>
+              )}
+            </div>
+
+            {c.children.length > 0 && (
+              <div class="ml-5 pl-2 border-l border-[var(--line-divider)] toc-children" data-children-for={c.id}>
+                {c.children.map((d) => (
+                  <a
+                    href={`#${d.id}`}
+                    data-toc-id={d.id}
+                    data-parent-id={c.id}
+                    class="toc-item px-2 flex gap-2 relative transition w-full min-h-9 rounded-xl py-2 group hover:bg-orange-950/5 dark:hover:bg-white/10 active:bg-orange-950/10 dark:active:bg-white/20 mt-1"
+                  >
+                    <div class="transition w-5 h-5 shrink-0 rounded-lg text-xs flex items-center justify-center font-bold bg-orange-950/5 dark:bg-white/10 text-[var(--btn-content)] opacity-60">
+                      •
+                    </div>
+                    <div class="transition text-[0.9rem] overflow-hidden text-ellipsis whitespace-nowrap text-orange-950/60 dark:text-white/60 group-hover:text-orange-950/80 dark:group-hover:text-white/80" title={d.text}>
+                      {d.text}
+                    </div>
+                    <div class="active-indicator absolute right-2 top-1/2 -translate-y-1/2 w-1 h-5 rounded bg-[var(--primary)] opacity-0 transition-opacity"></div>
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+))}
+
+<style is:global>
+  .active-indicator{opacity:0;transition:opacity .2s}
+  [data-active="true"] .active-indicator{opacity:1}
+  [data-collapsed="true"] {
+    display: none;
+  }
+</style>
+
+<style>
+  a{user-select:none}
+</style>

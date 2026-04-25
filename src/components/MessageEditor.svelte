@@ -1,10 +1,13 @@
 <script lang="ts">
 import { createEventDispatcher, onMount } from "svelte";
+import { tick } from "svelte";
 
 export let slug: string;
 export let parentId: string | null;
 export let isReply = false;
-const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher<{
+	added: never;
+}>();
 
 let nickname = "";
 let email = "";
@@ -48,10 +51,11 @@ async function handleSubmit(e: Event) {
 
 		saveToStorage();
 		content = "";
+		await tick();
 		dispatch("added");
 	} catch (e) {
 		error = "发送失败，请重试";
-		console.error(e);
+		console.warn("Message submit error:", e);
 	} finally {
 		submitting = false;
 	}
@@ -109,7 +113,7 @@ async function handleSubmit(e: Event) {
 			placeholder={isReply ? "写点什么..." : "支持 Markdown 和 ||剧透|| 语法哦~"}
 			rows={isReply ? 3 : 5}
 			class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-		/>
+		></textarea>
 	</div>
 
 	<div class="flex items-center justify-between">

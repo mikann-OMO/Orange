@@ -1,39 +1,41 @@
 <script lang="ts">
-	import { onMount } from "svelte";
-	import MessageItem from "./MessageItem.svelte";
-	import MessageEditor from "./MessageEditor.svelte";
-	import type { Message } from "@/types/message";
+import type { Message } from "@/types/message";
+import { onMount } from "svelte";
+import MessageEditor from "./MessageEditor.svelte";
+import MessageItem from "./MessageItem.svelte";
 
-	export let slug: string;
+export let slug: string;
 
-	let messages: Message[] = [];
-	let loading = true;
-	let error = "";
+let messages: Message[] = [];
+let loading = true;
+let error = "";
 
-	async function fetchMessages() {
-		try {
-			const response = await fetch(`/api/messages?slug=${encodeURIComponent(slug)}`);
-			if (!response.ok) throw new Error("Failed to fetch messages");
-			messages = await response.json();
-			error = "";
-		} catch (e) {
-			error = "加载留言失败";
-			console.error(e);
-		} finally {
-			loading = false;
-		}
+async function fetchMessages() {
+	try {
+		const response = await fetch(
+			`/api/messages?slug=${encodeURIComponent(slug)}`,
+		);
+		if (!response.ok) throw new Error("Failed to fetch messages");
+		messages = await response.json();
+		error = "";
+	} catch (e) {
+		error = "加载留言失败";
+		console.error("Error fetching messages:", e);
+	} finally {
+		loading = false;
 	}
+}
 
-	function handleMessageAdded() {
+function handleMessageAdded() {
+	fetchMessages();
+}
+
+onMount(() => {
+	const timer = setTimeout(() => {
 		fetchMessages();
-	}
-
-	onMount(() => {
-		const timer = setTimeout(() => {
-			fetchMessages();
-		}, 100);
-		return () => clearTimeout(timer);
-	});
+	}, 100);
+	return () => clearTimeout(timer);
+});
 </script>
 
 <div class="message-board">

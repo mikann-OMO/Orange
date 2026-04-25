@@ -3,7 +3,7 @@ import type { LIGHT_DARK_MODE } from "@/types/config";
 import { AUTO_MODE, DARK_MODE, LIGHT_MODE } from "@constants/constants";
 import Icon from "@iconify/svelte";
 import { getStoredTheme, setTheme } from "@utils/setting-utils";
-import { onMount } from "svelte";
+import { onMount, tick } from "svelte";
 
 let mode: LIGHT_DARK_MODE = $state(LIGHT_MODE);
 
@@ -11,7 +11,6 @@ function getDisplayMode(): LIGHT_DARK_MODE {
 	const storedTheme = getStoredTheme();
 	if (storedTheme === LIGHT_MODE) return LIGHT_MODE;
 	if (storedTheme === DARK_MODE) return DARK_MODE;
-	// AUTO_MODE: 根据系统主题决定显示
 	if (
 		typeof window !== "undefined" &&
 		window.matchMedia("(prefers-color-scheme: dark)").matches
@@ -24,11 +23,9 @@ function getDisplayMode(): LIGHT_DARK_MODE {
 onMount(() => {
 	mode = getDisplayMode();
 
-	// 监听系统主题变化
 	const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 	const handleChange = () => {
 		if (getStoredTheme() === AUTO_MODE) {
-			// 使用 requestAnimationFrame 来减少重绘
 			requestAnimationFrame(() => {
 				mode = mediaQuery.matches ? DARK_MODE : LIGHT_MODE;
 			});
@@ -39,15 +36,22 @@ onMount(() => {
 	return () => mediaQuery.removeEventListener("change", handleChange);
 });
 
-function switchScheme(newMode: LIGHT_DARK_MODE) {
-	// 立即更新本地状态，然后再应用主题
-	mode = newMode;
-	setTheme(newMode);
+async function switchScheme(newMode: LIGHT_DARK_MODE) {
+	try {
+		await tick();
+		mode = newMode;
+		setTheme(newMode);
+	} catch (e) {
+		console.warn("Theme switch aborted:", e);
+	}
 }
 
-function toggleScheme() {
-	// 直接在日间和夜间模式之间切换
-	switchScheme(mode === LIGHT_MODE ? DARK_MODE : LIGHT_MODE);
+async function toggleScheme() {
+	try {
+		await switchScheme(mode === LIGHT_MODE ? DARK_MODE : LIGHT_MODE);
+	} catch (e) {
+		console.warn("Theme toggle aborted:", e);
+	}
 }
 </script>
 

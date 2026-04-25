@@ -1,0 +1,114 @@
+---
+import { buildTocTree } from "@utils/toc";
+import type { MarkdownHeading } from "astro";
+
+const { headings = [], title = "文章目录" } = Astro.props;
+const tree = buildTocTree(headings);
+---
+
+{tree.length > 0 && (
+  <aside class="toc">
+    <div class="toc-title">{title}</div>
+
+    <nav>
+      <ul class="toc-root">
+        {tree.map((node) => (
+          <li>
+            <div class="toc-row">
+              {node.children.length > 0 && (
+                <button class="toc-toggle" data-toggle={node.id}>▶</button>
+              )}
+              <a href={`#${node.id}`} data-id={node.id} data-level={0}>{node.text}</a>
+            </div>
+            {node.children.length > 0 && (
+              <ul data-children={node.id}>
+                {node.children.map((c) => (
+                  <li>
+                    <div class="toc-row">
+                      {c.children.length > 0 && (
+                        <button class="toc-toggle" data-toggle={c.id}>▶</button>
+                      )}
+                      <a href={`#${c.id}`} data-id={c.id} data-level={1}>{c.text}</a>
+                    </div>
+                    {c.children.length > 0 && (
+                      <ul data-children={c.id}>
+                        {c.children.map((d) => (
+                          <li>
+                            <div class="toc-row">
+                              <a href={`#${d.id}`} data-id={d.id} data-level={2}>{d.text}</a>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </aside>
+)}
+
+<style>
+.toc {
+  position: sticky;
+  top: 100px;
+  width: 260px;
+  font-size: 14px;
+}
+
+.toc-title {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.toc-root {
+  list-style: none;
+  padding-left: 0;
+}
+
+.toc-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.toc-toggle {
+  font-size: 10px;
+  transform: rotate(90deg);
+  transition: transform 0.2s;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: inherit;
+}
+
+.toc-toggle.collapsed {
+  transform: rotate(0deg);
+}
+
+.toc ul {
+  list-style: none;
+  padding-left: 12px;
+}
+
+.toc a {
+  display: block;
+  padding: 3px 0;
+  color: #666;
+  text-decoration: none;
+}
+
+.toc a.active {
+  color: var(--primary);
+  font-weight: bold;
+}
+
+.toc ul[data-collapsed="true"] {
+  display: none;
+}
+</style>
