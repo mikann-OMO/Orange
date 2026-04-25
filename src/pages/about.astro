@@ -6,6 +6,7 @@ import Markdown from "@components/misc/Markdown.astro";
 import FriendsList from "@components/widget/FriendsList.astro";
 import Profile from "@components/widget/Profile.astro";
 import { Icon } from "astro-icon/components";
+import ImageWrapper from "../components/misc/ImageWrapper.astro";
 
 import { profileConfig } from "../config";
 import I18nKey from "../i18n/i18nKey";
@@ -27,7 +28,12 @@ const { Content } = await render(aboutPost);
         <div class="mobile-profile-card">
             <div class="flex items-center gap-3">
                 <div class="avatar-wrapper">
-                    <img src="https://mikann-1359996823.cos.ap-beijing.myqcloud.com/OMO.jpg" alt="Profile Image" class="avatar-img" loading="eager" />
+                    <ImageWrapper
+                        src="https://mikann-1359996823.cos.ap-beijing.myqcloud.com/OMO.jpg"
+                        alt="Profile Image"
+                        class="avatar-img"
+                        loading="eager"
+                    />
                 </div>
                 <div class="flex-1 min-w-0">
                     <h1 class="profile-name">{profileConfig.name}</h1>

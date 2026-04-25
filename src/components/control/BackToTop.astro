@@ -14,47 +14,66 @@ import { Icon } from "astro-icon/components";
 
 <style>
 .back-to-top-btn {
-    position: fixed;
-    bottom: 1.5rem;
-    right: 1rem;
-    z-index: 60;
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: auto;
+    position: fixed !important;
+    bottom: 1.5rem !important;
+    right: 1rem !important;
+    z-index: 60 !important;
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    pointer-events: auto !important;
+    visibility: visible !important;
+    display: flex !important;
+}
+
+.back-to-top-btn.visible {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    visibility: visible !important;
 }
 
 .back-to-top-btn button {
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.9) !important;
     backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 152, 0, 0.2);
+    border: 1px solid rgba(255, 152, 0, 0.2) !important;
 }
 
 :global(.dark) .back-to-top-btn button {
-    background: rgba(60, 60, 60, 0.9);
-    border-color: rgba(255, 255, 255, 0.1);
+    background: rgba(60, 60, 60, 0.9) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 @media (min-width: 768px) {
     .back-to-top-btn {
-        bottom: 2rem;
-        right: 1.5rem;
+        bottom: 2rem !important;
+        right: 1.5rem !important;
     }
 }
 </style>
 
 <script is:inline>
-    const backToTop = () => {
-        window.scroll({ top: 0, behavior: 'auto' });
-    };
+    (function() {
+        const backToTop = () => {
+            window.scrollTo({ top: 0, behavior: 'auto' });
+        };
 
-    const btn = document.querySelector<HTMLButtonElement>('#back-to-top-btn button');
-    if (btn) {
-        btn.addEventListener('click', backToTop);
-        btn.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                backToTop();
+        const initButton = () => {
+            const btn = document.querySelector('#back-to-top-btn button');
+            if (btn) {
+                btn.addEventListener('click', backToTop);
+                btn.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        backToTop();
+                    }
+                });
+                document.querySelector('#back-to-top-btn')?.classList.add('visible');
             }
-        });
-    }
+        };
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initButton);
+        } else {
+            initButton();
+        }
+    })();
 </script>

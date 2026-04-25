@@ -1,4 +1,5 @@
 <script lang="ts">
+import { ensureBusuanziLoaded, shouldUseBusuanzi } from "@utils/busuanzi-utils";
 import {
 	formatCount,
 	getPageVisitorCount,
@@ -6,7 +7,6 @@ import {
 	incrementPageVisitorCount,
 	isVisitorTrackingEnabled,
 } from "@utils/visitor-utils";
-import { ensureBusuanziLoaded, shouldUseBusuanzi } from "@utils/busuanzi-utils";
 import { onMount } from "svelte";
 
 declare global {

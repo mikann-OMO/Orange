@@ -63,7 +63,7 @@ for (const h of filtered) {
 ---
 
 {level1.length > 0 && (
-  <div id="sidebar-toc-wrapper" class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-none shadow-xl p-4" style="position: sticky; top: var(--toc-offset, 96px);">
+  <div id="sidebar-toc-wrapper" class="sticky top-[var(--toc-offset,96px)] bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-none shadow-xl p-4">
     <div class="px-2 pb-2">
       <h3 class="text-lg font-bold mb-4 text-orange-700 dark:text-white border-b border-gray-200/50 dark:border-gray-700/50 pb-2">{title}</h3>
       {level1.map((g) => (
@@ -230,8 +230,12 @@ for (const h of filtered) {
   };
 
   const boot = () => {
-    const off = getOffset();
-    document.documentElement.style.setProperty('--toc-offset', off + 'px');
+    const setTocOffset = () => {
+      const off = getOffset();
+      document.documentElement.style.setProperty('--toc-offset', off + 'px');
+    };
+    setTocOffset();
+    window.addEventListener('resize', setTocOffset);
     enableSmooth();
     initSpy();
   };

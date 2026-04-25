@@ -4,6 +4,7 @@
 import sitemap from "@astrojs/sitemap";
 import svelte from "@astrojs/svelte";
 import tailwind from "@astrojs/tailwind";
+import vercel from "@astrojs/vercel";
 
 import yaml from "@rollup/plugin-yaml";
 import icon from "astro-icon";
@@ -22,6 +23,7 @@ import remarkSectionize from "remark-sectionize";
 // PWA 支持 - 暂时禁用
 // import { VitePWA } from "vite-plugin-pwa";
 
+import remarkReplaceImg from "./plugins/remark-replace-img.js";
 // 自定义插件
 import { AdmonitionComponent } from "./src/plugins/rehype-component-admonition.mjs";
 import { GithubCardComponent } from "./src/plugins/rehype-component-github-card.mjs";
@@ -38,8 +40,8 @@ export default defineConfig({
 	site: "https://mikan.fun",
 	// 网站基础路径，默认为根路径
 	base: "/",
-	// 输出模式，使用静态模式以兼容Cloudflare Pages
-	output: "static",
+	// 输出模式，使用混合模式以支持 API 路由和静态页面
+	output: "hybrid",
 	// 启用内置预加载 - 与 View Transitions 兼容
 	prefetch: {
 		prefetchAll: false, // 只预加载用户悬停的链接，减少资源消耗
@@ -81,6 +83,8 @@ export default defineConfig({
 		}),
 		// 站点地图集成
 		sitemap(),
+		// Vercel 适配器
+		vercel(),
 	],
 
 	// Markdown 配置
@@ -94,6 +98,7 @@ export default defineConfig({
 			remarkDirective, // 指令支持
 			remarkSectionize, // 章节划分
 			parseDirectiveNode, // 自定义指令解析
+			remarkReplaceImg, // 替换 img 标签为 ImageWrapper
 		],
 		// Rehype 插件（用于处理 HTML 输出）
 		rehypePlugins: [

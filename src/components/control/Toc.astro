@@ -208,8 +208,12 @@ for (const h of filtered) {
   };
 
   const boot = () => {
-    const off = getOffset();
-    document.documentElement.style.setProperty('--toc-offset', off + 'px');
+    const setTocOffset = () => {
+      const off = getOffset();
+      document.documentElement.style.setProperty('--toc-offset', off + 'px');
+    };
+    setTocOffset();
+    window.addEventListener('resize', setTocOffset);
     enableSmooth();
     initSpy();
   };

@@ -91,7 +91,7 @@ const activeAnnouncement = announcementConfig || announcement;
             </main>
 
             {!fullWidth && (
-                <aside class="md:col-span-4 lg:col-span-4 pt-0 mt-0">
+                <aside class="md:col-span-4 lg:col-span-4 pt-0 mt-0 relative self-start">
                     {activeAnnouncement.enabled && showAnnouncement && (
                         <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-none shadow-xl p-4 mb-6">
                             <div class="flex items-start gap-4">
@@ -213,7 +213,7 @@ const activeAnnouncement = announcementConfig || announcement;
     #content-wrapper {
         padding-top: 1rem;
     }
-    
+
     #main-grid {
         padding-top: 0;
     }

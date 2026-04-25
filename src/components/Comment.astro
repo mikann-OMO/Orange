@@ -1,0 +1,14 @@
+---
+import MessageBoard from "./MessageBoard.svelte";
+
+interface Props {
+	slug?: string;
+}
+
+const { slug: propSlug } = Astro.props;
+let slug = propSlug || Astro.url.pathname.replace(/\/$/, "");
+---
+
+<div class="mt-8 mb-8">
+	<MessageBoard client:visible {slug} />
+</div>

@@ -17,11 +17,11 @@ const { items, className = "" } = Astro.props;
 		{items.map((item, index) => (
 			<li class="breadcrumb-item">
 				{item.url && !item.isActive ? (
-					<a href={item.url} class="text-75 hover:text-[var(--accent-text)] dark:hover:text-[var(--primary)] transition">
+					<a href={item.url} aria-label={item.label || "Breadcrumb item"} class="text-75 hover:text-[var(--accent-text)] dark:hover:text-[var(--primary)] transition">
 						{item.label}
 					</a>
 				) : (
-					<span class="text-50 dark:text-white/60">
+					<span class="text-50 dark:text-white/60" aria-label={item.label || "Breadcrumb item"}>
 						{item.label}
 					</span>
 				)}

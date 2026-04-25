@@ -558,6 +558,12 @@ function createRuntime(): Runtime {
 		let offset = Math.floor(window.innerHeight * (BANNER_HEIGHT_EXTEND / 100));
 		offset = offset - (offset % 4);
 		document.documentElement.style.setProperty("--banner-height-extend", `${offset}px`);
+
+		if (rt.navbar) {
+			const navbarHeight = rt.navbar.getBoundingClientRect().height;
+			const tocOffset = Math.max(72, Math.round(navbarHeight) + 12);
+			document.documentElement.style.setProperty("--toc-offset", `${tocOffset}px`);
+		}
 	};
 
 	const updateScroll = () => {
@@ -565,35 +571,7 @@ function createRuntime(): Runtime {
 		rt.lastScrollY = y;
 
 		if (rt.backToTopBtn) {
-			const shouldShow = y > 300;
-			if (shouldShow !== rt.lastBackToTopVisible) {
-				rt.backToTopBtn.classList.toggle("visible", shouldShow);
-				rt.lastBackToTopVisible = shouldShow;
-			}
-		}
-
-		if (rt.bannerEnabled && rt.navbar) {
-			const NAVBAR_HEIGHT = 72;
-			const MAIN_PANEL_EXCESS_HEIGHT = MAIN_PANEL_OVERLAPS_BANNER_HEIGHT * 16;
-
-			let currentBannerHeight = BANNER_HEIGHT;
-			if (
-				document.body.classList.contains("lg:is-home") &&
-				window.innerWidth >= 1024
-			) {
-				currentBannerHeight = BANNER_HEIGHT_HOME;
-			}
-
-			const threshold =
-				window.innerHeight * (currentBannerHeight / 100) -
-				NAVBAR_HEIGHT -
-				MAIN_PANEL_EXCESS_HEIGHT -
-				16;
-			const shouldHide = y >= threshold;
-			if (shouldHide !== rt.lastNavbarHidden) {
-				rt.navbar.classList.toggle("navbar-hidden", shouldHide);
-				rt.lastNavbarHidden = shouldHide;
-			}
+			rt.backToTopBtn.classList.add("visible");
 		}
 	};
 

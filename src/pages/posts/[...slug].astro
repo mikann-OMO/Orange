@@ -1,6 +1,7 @@
 ---
 import path from "node:path";
 import { Icon } from "astro-icon/components";
+import Comment from "../../components/Comment.astro";
 import LikeButton from "../../components/LikeButton.astro";
 import PageViewCounter from "../../components/PageViewCounter.svelte";
 import PostMetadata from "../../components/PostMeta.astro";
@@ -166,6 +167,8 @@ const jsonLd = {
     </div>
 
     <LikeButton slug={entry.slug} />
+
+    <Comment slug={entry.slug} />
 
 </MainGridLayout>
 

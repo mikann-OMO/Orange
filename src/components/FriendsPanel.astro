@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import { Icon } from "astro-icon/components";
 import FriendCard from "./FriendCard.astro";
+import ImageWrapper from "./misc/ImageWrapper.astro";
 
 const friends = await getCollection("friends");
 
@@ -44,12 +45,10 @@ const items = shuffledFriends.map((friend) => ({
                     </div>
                     <div class="card-glow"></div>
                     <div class="avatar-section">
-                        <img 
-                            src="https://mikann-1359996823.cos.ap-beijing.myqcloud.com/OMO.jpg" 
-                            alt="我的头像" 
+                        <ImageWrapper
+                            src="https://mikann-1359996823.cos.ap-beijing.myqcloud.com/OMO.jpg"
+                            alt="我的头像"
                             class="avatar"
-                            loading="lazy"
-                            decoding="async"
                         >
                     </div>
                     <div class="info-section">
