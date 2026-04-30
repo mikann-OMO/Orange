@@ -239,6 +239,20 @@ function sampleMosaic(album: (typeof sorted)[number], cover?: string) {
 	return { picks, total: entries.length };
 }
 
+function formatAlbumDate(input: unknown): string {
+	try {
+		const d = input instanceof Date ? input : new Date(String(input));
+		if (Number.isNaN(d.getTime())) return "";
+		return d.toLocaleDateString("zh-CN", {
+			year: "numeric",
+			month: "2-digit",
+			day: "2-digit",
+		});
+	} catch {
+		return "";
+	}
+}
+
 const albumStats = sorted.map((a) => sampleMosaic(a, a.data.cover));
 const totalAlbums = sorted.length;
 const totalImages = albumStats.reduce((sum, stat) => sum + stat.total, 0);
@@ -300,46 +314,63 @@ const totalImages = albumStats.reduce((sum, stat) => sum + stat.total, 0);
 				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 				{sorted.map((a) => {
 					const { picks, total } = sampleMosaic(a, a.data.cover);
+					const cover =
+						picks[0] ||
+						"https://mikann-1359996823.cos.ap-beijing.myqcloud.com/chika.png";
+					const dateText = formatAlbumDate(a.data.date);
 					return (
-						<a href={`/pictures/${a.id}/`} class="group rounded-xl overflow-hidden bg-white/30 dark:bg-stone-700/30 hover:bg-white/50 dark:hover:bg-stone-600/30 transition-all duration-300 shadow-lg hover:shadow-xl border border-orange-200/30 dark:border-stone-600/30 card-enter">
-								<div class="relative">
-									<div class="aspect-[4/3] overflow-hidden">
-										<div class="grid grid-cols-3 grid-rows-2 gap-[3px] h-full">
-											<ImageWrapper
-													src={picks[0] || "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/chika.png"}
-													alt={a.data.title}
-													class="col-span-2 row-span-2 w-full h-full object-cover bg-orange-950/5 dark:bg-white/5 transition-transform duration-500 group-hover:scale-105"
-													loading="lazy"
-												/>
-												<ImageWrapper
-													src={picks[1] || picks[0] || "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/chika.png"}
-													alt={a.data.title}
-													class="col-span-1 row-span-1 w-full h-full object-cover bg-orange-950/5 dark:bg-white/5 transition-transform duration-300 group-hover:scale-110"
-													loading="lazy"
-												/>
-												<ImageWrapper
-													src={picks[2] || picks[1] || picks[0] || "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/chika.png"}
-													alt={a.data.title}
-													class="col-span-1 row-span-1 w-full h-full object-cover bg-orange-950/5 dark:bg-white/5 transition-transform duration-300 group-hover:scale-110"
-													loading="lazy"
-												/>
-										</div>
-									</div>
-									<div class="absolute top-3 right-3 px-2 py-1 rounded-full bg-black/40 backdrop-blur-sm text-white text-xs font-medium flex items-center gap-1">
-										<Icon name="material-symbols:photo-rounded" class="text-sm" />
-										{total}
-									</div>
+						<a
+							href={`/pictures/${a.id}/`}
+							class="group album-card card-enter"
+							aria-label={`打开相册：${a.data.title}`}
+						>
+							<div class="album-cover">
+								<ImageWrapper
+									src={cover}
+									alt={a.data.title}
+									class="album-cover-img"
+									loading="lazy"
+								/>
+								<div class="album-scrim" aria-hidden="true"></div>
+								<div class="album-badge">
+									<Icon name="material-symbols:photo-rounded" class="text-sm" />
+									<span>{total}</span>
 								</div>
-								<div class="p-4">
-									<div class="flex items-center justify-between">
-										<h3 class="text-base font-semibold text-orange-800 dark:text-white line-clamp-1 group-hover:text-orange-600 dark:group-hover:text-orange-300 transition-colors">{a.data.title}</h3>
-										<Icon name="material-symbols:arrow-forward-rounded" class="text-lg text-orange-400 dark:text-orange-300 opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-1" />
+
+								<div class="album-meta">
+									<div class="album-title-row">
+										<h3 class="album-title">{a.data.title}</h3>
+										<Icon
+											name="material-symbols:arrow-forward-rounded"
+											class="album-arrow"
+										/>
 									</div>
-									{a.data.description && (
-										<p class="text-xs mt-2 text-orange-600/60 dark:text-gray-400 line-clamp-2">{a.data.description}</p>
-									)}
+
+									<div class="album-sub">
+										{dateText && (
+											<span class="album-date">
+												<Icon name="material-symbols:calendar-month-rounded" class="text-[1rem]" />
+												<span>{dateText}</span>
+											</span>
+										)}
+										{a.data.tags?.length ? (
+											<span class="album-tags" title={a.data.tags.join(", ")}>
+												{a.data.tags.slice(0, 2).map((t) => (
+													<span class="album-tag">{t}</span>
+												))}
+												{a.data.tags.length > 2 ? (
+													<span class="album-tag">+{a.data.tags.length - 2}</span>
+												) : null}
+											</span>
+										) : null}
+									</div>
+
+									{a.data.description ? (
+										<p class="album-desc">{a.data.description}</p>
+									) : null}
 								</div>
-							</a>
+							</div>
+						</a>
 						);
 					})}
 				</div>
@@ -356,3 +387,160 @@ const totalImages = albumStats.reduce((sum, stat) => sum + stat.total, 0);
 		)}
 	</div>
 </MainGridLayout>
+
+<style>
+	.album-card {
+		display: block;
+		border-radius: 18px;
+		overflow: hidden;
+		background: rgba(255, 255, 255, 0.22);
+		border: 1px solid rgba(255, 152, 0, 0.18);
+		box-shadow: 0 16px 40px rgba(234, 88, 12, 0.08);
+		transition: transform 250ms ease, box-shadow 250ms ease, border-color 250ms ease;
+		transform: translateZ(0);
+	}
+
+	:global(.dark) .album-card {
+		background: rgba(51, 41, 34, 0.26);
+		border-color: rgba(255, 255, 255, 0.08);
+		box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28);
+	}
+
+	.album-card:hover {
+		transform: translateY(-2px);
+		border-color: rgba(255, 152, 0, 0.35);
+		box-shadow: 0 20px 54px rgba(234, 88, 12, 0.12);
+	}
+
+	.album-cover {
+		position: relative;
+		aspect-ratio: 16 / 10;
+	}
+
+	.album-cover :global(img) {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	.album-cover-img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		transform: scale(1.01);
+		transition: transform 450ms ease, filter 450ms ease;
+		filter: saturate(1.03);
+	}
+
+	.album-card:hover .album-cover-img {
+		transform: scale(1.06);
+		filter: saturate(1.08);
+	}
+
+	.album-scrim {
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(
+			to bottom,
+			rgba(0, 0, 0, 0.05) 0%,
+			rgba(0, 0, 0, 0.15) 45%,
+			rgba(0, 0, 0, 0.62) 100%
+		);
+	}
+
+	.album-badge {
+		position: absolute;
+		top: 12px;
+		right: 12px;
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		padding: 6px 10px;
+		border-radius: 999px;
+		background: rgba(0, 0, 0, 0.38);
+		backdrop-filter: blur(8px);
+		color: white;
+		font-size: 12px;
+		font-weight: 600;
+	}
+
+	.album-meta {
+		position: absolute;
+		left: 14px;
+		right: 14px;
+		bottom: 12px;
+		color: rgba(255, 255, 255, 0.94);
+	}
+
+	.album-title-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 10px;
+	}
+
+	.album-title {
+		font-size: 16px;
+		font-weight: 800;
+		letter-spacing: 0.2px;
+		text-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.album-arrow {
+		font-size: 18px;
+		opacity: 0.85;
+		transform: translateX(-2px);
+		transition: transform 240ms ease, opacity 240ms ease;
+	}
+
+	.album-card:hover .album-arrow {
+		opacity: 1;
+		transform: translateX(2px);
+	}
+
+	.album-sub {
+		margin-top: 8px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 10px;
+		font-size: 12px;
+		color: rgba(255, 255, 255, 0.86);
+	}
+
+	.album-date {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+	}
+
+	.album-tags {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		flex-wrap: wrap;
+		justify-content: flex-end;
+	}
+
+	.album-tag {
+		padding: 2px 8px;
+		border-radius: 999px;
+		background: rgba(255, 255, 255, 0.16);
+		border: 1px solid rgba(255, 255, 255, 0.18);
+		backdrop-filter: blur(8px);
+	}
+
+	.album-desc {
+		margin-top: 8px;
+		font-size: 12px;
+		line-height: 1.35;
+		color: rgba(255, 255, 255, 0.86);
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+</style>

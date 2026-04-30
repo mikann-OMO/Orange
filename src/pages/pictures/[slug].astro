@@ -275,31 +275,38 @@ const totalImages = artistGroups.reduce(
 				
 				<!-- 图片瀑布流 -->
 				<div class="p-4 md:p-6">
-					<div class="gallery-masonry columns-2 md:columns-3 gap-3 md:gap-4">
-						{artist.images.map((img: { src: string; alt: string; width?: number; height?: number }) => (
-							<div class="break-inside-avoid mb-3 md:mb-4">
-								<div class="overflow-hidden rounded-sm shadow-md hover:shadow-xl transition-shadow duration-300 bg-white/50 dark:bg-stone-700/50">
-									<a href={img.src} target="_blank" rel="noopener noreferrer" class="block relative group">
+					<div class="gallery gallery-waterfall columns-2 md:columns-3">
+						{artist.images.map(
+							(
+								img: { src: string; alt: string; width?: number; height?: number },
+								i: number,
+							) => (
+								<figure class="gallery-card">
+									<a
+										href={img.src}
+										class="gallery-link"
+										aria-label={`查看图片：${img.alt || title}`}
+										data-pswp-width={img.width}
+										data-pswp-height={img.height}
+									>
 										<ImageWrapper
 											src={img.src}
 											alt={img.alt}
-											class="w-full h-auto object-cover"
-											loading="lazy"
+											class="gallery-img"
+											loading={i < 2 ? "eager" : "lazy"}
 											width={img.width}
 											height={img.height}
 										/>
-										<div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300 flex items-center justify-center">
-											<div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-												<div class="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
-													<Icon name="material-symbols:open-in-new-rounded" class="text-lg text-orange-700" />
-												</div>
-											</div>
-										</div>
+										<span class="gallery-overlay" aria-hidden="true">
+											<span class="gallery-zoom">
+												<Icon name="material-symbols:zoom-in-rounded" class="text-[1.15rem]" />
+											</span>
+										</span>
 									</a>
-									</div>
-								</div>
-							))}
-						</div>
+								</figure>
+							),
+						)}
+					</div>
 					</div>
 				</div>
 			))}
@@ -378,24 +385,93 @@ const totalImages = artistGroups.reduce(
 </MainGridLayout>
 
 <style>
-	.gallery-masonry {
+	.gallery-waterfall {
 		column-gap: 0.75rem;
 	}
-	
+
 	@media (min-width: 768px) {
-		.gallery-masonry {
+		.gallery-waterfall {
 			column-gap: 1rem;
 		}
 	}
-	
-	.gallery-masonry > div {
+
+	.gallery-card {
 		break-inside: avoid;
-		margin-bottom: 0.75rem;
+		margin: 0 0 0.75rem 0;
 	}
-	
+
 	@media (min-width: 768px) {
-		.gallery-masonry > div {
+		.gallery-card {
 			margin-bottom: 1rem;
+		}
+	}
+
+	.gallery-link {
+		display: block;
+		position: relative;
+		overflow: hidden;
+		border-radius: 14px;
+		background: rgba(255, 255, 255, 0.55);
+		box-shadow: 0 10px 30px rgba(234, 88, 12, 0.08);
+		border: 1px solid rgba(255, 152, 0, 0.18);
+		transform: translateZ(0);
+	}
+
+	:global(.dark) .gallery-link {
+		background: rgba(51, 41, 34, 0.35);
+		border-color: rgba(255, 255, 255, 0.06);
+		box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+	}
+
+	.gallery-img {
+		display: block;
+		width: 100%;
+		height: auto;
+		transition: transform 350ms ease, filter 350ms ease;
+		will-change: transform;
+	}
+
+	.gallery-overlay {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: linear-gradient(
+			to bottom,
+			rgba(0, 0, 0, 0) 40%,
+			rgba(0, 0, 0, 0.22) 100%
+		);
+		opacity: 0;
+		transition: opacity 240ms ease;
+	}
+
+	.gallery-zoom {
+		width: 44px;
+		height: 44px;
+		border-radius: 999px;
+		background: rgba(255, 255, 255, 0.92);
+		color: rgb(194 65 12);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transform: translateY(6px) scale(0.98);
+		transition: transform 240ms ease, opacity 240ms ease;
+		box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+	}
+
+	.gallery-link:hover .gallery-overlay {
+		opacity: 1;
+	}
+
+	.gallery-link:hover .gallery-zoom {
+		transform: translateY(0) scale(1);
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.gallery-link:hover .gallery-img {
+			transform: scale(1.035);
+			filter: saturate(1.03);
 		}
 	}
 </style>

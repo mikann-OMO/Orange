@@ -1,8 +1,8 @@
-import { visitorConfig } from "@/config";
-
 const STORAGE_KEY_PREFIX = "visitor_count_";
 const SITE_VISITOR_KEY = "site_visitor";
 const PAGE_VISITOR_KEY_PREFIX = "page_visitor_";
+
+type VisitorProvider = "busuanzi" | "leancloud" | "local" | "server";
 
 interface LeanCloudResponse {
 	objectId: string;
@@ -15,6 +15,33 @@ interface VisitorCountResult {
 	success: boolean;
 	count: number;
 	error?: string;
+}
+
+function getCarrier(): HTMLElement | null {
+	if (typeof document === "undefined") return null;
+	return document.getElementById("config-carrier");
+}
+
+function parseBool(input: string | undefined | null): boolean {
+	if (!input) return false;
+	const v = input.trim().toLowerCase();
+	return v === "1" || v === "true" || v === "yes" || v === "on";
+}
+
+function getRuntimeVisitorConfig(): { enable: boolean; provider: VisitorProvider } {
+	const carrier = getCarrier();
+	const enable = parseBool(carrier?.getAttribute("data-visitor-enable"));
+	const providerRaw = (carrier?.getAttribute("data-visitor-provider") || "").trim();
+	const provider = (
+		providerRaw === "busuanzi" ||
+		providerRaw === "server" ||
+		providerRaw === "local" ||
+		providerRaw === "leancloud"
+			? providerRaw
+			: "busuanzi"
+	) as VisitorProvider;
+
+	return { enable, provider };
 }
 
 function getStorageKey(key: string): string {
@@ -40,114 +67,51 @@ function incrementLocalCount(key: string): number {
 }
 
 async function getLeanCloudCount(key: string): Promise<number> {
-	const { leancloud } = visitorConfig;
-	if (!leancloud) return 0;
-
-	const { appId, appKey, serverUrl } = leancloud;
-	if (!appId || !appKey) return 0;
-	const baseUrl = serverUrl || "https://leancloud.cn";
-	const className = "VisitorCount";
-
 	try {
 		const response = await fetch(
-			`${baseUrl}/1.1/classes/${className}?where=${encodeURIComponent(JSON.stringify({ key }))}`,
-			{
-				headers: {
-					"X-LC-Id": appId,
-					"X-LC-Key": appKey,
-					"Content-Type": "application/json",
-				},
-			},
+			`/api/visitor?key=${encodeURIComponent(key)}&op=get`,
 		);
-
 		if (!response.ok) return 0;
-
-		const data = await response.json();
-		if (data.results && data.results.length > 0) {
-			return data.results[0].count || 0;
-		}
-		return 0;
+		const data = (await response.json()) as { count?: number };
+		return typeof data.count === "number" ? data.count : 0;
 	} catch {
 		return 0;
 	}
 }
 
 async function incrementLeanCloudCount(key: string): Promise<number> {
-	const { leancloud } = visitorConfig;
-	if (!leancloud) return 0;
-
-	const { appId, appKey, serverUrl } = leancloud;
-	if (!appId || !appKey) return getLocalCount(key);
-	const baseUrl = serverUrl || "https://leancloud.cn";
-	const className = "VisitorCount";
-
 	try {
-		const existingResponse = await fetch(
-			`${baseUrl}/1.1/classes/${className}?where=${encodeURIComponent(JSON.stringify({ key }))}`,
-			{
-				headers: {
-					"X-LC-Id": appId,
-					"X-LC-Key": appKey,
-					"Content-Type": "application/json",
-				},
-			},
-		);
-
-		if (!existingResponse.ok) {
-			return getLocalCount(key);
-		}
-
-		const existingData = await existingResponse.json();
-
-		if (existingData.results && existingData.results.length > 0) {
-			const record = existingData.results[0] as LeanCloudResponse;
-			const newCount = (record.count || 0) + 1;
-
-			await fetch(`${baseUrl}/1.1/classes/${className}/${record.objectId}`, {
-				method: "PUT",
-				headers: {
-					"X-LC-Id": appId,
-					"X-LC-Key": appKey,
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ count: newCount }),
-			});
-
-			return newCount;
-		}
-
-		const createResponse = await fetch(`${baseUrl}/1.1/classes/${className}`, {
+		const response = await fetch(`/api/visitor?key=${encodeURIComponent(key)}&op=inc`, {
 			method: "POST",
-			headers: {
-				"X-LC-Id": appId,
-				"X-LC-Key": appKey,
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({ key, count: 1 }),
 		});
-
-		if (createResponse.ok) {
-			return 1;
-		}
-
-		return getLocalCount(key);
+		if (!response.ok) return getLocalCount(key);
+		const data = (await response.json()) as { count?: number };
+		return typeof data.count === "number" ? data.count : getLocalCount(key);
 	} catch {
 		return getLocalCount(key);
 	}
 }
 
 export async function getSiteVisitorCount(): Promise<VisitorCountResult> {
-	if (!visitorConfig.enable) {
+	const cfg = getRuntimeVisitorConfig();
+	if (!cfg.enable) {
 		return { success: false, count: 0, error: "Visitor tracking disabled" };
 	}
 
 	try {
-		if (visitorConfig.provider === "leancloud") {
+		if (cfg.provider === "leancloud") {
 			const count = await getLeanCloudCount(SITE_VISITOR_KEY);
 			return { success: true, count };
-		} else if (visitorConfig.provider === "busuanzi") {
+		} else if (cfg.provider === "busuanzi") {
 			// For busuanzi, we'll let the client-side script handle the count
 			return { success: true, count: 0 };
+		} else if (cfg.provider === "server") {
+			const response = await fetch(
+				`/api/visitor?key=${encodeURIComponent(SITE_VISITOR_KEY)}&op=get`,
+			);
+			if (!response.ok) return { success: false, count: 0 };
+			const data = (await response.json()) as { count?: number };
+			return { success: true, count: typeof data.count === "number" ? data.count : 0 };
 		}
 
 		const count = getLocalCount(SITE_VISITOR_KEY);
@@ -158,17 +122,26 @@ export async function getSiteVisitorCount(): Promise<VisitorCountResult> {
 }
 
 export async function incrementSiteVisitorCount(): Promise<VisitorCountResult> {
-	if (!visitorConfig.enable) {
+	const cfg = getRuntimeVisitorConfig();
+	if (!cfg.enable) {
 		return { success: false, count: 0, error: "Visitor tracking disabled" };
 	}
 
 	try {
-		if (visitorConfig.provider === "leancloud") {
+		if (cfg.provider === "leancloud") {
 			const count = await incrementLeanCloudCount(SITE_VISITOR_KEY);
 			return { success: true, count };
-		} else if (visitorConfig.provider === "busuanzi") {
+		} else if (cfg.provider === "busuanzi") {
 			// For busuanzi, the script automatically increments the count
 			return { success: true, count: 0 };
+		} else if (cfg.provider === "server") {
+			const response = await fetch(
+				`/api/visitor?key=${encodeURIComponent(SITE_VISITOR_KEY)}&op=inc`,
+				{ method: "POST" },
+			);
+			if (!response.ok) return { success: false, count: 0 };
+			const data = (await response.json()) as { count?: number };
+			return { success: true, count: typeof data.count === "number" ? data.count : 0 };
 		}
 
 		const count = incrementLocalCount(SITE_VISITOR_KEY);
@@ -181,19 +154,27 @@ export async function incrementSiteVisitorCount(): Promise<VisitorCountResult> {
 export async function getPageVisitorCount(
 	pageSlug: string,
 ): Promise<VisitorCountResult> {
-	if (!visitorConfig.enable) {
+	const cfg = getRuntimeVisitorConfig();
+	if (!cfg.enable) {
 		return { success: false, count: 0, error: "Visitor tracking disabled" };
 	}
 
 	const key = `${PAGE_VISITOR_KEY_PREFIX}${pageSlug}`;
 
 	try {
-		if (visitorConfig.provider === "leancloud") {
+		if (cfg.provider === "leancloud") {
 			const count = await getLeanCloudCount(key);
 			return { success: true, count };
-		} else if (visitorConfig.provider === "busuanzi") {
+		} else if (cfg.provider === "busuanzi") {
 			// For busuanzi, we'll let the client-side script handle the count
 			return { success: true, count: 0 };
+		} else if (cfg.provider === "server") {
+			const response = await fetch(
+				`/api/visitor?key=${encodeURIComponent(key)}&op=get`,
+			);
+			if (!response.ok) return { success: false, count: 0 };
+			const data = (await response.json()) as { count?: number };
+			return { success: true, count: typeof data.count === "number" ? data.count : 0 };
 		}
 
 		const count = getLocalCount(key);
@@ -206,19 +187,28 @@ export async function getPageVisitorCount(
 export async function incrementPageVisitorCount(
 	pageSlug: string,
 ): Promise<VisitorCountResult> {
-	if (!visitorConfig.enable) {
+	const cfg = getRuntimeVisitorConfig();
+	if (!cfg.enable) {
 		return { success: false, count: 0, error: "Visitor tracking disabled" };
 	}
 
 	const key = `${PAGE_VISITOR_KEY_PREFIX}${pageSlug}`;
 
 	try {
-		if (visitorConfig.provider === "leancloud") {
+		if (cfg.provider === "leancloud") {
 			const count = await incrementLeanCloudCount(key);
 			return { success: true, count };
-		} else if (visitorConfig.provider === "busuanzi") {
+		} else if (cfg.provider === "busuanzi") {
 			// For busuanzi, the script automatically increments the count
 			return { success: true, count: 0 };
+		} else if (cfg.provider === "server") {
+			const response = await fetch(
+				`/api/visitor?key=${encodeURIComponent(key)}&op=inc`,
+				{ method: "POST" },
+			);
+			if (!response.ok) return { success: false, count: 0 };
+			const data = (await response.json()) as { count?: number };
+			return { success: true, count: typeof data.count === "number" ? data.count : 0 };
 		}
 
 		const count = incrementLocalCount(key);
@@ -239,9 +229,9 @@ export function formatCount(count: number): string {
 }
 
 export function isVisitorTrackingEnabled(): boolean {
-	return visitorConfig.enable;
+	return getRuntimeVisitorConfig().enable;
 }
 
 export function getVisitorProvider(): string {
-	return visitorConfig.provider;
+	return getRuntimeVisitorConfig().provider;
 }

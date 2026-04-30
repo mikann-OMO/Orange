@@ -15,8 +15,11 @@ let website = "";
 let content = "";
 let submitting = false;
 let error = "";
+let apiBase = "";
 
 onMount(() => {
+	const carrier = document.getElementById("config-carrier");
+	apiBase = carrier?.getAttribute("data-message-api-base") || "";
 	nickname = localStorage.getItem("message_nickname") || "";
 	email = localStorage.getItem("message_email") || "";
 	website = localStorage.getItem("message_website") || "";
@@ -34,7 +37,8 @@ async function handleSubmit(e: Event) {
 	error = "";
 
 	try {
-		const response = await fetch("/api/messages", {
+		const base = apiBase ? apiBase.replace(/\/$/, "") : "";
+		const response = await fetch(`${base}/api/messages`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({

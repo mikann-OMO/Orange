@@ -9,11 +9,13 @@ export let slug: string;
 let messages: Message[] = [];
 let loading = true;
 let error = "";
+let apiBase = "";
 
 async function fetchMessages() {
 	try {
+		const base = apiBase ? apiBase.replace(/\/$/, "") : "";
 		const response = await fetch(
-			`/api/messages?slug=${encodeURIComponent(slug)}`,
+			`${base}/api/messages?slug=${encodeURIComponent(slug)}`,
 		);
 		if (!response.ok) throw new Error("Failed to fetch messages");
 		messages = await response.json();
@@ -31,6 +33,8 @@ function handleMessageAdded() {
 }
 
 onMount(() => {
+	const carrier = document.getElementById("config-carrier");
+	apiBase = carrier?.getAttribute("data-message-api-base") || "";
 	const timer = setTimeout(() => {
 		fetchMessages();
 	}, 100);

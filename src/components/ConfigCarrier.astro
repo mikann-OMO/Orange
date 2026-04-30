@@ -3,5 +3,11 @@
 import { siteConfig } from "../config";
 ---
 
-<div id="config-carrier" data-hue={siteConfig.themeColor.hue}>
+<div
+	id="config-carrier"
+	data-hue={siteConfig.themeColor.hue}
+	data-visitor-enable={import.meta.env.PUBLIC_VISITOR_ENABLE || ""}
+	data-visitor-provider={import.meta.env.PUBLIC_VISITOR_PROVIDER || ""}
+	data-message-api-base={import.meta.env.PUBLIC_MESSAGE_API_BASE || ""}
+>
 </div>
