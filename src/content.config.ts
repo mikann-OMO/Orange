@@ -2,6 +2,10 @@ import { defineCollection, z } from "astro:content";
 import { glob } from "astro/loaders";
 
 const postsCollection = defineCollection({
+	loader: glob({
+		pattern: "**/*.{md,mdx}",
+		base: "./src/content/posts",
+	}),
 	schema: z.object({
 		title: z.string(),
 		published: z.date(),
@@ -23,7 +27,7 @@ const postsCollection = defineCollection({
 
 const exhibitionCollection = defineCollection({
 	loader: glob({
-		pattern: "**/*.{yaml,yml,json,md}",
+		pattern: "**/*.{yaml,yml,json,md,mdx}",
 		base: "./src/content/exhibition",
 	}),
 	schema: z.object({
@@ -50,6 +54,10 @@ const exhibitionCollection = defineCollection({
 });
 
 const notesCollection = defineCollection({
+	loader: glob({
+		pattern: "**/*.{md,mdx}",
+		base: "./src/content/notes",
+	}),
 	schema: z.object({
 		title: z.string().nullable().optional().default(null),
 		published: z.date(),
@@ -61,6 +69,10 @@ const notesCollection = defineCollection({
 });
 
 const aboutCollection = defineCollection({
+	loader: glob({
+		pattern: "**/*.{md,mdx}",
+		base: "./src/content/about",
+	}),
 	schema: z.object({
 		title: z.string(),
 		description: z.string().optional().default(""),
@@ -69,6 +81,10 @@ const aboutCollection = defineCollection({
 });
 
 const friendsCollection = defineCollection({
+	loader: glob({
+		pattern: "**/*.{md,mdx}",
+		base: "./src/content/friends",
+	}),
 	schema: z.object({
 		title: z.string(),
 		siteurl: z.string().url(),
@@ -78,13 +94,11 @@ const friendsCollection = defineCollection({
 	}),
 });
 
-export const collections: Record<
-	string,
-	ReturnType<typeof defineCollection>
-> = {
+export const collections = {
 	posts: postsCollection,
 	exhibition: exhibitionCollection,
 	notes: notesCollection,
 	about: aboutCollection,
 	friends: friendsCollection,
-} satisfies Record<string, ReturnType<typeof defineCollection>>;
+};
+
