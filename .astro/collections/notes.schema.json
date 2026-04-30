@@ -1,69 +1,43 @@
 {
-  "$ref": "#/definitions/notes",
-  "definitions": {
-    "notes": {
-      "type": "object",
-      "properties": {
-        "title": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "default": null
-        },
-        "published": {
-          "anyOf": [
-            {
-              "type": "string",
-              "format": "date-time"
-            },
-            {
-              "type": "string",
-              "format": "date"
-            },
-            {
-              "type": "integer",
-              "format": "unix-time"
-            }
-          ]
-        },
-        "updated": {
-          "anyOf": [
-            {
-              "type": "string",
-              "format": "date-time"
-            },
-            {
-              "type": "string",
-              "format": "date"
-            },
-            {
-              "type": "integer",
-              "format": "unix-time"
-            }
-          ]
-        },
-        "draft": {
-          "type": "boolean",
-          "default": false
-        },
-        "lang": {
-          "type": "string",
-          "default": ""
-        },
-        "image": {
-          "type": "string",
-          "default": ""
-        },
-        "$schema": {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "title": {
+      "default": null,
+      "anyOf": [
+        {
           "type": "string"
+        },
+        {
+          "type": "null"
         }
-      },
-      "required": [
-        "published"
-      ],
-      "additionalProperties": false
+      ]
+    },
+    "published": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "draft": {
+      "default": false,
+      "type": "boolean"
+    },
+    "lang": {
+      "default": "",
+      "type": "string"
+    },
+    "image": {
+      "default": "",
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
     }
   },
-  "$schema": "http://json-schema.org/draft-07/schema#"
+  "required": [
+    "published"
+  ]
 }

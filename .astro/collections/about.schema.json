@@ -1,29 +1,23 @@
 {
-  "$ref": "#/definitions/about",
-  "definitions": {
-    "about": {
-      "type": "object",
-      "properties": {
-        "title": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string",
-          "default": ""
-        },
-        "draft": {
-          "type": "boolean",
-          "default": false
-        },
-        "$schema": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "title"
-      ],
-      "additionalProperties": false
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "default": "",
+      "type": "string"
+    },
+    "draft": {
+      "default": false,
+      "type": "boolean"
+    },
+    "$schema": {
+      "type": "string"
     }
   },
-  "$schema": "http://json-schema.org/draft-07/schema#"
+  "required": [
+    "title"
+  ]
 }

@@ -1,47 +1,41 @@
 {
-  "$ref": "#/definitions/friends",
-  "definitions": {
-    "friends": {
-      "type": "object",
-      "properties": {
-        "title": {
-          "type": "string"
-        },
-        "siteurl": {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "siteurl": {
+      "type": "string",
+      "format": "uri"
+    },
+    "desc": {
+      "default": "",
+      "type": "string"
+    },
+    "image": {
+      "anyOf": [
+        {
           "type": "string",
           "format": "uri"
         },
-        "desc": {
+        {
           "type": "string",
-          "default": ""
-        },
-        "image": {
-          "anyOf": [
-            {
-              "type": "string",
-              "format": "uri"
-            },
-            {
-              "type": "string",
-              "pattern": "^\\/"
-            }
-          ]
-        },
-        "rss": {
-          "type": "string",
-          "format": "uri"
-        },
-        "$schema": {
-          "type": "string"
+          "pattern": "^\\/.*"
         }
-      },
-      "required": [
-        "title",
-        "siteurl",
-        "image"
-      ],
-      "additionalProperties": false
+      ]
+    },
+    "rss": {
+      "type": "string",
+      "format": "uri"
+    },
+    "$schema": {
+      "type": "string"
     }
   },
-  "$schema": "http://json-schema.org/draft-07/schema#"
+  "required": [
+    "title",
+    "siteurl",
+    "image"
+  ]
 }
