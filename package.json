@@ -22,13 +22,13 @@
 		"test:watch": "vitest"
 	},
 	"dependencies": {
-		"@astrojs/check": "^0.9.4",
-		"@astrojs/node": "^8.3.4",
+		"@astrojs/check": "^0.9.9",
+		"@astrojs/node": "^9.0.0",
 		"@astrojs/rss": "^4.0.11",
 		"@astrojs/sitemap": "^3.4.0",
 		"@astrojs/svelte": "7.0.13",
 		"@astrojs/tailwind": "^6.0.2",
-		"@astrojs/vercel": "^10.0.5",
+		"@astrojs/vercel": "^10.0.6",
 		"@fontsource-variable/jetbrains-mono": "^5.2.5",
 		"@fontsource/roboto": "^5.2.5",
 		"@iconify-json/fa6-brands": "^1.2.5",
@@ -39,7 +39,7 @@
 		"@swup/astro": "^1.6.0",
 		"@tailwindcss/typography": "^0.5.16",
 		"@vercel/kv": "^3.0.0",
-		"astro": "5.7.13",
+		"astro": "^6.1.10",
 		"astro-icon": "^1.1.5",
 		"hastscript": "^9.0.1",
 		"ioredis": "^5.10.1",
@@ -83,5 +83,14 @@
 		"postcss-import": "^16.1.0",
 		"postcss-nesting": "^13.0.1",
 		"vite-plugin-pwa": "^1.2.0"
+	},
+	"pnpm": {
+		"onlyBuiltDependencies": [
+			"@biomejs/biome",
+			"core-js",
+			"esbuild",
+			"sharp",
+			"swup"
+		]
 	}
 }
