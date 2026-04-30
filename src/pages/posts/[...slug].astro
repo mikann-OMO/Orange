@@ -1,10 +1,11 @@
 ---
 import path from "node:path";
+import { render } from "astro:content";
 import { Icon } from "astro-icon/components";
 import Comment from "../../components/Comment.astro";
 
-import PageViewCounter from "../../components/PageViewCounter.svelte";
 import LikeButton from "../../components/LikeButton.svelte";
+import PageViewCounter from "../../components/PageViewCounter.svelte";
 import PostMetadata from "../../components/PostMeta.astro";
 import Toc from "../../components/Toc.astro";
 import Breadcrumb from "../../components/control/Breadcrumb.astro";
@@ -31,9 +32,9 @@ export async function getStaticPaths() {
 export const prerender = true;
 
 const { entry } = Astro.props;
-const { Content, headings } = await entry.render();
+const { Content, headings } = await render(entry);
 
-const { remarkPluginFrontmatter } = await entry.render();
+const { remarkPluginFrontmatter } = await render(entry);
 
 const jsonLd = {
 	"@context": "https://schema.org",

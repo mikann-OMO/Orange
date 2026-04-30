@@ -1,6 +1,7 @@
 ---
 import path from "node:path";
 import type { CollectionEntry } from "astro:content";
+import { render } from "astro:content";
 import { Icon } from "astro-icon/components";
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
@@ -41,7 +42,7 @@ const hasCover = image !== undefined && image !== null && image !== "";
 
 const coverWidth = "28%";
 
-const { remarkPluginFrontmatter } = await entry.render();
+const { remarkPluginFrontmatter } = await render(entry);
 ---
 <div class:list={["group flex flex-col md:flex-row w-full rounded-[var(--radius-large)] overflow-hidden relative backdrop-blur-md bg-orange-100/18 dark:bg-stone-800 border border-orange-200/50 dark:border-stone-700/50 shadow-lg hover:border-[var(--primary)]/70 hover:shadow-[0_8px_24px_rgba(133,32,12,0.15)] transition-all duration-300 hover:-translate-y-1 post-card-animate", className]} style={style}>
     <a href={url} aria-label={title} class="absolute inset-0 z-10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"></a>

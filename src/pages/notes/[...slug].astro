@@ -1,6 +1,6 @@
 ---
 
-import { getCollection } from "astro:content";
+import { getCollection, render } from "astro:content";
 import ImageWrapper from "../../components/misc/ImageWrapper.astro";
 import Markdown from "../../components/misc/Markdown.astro";
 import { profileConfig, siteConfig } from "../../config";
@@ -33,7 +33,7 @@ export const prerender = true;
 
 // 获取当前随记数据
 const { note } = Astro.props;
-const { Content, headings } = await note.render();
+const { Content, headings } = await render(note);
 
 // 生成结构化数据
 const jsonLd = {
