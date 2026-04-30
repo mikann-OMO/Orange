@@ -78,7 +78,7 @@ const siteHref = Astro.site?.toString() || canonicalHref;
 
 const toOgImagePath = (src: string): string => {
 	if (!src)
-		return "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/orange.png";
+		return "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/chika000.jpg";
 	if (src.startsWith("http://") || src.startsWith("https://")) return src;
 	if (src.startsWith("/")) return src;
 	if (src.startsWith("assets/images/"))
@@ -155,10 +155,6 @@ const jsonLd = {
 		const isDark = document.documentElement.classList.contains('dark');
 		document.documentElement.style.setProperty('--page-bg', isDark ? '#1c1814' : '#fff8f0');
 		document.documentElement.style.backgroundColor = isDark ? '#1c1814' : '#fff8f0';
-		document.documentElement.style.backgroundImage = 'url("https://mikann-1359996823.cos.ap-beijing.myqcloud.com/orange.png")';
-		document.documentElement.style.backgroundSize = 'cover';
-		document.documentElement.style.backgroundPosition = 'center';
-		document.documentElement.style.backgroundAttachment = 'fixed';
 
 	// Calculate the --banner-height-extend, which needs to be a multiple of 4 to avoid blurry text
 	const calculateBannerHeight = () => {
@@ -181,7 +177,7 @@ const jsonLd = {
 		<style is:inline>
 		html {
 			background-color: #fff8f0;
-			background-image: url('https://mikann-1359996823.cos.ap-beijing.myqcloud.com/orange.png');
+			background-image: url('https://mikann-1359996823.cos.ap-beijing.myqcloud.com/chika000.jpg');
 			background-size: cover;
 			background-position: center;
 			background-attachment: fixed;
@@ -189,7 +185,7 @@ const jsonLd = {
 		@media (prefers-color-scheme: dark) {
 			html {
 				background-color: #1c1814;
-				background-image: url('https://mikann-1359996823.cos.ap-beijing.myqcloud.com/orange.png');
+				background-image: url('https://mikann-1359996823.cos.ap-beijing.myqcloud.com/chika000.jpg');
 				background-size: cover;
 				background-position: center;
 				background-attachment: fixed;
@@ -268,9 +264,6 @@ const jsonLd = {
 		
 		<!-- 防止页面闪烁：设置初始背景色和过渡背景 -->
 		<style is:inline>
-			html { 
-				background-color: var(--page-bg) !important;
-			}
 			html.loaded { 
 				visibility: visible; 
 			}
@@ -282,7 +275,7 @@ const jsonLd = {
 		</style>
 	</head>
 	<!-- 性能优化：减少不必要的触摸事件延迟 -->
-	<body class="min-h-screen bg-[var(--page-bg)]" class:list={[{"lg:is-home": isHomePage, "enable-banner": enableBanner}]}
+	<body class="min-h-screen" class:list={[{"lg:is-home": isHomePage, "enable-banner": enableBanner}]}
 		  style="touch-action: manipulation; -webkit-tap-highlight-color: transparent; -webkit-overflow-scrolling: touch; overflow: auto;"
 	>
 		<ConfigCarrier></ConfigCarrier>
@@ -338,11 +331,7 @@ const jsonLd = {
 			
 			html.style.setProperty('--page-bg', pageBg);
 			html.style.backgroundColor = pageBg;
-			html.style.backgroundImage = 'url("https://mikann-1359996823.cos.ap-beijing.myqcloud.com/orange.png")';
-			html.style.backgroundSize = 'cover';
-			html.style.backgroundPosition = 'center';
-			html.style.backgroundAttachment = 'fixed';
-						
+			
 						const hue = localStorage.getItem('hue') || '0';
 						html.style.setProperty('--hue', hue);
 					});
@@ -480,10 +469,6 @@ const jsonLd = {
 	@media (max-width: 768px) {
 		body {
 			@apply bg-[#fff8f0] dark:bg-[#1c1814];
-			background-image: url('https://mikann-1359996823.cos.ap-beijing.myqcloud.com/orange.png');
-			background-size: cover;
-			background-position: center;
-			background-attachment: fixed;
 		}
 	}
 }

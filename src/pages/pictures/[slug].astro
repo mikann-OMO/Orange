@@ -23,10 +23,12 @@ const typedPicturesAnnouncement =
 
 export const getStaticPaths: GetStaticPaths = async () => {
 	const pictures = await getCollection("exhibition");
-	return pictures.map((a) => ({
-		params: { slug: a.id },
-		props: { album: a },
-	}));
+	return pictures
+		.filter((a) => a.id && typeof a.id === "string")
+		.map((a) => ({
+			params: { slug: a.id },
+			props: { album: a },
+		}));
 };
 
 // 预渲染为静态HTML

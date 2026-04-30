@@ -1,9 +1,9 @@
-import type { APIRoute } from "astro";
 import { createHash } from "node:crypto";
+import type { CreateMessageDto, DeviceInfo } from "@/types/message";
+import { addMessage, buildMessageTree, getMessages } from "@/utils/local-db";
+import type { APIRoute } from "astro";
 import sanitizeHtml from "sanitize-html";
 import { UAParser } from "ua-parser-js";
-import { getMessages, addMessage, buildMessageTree } from "@/utils/local-db";
-import type { CreateMessageDto, DeviceInfo } from "@/types/message";
 
 export const prerender = false;
 
@@ -89,10 +89,13 @@ export const POST: APIRoute = async ({ request }) => {
 		const parentId = normalizeTrimmedString(body.parentId) || null;
 
 		if (!slug || !contentRaw || !nickname || !email) {
-			return new Response(JSON.stringify({ error: "Missing required fields" }), {
-				status: 400,
-				headers: { "Content-Type": "application/json" },
-			});
+			return new Response(
+				JSON.stringify({ error: "Missing required fields" }),
+				{
+					status: 400,
+					headers: { "Content-Type": "application/json" },
+				},
+			);
 		}
 
 		if (
@@ -137,7 +140,9 @@ export const POST: APIRoute = async ({ request }) => {
 		const device = parser.getDevice();
 
 		const deviceInfo: DeviceInfo = {
-			browser: browser.name ? `${browser.name} ${browser.version || ""}`.trim() : null,
+			browser: browser.name
+				? `${browser.name} ${browser.version || ""}`.trim()
+				: null,
 			os: os.name ? `${os.name} ${os.version || ""}`.trim() : null,
 			device: device.model || null,
 		};

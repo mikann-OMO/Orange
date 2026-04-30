@@ -1,14 +1,16 @@
-import { createClient } from "@vercel/kv";
-import Redis from "ioredis";
-import type { Message, DeviceInfo } from "@/types/message";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import type { DeviceInfo, Message } from "@/types/message";
+import { createClient } from "@vercel/kv";
+import Redis from "ioredis";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const USE_VERCEL_KV = !!(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
+const USE_VERCEL_KV = !!(
+	process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN
+);
 const USE_REDIS_URL = !USE_VERCEL_KV && !!process.env.REDIS_URL;
 
 const kvClient = USE_VERCEL_KV
@@ -18,7 +20,10 @@ const kvClient = USE_VERCEL_KV
 		})
 	: null;
 
-const redisClient = USE_REDIS_URL && process.env.REDIS_URL ? new Redis(process.env.REDIS_URL) : null;
+const redisClient =
+	USE_REDIS_URL && process.env.REDIS_URL
+		? new Redis(process.env.REDIS_URL)
+		: null;
 
 const LOCAL_DB_PATH = path.join(__dirname, "../../data/messages.json");
 
@@ -46,7 +51,8 @@ function normalizeMessage(input: unknown): Message | null {
 	const nickname = typeof m.nickname === "string" ? m.nickname : "";
 	const website = typeof m.website === "string" ? m.website : null;
 	const avatar = typeof m.avatar === "string" ? m.avatar : "";
-	const createdAt = typeof m.createdAt === "string" ? m.createdAt : new Date().toISOString();
+	const createdAt =
+		typeof m.createdAt === "string" ? m.createdAt : new Date().toISOString();
 	const parentId = typeof m.parentId === "string" ? m.parentId : null;
 	const device = normalizeDeviceInfo(m.device);
 
@@ -122,7 +128,7 @@ export async function addMessage(
 		device: deviceInfo,
 	};
 
-	let messages = await getMessages();
+	const messages = await getMessages();
 	messages.push(newMessage);
 
 	if (USE_VERCEL_KV && kvClient) {
@@ -158,7 +164,9 @@ export function buildMessageTree(messages: Message[]): Message[] {
 		}
 	}
 
-	roots.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+	roots.sort(
+		(a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+	);
 
 	return roots;
 }

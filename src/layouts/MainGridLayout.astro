@@ -82,178 +82,107 @@ const activeAnnouncement = announcementConfig || announcement;
     
     <div id="content-wrapper" class="relative max-w-[var(--page-width)] mx-auto h-full overflow-x-hidden">
         <div id="main-grid" class="w-full gap-4 md:gap-6 px-3 md:px-6 grid grid-cols-1 md:grid-cols-12 grid-rows-[auto_1fr_auto] h-full max-w-[var(--page-width)] items-start">
-            <main id="content-container" class={`${fullWidth ? 'md:col-span-12 lg:col-span-12' : centerContent ? 'md:col-span-10 lg:col-span-10 md:col-start-2 lg:col-start-2' : 'md:col-span-8 lg:col-span-8'}`}>
-                <div class="w-full">
-                    <slot></slot>
-                    <div class="footer col-span-2 hidden lg:block">
-                        <Footer></Footer>
-                    </div>
-                </div>
-            </main>
-
-            {!fullWidth && (
-                <aside class="md:col-span-4 lg:col-span-4 pt-0 mt-0 relative self-start">
-                    {activeAnnouncement.enabled && showAnnouncement && (
-                        <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-none shadow-xl p-4 mb-6">
-                            <div class="flex items-start gap-4">
-                                <div class="flex-shrink-0">
-                                    <ImageWrapper 
-                                        src={activeAnnouncement.avatar as string} 
-                                        alt="公告头像" 
-                                        class="w-12 h-12 rounded-full object-cover border-2 border-orange-100 dark:border-stone-700" 
-                                        loading="lazy"
-                                    />
-                                </div>
-                                <div class="flex-1">
-                                    <p class="font-bold text-orange-700 dark:text-white">{activeAnnouncement.title}：</p>
-                                    <p class="text-gray-600 dark:text-gray-300">{activeAnnouncement.content}</p>
+            {isPostPage ? (
+                <>
+                    <main id="content-container" class="md:col-span-8 lg:col-span-8">
+                        <div class="w-full">
+                            <slot></slot>
+                        </div>
+                    </main>
+                    <aside class="md:col-span-4 lg:col-span-4 pt-0 mt-0 relative self-start space-y-4">
+                        {activeAnnouncement.enabled && showAnnouncement && (
+                            <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-xl shadow-xl p-4">
+                                <div class="flex items-start gap-4">
+                                    <div class="flex-shrink-0">
+                                        <ImageWrapper
+                                            src={activeAnnouncement.avatar as string}
+                                            alt="公告头像"
+                                            class="w-12 h-12 rounded-full object-cover border-2 border-orange-100 dark:border-stone-700"
+                                            loading="lazy"
+                                        />
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="font-bold text-orange-700 dark:text-white">{activeAnnouncement.title}：</p>
+                                        <p class="text-gray-600 dark:text-gray-300">{activeAnnouncement.content}</p>
+                                    </div>
                                 </div>
                             </div>
+                        )}
+
+                        {headings.length > 0 && (
+                            <div class="sticky top-4">
+                                <Toc headings={headings} />
+                            </div>
+                        )}
+
+                        <button
+                            id="back-to-top"
+                            class="w-full py-2 px-4 rounded-lg bg-[var(--primary)]/10 hover:bg-[var(--primary)]/20 text-[var(--primary)] text-sm font-medium transition-colors flex items-center justify-center gap-2"
+                            aria-label="回到顶部"
+                        >
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+                            </svg>
+                            回到顶部
+                        </button>
+
+                        <div class="mt-4">
+                            <slot name="sidebar"></slot>
                         </div>
-                    )}
-                    
-                    {headings.length > 0 && (
-                        <div class="sticky top-24">
-                            <Toc headings={headings} />
-                        </div>
-                    )}
-                    
-                    <div class="mt-6">
-                        <slot name="sidebar"></slot>
+                    </aside>
+                    <div class="footer col-span-2 hidden lg:block col-start-1">
+                        <Footer></Footer>
                     </div>
-                </aside>
+                </>
+            ) : (
+                <>
+                    <main id="content-container" class={`${fullWidth ? 'md:col-span-12 lg:col-span-12' : centerContent ? 'md:col-span-10 lg:col-span-10 md:col-start-2 lg:col-start-2' : 'md:col-span-8 lg:col-span-8'}`}>
+                        <div class="w-full">
+                            <slot></slot>
+                            <div class="footer col-span-2 hidden lg:block">
+                                <Footer></Footer>
+                            </div>
+                        </div>
+                    </main>
+
+                    {!fullWidth && (
+                        <aside class="md:col-span-4 lg:col-span-4 pt-0 mt-0 relative self-start">
+                            {activeAnnouncement.enabled && showAnnouncement && (
+                                <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-none shadow-xl p-4 mb-6">
+                                    <div class="flex items-start gap-4">
+                                        <div class="flex-shrink-0">
+                                            <ImageWrapper
+                                                src={activeAnnouncement.avatar as string}
+                                                alt="公告头像"
+                                                class="w-12 h-12 rounded-full object-cover border-2 border-orange-100 dark:border-stone-700"
+                                                loading="lazy"
+                                            />
+                                        </div>
+                                        <div class="flex-1">
+                                            <p class="font-bold text-orange-700 dark:text-white">{activeAnnouncement.title}：</p>
+                                            <p class="text-gray-600 dark:text-gray-300">{activeAnnouncement.content}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            <div class="mt-6">
+                                <slot name="sidebar"></slot>
+                            </div>
+                        </aside>
+                    )}
+
+                    <div class="footer col-span-2 block lg:hidden">
+                        <Footer></Footer>
+                    </div>
+                </>
             )}
-
-            <div class="footer col-span-2 block lg:hidden">
-                <Footer></Footer>
-            </div>
-        </div>
-
-    </div>
 </div>
 
 
 </Layout>
 
 <script is:inline>
-  const initToc = () => {
-	 const links = [...document.querySelectorAll(".toc a")];
-	 const headings = [...document.querySelectorAll(".markdown-content h1, h2, h3")];
-
-	 if (!links.length || !headings.length) return;
-
-	 const linkMap = {};
-	 links.forEach((l) => {
-		 linkMap[l.dataset.id] = l;
-	 });
-
-	 const getOffset = () => {
-		 const nav = document.getElementById("navbar-wrapper");
-		 return nav ? nav.offsetHeight + 12 : 80;
-	 };
-
-	 // ===== 激活（含父级）=====
-	 const activate = (id) => {
-		 links.forEach((l) => l.classList.remove("active"));
-
-		 let current = linkMap[id];
-		 while (current) {
-			 current.classList.add("active");
-
-			 const parentId = current.closest("ul")?.dataset.children;
-			 if (!parentId) break;
-
-			 current = linkMap[parentId];
-		 }
-	 };
-
-	 // ===== 自动展开 =====
-	 const expandPath = (id) => {
-		 let el = linkMap[id];
-		 while (el) {
-			 const parentId = el.closest("ul")?.dataset.children;
-			 if (!parentId) break;
-
-			 const ul = document.querySelector(`[data-children="${parentId}"]`);
-			 if (ul) ul.removeAttribute("data-collapsed");
-
-			 const toggle = document.querySelector(`[data-toggle="${parentId}"]`);
-			 if (toggle) toggle.classList.remove("collapsed");
-
-			 el = linkMap[parentId];
-		 }
-	 };
-
-	 // ===== scroll spy =====
-	 let activeId = "";
-
-	 const observer = new IntersectionObserver(
-		 (entries) => {
-			 entries.forEach((entry) => {
-				 if (entry.isIntersecting) {
-					 const id = entry.target.id;
-					 if (id !== activeId) {
-						 activeId = id;
-						 activate(id);
-						 expandPath(id);
-					 }
-				 }
-			 });
-		 },
-		 {
-			 rootMargin: "0px 0px -70% 0px",
-		 }
-	 );
-
-	 headings.forEach((h) => observer.observe(h));
-
-	 // ===== 平滑滚动 =====
-	 links.forEach((link) => {
-		 link.addEventListener("click", (e) => {
-			 e.preventDefault();
-
-			 const id = link.dataset.id;
-			 const el = document.getElementById(id);
-			 if (!el) return;
-
-			 window.scrollTo({
-				 top: el.getBoundingClientRect().top + window.scrollY - getOffset(),
-				 behavior: "smooth",
-			 });
-
-			 history.replaceState(null, "", `#${id}`);
-		 });
-	 });
-
-	 // ===== 折叠功能 =====
-	 document.querySelectorAll("[data-toggle]").forEach((btn) => {
-		 btn.addEventListener("click", (e) => {
-			 e.stopPropagation();
-
-			 const id = btn.dataset.toggle;
-			 const ul = document.querySelector(`[data-children="${id}"]`);
-			 if (!ul) return;
-
-			 const collapsed = ul.hasAttribute("data-collapsed");
-
-			 if (collapsed) {
-				 ul.removeAttribute("data-collapsed");
-				 btn.classList.remove("collapsed");
-			 } else {
-				 ul.setAttribute("data-collapsed", "true");
-				 btn.classList.add("collapsed");
-			 }
-		 });
-	 });
-
-	 // ===== 初始化 hash =====
-	 const hash = location.hash.replace("#", "");
-	 if (hash && linkMap[hash]) {
-		 activate(hash);
-		 expandPath(hash);
-	 }
-};
-
   const initReadingProgress = () => {
     const update = () => {
       const scrollTop = window.scrollY;
@@ -270,14 +199,23 @@ const activeAnnouncement = announcementConfig || announcement;
     update();
   };
 
+  const initBackToTop = () => {
+    const btn = document.getElementById('back-to-top');
+    if (!btn) return;
+
+    btn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  };
+
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => {
       initReadingProgress();
-      initToc();
+      initBackToTop();
     });
   } else {
     initReadingProgress();
-    initToc();
+    initBackToTop();
   }
 </script>
 

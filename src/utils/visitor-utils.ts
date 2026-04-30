@@ -28,10 +28,15 @@ function parseBool(input: string | undefined | null): boolean {
 	return v === "1" || v === "true" || v === "yes" || v === "on";
 }
 
-function getRuntimeVisitorConfig(): { enable: boolean; provider: VisitorProvider } {
+function getRuntimeVisitorConfig(): {
+	enable: boolean;
+	provider: VisitorProvider;
+} {
 	const carrier = getCarrier();
 	const enable = parseBool(carrier?.getAttribute("data-visitor-enable"));
-	const providerRaw = (carrier?.getAttribute("data-visitor-provider") || "").trim();
+	const providerRaw = (
+		carrier?.getAttribute("data-visitor-provider") || ""
+	).trim();
 	const provider = (
 		providerRaw === "busuanzi" ||
 		providerRaw === "server" ||
@@ -81,9 +86,12 @@ async function getLeanCloudCount(key: string): Promise<number> {
 
 async function incrementLeanCloudCount(key: string): Promise<number> {
 	try {
-		const response = await fetch(`/api/visitor?key=${encodeURIComponent(key)}&op=inc`, {
-			method: "POST",
-		});
+		const response = await fetch(
+			`/api/visitor?key=${encodeURIComponent(key)}&op=inc`,
+			{
+				method: "POST",
+			},
+		);
 		if (!response.ok) return getLocalCount(key);
 		const data = (await response.json()) as { count?: number };
 		return typeof data.count === "number" ? data.count : getLocalCount(key);
@@ -111,7 +119,10 @@ export async function getSiteVisitorCount(): Promise<VisitorCountResult> {
 			);
 			if (!response.ok) return { success: false, count: 0 };
 			const data = (await response.json()) as { count?: number };
-			return { success: true, count: typeof data.count === "number" ? data.count : 0 };
+			return {
+				success: true,
+				count: typeof data.count === "number" ? data.count : 0,
+			};
 		}
 
 		const count = getLocalCount(SITE_VISITOR_KEY);
@@ -141,7 +152,10 @@ export async function incrementSiteVisitorCount(): Promise<VisitorCountResult> {
 			);
 			if (!response.ok) return { success: false, count: 0 };
 			const data = (await response.json()) as { count?: number };
-			return { success: true, count: typeof data.count === "number" ? data.count : 0 };
+			return {
+				success: true,
+				count: typeof data.count === "number" ? data.count : 0,
+			};
 		}
 
 		const count = incrementLocalCount(SITE_VISITOR_KEY);
@@ -174,7 +188,10 @@ export async function getPageVisitorCount(
 			);
 			if (!response.ok) return { success: false, count: 0 };
 			const data = (await response.json()) as { count?: number };
-			return { success: true, count: typeof data.count === "number" ? data.count : 0 };
+			return {
+				success: true,
+				count: typeof data.count === "number" ? data.count : 0,
+			};
 		}
 
 		const count = getLocalCount(key);
@@ -208,7 +225,10 @@ export async function incrementPageVisitorCount(
 			);
 			if (!response.ok) return { success: false, count: 0 };
 			const data = (await response.json()) as { count?: number };
-			return { success: true, count: typeof data.count === "number" ? data.count : 0 };
+			return {
+				success: true,
+				count: typeof data.count === "number" ? data.count : 0,
+			};
 		}
 
 		const count = incrementLocalCount(key);

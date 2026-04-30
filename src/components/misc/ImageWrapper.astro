@@ -36,7 +36,7 @@ const isLocal = !(
 	src.startsWith("data:")
 );
 const isPublic = src.startsWith("/");
-const isRemote = 
+const isRemote =
 	src.startsWith("http://") ||
 	src.startsWith("https://") ||
 	src.startsWith("data:");
@@ -56,12 +56,12 @@ if (isLocal) {
 		"../../**/*.{png,jpg,jpeg,gif,webp,avif}",
 		{
 			import: "default",
-		}
+		},
 	);
 	const fallbackFile = files["../../assets/images/chikann.png"];
 	if (!fallbackFile) {
 		throw new Error(
-			"Fallback image not found: ../../assets/images/chikann.png"
+			"Fallback image not found: ../../assets/images/chikann.png",
 		);
 	}
 	const fallbackAvatar = await fallbackFile();
@@ -80,7 +80,7 @@ if (isLocal) {
 	if (!found) {
 		console.error(
 			`\n[ERROR] Image file not found: ${src}`,
-			`Tried paths: ${pathsToTry.join(", ")}`
+			`Tried paths: ${pathsToTry.join(", ")}`,
 		);
 	}
 }

@@ -6,7 +6,7 @@ interface Props {
 }
 
 const { slug: propSlug } = Astro.props;
-let slug = propSlug || Astro.url.pathname.replace(/\/$/, "");
+const slug = propSlug || Astro.url.pathname.replace(/\/$/, "");
 ---
 
 <div class="mt-8 mb-8">

@@ -101,4 +101,3 @@ export const collections = {
 	about: aboutCollection,
 	friends: friendsCollection,
 };
-

@@ -12,18 +12,19 @@ import { formatDate, formatDateToYYYYMMDD } from "../../utils/date-utils";
 // 获取所有随记并生成静态路径
 export async function getStaticPaths() {
 	const notes = await getCollection("notes");
-	// 严格过滤有效且非草稿的note
 	const validNotes = notes.filter((note) => {
 		return (
 			note &&
 			typeof note === "object" &&
 			note.data &&
 			typeof note.data === "object" &&
-			!note.data.draft
+			!note.data.draft &&
+			note.id &&
+			typeof note.id === "string"
 		);
 	});
 	return validNotes.map((note) => ({
-		params: { slug: note.slug },
+		params: { slug: note.id },
 		props: { note },
 	}));
 }

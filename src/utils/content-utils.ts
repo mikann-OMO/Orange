@@ -23,11 +23,11 @@ export async function getSortedPosts(): Promise<
 	// 合并循环，减少遍历次数
 	for (let i = 0; i < sorted.length; i++) {
 		if (i < sorted.length - 1) {
-			sorted[i].data.prevSlug = sorted[i + 1].slug;
+			sorted[i].data.prevSlug = sorted[i + 1].id;
 			sorted[i].data.prevTitle = sorted[i + 1].data.title;
 		}
 		if (i > 0) {
-			sorted[i].data.nextSlug = sorted[i - 1].slug;
+			sorted[i].data.nextSlug = sorted[i - 1].id;
 			sorted[i].data.nextTitle = sorted[i - 1].data.title;
 		}
 	}

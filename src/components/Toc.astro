@@ -1,114 +1,292 @@
 ---
-import { buildTocTree } from "@utils/toc";
 import type { MarkdownHeading } from "astro";
 
-const { headings = [], title = "文章目录" } = Astro.props;
-const tree = buildTocTree(headings);
+interface Props {
+	headings: MarkdownHeading[];
+}
+
+const { headings } = Astro.props;
+
+interface FlatNode {
+	id: string;
+	text: string;
+	depth: number;
+	num: number;
+}
+
+const flattenHeadings = (headings: MarkdownHeading[]): FlatNode[] => {
+	const result: FlatNode[] = [];
+	let h2Count = 0;
+
+	headings.forEach((heading) => {
+		if (heading.depth === 2) {
+			h2Count++;
+			result.push({
+				id: heading.slug,
+				text: heading.text,
+				depth: 2,
+				num: h2Count,
+			});
+		} else if (heading.depth === 3) {
+			const parent = result.filter((r) => r.depth === 2).pop();
+			result.push({
+				id: heading.slug,
+				text: heading.text,
+				depth: 3,
+				num: parent ? parent.num : h2Count,
+			});
+		}
+	});
+
+	return result;
+};
+
+const flatList = flattenHeadings(
+	headings.filter((h) => h.depth === 2 || h.depth === 3),
+);
+
+const cleanText = (text: string) => text.replace(/\s*#+\s*$/, "").trim();
 ---
 
-{tree.length > 0 && (
-  <aside class="toc">
-    <div class="toc-title">{title}</div>
+<div id="toc-wrapper" class="transition w-full p-1 -m-1">
+  <div id="toc-inner-wrapper" class="w-full overflow-y-auto hide-scrollbar rounded-xl" style="max-height: calc(500px + 0.5rem);">
+    <div id="toc" class="w-full transition-swup-fade backdrop-blur-xl bg-white/30 dark:bg-stone-800/30 rounded-xl p-2">
+      <table-of-contents class="group">
+        {flatList.map((item) => {
+          const isPrimary = item.depth === 2;
+          return (
+            <a
+              href={`#${item.id}`}
+              class="px-2 flex gap-2 relative transition w-full min-h-8 rounded-lg hover:bg-[var(--toc-btn-hover)] active:bg-[var(--toc-btn-active)] py-1.5"
+              data-heading-id={item.id}
+            >
+              <div
+                class:list={[
+                  "transition w-5 h-5 shrink-0 rounded-md text-xs flex items-center justify-center font-bold",
+                  isPrimary ? "bg-[var(--toc-badge-bg)] text-[var(--btn-content)]" : "ml-4",
+                ]}
+              >
+                {isPrimary ? (
+                  item.num
+                ) : (
+                  <div class="transition w-1.5 h-1.5 rounded-[0.125rem] bg-[var(--toc-badge-bg)]" />
+                )}
+              </div>
+              <div class="transition text-sm text-gray-600 dark:text-gray-300 truncate">{cleanText(item.text)}</div>
+            </a>
+          );
+        })}
+        <div
+          id="active-indicator"
+          class="-z-10 absolute bg-[var(--toc-btn-hover)] left-0 right-0 rounded-lg transition-all group-hover:bg-transparent border-2 border-[var(--toc-btn-hover)] group-hover:border-[var(--toc-btn-active)] border-dashed"
+        />
+      </table-of-contents>
+    </div>
+  </div>
+</div>
 
-    <nav>
-      <ul class="toc-root">
-        {tree.map((node) => (
-          <li>
-            <div class="toc-row">
-              {node.children.length > 0 && (
-                <button class="toc-toggle" data-toggle={node.id}>▶</button>
-              )}
-              <a href={`#${node.id}`} data-id={node.id} data-level={0}>{node.text}</a>
-            </div>
-            {node.children.length > 0 && (
-              <ul data-children={node.id}>
-                {node.children.map((c) => (
-                  <li>
-                    <div class="toc-row">
-                      {c.children.length > 0 && (
-                        <button class="toc-toggle" data-toggle={c.id}>▶</button>
-                      )}
-                      <a href={`#${c.id}`} data-id={c.id} data-level={1}>{c.text}</a>
-                    </div>
-                    {c.children.length > 0 && (
-                      <ul data-children={c.id}>
-                        {c.children.map((d) => (
-                          <li>
-                            <div class="toc-row">
-                              <a href={`#${d.id}`} data-id={d.id} data-level={2}>{d.text}</a>
-                            </div>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </li>
-        ))}
-      </ul>
-    </nav>
-  </aside>
-)}
+<script is:inline>
+  (function() {
+  class TableOfContents extends HTMLElement {
+    tocEl = null;
+    visibleClass = "visible";
+    observer;
+    anchorNavTarget = null;
+    headingIdxMap = new Map();
+    headings = [];
+    sections = [];
+    tocEntries = [];
+    active = [];
+    activeIndicator = null;
 
-<style>
-.toc {
-  position: sticky;
-  top: 100px;
-  width: 260px;
-  font-size: 14px;
-}
+    constructor() {
+      super();
+      this.observer = new IntersectionObserver(this.markVisibleSection.bind(this), { threshold: 0 });
+    }
 
-.toc-title {
-  font-weight: bold;
-  margin-bottom: 10px;
-}
+    connectedCallback() {
+      this.tocEl = this;
+      this.tocEntries = [...this.querySelectorAll("a")];
+      this.headings = [...document.querySelectorAll(".markdown-content h2, .markdown-content h3")];
 
-.toc-root {
-  list-style: none;
-  padding-left: 0;
-}
+      if (!this.tocEntries.length || !this.headings.length) return;
 
-.toc-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
+      this.headingIdxMap = new Map();
+      this.headings.forEach((heading, idx) => {
+        this.headingIdxMap.set(heading.id, idx);
+      });
 
-.toc-toggle {
-  font-size: 10px;
-  transform: rotate(90deg);
-  transition: transform 0.2s;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  color: inherit;
-}
+      this.sections = this.headings.map((heading) => {
+        const section = document.createElement("div");
+        section.appendChild(heading.cloneNode(true));
+        return section;
+      });
 
-.toc-toggle.collapsed {
-  transform: rotate(0deg);
-}
+      this.active = new Array(this.headings.length).fill(false);
+      this.activeIndicator = this.querySelector("#active-indicator");
 
-.toc ul {
-  list-style: none;
-  padding-left: 12px;
-}
+      this.headings.forEach((heading) => {
+        this.observer.observe(heading);
+      });
 
-.toc a {
-  display: block;
-  padding: 3px 0;
-  color: #666;
-  text-decoration: none;
-}
+      this.tocEntries.forEach((entry) => {
+        entry.addEventListener("click", (e) => {
+          e.preventDefault();
+          const id = entry.dataset.headingId;
+          const heading = document.getElementById(id);
+          if (!heading) return;
 
-.toc a.active {
-  color: var(--primary);
-  font-weight: bold;
-}
+          this.anchorNavTarget = heading;
+          const offset = this.getOffset();
+          const top = heading.getBoundingClientRect().top + window.scrollY - offset;
 
-.toc ul[data-collapsed="true"] {
-  display: none;
-}
+          window.scrollTo({ top, behavior: "smooth" });
+          history.replaceState(null, "", `#${id}`);
+
+          setTimeout(() => {
+            this.anchorNavTarget = null;
+          }, 500);
+        });
+      });
+    }
+
+    getOffset() {
+      const nav = document.getElementById("navbar-wrapper");
+      return nav ? nav.offsetHeight + 12 : 80;
+    }
+
+    markVisibleSection(entries) {
+      entries.forEach((entry) => {
+        const id = entry.target.id;
+        const idx = this.headingIdxMap.get(id);
+        if (idx != null) {
+          this.active[idx] = entry.isIntersecting;
+        }
+
+        if (entry.isIntersecting && this.anchorNavTarget === entry.target) {
+          this.anchorNavTarget = null;
+        }
+      });
+
+      if (!this.active.includes(true)) {
+        this.fallback();
+      }
+      this.update();
+    }
+
+    fallback() {
+      const scrollY = window.scrollY;
+      let closest = 0;
+      let minDist = Infinity;
+
+      this.headings.forEach((heading, idx) => {
+        const dist = Math.abs(heading.getBoundingClientRect().top + window.scrollY - scrollY);
+        if (dist < minDist) {
+          minDist = dist;
+          closest = idx;
+        }
+      });
+
+      this.active.fill(false);
+      this.active[closest] = true;
+    }
+
+    update() {
+      let lastTrue = -1;
+      let firstTrue = -1;
+
+      for (let i = this.active.length - 1; i >= 0; i--) {
+        if (this.active[i]) {
+          lastTrue = i;
+          break;
+        }
+      }
+
+      for (let i = 0; i < this.active.length; i++) {
+        if (this.active[i]) {
+          firstTrue = i;
+          break;
+        }
+      }
+
+      this.tocEntries.forEach((entry) => {
+        const headingIdx = this.headingIdxMap.get(entry.dataset.headingId);
+        if (headingIdx == null) return;
+
+        if (this.active[headingIdx]) {
+          entry.classList.add(this.visibleClass);
+        } else {
+          entry.classList.remove(this.visibleClass);
+        }
+      });
+
+      if (this.activeIndicator && firstTrue >= 0 && lastTrue >= 0) {
+        const firstEntry = this.tocEntries.find(
+          (e) => this.headingIdxMap.get(e.dataset.headingId) === firstTrue
+        );
+        const lastEntry = this.tocEntries.find(
+          (e) => this.headingIdxMap.get(e.dataset.headingId) === lastTrue
+        );
+
+        if (firstEntry && lastEntry) {
+          const tocRect = this.tocEl.getBoundingClientRect();
+          const firstRect = firstEntry.getBoundingClientRect();
+          const lastRect = lastEntry.getBoundingClientRect();
+
+          const top = firstRect.top - tocRect.top + this.tocEl.scrollTop;
+          const bottom = lastRect.bottom - tocRect.top + this.tocEl.scrollTop;
+
+          this.activeIndicator.setAttribute("style", `top: ${top}px; height: ${bottom - top}px`);
+        }
+      }
+    }
+
+    disconnectedCallback() {
+      this.observer.disconnect();
+    }
+  }
+
+  if (!customElements.get("table-of-contents")) {
+      customElements.define("table-of-contents", TableOfContents);
+    }
+  })();
+</script>
+
+<style is:global>
+  :root {
+    --toc-width: 100%;
+    --toc-btn-hover: rgba(249, 115, 22, 0.1);
+    --toc-btn-active: rgba(249, 115, 22, 0.15);
+    --toc-badge-bg: rgba(249, 115, 22, 0.2);
+    --btn-content: rgb(249, 115, 22);
+  }
+
+  .dark {
+    --toc-btn-hover: rgba(249, 115, 22, 0.15);
+    --toc-btn-active: rgba(249, 115, 22, 0.2);
+    --toc-badge-bg: rgba(249, 115, 22, 0.3);
+    --btn-content: rgb(251, 146, 60);
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .toc-btn.visible {
+    @apply bg-[var(--toc-btn-hover)];
+  }
+
+  .toc-btn.visible .transition:last-child {
+    @apply text-[var(--btn-content)] font-medium;
+  }
+
+  a.visible .transition:last-child {
+    color: var(--btn-content) !important;
+    font-weight: 500;
+  }
 </style>

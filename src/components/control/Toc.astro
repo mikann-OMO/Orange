@@ -1,10 +1,10 @@
 ---
-import TocTree from "../toc/TocTree.astro";
 import type { MarkdownHeading } from "astro";
+import TocTree from "../toc/TocTree.astro";
 
 interface Props {
-  headings?: MarkdownHeading[];
-  title?: string;
+	headings?: MarkdownHeading[];
+	title?: string;
 }
 
 const { headings = [], title = "目录" } = Astro.props;

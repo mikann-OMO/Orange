@@ -22,7 +22,7 @@ export const siteConfig: SiteConfig = {
 	},
 	banner: {
 		enable: true,
-		src: "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/orange.png",
+		src: "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/chika000.jpg",
 		position: "center",
 		credit: {
 			enable: false,
