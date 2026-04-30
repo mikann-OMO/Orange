@@ -22,16 +22,70 @@ const redisClient = USE_REDIS_URL && process.env.REDIS_URL ? new Redis(process.e
 
 const LOCAL_DB_PATH = path.join(__dirname, "../../data/messages.json");
 
+type RawMessage = Record<string, unknown>;
+
+function normalizeDeviceInfo(input: unknown): DeviceInfo {
+	if (!input || typeof input !== "object") {
+		return { browser: null, os: null, device: null };
+	}
+	const obj = input as Record<string, unknown>;
+	return {
+		browser: typeof obj.browser === "string" ? obj.browser : null,
+		os: typeof obj.os === "string" ? obj.os : null,
+		device: typeof obj.device === "string" ? obj.device : null,
+	};
+}
+
+function normalizeMessage(input: unknown): Message | null {
+	if (!input || typeof input !== "object") return null;
+	const m = input as RawMessage;
+
+	const id = typeof m.id === "string" ? m.id : "";
+	const slug = typeof m.slug === "string" ? m.slug : "";
+	const content = typeof m.content === "string" ? m.content : "";
+	const nickname = typeof m.nickname === "string" ? m.nickname : "";
+	const website = typeof m.website === "string" ? m.website : null;
+	const avatar = typeof m.avatar === "string" ? m.avatar : "";
+	const createdAt = typeof m.createdAt === "string" ? m.createdAt : new Date().toISOString();
+	const parentId = typeof m.parentId === "string" ? m.parentId : null;
+	const device = normalizeDeviceInfo(m.device);
+
+	if (!id || !slug || !nickname) return null;
+
+	return {
+		id,
+		slug,
+		content,
+		nickname,
+		website,
+		avatar,
+		device,
+		createdAt,
+		parentId,
+	};
+}
+
+function normalizeMessageArray(input: unknown): Message[] {
+	if (!Array.isArray(input)) return [];
+	const out: Message[] = [];
+	for (const item of input) {
+		const msg = normalizeMessage(item);
+		if (msg) out.push(msg);
+	}
+	return out;
+}
+
 async function readLocalFile(): Promise<Message[]> {
 	try {
 		const data = await fs.readFile(LOCAL_DB_PATH, "utf-8");
-		return JSON.parse(data);
+		return normalizeMessageArray(JSON.parse(data));
 	} catch {
 		return [];
 	}
 }
 
 async function writeLocalFile(messages: Message[]): Promise<void> {
+	await fs.mkdir(path.dirname(LOCAL_DB_PATH), { recursive: true });
 	await fs.writeFile(LOCAL_DB_PATH, JSON.stringify(messages, null, 2));
 }
 
@@ -43,10 +97,10 @@ export async function getMessages(slug?: string): Promise<Message[]> {
 	let messages: Message[] = [];
 
 	if (USE_VERCEL_KV && kvClient) {
-		messages = (await kvClient.get("messages")) || [];
+		messages = normalizeMessageArray(await kvClient.get("messages"));
 	} else if (USE_REDIS_URL && redisClient) {
 		const data = await redisClient.get("messages");
-		messages = data ? JSON.parse(data) : [];
+		messages = data ? normalizeMessageArray(JSON.parse(data)) : [];
 	} else {
 		messages = await readLocalFile();
 	}

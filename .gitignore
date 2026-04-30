@@ -2,6 +2,10 @@
 # 构建输出目录
 dist/
 
+# local data (message board)
+# 留言板本地数据（不要提交到仓库）
+data/
+
 # generated types
 # Astro 生成的类型文件
 .astro/

@@ -9,7 +9,6 @@ export interface Message {
 	slug: string;
 	content: string;
 	nickname: string;
-	email: string;
 	website: string | null;
 	avatar: string;
 	device: DeviceInfo;

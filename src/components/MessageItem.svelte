@@ -35,7 +35,7 @@ async function handleReplyAdded() {
 	<div class="flex items-start gap-4">
 		<div class="flex-shrink-0">
 		<img
-			src={`https://ui-avatars.com/api/?name=${message.nickname}&background=random`}
+			src={message.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(message.nickname)}&background=random`}
 			alt={message.nickname}
 			class="w-12 h-12 rounded-full object-cover"
 		/>
