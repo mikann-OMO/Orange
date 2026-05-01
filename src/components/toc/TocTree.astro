@@ -4,10 +4,9 @@ import type { MarkdownHeading } from "astro";
 
 interface Props {
 	headings?: MarkdownHeading[];
-	title?: string;
 }
 
-const { headings = [], title } = Astro.props;
+const { headings = [] } = Astro.props;
 
 const tree = buildTocTree(headings);
 ---
