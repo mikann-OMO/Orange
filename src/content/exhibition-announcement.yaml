@@ -7,7 +7,7 @@ title: "公告"
 content: "内容建设中"
 
 # 公告头像路径
-avatar: "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/chika.png"
+avatar: "/favicon.webp"
 
 # 公告状态（true表示显示，false表示隐藏）
 enabled: true

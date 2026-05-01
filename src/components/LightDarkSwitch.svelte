@@ -26,9 +26,7 @@ onMount(() => {
 	const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 	const handleChange = () => {
 		if (getStoredTheme() === AUTO_MODE) {
-			requestAnimationFrame(() => {
-				mode = mediaQuery.matches ? DARK_MODE : LIGHT_MODE;
-			});
+			mode = mediaQuery.matches ? DARK_MODE : LIGHT_MODE;
 		}
 	};
 	mediaQuery.addEventListener("change", handleChange);

@@ -22,9 +22,9 @@ import "../styles/markdown.css";
 import { ClientRouter } from "astro:transitions";
 import BackToTop from "@components/control/BackToTop.astro";
 import PageProgress from "@components/control/PageProgress.astro";
+import SpeedInsights from "@vercel/speed-insights/astro";
 
-// 自托管字体优化
-import "@fontsource/roboto/300.css";
+// 自托管字体优化 - 仅加载实际使用的字重
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
@@ -77,8 +77,7 @@ const canonicalHref = Astro.url.href;
 const siteHref = Astro.site?.toString() || canonicalHref;
 
 const toOgImagePath = (src: string): string => {
-	if (!src)
-		return "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/chika000.jpg";
+	if (!src) return "";
 	if (src.startsWith("http://") || src.startsWith("https://")) return src;
 	if (src.startsWith("/")) return src;
 	if (src.startsWith("assets/images/"))
@@ -151,18 +150,25 @@ const jsonLd = {
 	const hue = localStorage.getItem('hue') || configHue;
 	document.documentElement.style.setProperty('--hue', hue);
 
-	// Set page background color and image immediately to prevent flash
-		const isDark = document.documentElement.classList.contains('dark');
-		document.documentElement.style.setProperty('--page-bg', isDark ? '#1c1814' : '#fff8f0');
-		document.documentElement.style.backgroundColor = isDark ? '#1c1814' : '#fff8f0';
+	const isDark = document.documentElement.classList.contains('dark');
+	document.documentElement.style.setProperty('--page-bg', isDark ? '#1c1814' : '#fff8f0');
+	document.documentElement.style.backgroundColor = isDark ? '#1c1814' : '#fff8f0';
 
-	// Calculate the --banner-height-extend, which needs to be a multiple of 4 to avoid blurry text
 	const calculateBannerHeight = () => {
 		let offset = Math.floor(window.innerHeight * (BANNER_HEIGHT_EXTEND / 100));
 		offset = offset - offset % 4;
 		document.documentElement.style.setProperty('--banner-height-extend', `${offset}px`);
 	};
 	calculateBannerHeight();
+
+	if (theme === AUTO_MODE) {
+		window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+			document.documentElement.classList.toggle('dark', e.matches);
+			document.documentElement.style.setProperty('--page-bg', e.matches ? '#1c1814' : '#fff8f0');
+			document.documentElement.style.backgroundColor = e.matches ? '#1c1814' : '#fff8f0';
+			window.dispatchEvent(new CustomEvent('themeChange', { detail: { theme: AUTO_MODE } }));
+		});
+	}
 </script>
 <html lang={siteLang} class="text-[14px] md:text-[16px]">
 	<head>
@@ -174,36 +180,12 @@ const jsonLd = {
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 		<!-- 性能优化：设置主题色 -->
 		<meta name="theme-color" content="#ff9800">
-		<style is:inline>
-		html {
-			background-color: #fff8f0;
-			background-image: url('https://mikann-1359996823.cos.ap-beijing.myqcloud.com/chika000.jpg');
-			background-size: cover;
-			background-position: center;
-			background-attachment: fixed;
-		}
-		@media (prefers-color-scheme: dark) {
-			html {
-				background-color: #1c1814;
-				background-image: url('https://mikann-1359996823.cos.ap-beijing.myqcloud.com/chika000.jpg');
-				background-size: cover;
-				background-position: center;
-				background-attachment: fixed;
-			}
-		}
-		body { background-color: inherit; }
-	</style>
-		<!-- 性能优化：减少DNS查找时间 -->
-		<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-		<link rel="preconnect" href="https://unpkg.com" crossorigin>
-		<!-- DNS预解析 -->
-		<link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
-		<link rel="dns-prefetch" href="https://unpkg.com">
 
 		<!-- 性能优化：移动端优化 -->
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 		<meta name="mobile-web-app-capable" content="yes">
+
 
 		<title>{pageTitle}</title>
 		<meta name="description" content={description || pageTitle}>
@@ -276,12 +258,13 @@ const jsonLd = {
 	</head>
 	<!-- 性能优化：减少不必要的触摸事件延迟 -->
 	<body class="min-h-screen" class:list={[{"lg:is-home": isHomePage, "enable-banner": enableBanner}]}
-		  style="touch-action: manipulation; -webkit-tap-highlight-color: transparent; -webkit-overflow-scrolling: touch; overflow: auto;"
+		  style="touch-action: manipulation; -webkit-tap-highlight-color: transparent;"
 	>
 		<ConfigCarrier></ConfigCarrier>
 		<PageProgress />
 		<slot />
 		<BackToTop />
+		<SpeedInsights />
 		<!-- 页面加载完成后显示内容 -->
 		<script is:inline>
 			requestAnimationFrame(() => {
@@ -295,136 +278,68 @@ const jsonLd = {
 				if ((w as any).__vtHooksInstalled) return;
 				(w as any).__vtHooksInstalled = true;
 
-				const LIGHT_MODE = 'light';
-				const DARK_MODE = 'dark';
-				const AUTO_MODE = 'auto';
 				const DEFAULT_THEME = 'auto';
-				
-				const MAX_TRANSITION_TIME = 1500;
-				
-				let isTransitioning = false;
-				let transitionTimeout: number | null = null;
-				
+
 				function applyTheme() {
-					requestAnimationFrame(() => {
-						const theme = localStorage.getItem('theme') || DEFAULT_THEME;
-						const html = document.documentElement;
-						
-						switch (theme) {
-							case LIGHT_MODE:
-								html.classList.remove('dark');
-								break;
-							case DARK_MODE:
-								html.classList.add('dark');
-								break;
-							case AUTO_MODE:
-								if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-									html.classList.add('dark');
-								} else {
-									html.classList.remove('dark');
-								}
-								break;
-						}
-						
-						const isDark = html.classList.contains('dark');
-			const pageBg = isDark ? '#1c1814' : '#fff8f0';
-			
-			html.style.setProperty('--page-bg', pageBg);
-			html.style.backgroundColor = pageBg;
-			
-						const hue = localStorage.getItem('hue') || '0';
-						html.style.setProperty('--hue', hue);
-					});
+					const theme = localStorage.getItem('theme') || DEFAULT_THEME;
+					const html = document.documentElement;
+					const isDark = theme === 'dark' || (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+					html.classList.toggle('dark', isDark);
+					html.style.setProperty('--page-bg', isDark ? '#1c1814' : '#fff8f0');
+					html.style.setProperty('--hue', localStorage.getItem('hue') || '0');
+					window.dispatchEvent(new CustomEvent('themeChange', { detail: { theme } }));
 				}
-				
-				function clearTransitionState() {
-					isTransitioning = false;
-					if (transitionTimeout) {
-						clearTimeout(transitionTimeout);
-						transitionTimeout = null;
-					}
-					document.body.style.pointerEvents = '';
-					const mainContent = document.querySelector('.main-panel');
-					if (mainContent) {
-						mainContent.classList.remove('page-exit-animation', 'page-enter-animation');
-					}
-				}
-				
-				function triggerExitAnimations() {
-					if (isTransitioning) return;
-					isTransitioning = true;
-					
-					const mainContent = document.querySelector('.main-panel');
-					if (mainContent) {
-						mainContent.classList.add('page-exit-animation');
-					}
-					
-					transitionTimeout = window.setTimeout(() => {
-						clearTransitionState();
-					}, MAX_TRANSITION_TIME);
-				}
-				
+
 				function triggerEnterAnimations() {
-					clearTransitionState();
-					
 					const mainContent = document.querySelector('.main-panel');
 					if (mainContent) {
 						mainContent.classList.add('page-enter-animation');
-						setTimeout(() => mainContent.classList.remove('page-enter-animation'), 300);
+						mainContent.addEventListener('animationend', () => {
+							mainContent.classList.remove('page-enter-animation');
+						}, { once: true });
 					}
-					
-					const observerOptions = {
-						threshold: 0.1,
-						rootMargin: '20px'
-					};
-					
+
 					const cardObserver = new IntersectionObserver((entries) => {
 						entries.forEach((entry, index) => {
 							if (entry.isIntersecting) {
 								setTimeout(() => {
 									entry.target.classList.add('card-enter');
-									setTimeout(() => {
+									(entry.target as HTMLElement).addEventListener('animationend', () => {
 										entry.target.classList.remove('card-enter');
-									}, 400);
-								}, index * 0.02 * 1000);
+									}, { once: true });
+								}, index * 20);
 								cardObserver.unobserve(entry.target);
 							}
 						});
-					}, observerOptions);
-					
-					const postCards = document.querySelectorAll('.post-card-animate');
-					postCards.forEach(card => cardObserver.observe(card));
-					
-					const friendCards = document.querySelectorAll('.friend-card-animate');
-					friendCards.forEach(card => cardObserver.observe(card));
-					
-					const noteCards = document.querySelectorAll('.note-card-animate');
-					noteCards.forEach(card => cardObserver.observe(card));
-					
+					}, { threshold: 0.1, rootMargin: '20px' });
+
+					document.querySelectorAll('.post-card-animate, .friend-card-animate, .note-card-animate')
+						.forEach(card => cardObserver.observe(card));
+
 					const postContent = document.querySelector('.post-content-animate');
 					if (postContent) {
 						postContent.classList.add('content-enter');
-						setTimeout(() => postContent.classList.remove('content-enter'), 350);
+						(postContent as HTMLElement).addEventListener('animationend', () => {
+							postContent.classList.remove('content-enter');
+						}, { once: true });
 					}
-					
+
 					const sidebar = document.querySelector('#sidebar-sticky');
 					if (sidebar) {
 						sidebar.classList.add('sidebar-enter');
-						setTimeout(() => sidebar.classList.remove('sidebar-enter'), 300);
+						(sidebar as HTMLElement).addEventListener('animationend', () => {
+							sidebar.classList.remove('sidebar-enter');
+						}, { once: true });
 					}
 				}
-				
+
 				document.addEventListener('astro:page-load', () => {
 					applyTheme();
 					requestAnimationFrame(triggerEnterAnimations);
 				});
-				
-				document.addEventListener('astro:before-preparation', triggerExitAnimations);
-				
-				document.addEventListener('astro:after-swap', () => {
-					applyTheme();
-					clearTransitionState();
-				});
+
+				document.addEventListener('astro:after-swap', applyTheme);
 			})();
 		</script>
 	</body>
@@ -437,22 +352,13 @@ const jsonLd = {
 }}>
 @tailwind components;
 @layer components {
-	.enable-banner.is-home #banner-wrapper {
-		@apply h-screen w-full fixed top-0 left-0 right-0 z-0 hidden md:block
-	}
+	.enable-banner.is-home #banner-wrapper,
 	.enable-banner #banner-wrapper {
-		@apply h-screen w-full fixed top-0 left-0 right-0 z-0 hidden md:block
+		@apply w-full fixed top-0 left-0 right-0 z-0 hidden md:block;
+		height: 100vh;
+		height: 100dvh;
 	}
 
-	.enable-banner.is-home #banner {
-		@apply h-full w-full object-cover
-	}
-	.enable-banner #banner {
-		@apply h-full w-full object-cover
-	}
-	.dark #banner {
-		@apply brightness-75 contrast-100
-	}
 	.enable-banner.is-home #main-grid {
 		@apply relative z-10;
 	}
@@ -468,7 +374,7 @@ const jsonLd = {
 	/* 移动端背景 */
 	@media (max-width: 768px) {
 		body {
-			@apply bg-[#fff8f0] dark:bg-[#1c1814];
+			background-color: var(--page-bg);
 		}
 	}
 }
@@ -490,10 +396,7 @@ html {
 <script>
 import { getStoredTheme, setTheme } from "../utils/setting-utils";
 import {
-	BANNER_HEIGHT,
-	BANNER_HEIGHT_HOME,
 	BANNER_HEIGHT_EXTEND,
-	MAIN_PANEL_OVERLAPS_BANNER_HEIGHT,
 } from "../constants/constants";
 
 type Runtime = {

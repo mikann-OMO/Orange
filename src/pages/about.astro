@@ -1,5 +1,4 @@
 ---
-import { Image } from "astro:assets";
 import { getEntry } from "astro:content";
 import { render } from "astro:content";
 import Markdown from "@components/misc/Markdown.astro";
@@ -29,7 +28,7 @@ const { Content } = await render(aboutPost);
             <div class="flex items-center gap-3">
                 <div class="avatar-wrapper">
                     <ImageWrapper
-                        src="https://mikann-1359996823.cos.ap-beijing.myqcloud.com/justorange.jpg"
+                        src={profileConfig.avatar || "/avatar.webp"}
                         alt="个人头像"
                         class="avatar-img"
                         loading="eager"
@@ -106,7 +105,7 @@ const { Content } = await render(aboutPost);
                 </div>
                 <div class="friend-info-item">
                     <span class="info-label">站点头像：</span>
-                    <span class="info-value truncate">https://mikann-1359996823.cos.ap-beijing.myqcloud.com/justorange.jpg</span>
+                    <span class="info-value truncate">https://mikan.fun/avatar.webp</span>
                 </div>
                 <div class="friend-info-item">
                     <span class="info-label">站点描述：</span>
@@ -129,7 +128,7 @@ const { Content } = await render(aboutPost);
      { 
          title: "mikann_OMO", 
          image: 
-              "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/justorange.jpg", 
+              "https://mikan.fun/avatar.webp", 
          desc: "是一位超级无敌可爱美少女", 
          siteurl: "https://www.mikann.fun", 
          tags: [""], 

@@ -5,21 +5,6 @@
         @apply rounded-xl overflow-hidden transition;
     }
     
-    .arknights-card {
-        @apply rounded-xl overflow-hidden bg-white/80 dark:bg-stone-800/80 transition-all duration-300 border border-gray-200/50 dark:border-stone-700/50 shadow-lg backdrop-blur-sm;
-    }
-    .arknights-card:hover {
-        @apply shadow-xl;
-    }
-    
-
-    
-
-    
-    .card-shadow {
-        @apply drop-shadow-[0_2px_4px_rgba(0,0,0,0.005)]
-    }
-    
     .expand-animation {
         @apply relative bg-transparent z-0
         before:absolute before:rounded-[inherit] before:inset-0 before:scale-100 before:-z-10
@@ -39,11 +24,6 @@
     
     .float-panel-closed {
         @apply hidden pointer-events-none
-    }
-    
-    @media (max-width: 768px) {
-        .float-panel {
-        }
     }
     
     #nav-menu-panel {
@@ -81,11 +61,6 @@
     .link-underline {
         @apply transition underline decoration-2 decoration-dashed decoration-orange-950/20 dark:decoration-white/20
         hover:decoration-orange-500 active:decoration-orange-600 underline-offset-[0.25rem]
-    }
-
-    .toc-hide,
-    .toc-not-ready {
-        @apply opacity-0 pointer-events-none
     }
 
     #toc-inner-wrapper {
@@ -212,28 +187,6 @@
     background-color: rgba(255, 152, 0, 0.2)
 }
 
-.dash-line {
-    position: relative;
-}
-
-.dash-line::before {
-    content: "";
-    position: absolute;
-    width: 10%;
-    height: 100%;
-    left: calc(50% - 1px);
-    border-left: 2px dashed #d1d5db;
-    pointer-events: none;
-    transition: all 0.3s;
-    transform: translateY(-50%);
-}
-
-@media (prefers-color-scheme: dark) {
-    .dash-line::before {
-        border-left: 2px dashed #4b5563;
-    }
-}
-
 .collapsed {
     height: var(--collapsedHeight);
 }
@@ -282,8 +235,6 @@ img[loading="lazy"][complete] {
     opacity: 1;
 }
 
-.post-card,
-.arknights-card,
 #post-container {
     content-visibility: auto;
     contain-intrinsic-size: 0 500px;

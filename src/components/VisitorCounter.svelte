@@ -20,10 +20,12 @@ declare global {
 	}
 }
 
-let count = 0;
-let loading = true;
-let error = false;
-let useBusuanzi = false;
+let count = $state(0);
+let loading = $state(true);
+let error = $state(false);
+let useBusuanzi = $state(false);
+
+let displayCount = $derived(formatCount(count));
 
 const TRACK_INTERVAL_KEY = "visitor_track_interval";
 const TRACK_INTERVAL_MS = 24 * 60 * 60 * 1000;
@@ -102,8 +104,6 @@ onMount(async () => {
 		}
 	}
 });
-
-$: displayCount = formatCount(count);
 </script>
 
 <div class="visitor-counter">

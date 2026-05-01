@@ -22,7 +22,7 @@ export const siteConfig: SiteConfig = {
 	},
 	banner: {
 		enable: true,
-		src: "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/chika000.jpg",
+		src: "assets/images/banner-light.webp",
 		position: "center",
 		credit: {
 			enable: false,
@@ -30,24 +30,7 @@ export const siteConfig: SiteConfig = {
 			url: "",
 		},
 	},
-	favicon: [
-		{
-			src: "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/chika.png",
-			sizes: "32x32",
-		},
-		{
-			src: "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/chika.png",
-			sizes: "128x128",
-		},
-		{
-			src: "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/chika.png",
-			sizes: "180x180",
-		},
-		{
-			src: "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/chika.png",
-			sizes: "192x192",
-		},
-	],
+	favicon: [],
 };
 
 export const navBarConfig: NavBarConfig = {
@@ -63,7 +46,7 @@ export const navBarConfig: NavBarConfig = {
 
 export const profileConfig: ProfileConfig = {
 	avatar:
-		"https://mikann-1359996823.cos.ap-beijing.myqcloud.com/justorange.jpg",
+		"/avatar.webp",
 	name: "mikann-OMO",
 	bio: "这个人不是很精彩呢",
 	links: [],

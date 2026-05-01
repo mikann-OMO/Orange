@@ -316,7 +316,7 @@ const totalImages = albumStats.reduce((sum, stat) => sum + stat.total, 0);
 					const { picks, total } = sampleMosaic(a, a.data.cover);
 					const cover =
 						picks[0] ||
-						"https://mikann-1359996823.cos.ap-beijing.myqcloud.com/chika.png";
+						"/avatar.webp";
 					const dateText = formatAlbumDate(a.data.date);
 					return (
 						<a

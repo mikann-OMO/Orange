@@ -1,12 +1,7 @@
 /* View Transitions API */
 
-::view-transition-old(root),
-::view-transition-new(root) {
-    mix-blend-mode: normal;
-}
-
 ::view-transition-group(root) {
-    animation-duration: 0.35s;
+    animation-duration: 0.3s;
 }
 
 ::view-transition-image-pair(root) {
@@ -15,18 +10,20 @@
 
 ::view-transition-old(root),
 ::view-transition-new(root) {
+    mix-blend-mode: normal;
     background-color: var(--page-bg);
 }
 
 /* 页面滑入动画 */
 .page-enter-animation {
-    animation: pageSlideIn 0.35s ease-out forwards;
+    animation: pageSlideIn 0.3s ease-out forwards;
+    will-change: opacity, transform;
 }
 
 @keyframes pageSlideIn {
     from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(16px);
     }
     to {
         opacity: 1;
@@ -34,15 +31,33 @@
     }
 }
 
+/* 页面退出动画 */
+.page-exit-animation {
+    animation: pageSlideOut 0.2s ease-in forwards;
+    will-change: opacity, transform;
+}
+
+@keyframes pageSlideOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+}
+
 /* 卡片进入动画 */
 .card-enter {
-    animation: cardSlideIn 0.35s ease-out forwards;
+    animation: cardSlideIn 0.3s ease-out forwards;
+    will-change: opacity, transform;
 }
 
 @keyframes cardSlideIn {
     from {
         opacity: 0;
-        transform: translateY(15px) scale(0.98);
+        transform: translateY(12px) scale(0.98);
     }
     to {
         opacity: 1;
@@ -52,13 +67,14 @@
 
 /* 内容进入动画 */
 .content-enter {
-    animation: contentSlideIn 0.35s ease-out forwards;
+    animation: contentSlideIn 0.3s ease-out forwards;
+    will-change: opacity, transform;
 }
 
 @keyframes contentSlideIn {
     from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(8px);
     }
     to {
         opacity: 1;
@@ -68,24 +84,17 @@
 
 /* 侧边栏进入动画 */
 .sidebar-enter {
-    animation: sidebarSlideIn 0.35s ease-out forwards;
+    animation: sidebarSlideIn 0.3s ease-out forwards;
+    will-change: opacity, transform;
 }
 
 @keyframes sidebarSlideIn {
     from {
         opacity: 0;
-        transform: translateX(-10px);
+        transform: translateX(-8px);
     }
     to {
         opacity: 1;
         transform: translateX(0);
     }
-}
-
-/* 启用 view-transition-name */
-.main-panel,
-#navbar-wrapper,
-#sidebar-sticky,
-#banner-wrapper {
-    view-transition-name: auto;
 }

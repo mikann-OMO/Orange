@@ -3,11 +3,14 @@ import Footer from "@components/Footer.astro";
 import Navbar from "@components/Navbar.astro";
 
 import type { MarkdownHeading } from "astro";
+import { Background } from "astro-lqip/components";
 import Toc from "../components/Toc.astro";
 import ImageWrapper from "../components/misc/ImageWrapper.astro";
 import { siteConfig } from "../config";
 import Layout from "./Layout.astro";
 
+import bannerLight from "../assets/images/banner-light.webp";
+import bannerDark from "../assets/images/banner-dark.webp";
 import announcement from "../content/announcement.yaml";
 
 interface AnnouncementConfig {
@@ -64,15 +67,33 @@ const activeAnnouncement = announcementConfig || announcement;
 
 {siteConfig.banner.enable && (
     <div id="banner-wrapper" class="h-screen w-full fixed top-0 left-0 right-0 z-0 hidden md:block">
-        <ImageWrapper 
-            src={siteConfig.banner.src} 
-            alt="页面横幅"
-            class="w-full h-full object-cover" 
-            position={siteConfig.banner.position} 
-            loading="eager"
-        />
+        <Background src={bannerLight} cssVariable="--bg-light-lqip">
+        <div id="banner-light-container"
+             style={`position:absolute;inset:0;background-image:url(${bannerLight.src}),var(--bg-light-lqip);background-size:cover;background-position:center;background-attachment:fixed;background-color:#fff8f0;`}>
+        </div>
+        </Background>
+        <Background src={bannerDark} cssVariable="--bg-dark-lqip">
+        <div id="banner-dark-container"
+             style={`position:absolute;inset:0;display:none;background-image:url(${bannerDark.src}),var(--bg-dark-lqip);background-size:cover;background-position:center;background-attachment:fixed;background-color:#1c1814;`}>
+        </div>
+        </Background>
     </div>
 )}
+
+<script is:inline define:vars={{enable: siteConfig.banner.enable}}>
+    if (enable) {
+        function syncBannerTheme() {
+            var isDark = document.documentElement.classList.contains('dark');
+            var lightEl = document.getElementById('banner-light-container');
+            var darkEl = document.getElementById('banner-dark-container');
+            if (lightEl) lightEl.style.display = isDark ? 'none' : 'block';
+            if (darkEl) darkEl.style.display = isDark ? 'block' : 'none';
+        }
+
+        syncBannerTheme();
+        window.addEventListener('themeChange', syncBannerTheme);
+    }
+</script>
 
 <div id="main-wrapper" class="relative w-full z-10 min-h-screen">
     <div class:list={[
@@ -225,6 +246,7 @@ const activeAnnouncement = announcementConfig || announcement;
     width: 100%;
     z-index: 10;
     min-height: 100vh;
+    min-height: 100dvh;
 }
 
 #content-wrapper {

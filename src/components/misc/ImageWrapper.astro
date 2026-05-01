@@ -2,7 +2,6 @@
 import path from "node:path";
 import { Image } from "astro:assets";
 import type { ImageMetadata } from "astro";
-import { url } from "../../utils/url-utils";
 interface Props {
 	id?: string;
 	src: string;
@@ -86,9 +85,10 @@ if (isLocal) {
 }
 
 const imageStyle = `object-position: ${position}`;
+const useNativeImg = isRemote || isPublic;
 ---
 <div id={id} class:list={['overflow-hidden relative image-wrapper']}>
-    {isRemote ? (
+    {useNativeImg ? (
         <img 
             src={src} 
             alt={alt || ""} 
@@ -98,11 +98,11 @@ const imageStyle = `object-position: ${position}`;
             width={width}
             height={height}
             decoding="async"
-            fetchpriority={loading === "eager" ? "high" : "auto"}
+            fetchpriority={loading === "eager" ? "high" : "low"}
         />
     ) : (
         <Image 
-            src={isLocal ? img! : (isPublic ? src : url(src))} 
+            src={img!} 
             alt={alt || ""} 
             class={className} 
             style={imageStyle}
@@ -113,8 +113,7 @@ const imageStyle = `object-position: ${position}`;
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             densities={[1, 1.5, 2]}
             decoding="async"
-            fetchpriority={loading === "eager" ? "high" : "auto"}
-            inferSize={!isLocal}
+            fetchpriority={loading === "eager" ? "high" : "low"}
         />
     )}
 </div>
