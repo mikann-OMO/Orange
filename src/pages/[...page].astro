@@ -36,19 +36,21 @@ function formatLastUpdateTime(date: Date): string {
 
 	if (diffSecs < 60) {
 		return "刚刚";
-	} else if (diffMins < 60) {
-		return `${diffMins}分钟前`;
-	} else if (diffHours < 24) {
-		return `${diffHours}小时前`;
-	} else if (diffDays < 7) {
-		return `${diffDays}天前`;
-	} else {
-		return date.toLocaleString("zh-CN", {
-			year: "numeric",
-			month: "2-digit",
-			day: "2-digit",
-		});
 	}
+	if (diffMins < 60) {
+		return `${diffMins}分钟前`;
+	}
+	if (diffHours < 24) {
+		return `${diffHours}小时前`;
+	}
+	if (diffDays < 7) {
+		return `${diffDays}天前`;
+	}
+	return date.toLocaleString("zh-CN", {
+		year: "numeric",
+		month: "2-digit",
+		day: "2-digit",
+	});
 }
 
 const lastUpdateTime = latestPost

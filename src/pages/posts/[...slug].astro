@@ -238,9 +238,9 @@ const jsonLd = {
       if (e.target === panel) closePanel();
     });
 
-    panel.querySelectorAll('a[data-id]').forEach(link => {
+    for (const link of panel.querySelectorAll('a[data-id]')) {
       link.addEventListener('click', closePanel);
-    });
+    }
   })();
 </script>
 

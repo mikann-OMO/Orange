@@ -23,6 +23,8 @@ function visit(tree, type, callback) {
 		callback(tree);
 	}
 	if (tree.children) {
-		tree.children.forEach((child) => visit(child, type, callback));
+		for (const child of tree.children) {
+			visit(child, type, callback);
+		}
 	}
 }

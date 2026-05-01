@@ -83,11 +83,6 @@
 		"vite-plugin-pwa": "^1.2.0"
 	},
 	"pnpm": {
-		"onlyBuiltDependencies": [
-			"@biomejs/biome",
-			"core-js",
-			"esbuild",
-			"sharp"
-		]
+		"onlyBuiltDependencies": ["@biomejs/biome", "core-js", "esbuild", "sharp"]
 	}
 }

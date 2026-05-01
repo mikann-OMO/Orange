@@ -110,10 +110,12 @@ export async function getSiteVisitorCount(): Promise<VisitorCountResult> {
 		if (cfg.provider === "leancloud") {
 			const count = await getLeanCloudCount(SITE_VISITOR_KEY);
 			return { success: true, count };
-		} else if (cfg.provider === "busuanzi") {
+		}
+		if (cfg.provider === "busuanzi") {
 			// For busuanzi, we'll let the client-side script handle the count
 			return { success: true, count: 0 };
-		} else if (cfg.provider === "server") {
+		}
+		if (cfg.provider === "server") {
 			const response = await fetch(
 				`/api/visitor?key=${encodeURIComponent(SITE_VISITOR_KEY)}&op=get`,
 			);
@@ -142,10 +144,12 @@ export async function incrementSiteVisitorCount(): Promise<VisitorCountResult> {
 		if (cfg.provider === "leancloud") {
 			const count = await incrementLeanCloudCount(SITE_VISITOR_KEY);
 			return { success: true, count };
-		} else if (cfg.provider === "busuanzi") {
+		}
+		if (cfg.provider === "busuanzi") {
 			// For busuanzi, the script automatically increments the count
 			return { success: true, count: 0 };
-		} else if (cfg.provider === "server") {
+		}
+		if (cfg.provider === "server") {
 			const response = await fetch(
 				`/api/visitor?key=${encodeURIComponent(SITE_VISITOR_KEY)}&op=inc`,
 				{ method: "POST" },
@@ -179,10 +183,12 @@ export async function getPageVisitorCount(
 		if (cfg.provider === "leancloud") {
 			const count = await getLeanCloudCount(key);
 			return { success: true, count };
-		} else if (cfg.provider === "busuanzi") {
+		}
+		if (cfg.provider === "busuanzi") {
 			// For busuanzi, we'll let the client-side script handle the count
 			return { success: true, count: 0 };
-		} else if (cfg.provider === "server") {
+		}
+		if (cfg.provider === "server") {
 			const response = await fetch(
 				`/api/visitor?key=${encodeURIComponent(key)}&op=get`,
 			);
@@ -215,10 +221,12 @@ export async function incrementPageVisitorCount(
 		if (cfg.provider === "leancloud") {
 			const count = await incrementLeanCloudCount(key);
 			return { success: true, count };
-		} else if (cfg.provider === "busuanzi") {
+		}
+		if (cfg.provider === "busuanzi") {
 			// For busuanzi, the script automatically increments the count
 			return { success: true, count: 0 };
-		} else if (cfg.provider === "server") {
+		}
+		if (cfg.provider === "server") {
 			const response = await fetch(
 				`/api/visitor?key=${encodeURIComponent(key)}&op=inc`,
 				{ method: "POST" },

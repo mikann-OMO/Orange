@@ -45,8 +45,7 @@ export const navBarConfig: NavBarConfig = {
 };
 
 export const profileConfig: ProfileConfig = {
-	avatar:
-		"/avatar.webp",
+	avatar: "/avatar.webp",
 	name: "mikann-OMO",
 	bio: "这个人不是很精彩呢",
 	links: [],

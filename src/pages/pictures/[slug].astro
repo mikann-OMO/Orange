@@ -1,6 +1,6 @@
 ---
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 import type { GetStaticPaths } from "astro";
@@ -131,12 +131,13 @@ function extractImagesByArtistFromMarkdown(): ArtistGroup[] {
 		}
 
 		// 尝试匹配 Markdown 图片语法
-		let match;
-		while ((match = markdownImageRegex.exec(trimmedLine)) !== null) {
+		let match: RegExpExecArray | null = markdownImageRegex.exec(trimmedLine);
+		while (match !== null) {
 			currentImages.push({
 				src: match[1],
 				alt: title,
 			});
+			match = markdownImageRegex.exec(trimmedLine);
 		}
 	}
 
@@ -157,9 +158,10 @@ function extractImagesByArtistFromMarkdown(): ArtistGroup[] {
 				allUrls.push(urlMatch[0]);
 				continue;
 			}
-			let match;
-			while ((match = markdownImageRegex.exec(trimmedLine)) !== null) {
+			let match: RegExpExecArray | null = markdownImageRegex.exec(trimmedLine);
+			while (match !== null) {
 				allUrls.push(match[1]);
+				match = markdownImageRegex.exec(trimmedLine);
 			}
 		}
 		if (allUrls.length > 0) {

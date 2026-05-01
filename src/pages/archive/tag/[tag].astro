@@ -15,19 +15,17 @@ export async function getStaticPaths() {
 
 	const allTags = posts.reduce<Set<string>>((acc, post) => {
 		if (Array.isArray(post.data.tags)) {
-			// biome-ignore lint/complexity/noForEach: <explanation>
-			post.data.tags.forEach((tag: string | number) => {
+			for (const tag of post.data.tags) {
 				if (typeof tag === "string") {
 					acc.add(tag.trim());
 				} else {
 					acc.add(String(tag).trim());
 				}
-			});
+			}
 		} else if (post.data.tags && typeof post.data.tags === "string") {
-			// biome-ignore lint/complexity/noForEach: <explanation>
-			(post.data.tags as string)
-				.split(",")
-				.forEach((tag) => acc.add(tag.trim()));
+			for (const tag of (post.data.tags as string).split(",")) {
+				acc.add(tag.trim());
+			}
 		}
 		return acc;
 	}, new Set());

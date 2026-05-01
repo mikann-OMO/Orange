@@ -7,9 +7,9 @@ export function initToc() {
 	if (!links.length || !headings.length) return;
 
 	const linkMap = {};
-	links.forEach((l) => {
+	for (const l of links) {
 		linkMap[l.dataset.id] = l;
-	});
+	}
 
 	const getOffset = () => {
 		const nav = document.getElementById("navbar-wrapper");
@@ -18,7 +18,9 @@ export function initToc() {
 
 	// ===== 激活（含父级）=====
 	const activate = (id) => {
-		links.forEach((l) => l.classList.remove("active"));
+		for (const l of links) {
+			l.classList.remove("active");
+		}
 
 		let current = linkMap[id];
 		while (current) {
@@ -53,7 +55,7 @@ export function initToc() {
 
 	const observer = new IntersectionObserver(
 		(entries) => {
-			entries.forEach((entry) => {
+			for (const entry of entries) {
 				if (entry.isIntersecting) {
 					const id = entry.target.id;
 					if (id !== activeId) {
@@ -62,17 +64,19 @@ export function initToc() {
 						expandPath(id);
 					}
 				}
-			});
+			}
 		},
 		{
 			rootMargin: "0px 0px -70% 0px",
 		},
 	);
 
-	headings.forEach((h) => observer.observe(h));
+	for (const h of headings) {
+		observer.observe(h);
+	}
 
 	// ===== 平滑滚动 =====
-	links.forEach((link) => {
+	for (const link of links) {
 		link.addEventListener("click", (e) => {
 			e.preventDefault();
 
@@ -87,10 +91,10 @@ export function initToc() {
 
 			history.replaceState(null, "", `#${id}`);
 		});
-	});
+	}
 
 	// ===== 折叠功能 =====
-	document.querySelectorAll("[data-toggle]").forEach((btn) => {
+	for (const btn of document.querySelectorAll("[data-toggle]")) {
 		btn.addEventListener("click", (e) => {
 			e.stopPropagation();
 
@@ -108,7 +112,7 @@ export function initToc() {
 				btn.classList.add("collapsed");
 			}
 		});
-	});
+	}
 
 	// ===== 初始化 hash =====
 	const hash = location.hash.replace("#", "");

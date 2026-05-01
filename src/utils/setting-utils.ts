@@ -24,7 +24,10 @@ export function applyThemeToDocument(theme: LIGHT_DARK_MODE): void {
 	}
 
 	const isDark = document.documentElement.classList.contains("dark");
-	document.documentElement.style.setProperty("--page-bg", isDark ? "#1c1814" : "#fff8f0");
+	document.documentElement.style.setProperty(
+		"--page-bg",
+		isDark ? "#1c1814" : "#fff8f0",
+	);
 
 	const event = new CustomEvent("themeChange", { detail: { theme } });
 	window.dispatchEvent(event);

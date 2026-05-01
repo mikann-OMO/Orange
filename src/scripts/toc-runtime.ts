@@ -38,10 +38,10 @@ export function initToc(options: TocRuntimeOptions = {}) {
 
 	// Clear all active states
 	const clearActive = () => {
-		document.querySelectorAll("[data-toc-id]").forEach((n) => {
+		for (const n of document.querySelectorAll("[data-toc-id]")) {
 			n.classList.remove(...activeClass);
 			n.removeAttribute("data-active");
-		});
+		}
 	};
 
 	// Activate a TOC item and its parents
@@ -96,7 +96,7 @@ export function initToc(options: TocRuntimeOptions = {}) {
 
 	// Setup smooth scroll for all TOC links
 	const setupSmoothScroll = () => {
-		document.querySelectorAll("a[href^='#']").forEach((a) => {
+		for (const a of document.querySelectorAll("a[href^='#']")) {
 			a.addEventListener("click", (e) => {
 				const href = a.getAttribute("href");
 				if (!href) return;
@@ -111,7 +111,7 @@ export function initToc(options: TocRuntimeOptions = {}) {
 				window.scrollTo({ top, behavior: "smooth" });
 				history.replaceState(null, "", href);
 			});
-		});
+		}
 	};
 
 	// Setup IntersectionObserver for scroll spy
@@ -124,11 +124,11 @@ export function initToc(options: TocRuntimeOptions = {}) {
 
 		const io = new IntersectionObserver(
 			(entries) => {
-				entries.forEach((en) => {
+				for (const en of entries) {
 					if (en.isIntersecting) {
 						activate(en.target.id);
 					}
-				});
+				}
 			},
 			{
 				rootMargin: "0px 0px -70% 0px",
@@ -136,12 +136,14 @@ export function initToc(options: TocRuntimeOptions = {}) {
 			},
 		);
 
-		headings.forEach((h) => io.observe(h));
+		for (const h of headings) {
+			io.observe(h);
+		}
 	};
 
 	// Setup toggle collapse/expand
 	const setupToggle = () => {
-		document.querySelectorAll("[data-toggle-for]").forEach((btn) => {
+		for (const btn of document.querySelectorAll("[data-toggle-for]")) {
 			btn.addEventListener("click", (e) => {
 				e.stopPropagation();
 				e.preventDefault();
@@ -171,13 +173,13 @@ export function initToc(options: TocRuntimeOptions = {}) {
 						: "rotate(180deg)";
 				}
 			});
-		});
+		}
 	};
 
 	// Set TOC offset CSS variable
 	const setTocOffset = () => {
 		const off = getOffset();
-		document.documentElement.style.setProperty("--toc-offset", off + "px");
+		document.documentElement.style.setProperty("--toc-offset", `${off}px`);
 	};
 
 	// Initialize everything
@@ -214,7 +216,7 @@ export function initMobileToc() {
 		if (e.target === panel) closePanel();
 	});
 
-	panel.querySelectorAll("a[data-toc-id]").forEach((link) => {
+	for (const link of panel.querySelectorAll("a[data-toc-id]")) {
 		link.addEventListener("click", closePanel);
-	});
+	}
 }

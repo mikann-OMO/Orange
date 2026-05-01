@@ -301,21 +301,25 @@ const jsonLd = {
 					}
 
 					const cardObserver = new IntersectionObserver((entries) => {
-						entries.forEach((entry, index) => {
+					let index = 0;
+					for (const entry of entries) {
 							if (entry.isIntersecting) {
+								const idx = index;
 								setTimeout(() => {
 									entry.target.classList.add('card-enter');
 									(entry.target as HTMLElement).addEventListener('animationend', () => {
 										entry.target.classList.remove('card-enter');
 									}, { once: true });
-								}, index * 20);
+								}, idx * 20);
 								cardObserver.unobserve(entry.target);
 							}
-						});
+							index++;
+						}
 					}, { threshold: 0.1, rootMargin: '20px' });
 
-					document.querySelectorAll('.post-card-animate, .friend-card-animate, .note-card-animate')
-						.forEach(card => cardObserver.observe(card));
+					for (const card of document.querySelectorAll('.post-card-animate, .friend-card-animate, .note-card-animate')) {
+						cardObserver.observe(card);
+					}
 
 					const postContent = document.querySelector('.post-content-animate');
 					if (postContent) {

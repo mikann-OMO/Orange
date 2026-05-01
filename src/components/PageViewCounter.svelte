@@ -81,35 +81,34 @@ onMount(async () => {
 			}
 		}, 2000);
 		return;
-	} else {
-		// Use local storage for local development or when busuanzi is not available
-		useBusuanzi = false;
-		try {
-			if (shouldTrack()) {
-				const result = await incrementPageVisitorCount(slug);
-				if (result.success) {
-					count = result.count;
-					markTracked();
-				} else {
-					error = true;
-					const getResult = await getPageVisitorCount(slug);
-					if (getResult.success) {
-						count = getResult.count;
-					}
-				}
+	}
+	// Use local storage for local development or when busuanzi is not available
+	useBusuanzi = false;
+	try {
+		if (shouldTrack()) {
+			const result = await incrementPageVisitorCount(slug);
+			if (result.success) {
+				count = result.count;
+				markTracked();
 			} else {
-				const result = await getPageVisitorCount(slug);
-				if (result.success) {
-					count = result.count;
-				} else {
-					error = true;
+				error = true;
+				const getResult = await getPageVisitorCount(slug);
+				if (getResult.success) {
+					count = getResult.count;
 				}
 			}
-		} catch {
-			error = true;
-		} finally {
-			loading = false;
+		} else {
+			const result = await getPageVisitorCount(slug);
+			if (result.success) {
+				count = result.count;
+			} else {
+				error = true;
+			}
 		}
+	} catch {
+		error = true;
+	} finally {
+		loading = false;
 	}
 });
 </script>
