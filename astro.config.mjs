@@ -43,7 +43,9 @@ export default defineConfig({
 	// 输出模式，使用服务端模式以支持 API 路由
 	output: "server",
 	// 部署适配器（Vercel）
-	adapter: vercel(),
+	adapter: vercel({
+		webAnalytics: { enabled: true },
+	}),
 	// 启用内置预加载 - 与 View Transitions 兼容
 	prefetch: {
 		prefetchAll: false, // 只预加载用户悬停的链接，减少资源消耗
