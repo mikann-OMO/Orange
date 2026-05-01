@@ -60,8 +60,8 @@
 <script>
     (function () {
         const w = window;
-        if ((w as any).__pageProgressInstalled) return;
-        (w as any).__pageProgressInstalled = true;
+        if (w.__pageProgressInstalled) return;
+        w.__pageProgressInstalled = true;
 
         let isLoading = false;
         let showTimeout: number | null = null;

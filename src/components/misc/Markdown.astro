@@ -28,11 +28,11 @@ const style = Astro.props.style;
 <script>
   (function () {
     const w = window;
-    if ((w as any).__mdCopyInstalled) {
+    if (w.__mdCopyInstalled) {
       requestAnimationFrame(addPreCopyButton);
       return;
     }
-    (w as any).__mdCopyInstalled = true;
+    w.__mdCopyInstalled = true;
 
   function addPreCopyButton() {
     const codeBlocks = Array.from(document.querySelectorAll("pre"));

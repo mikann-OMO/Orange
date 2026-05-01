@@ -180,13 +180,13 @@ const cleanText = (text: string) => text.replace(/\s*#+\s*$/, "").trim();
       let closest = 0;
       let minDist = Infinity;
 
-      this.headings.forEach((heading, idx) => {
+      for (const [idx, heading] of this.headings.entries()) {
         const dist = Math.abs(heading.getBoundingClientRect().top + window.scrollY - scrollY);
         if (dist < minDist) {
           minDist = dist;
           closest = idx;
         }
-      });
+      }
 
       this.active.fill(false);
       this.active[closest] = true;

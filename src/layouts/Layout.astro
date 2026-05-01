@@ -275,8 +275,8 @@ const jsonLd = {
 		<script>
 			(function () {
 				const w = window;
-				if ((w as any).__vtHooksInstalled) return;
-				(w as any).__vtHooksInstalled = true;
+				if (w.__vtHooksInstalled) return;
+				w.__vtHooksInstalled = true;
 
 				const DEFAULT_THEME = 'auto';
 
@@ -415,7 +415,7 @@ type Runtime = {
 	onPageLoad: () => void;
 };
 
-const w = window as any;
+const w = window;
 
 function createRuntime(): Runtime {
 	const rt: Runtime = {
@@ -509,8 +509,8 @@ function createRuntime(): Runtime {
 		const navMenuPanel = document.getElementById("nav-menu-panel");
 		if (!navMenuSwitch || !navMenuPanel) return;
 
-		if ((navMenuSwitch as any).dataset.bound === "true") return;
-		(navMenuSwitch as any).dataset.bound = "true";
+		if (navMenuSwitch.dataset.bound === "true") return;
+		navMenuSwitch.dataset.bound = "true";
 
 		navMenuSwitch.addEventListener(
 			"click",
@@ -547,12 +547,15 @@ w.__layoutRuntime.onPageLoad();
 </script>
 
 <script>
+	import type PhotoSwipeLightbox from "photoswipe/lightbox";
+	import type { PhotoSwipeOptions, SlideData } from "photoswipe";
+
 	(function () {
-		const w = window as any;
+		const w = window;
 		if (w.__photoswipeInstalled) return;
 		w.__photoswipeInstalled = true;
 
-		let lightbox: any;
+		let lightbox: PhotoSwipeLightbox | null = null;
 
 		const hasGalleryItems = () =>
 			!!document.querySelector(".gallery a, .custom-md img, #post-cover img");
@@ -575,7 +578,7 @@ w.__layoutRuntime.onPageLoad();
 				const { default: PhotoSwipeLightbox } = await import("photoswipe/lightbox");
 				const { default: PhotoSwipe } = await import("photoswipe");
 
-				const options: any = {
+				const options: PhotoSwipeOptions = {
 					gallery: ".gallery a, .custom-md img, #post-cover img",
 					pswpModule: PhotoSwipe,
 					closeSVG:
@@ -594,7 +597,7 @@ w.__layoutRuntime.onPageLoad();
 
 				lightbox = new PhotoSwipeLightbox(options);
 
-				lightbox.addFilter("domItemData", (itemData: any, element: any) => {
+				lightbox.addFilter("domItemData", (itemData: SlideData, element: HTMLElement) => {
 					if (element instanceof HTMLImageElement) {
 						itemData.src = element.src;
 						itemData.w = Number(element.naturalWidth || window.innerWidth);

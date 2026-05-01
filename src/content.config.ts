@@ -95,7 +95,13 @@ const friendsCollection = defineCollection({
 	}),
 });
 
-export const collections = {
+export const collections: {
+	posts: typeof postsCollection;
+	exhibition: typeof exhibitionCollection;
+	notes: typeof notesCollection;
+	about: typeof aboutCollection;
+	friends: typeof friendsCollection;
+} = {
 	posts: postsCollection,
 	exhibition: exhibitionCollection,
 	notes: notesCollection,
