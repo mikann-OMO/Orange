@@ -81,7 +81,7 @@ onMount(async () => {
 	disabled={loading}
 	title={liked ? "取消点赞" : "点赞"}
 >
-	<span class:list={["heart", liked ? "on" : "off"]} aria-hidden="true">♥</span>
+	<span class="heart {liked ? 'on' : 'off'}" aria-hidden="true">♥</span>
 	<span class="count">{loading ? "---" : count}</span>
 </button>
 {#if error}

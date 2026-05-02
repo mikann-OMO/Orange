@@ -257,7 +257,7 @@ const jsonLd = {
 		</style>
 	</head>
 	<!-- 性能优化：减少不必要的触摸事件延迟 -->
-	<body class="min-h-screen" class:list={[{"lg:is-home": isHomePage, "enable-banner": enableBanner}]}
+	<body class:list={["min-h-screen", {"lg:is-home": isHomePage, "enable-banner": enableBanner}]}
 		  style="touch-action: manipulation; -webkit-tap-highlight-color: transparent;"
 	>
 		<ConfigCarrier></ConfigCarrier>
