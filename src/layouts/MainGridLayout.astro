@@ -4,8 +4,9 @@ import Navbar from "@components/Navbar.astro";
 
 import type { MarkdownHeading } from "astro";
 import { Background } from "astro-lqip/components";
-import Toc from "../components/Toc.astro";
+import MobileTocDrawer from "../components/control/MobileTocDrawer.astro";
 import ImageWrapper from "../components/misc/ImageWrapper.astro";
+import SidebarToc from "../components/widget/SidebarToc.astro";
 import { siteConfig } from "../config";
 import Layout from "./Layout.astro";
 
@@ -59,7 +60,7 @@ const activeAnnouncement = announcementConfig || announcement;
 <slot slot="head" name="head"></slot>
 
 <div id="top-row" class="z-[999] pointer-events-none fixed top-0 left-0 right-0 w-full">
-    <div id="reading-progress" class="fixed top-0 left-0 right-0 h-1 bg-[var(--primary)] z-[1000] transform-origin-left scale-x-0 transition-transform duration-300"></div>
+    <div id="reading-progress" class="fixed top-0 left-0 right-0 h-[2px] bg-[var(--primary)] z-[1000] transform-origin-left scale-x-0 transition-transform duration-150"></div>
     <div id="navbar-wrapper" class="pointer-events-auto fixed top-0 left-0 right-0 w-full bg-orange-100 dark:bg-stone-800 shadow-md z-[999]">
         <Navbar></Navbar>
     </div>
@@ -69,12 +70,12 @@ const activeAnnouncement = announcementConfig || announcement;
     <div id="banner-wrapper" class="h-dvh w-full fixed top-0 left-0 right-0 z-0 hidden md:block">
         <Background src={bannerLight} cssVariable="--bg-light-lqip">
         <div id="banner-light-container"
-             style={`position:absolute;inset:0;background-image:url(${bannerLight.src}),var(--bg-light-lqip);background-size:cover;background-position:center;background-attachment:fixed;background-color:#fff8f0;`}>
+             style={`position:absolute;inset:0;background-image:url(${bannerLight.src}),var(--bg-light-lqip);background-size:cover;background-position:center;background-attachment:fixed;background-color:#faf8f5;`}>
         </div>
         </Background>
         <Background src={bannerDark} cssVariable="--bg-dark-lqip">
         <div id="banner-dark-container"
-             style={`position:absolute;inset:0;display:none;background-image:url(${bannerDark.src}),var(--bg-dark-lqip);background-size:cover;background-position:center;background-attachment:fixed;background-color:#1c1814;`}>
+             style={`position:absolute;inset:0;display:none;background-image:url(${bannerDark.src}),var(--bg-dark-lqip);background-size:cover;background-position:center;background-attachment:fixed;background-color:#121212;`}>
         </div>
         </Background>
     </div>
@@ -110,9 +111,9 @@ const activeAnnouncement = announcementConfig || announcement;
                             <slot></slot>
                         </div>
                     </main>
-                    <aside class="md:col-span-4 lg:col-span-4 pt-0 mt-0 relative self-start space-y-4">
+                    <aside class="md:col-span-4 lg:col-span-4 pt-0 mt-0 sticky top-20 self-start space-y-4">
                         {activeAnnouncement.enabled && showAnnouncement && (
-                            <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-xl shadow-xl p-4">
+                            <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-2xl shadow-xl p-4">
                                 <div class="flex items-start gap-4">
                                     <div class="flex-shrink-0">
                                         <ImageWrapper
@@ -132,7 +133,7 @@ const activeAnnouncement = announcementConfig || announcement;
 
                         {headings.length > 0 && (
                             <div class="sticky top-4">
-                                <Toc headings={headings} />
+                                <SidebarToc headings={headings} />
                             </div>
                         )}
 
@@ -169,7 +170,7 @@ const activeAnnouncement = announcementConfig || announcement;
                     {!fullWidth && (
                         <aside class="md:col-span-4 lg:col-span-4 pt-0 mt-0 relative self-start">
                             {activeAnnouncement.enabled && showAnnouncement && (
-                                <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-none shadow-xl p-4 mb-6">
+                                <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-2xl shadow-xl p-4 mb-6">
                                     <div class="flex items-start gap-4">
                                         <div class="flex-shrink-0">
                                             <ImageWrapper
@@ -200,6 +201,9 @@ const activeAnnouncement = announcementConfig || announcement;
             )}
 </div>
 
+{isPostPage && headings.length > 0 && (
+    <MobileTocDrawer headings={headings} />
+)}
 
 </Layout>
 
@@ -272,7 +276,7 @@ const activeAnnouncement = announcementConfig || announcement;
 
 @media (max-width: 768px) {
     #content-wrapper {
-        padding-top: 56px;
+        padding-top: 40px;
     }
     
     #main-grid {

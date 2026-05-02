@@ -2,7 +2,7 @@
 
 @layer components {
     .card-base {
-        @apply rounded-xl overflow-hidden transition;
+        @apply rounded-2xl overflow-hidden transition;
     }
     
     .expand-animation {
@@ -241,33 +241,41 @@ img[loading="lazy"][complete] {
 }
 
 :root {
-    /* 页面基础CSS变量 */
-    --page-bg: #fff8f0;
+    --page-bg: #faf8f5;
     --primary: #ff9800;
     --secondary: #e64a19;
     --accent-text: #c2410c;
-    --text-primary: #1c1814;
-    --text-secondary: #6b7280;
-    /* 按钮相关CSS变量 */
-    --btn-plain-bg-hover: rgba(255, 152, 0, 0.05);
-    --btn-plain-bg-active: rgba(255, 152, 0, 0.1);
+    --text-primary: #1a1816;
+    --text-secondary: #78716c;
+    --btn-plain-bg-hover: rgba(255, 152, 0, 0.06);
+    --btn-plain-bg-active: rgba(255, 152, 0, 0.12);
     --btn-content: #e64a19;
     --deep-text: #ff9800;
     --btn-regular-bg: rgba(255, 152, 0, 0.8);
     --btn-regular-bg-hover: rgba(255, 152, 0, 1);
-    --card-border: rgba(255, 152, 0, 0.2);
-    --card-bg: #fff8f0;
-    --radius-large: 0.75rem;
-    /* 页面宽度 */
+    --card-border: rgba(0, 0, 0, 0.06);
+    --card-bg: #ffffff;
+    --radius-large: 1rem;
     --page-width: 68rem;
+    --elevation-1: rgba(0, 0, 0, 0.04);
+    --elevation-2: rgba(0, 0, 0, 0.08);
+    --elevation-3: rgba(0, 0, 0, 0.12);
+    --line-divider: rgba(0, 0, 0, 0.06);
 }
 
 .dark {
-    --page-bg: #1c1814;
-    --accent-text: #ff9800;
-    --text-primary: #f5f5f4;
+    --page-bg: #121212;
+    --accent-text: #ffb74d;
+    --text-primary: #e7e5e4;
     --text-secondary: #a8a29e;
-    --card-bg: #1c1814;
+    --card-bg: #1e1e1e;
+    --card-border: rgba(255, 255, 255, 0.08);
+    --btn-plain-bg-hover: rgba(255, 152, 0, 0.1);
+    --btn-plain-bg-active: rgba(255, 152, 0, 0.18);
+    --elevation-1: rgba(255, 255, 255, 0.04);
+    --elevation-2: rgba(255, 255, 255, 0.08);
+    --elevation-3: rgba(255, 255, 255, 0.12);
+    --line-divider: rgba(255, 255, 255, 0.08);
 }
 
 html {

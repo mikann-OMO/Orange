@@ -37,6 +37,14 @@ enum I18nKey {
 	publishedAt = "publishedAt",
 	license = "license",
 	back_to_notes = "back_to_notes",
+
+	friendsDesc = "friendsDesc",
+	friendUnitText = "friendUnitText",
+	applyForFriendLink = "applyForFriendLink",
+	applyForFriendLinkDesc = "applyForFriendLinkDesc",
+	copyButton = "copyButton",
+	copySuccess = "copySuccess",
+	copyFailed = "copyFailed",
 }
 
 export default I18nKey;

@@ -1,0 +1,94 @@
+---
+import type { MarkdownHeading } from "astro";
+import TocTree from "../toc/TocTree.astro";
+
+interface Props {
+	headings: MarkdownHeading[];
+}
+
+const { headings } = Astro.props;
+---
+
+<div class="mobile-toc-drawer md:hidden" id="mobile-toc-drawer">
+  <button
+    id="mobile-toc-fab"
+    class="fixed bottom-6 right-6 z-[100] w-12 h-12 rounded-full shadow-lg
+           flex items-center justify-center transition-all duration-300
+           bg-[var(--card-bg)] border border-[var(--card-border)]
+           hover:shadow-xl hover:scale-105 active:scale-95"
+    aria-label="Table of Contents"
+  >
+    <svg class="w-5 h-5 text-[var(--primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 6h16M4 12h10M4 18h14"/>
+    </svg>
+  </button>
+
+  <div id="mobile-toc-overlay" class="fixed inset-0 z-[101] bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300"></div>
+
+  <div
+    id="mobile-toc-panel"
+    class="fixed bottom-0 left-0 right-0 z-[102] max-h-[50vh] rounded-t-2xl
+           bg-[var(--card-bg)] border-t border-[var(--card-border)]
+           shadow-2xl overflow-hidden transition-transform duration-300
+           translate-y-full flex flex-col"
+  >
+    <div class="flex items-center justify-between px-4 py-3 border-b border-[var(--line-divider)] shrink-0">
+      <span class="text-sm font-semibold text-[var(--text-primary)]">文章目录</span>
+      <button
+        id="mobile-toc-close"
+        class="w-8 h-8 rounded-full flex items-center justify-center
+               hover:bg-[color-mix(in_srgb,var(--primary)_8%,transparent)] transition-colors"
+        aria-label="Close"
+      >
+        <svg class="w-4 h-4 text-[var(--text-secondary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="overflow-y-auto overscroll-contain p-4 flex-1" data-toc-root>
+      <TocTree headings={headings} />
+    </div>
+  </div>
+</div>
+
+<script>
+  function initMobileTocDrawer() {
+    const fab = document.getElementById('mobile-toc-fab');
+    const overlay = document.getElementById('mobile-toc-overlay');
+    const panel = document.getElementById('mobile-toc-panel');
+    const closeBtn = document.getElementById('mobile-toc-close');
+
+    if (!fab || !overlay || !panel || !closeBtn) return;
+
+    let isOpen = false;
+
+    function openDrawer() {
+      isOpen = true;
+      overlay.style.opacity = '1';
+      overlay.style.pointerEvents = 'auto';
+      panel.style.transform = 'translateY(0)';
+    }
+
+    function closeDrawer() {
+      isOpen = false;
+      overlay.style.opacity = '0';
+      overlay.style.pointerEvents = 'none';
+      panel.style.transform = 'translateY(100%)';
+    }
+
+    fab.addEventListener('click', () => {
+      if (isOpen) closeDrawer();
+      else openDrawer();
+    });
+
+    closeBtn.addEventListener('click', closeDrawer);
+    overlay.addEventListener('click', closeDrawer);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isOpen) closeDrawer();
+    });
+  }
+
+  document.addEventListener('astro:page-load', initMobileTocDrawer);
+  if (document.readyState !== 'loading') initMobileTocDrawer();
+</script>

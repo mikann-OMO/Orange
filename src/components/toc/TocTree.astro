@@ -9,30 +9,52 @@ interface Props {
 const { headings = [] } = Astro.props;
 
 const tree = buildTocTree(headings);
+
+function indentClass(depth: number): string {
+	switch (depth) {
+		case 0:
+			return "";
+		case 1:
+			return "pl-4";
+		case 2:
+			return "pl-8";
+		default:
+			return "pl-10";
+	}
+}
 ---
 
 {tree.map((g) => (
-  <div class="mb-1">
+  <div class="toc-group" data-depth="0">
     <div class="flex items-center">
       <a
         href={`#${g.id}`}
         data-toc-id={g.id}
-        class="toc-item px-2 flex gap-2 relative transition w-full min-h-9 rounded-xl py-2 group hover:bg-orange-950/5 dark:hover:bg-white/10 active:bg-orange-950/10 dark:active:bg-white/20 mt-[2px]"
+        data-depth="0"
+        class="toc-item px-2 flex gap-2 relative transition w-full min-h-8 rounded-lg py-1.5 group
+               hover:bg-[color-mix(in_srgb,var(--primary)_6%,transparent)]
+               active:bg-[color-mix(in_srgb,var(--primary)_12%,transparent)]
+               mt-[2px]"
       >
-        <div class="transition w-5 h-5 shrink-0 rounded-lg text-xs flex items-center justify-center font-bold bg-orange-950/5 dark:bg-white/10 text-[var(--btn-content)]">
+        <div class="transition w-5 h-5 shrink-0 rounded-md text-xs flex items-center justify-center font-bold
+                    bg-[color-mix(in_srgb,var(--primary)_8%,transparent)] text-[var(--primary)]">
           {g.num ?? "•"}
         </div>
-        <div class="transition text-sm overflow-hidden text-ellipsis whitespace-nowrap text-orange-950/60 dark:text-white/60 group-hover:text-orange-950/80 dark:group-hover:text-white/80" title={g.text}>
+        <div class="transition text-sm overflow-hidden text-ellipsis whitespace-nowrap
+                    text-[color-mix(in_srgb,var(--text-primary)_60%,transparent)]
+                    group-hover:text-[color-mix(in_srgb,var(--text-primary)_80%,transparent)]
+                    group-active:text-[var(--primary)]" title={g.text}>
           {g.text}
         </div>
-        <div class="active-indicator absolute right-2 top-1/2 -translate-y-1/2 w-1 h-5 rounded bg-[var(--primary)] opacity-0 transition-opacity"></div>
+        <div class="toc-active-bar absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r bg-[var(--primary)] opacity-0 transition-all"></div>
       </a>
       {g.children.length > 0 && (
         <button
           data-toggle-for={g.id}
-          class="toc-toggle absolute right-12 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full hover:bg-orange-950/10 dark:hover:bg-white/20 transition-colors"
+          class="toc-toggle absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center
+                 rounded-full hover:bg-[color-mix(in_srgb,var(--primary)_12%,transparent)] transition-colors"
         >
-          <svg class="w-4 h-4 text-orange-950/60 dark:text-white/60 transition-transform toc-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg class="w-3.5 h-3.5 text-[color-mix(in_srgb,var(--text-primary)_40%,transparent)] transition-transform duration-200 toc-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M6 9l6 6 6-6"/>
           </svg>
         </button>
@@ -40,71 +62,226 @@ const tree = buildTocTree(headings);
     </div>
 
     {g.children.length > 0 && (
-      <div class="ml-6 pl-2 border-l border-[var(--line-divider)] toc-children" data-children-for={g.id}>
-        {g.children.map((c) => (
-          <div class="mb-1">
-            <div class="flex items-center">
-              <a
-                href={`#${c.id}`}
-                data-toc-id={c.id}
-                data-parent-id={g.id}
-                class="toc-item px-2 flex gap-2 relative transition w-full min-h-9 rounded-xl py-2 group hover:bg-orange-950/5 dark:hover:bg-white/10 active:bg-orange-950/10 dark:active:bg-white/20 mt-1"
-              >
-                <div class="transition w-5 h-5 shrink-0 rounded-lg text-xs flex items-center justify-center font-bold bg-orange-950/5 dark:bg-white/10 text-[var(--btn-content)] opacity-60">
-                  •
-                </div>
-                <div class="transition text-[0.9rem] overflow-hidden text-ellipsis whitespace-nowrap text-orange-950/60 dark:text-white/60 group-hover:text-orange-950/80 dark:group-hover:text-white/80" title={c.text}>
-                  {c.text}
-                </div>
-                <div class="active-indicator absolute right-2 top-1/2 -translate-y-1/2 w-1 h-5 rounded bg-[var(--primary)] opacity-0 transition-opacity"></div>
-              </a>
-              {c.children.length > 0 && (
-                <button
-                  data-toggle-for={c.id}
-                  class="toc-toggle absolute right-12 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full hover:bg-orange-950/10 dark:hover:bg-white/20 transition-colors"
+      <div class={`toc-children overflow-hidden transition-all duration-300 ${indentClass(1)}`}
+           data-children-for={g.id}
+           data-collapsed="true"
+           style="max-height:0;opacity:0">
+        <div class="pl-2 border-l-2 border-[var(--line-divider)]">
+          {g.children.map((c) => (
+            <div class="toc-group" data-depth="1">
+              <div class="flex items-center">
+                <a
+                  href={`#${c.id}`}
+                  data-toc-id={c.id}
+                  data-depth="1"
+                  data-parent-id={g.id}
+                  class="toc-item px-2 flex gap-2 relative transition w-full min-h-8 rounded-lg py-1.5 group
+                         hover:bg-[color-mix(in_srgb,var(--primary)_6%,transparent)]
+                         active:bg-[color-mix(in_srgb,var(--primary)_12%,transparent)]
+                         mt-[2px]"
                 >
-                  <svg class="w-4 h-4 text-orange-950/60 dark:text-white/60 transition-transform toc-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M6 9l6 6 6-6"/>
-                  </svg>
-                </button>
+                  <div class="transition text-[0.8rem] overflow-hidden text-ellipsis whitespace-nowrap
+                              text-[color-mix(in_srgb,var(--text-primary)_45%,transparent)]
+                              group-hover:text-[color-mix(in_srgb,var(--text-primary)_70%,transparent)]
+                              group-active:text-[var(--primary)]" title={c.text}>
+                    {c.text}
+                  </div>
+                  <div class="toc-active-bar absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-4 rounded-r bg-[var(--primary)] opacity-0 transition-all"></div>
+                </a>
+                {c.children.length > 0 && (
+                  <button
+                    data-toggle-for={c.id}
+                    class="toc-toggle absolute right-2 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center
+                           rounded-full hover:bg-[color-mix(in_srgb,var(--primary)_12%,transparent)] transition-colors"
+                  >
+                    <svg class="w-3 h-3 text-[color-mix(in_srgb,var(--text-primary)_40%,transparent)] transition-transform duration-200 toc-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M6 9l6 6 6-6"/>
+                    </svg>
+                  </button>
+                )}
+              </div>
+
+              {c.children.length > 0 && (
+                <div class={`toc-children overflow-hidden transition-all duration-300 ${indentClass(2)}`}
+                     data-children-for={c.id}
+                     data-collapsed="true"
+                     style="max-height:0;opacity:0">
+                  <div class="pl-2 border-l-2 border-[var(--line-divider)]">
+                    {c.children.map((d) => (
+                      <a
+                        href={`#${d.id}`}
+                        data-toc-id={d.id}
+                        data-depth="2"
+                        data-parent-id={c.id}
+                        class="toc-item px-2 flex gap-2 relative transition w-full min-h-8 rounded-lg py-1.5 group
+                               hover:bg-[color-mix(in_srgb,var(--primary)_6%,transparent)]
+                               active:bg-[color-mix(in_srgb,var(--primary)_12%,transparent)]
+                               mt-[2px]"
+                      >
+                        <div class="transition text-[0.75rem] overflow-hidden text-ellipsis whitespace-nowrap
+                                    text-[color-mix(in_srgb,var(--text-primary)_35%,transparent)]
+                                    group-hover:text-[color-mix(in_srgb,var(--text-primary)_60%,transparent)]
+                                    group-active:text-[var(--primary)]" title={d.text}>
+                          {d.text}
+                        </div>
+                        <div class="toc-active-bar absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-3.5 rounded-r bg-[var(--primary)] opacity-0 transition-all"></div>
+                      </a>
+                    ))}
+                  </div>
+                </div>
               )}
             </div>
-
-            {c.children.length > 0 && (
-              <div class="ml-5 pl-2 border-l border-[var(--line-divider)] toc-children" data-children-for={c.id}>
-                {c.children.map((d) => (
-                  <a
-                    href={`#${d.id}`}
-                    data-toc-id={d.id}
-                    data-parent-id={c.id}
-                    class="toc-item px-2 flex gap-2 relative transition w-full min-h-9 rounded-xl py-2 group hover:bg-orange-950/5 dark:hover:bg-white/10 active:bg-orange-950/10 dark:active:bg-white/20 mt-1"
-                  >
-                    <div class="transition w-5 h-5 shrink-0 rounded-lg text-xs flex items-center justify-center font-bold bg-orange-950/5 dark:bg-white/10 text-[var(--btn-content)] opacity-60">
-                      •
-                    </div>
-                    <div class="transition text-[0.9rem] overflow-hidden text-ellipsis whitespace-nowrap text-orange-950/60 dark:text-white/60 group-hover:text-orange-950/80 dark:group-hover:text-white/80" title={d.text}>
-                      {d.text}
-                    </div>
-                    <div class="active-indicator absolute right-2 top-1/2 -translate-y-1/2 w-1 h-5 rounded bg-[var(--primary)] opacity-0 transition-opacity"></div>
-                  </a>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     )}
   </div>
 ))}
 
-<style is:global>
-  .active-indicator{opacity:0;transition:opacity .2s}
-  [data-active="true"] .active-indicator{opacity:1}
-  [data-collapsed="true"] {
-    display: none;
+<script>
+  function initToc() {
+    const root = document.querySelector('[data-toc-root]');
+    if (!root) return;
+
+    const items = Array.from(root.querySelectorAll<HTMLElement>('.toc-item'));
+    if (items.length === 0) return;
+
+    const headingIds = items.map(el => el.getAttribute('href')?.replace('#', '')).filter(Boolean) as string[];
+    const childrenMap = new Map<string, HTMLElement[]>();
+    items.forEach(el => {
+      const parentId = el.getAttribute('data-parent-id');
+      if (parentId) {
+        if (!childrenMap.has(parentId)) childrenMap.set(parentId, []);
+        childrenMap.get(parentId)!.push(el);
+      }
+    });
+
+    function expandChildren(parentId: string) {
+      const container = root!.querySelector<HTMLElement>(`[data-children-for="${parentId}"]`);
+      if (!container || container.getAttribute('data-collapsed') !== 'true') return;
+      container.setAttribute('data-collapsed', 'false');
+      container.style.maxHeight = container.scrollHeight + 'px';
+      container.style.opacity = '1';
+      const toggleIcon = container.previousElementSibling?.querySelector<HTMLElement>('.toc-toggle-icon');
+      if (toggleIcon) toggleIcon.style.transform = 'rotate(180deg)';
+    }
+
+    function collapseChildren(parentId: string) {
+      const container = root!.querySelector<HTMLElement>(`[data-children-for="${parentId}"]`);
+      if (!container || container.getAttribute('data-collapsed') !== 'false') return;
+      container.setAttribute('data-collapsed', 'true');
+      container.style.maxHeight = '0';
+      container.style.opacity = '0';
+      const toggleIcon = container.previousElementSibling?.querySelector<HTMLElement>('.toc-toggle-icon');
+      if (toggleIcon) toggleIcon.style.transform = '';
+    }
+
+    function setActive(id: string | null) {
+      items.forEach(el => {
+        el.setAttribute('data-active', 'false');
+        el.classList.remove('font-semibold');
+        const textEl = el.querySelector<HTMLElement>('div:not(.toc-active-bar):first-of-type');
+        if (textEl) {
+          textEl.style.color = '';
+        }
+      });
+
+      if (!id) return;
+
+      const activeEl = root!.querySelector<HTMLElement>(`[data-toc-id="${id}"]`);
+      if (activeEl) {
+        activeEl.setAttribute('data-active', 'true');
+        activeEl.classList.add('font-semibold');
+        const textEl = activeEl.querySelector<HTMLElement>('div:not(.toc-active-bar):first-of-type');
+        if (textEl) {
+          textEl.style.color = 'var(--primary)';
+        }
+
+        const depth = activeEl.getAttribute('data-depth');
+        if (depth === '1' || depth === '2') {
+          const parentId = activeEl.getAttribute('data-parent-id');
+          if (parentId) expandChildren(parentId);
+        }
+      }
+
+      const h2Items = items.filter(el => el.getAttribute('data-depth') === '0');
+      h2Items.forEach(h2 => {
+        const h2Id = h2.getAttribute('data-toc-id');
+        if (h2Id && h2Id !== id) {
+          const isActive = isParentActive(h2Id, id!);
+          if (isActive) {
+            expandChildren(h2Id);
+          }
+        }
+      });
+    }
+
+    function isParentActive(parentId: string, activeId: string): boolean {
+      const children = childrenMap.get(parentId);
+      if (!children) return false;
+      for (const child of children) {
+        const childId = child.getAttribute('data-toc-id');
+        if (childId === activeId) return true;
+        if (childId && isParentActive(childId, activeId)) return true;
+      }
+      return false;
+    }
+
+    let activeId: string | null = null;
+    const headingEls = headingIds
+      .map(id => document.getElementById(id))
+      .filter(Boolean) as HTMLElement[];
+
+    if (headingEls.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            activeId = entry.target.id;
+            setActive(activeId);
+
+            const tocItem = root!.querySelector<HTMLElement>(`[data-toc-id="${activeId}"]`);
+            if (tocItem) {
+              tocItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+          }
+        }
+      },
+      { rootMargin: '-80px 0px -60% 0px', threshold: 0 }
+    );
+
+    headingEls.forEach(el => observer.observe(el));
+
+    const toggleBtns = root.querySelectorAll<HTMLElement>('.toc-toggle');
+    toggleBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const targetId = btn.getAttribute('data-toggle-for');
+        if (!targetId) return;
+        const container = root!.querySelector<HTMLElement>(`[data-children-for="${targetId}"]`);
+        if (!container) return;
+        const isCollapsed = container.getAttribute('data-collapsed') === 'true';
+        if (isCollapsed) {
+          expandChildren(targetId);
+        } else {
+          collapseChildren(targetId);
+        }
+      });
+    });
   }
-</style>
+
+  document.addEventListener('astro:page-load', initToc);
+  if (document.readyState !== 'loading') initToc();
+</script>
 
 <style>
-  a{user-select:none}
+  .toc-item[data-active="true"] .toc-active-bar {
+    opacity: 1;
+  }
+  .toc-item[data-active="true"] {
+    font-weight: 600;
+  }
+  a { user-select: none; }
 </style>
