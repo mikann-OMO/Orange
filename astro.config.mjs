@@ -43,13 +43,7 @@ export default defineConfig({
 	// 输出模式，使用服务端模式以支持 API 路由
 	output: "server",
 	// 部署适配器（Vercel）
-	adapter: vercel({
-		webAnalytics: {
-			enabled: true,
-		},
-		imageService: true,
-		devImageService: true,
-	}),
+	adapter: vercel(),
 	// 内容安全策略（CSP）- Astro 6 新功能
 	csp: {
 		mode: "auto",
