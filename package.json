@@ -19,7 +19,8 @@
 		"preinstall": "npx only-allow pnpm",
 		"test-cssnano": "node test-cssnano.mjs",
 		"test": "vitest run",
-		"test:watch": "vitest"
+		"test:watch": "vitest",
+		"upgrade": "npx @astrojs/upgrade"
 	},
 	"dependencies": {
 		"@astrojs/check": "^0.9.9",
@@ -61,14 +62,14 @@
 		"sanitize-html": "^2.17.0",
 		"sharp": "^0.34.1",
 		"svelte": "^5.30.1",
-		"tailwindcss": "^3.4.17",
+		"tailwindcss": "^3.4.19",
 		"typescript": "^5.8.3",
 		"ua-parser-js": "^2.0.9",
 		"unist-util-visit": "^5.0.0"
 	},
 	"devDependencies": {
 		"@astrojs/ts-plugin": "^1.10.4",
-		"@biomejs/biome": "1.9.4",
+		"@biomejs/biome": "2.4.9",
 		"@rollup/plugin-yaml": "^4.1.2",
 		"@types/markdown-it": "^14.1.2",
 		"@types/mdast": "^4.0.4",

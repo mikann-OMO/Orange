@@ -1,293 +1,299 @@
 @tailwind components;
 
 @layer components {
-    .card-base {
-        @apply rounded-2xl overflow-hidden transition;
-    }
-    
-    .expand-animation {
-        @apply relative bg-transparent z-0
+	.card-base {
+		@apply rounded-2xl overflow-hidden transition;
+	}
+
+	.expand-animation {
+		@apply relative bg-transparent z-0
         before:absolute before:rounded-[inherit] before:inset-0 before:scale-100 before:-z-10
-    }
-    
-    .link {
-        @apply rounded-md p-1 -m-1 expand-animation;
-    }
-    
-    .link-lg {
-        @apply rounded-md p-1.5 -m-1.5 expand-animation;
-    }
-    
-    .float-panel {
-        @apply top-[5.25rem] rounded-t-none overflow-hidden bg-white/80 dark:bg-stone-800/80 shadow-lg dark:shadow-xl
-    }
-    
-    .float-panel-closed {
-        @apply hidden pointer-events-none
-    }
-    
-    #nav-menu-panel {
-        @apply right-4 border rounded-xl shadow-lg bg-white dark:bg-stone-800
-    }
+	}
 
-    .btn-card {
-        @apply transition flex items-center justify-center hover:bg-orange-950/5 dark:hover:bg-white/10
+	.link {
+		@apply rounded-md p-1 -m-1 expand-animation;
+	}
+
+	.link-lg {
+		@apply rounded-md p-1.5 -m-1.5 expand-animation;
+	}
+
+	.float-panel {
+		@apply top-[5.25rem] rounded-t-none overflow-hidden bg-white/80 dark:bg-stone-800/80 shadow-lg dark:shadow-xl
+	}
+
+	.float-panel-closed {
+		@apply hidden pointer-events-none
+	}
+
+	#nav-menu-panel {
+		@apply right-4 border rounded-xl shadow-lg bg-white dark:bg-stone-800
+	}
+
+	.btn-card {
+		@apply transition flex items-center justify-center hover:bg-orange-950/5 dark:hover:bg-white/10
         active:bg-orange-950/10 dark:active:bg-white/15
-    }
-    
-    .btn-card.disabled {
-        @apply pointer-events-none text-orange-950/10 dark:text-white/10
-    }
-    
-    .btn-plain {
-        @apply relative flex items-center justify-center bg-none
+	}
+
+	.btn-card.disabled {
+		@apply pointer-events-none text-orange-950/10 dark:text-white/10
+	}
+
+	.btn-plain {
+		@apply relative flex items-center justify-center bg-none
         text-orange-950/75 dark:text-white/75;
-        &:not(.scale-animation) {
-            @apply bg-transparent
-        }
-        &.scale-animation {
-            @apply bg-transparent;
-            &.current-theme-btn {
-                @apply text-orange-700
-            }
-        }
-    }
-    
-    .btn-regular {
-        @apply transition flex items-center justify-center bg-white/60 dark:bg-stone-700/80 hover:bg-white/80 dark:hover:bg-stone-600/80 active:bg-white/90 dark:active:bg-stone-500/80 backdrop-blur-sm
+		&:not(.scale-animation) {
+			@apply bg-transparent
+		}
+		&.scale-animation {
+			@apply bg-transparent;
+			&.current-theme-btn {
+				@apply text-orange-700
+			}
+		}
+	}
+
+	.btn-regular {
+		@apply transition flex items-center justify-center bg-white/60 dark:bg-stone-700/80 hover:bg-white/80 dark:hover:bg-stone-600/80 active:bg-white/90 dark:active:bg-stone-500/80 backdrop-blur-sm
         text-gray-900 dark:text-white
-    }
+	}
 
-    .link-underline {
-        @apply transition underline decoration-2 decoration-dashed decoration-orange-950/20 dark:decoration-white/20
+	.link-underline {
+		@apply transition underline decoration-2 decoration-dashed decoration-orange-950/20 dark:decoration-white/20
         hover:decoration-orange-500 active:decoration-orange-600 underline-offset-[0.25rem]
-    }
+	}
 
-    #toc-inner-wrapper {
-        mask-image: linear-gradient(to bottom, transparent 0%, black 2rem, black calc(100% - 2rem), transparent 100%);
-    }
+	#toc-inner-wrapper {
+		mask-image: linear-gradient(
+			to bottom,
+			transparent 0%,
+			black 2rem,
+			black calc(100% - 2rem),
+			transparent 100%
+		);
+	}
 
-    .hide-scrollbar {
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-    }
-    
-    .hide-scrollbar::-webkit-scrollbar {
-        display: none;
-    }
+	.hide-scrollbar {
+		scrollbar-width: none;
+		-ms-overflow-style: none;
+	}
 
-    .text-90 {
-        @apply text-orange-950/90 dark:text-white/90
-    }
-    
-    .text-75 {
-        @apply text-orange-950/75 dark:text-white/75
-    }
-    
-    .text-50 {
-        @apply text-orange-950/50 dark:text-white/50
-    }
-    
-    .text-30 {
-        @apply text-orange-950/30 dark:text-white/30
-    }
-    
-    .text-25 {
-        @apply text-orange-950/25 dark:text-white/25
-    }
+	.hide-scrollbar::-webkit-scrollbar {
+		display: none;
+	}
 
-    .meta-icon {
-        @apply w-8 h-8 transition rounded-md flex items-center justify-center bg-white/60 dark:bg-gray-700/80 backdrop-blur-sm
+	.text-90 {
+		@apply text-orange-950/90 dark:text-white/90
+	}
+
+	.text-75 {
+		@apply text-orange-950/75 dark:text-white/75
+	}
+
+	.text-50 {
+		@apply text-orange-950/50 dark:text-white/50
+	}
+
+	.text-30 {
+		@apply text-orange-950/30 dark:text-white/30
+	}
+
+	.text-25 {
+		@apply text-orange-950/25 dark:text-white/25
+	}
+
+	.meta-icon {
+		@apply w-8 h-8 transition rounded-md flex items-center justify-center bg-white/60 dark:bg-gray-700/80 backdrop-blur-sm
         text-gray-900 dark:text-white mr-2
-    }
-    
-    .with-divider {
-        @apply before:content-["/"] before:ml-1.5 before:mr-1.5 before:text-gray-400 dark:before:text-gray-600 before:text-sm
-        before:font-medium before:first-of-type:hidden before:transition
-    }
+	}
 
-    .btn-regular-dark {
-        @apply flex items-center justify-center
+	.with-divider {
+		@apply before:content-["/"] before:ml-1.5 before:mr-1.5 before:text-gray-400 dark:before:text-gray-600 before:text-sm
+        before:font-medium before:first-of-type:hidden before:transition
+	}
+
+	.btn-regular-dark {
+		@apply flex items-center justify-center
         bg-gray-700 hover:bg-gray-600 active:bg-gray-500
         dark:bg-gray-800 dark:hover:bg-gray-700 dark:active:bg-gray-600
-    }
-    
-    .btn-regular-dark.success {
-        @apply bg-green-500 dark:bg-green-500
-    }
+	}
 
-    .copy-btn-icon {
-        @apply absolute top-1/2 left-1/2 transition -translate-x-1/2 -translate-y-1/2
-    }
-    
-    .copy-btn .copy-icon {
-        @apply opacity-100 fill-white dark:fill-white/75
-    }
-    
-    .copy-btn.success .copy-icon {
-        @apply opacity-0 fill-gray-900 dark:fill-white
-    }
-    
-    .copy-btn .success-icon {
-        @apply opacity-0
-    }
-    
-    .copy-btn.success .success-icon {
-        @apply opacity-100
-    }
+	.btn-regular-dark.success {
+		@apply bg-green-500 dark:bg-green-500
+	}
+
+	.copy-btn-icon {
+		@apply absolute top-1/2 left-1/2 transition -translate-x-1/2 -translate-y-1/2
+	}
+
+	.copy-btn .copy-icon {
+		@apply opacity-100 fill-white dark:fill-white/75
+	}
+
+	.copy-btn.success .copy-icon {
+		@apply opacity-0 fill-gray-900 dark:fill-white
+	}
+
+	.copy-btn .success-icon {
+		@apply opacity-0
+	}
+
+	.copy-btn.success .success-icon {
+		@apply opacity-100
+	}
 }
 
-.custom-md img, #post-cover img {
-    @apply cursor-zoom-in
+.custom-md img,
+#post-cover img {
+	@apply cursor-zoom-in
 }
 
 @media (max-width: 640px) {
-    .custom-md img {
-        float: none !important;
-        display: block !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        margin: 1rem auto !important;
-    }
-    
-    /* 九华山游记图片样式，确保移动端和PC端一致 */
-    .jiuhuashan-gallery .custom-md img {
-        float: none !important;
-        display: block !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        margin: 1rem auto !important;
-    }
-    
-    /* 九华山游记中的弹性布局图片容器 */
-    .jiuhuashan-gallery div[style*="display: flex"] {
-        display: flex !important;
-        flex-wrap: nowrap !important;
-        gap: 5px !important;
-        margin: 20px 0 !important;
-        overflow-x: auto !important;
-        padding: 10px 0 !important;
-    }
-    
-    /* 九华山游记中的图片 */
-    .jiuhuashan-gallery div[style*="display: flex"] img {
-        width: 80px !important;
-        height: 80px !important;
-        object-fit: cover !important;
-        border-radius: 4px !important;
-        transition: transform 0.2s ease !important;
-        cursor: pointer !important;
-        flex-shrink: 0 !important;
-    }
-    
+	.custom-md img {
+		float: none !important;
+		display: block !important;
+		width: 100% !important;
+		max-width: 100% !important;
+		margin: 1rem auto !important;
+	}
 
+	/* 九华山游记图片样式，确保移动端和PC端一致 */
+	.jiuhuashan-gallery .custom-md img {
+		float: none !important;
+		display: block !important;
+		width: 100% !important;
+		max-width: 100% !important;
+		margin: 1rem auto !important;
+	}
+
+	/* 九华山游记中的弹性布局图片容器 */
+	.jiuhuashan-gallery div[style*="display: flex"] {
+		display: flex !important;
+		flex-wrap: nowrap !important;
+		gap: 5px !important;
+		margin: 20px 0 !important;
+		overflow-x: auto !important;
+		padding: 10px 0 !important;
+	}
+
+	/* 九华山游记中的图片 */
+	.jiuhuashan-gallery div[style*="display: flex"] img {
+		width: 80px !important;
+		height: 80px !important;
+		object-fit: cover !important;
+		border-radius: 4px !important;
+		transition: transform 0.2s ease !important;
+		cursor: pointer !important;
+		flex-shrink: 0 !important;
+	}
 }
 
 ::selection {
-    background-color: color-mix(in srgb, var(--primary) 20%, transparent)
+	background-color: color-mix(in srgb, var(--primary) 20%, transparent);
 }
 
 .collapsed {
-    height: var(--collapsedHeight);
+	height: var(--collapsedHeight);
 }
 
 /* 为PC端使用浏览器默认滚动条 */
 @media (min-width: 769px) {
-    /* 移除所有自定义滚动条样式，使用浏览器默认样式 */
-    body {
-        overflow-y: auto;
-    }
+	/* 移除所有自定义滚动条样式，使用浏览器默认样式 */
+	body {
+		overflow-y: auto;
+	}
 }
 
 /* 移动端保持无滚动条 */
 @media (max-width: 768px) {
-    ::-webkit-scrollbar-horizontal {
-        display: none;
-    }
-    
-    body {
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-    }
+	::-webkit-scrollbar-horizontal {
+		display: none;
+	}
+
+	body {
+		scrollbar-width: none;
+		-ms-overflow-style: none;
+	}
 }
 
-html, body {
-    overflow-x: hidden;
-    width: 100%;
+html,
+body {
+	overflow-x: hidden;
+	width: 100%;
 }
 
 img {
-    background-color: rgba(255, 255, 255, 0.8);
-    transition: opacity 0.3s ease;
-    opacity: 1;
+	background-color: rgba(255, 255, 255, 0.8);
+	transition: opacity 0.3s ease;
+	opacity: 1;
 }
 
 img[src]:not([src=""]) {
-    background: transparent;
+	background: transparent;
 }
 
 img[loading="lazy"] {
-    opacity: 1;
+	opacity: 1;
 }
 
 img[loading="lazy"].loaded,
 img[loading="lazy"][complete] {
-    opacity: 1;
+	opacity: 1;
 }
 
 #post-container {
-    content-visibility: auto;
-    contain-intrinsic-size: 0 500px;
+	content-visibility: auto;
+	contain-intrinsic-size: 0 500px;
 }
 
 :root {
-    --page-bg: #faf8f5;
-    --primary: #ff9800;
-    --secondary: #e64a19;
-    --accent-text: #c2410c;
-    --text-primary: #1a1816;
-    --text-secondary: #78716c;
-    --btn-plain-bg-hover: rgba(255, 152, 0, 0.06);
-    --btn-plain-bg-active: rgba(255, 152, 0, 0.12);
-    --btn-content: #e64a19;
-    --deep-text: #ff9800;
-    --btn-regular-bg: rgba(255, 152, 0, 0.8);
-    --btn-regular-bg-hover: rgba(255, 152, 0, 1);
-    --card-border: rgba(0, 0, 0, 0.06);
-    --card-bg: #ffffff;
-    --radius-large: 1rem;
-    --page-width: 68rem;
-    --elevation-1: rgba(0, 0, 0, 0.04);
-    --elevation-2: rgba(0, 0, 0, 0.08);
-    --elevation-3: rgba(0, 0, 0, 0.12);
-    --line-divider: rgba(0, 0, 0, 0.06);
+	--page-bg: #faf8f5;
+	--primary: #ff9800;
+	--secondary: #e64a19;
+	--accent-text: #c2410c;
+	--text-primary: #1a1816;
+	--text-secondary: #78716c;
+	--btn-plain-bg-hover: rgba(255, 152, 0, 0.06);
+	--btn-plain-bg-active: rgba(255, 152, 0, 0.12);
+	--btn-content: #e64a19;
+	--deep-text: #ff9800;
+	--btn-regular-bg: rgba(255, 152, 0, 0.8);
+	--btn-regular-bg-hover: rgba(255, 152, 0, 1);
+	--card-border: rgba(0, 0, 0, 0.06);
+	--card-bg: #ffffff;
+	--radius-large: 1rem;
+	--page-width: 68rem;
+	--elevation-1: rgba(0, 0, 0, 0.04);
+	--elevation-2: rgba(0, 0, 0, 0.08);
+	--elevation-3: rgba(0, 0, 0, 0.12);
+	--line-divider: rgba(0, 0, 0, 0.06);
 }
 
 .dark {
-    --page-bg: #121212;
-    --accent-text: #ffb74d;
-    --text-primary: #e7e5e4;
-    --text-secondary: #a8a29e;
-    --card-bg: #1e1e1e;
-    --card-border: rgba(255, 255, 255, 0.08);
-    --btn-plain-bg-hover: rgba(255, 152, 0, 0.1);
-    --btn-plain-bg-active: rgba(255, 152, 0, 0.18);
-    --elevation-1: rgba(255, 255, 255, 0.04);
-    --elevation-2: rgba(255, 255, 255, 0.08);
-    --elevation-3: rgba(255, 255, 255, 0.12);
-    --line-divider: rgba(255, 255, 255, 0.08);
+	--page-bg: #121212;
+	--accent-text: #ffb74d;
+	--text-primary: #e7e5e4;
+	--text-secondary: #a8a29e;
+	--card-bg: #1e1e1e;
+	--card-border: rgba(255, 255, 255, 0.08);
+	--btn-plain-bg-hover: rgba(255, 152, 0, 0.1);
+	--btn-plain-bg-active: rgba(255, 152, 0, 0.18);
+	--elevation-1: rgba(255, 255, 255, 0.04);
+	--elevation-2: rgba(255, 255, 255, 0.08);
+	--elevation-3: rgba(255, 255, 255, 0.12);
+	--line-divider: rgba(255, 255, 255, 0.08);
 }
 
 html {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-    background-color: var(--page-bg);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-rendering: optimizeLegibility;
+	background-color: var(--page-bg);
 }
 
 /* 优化 backdrop-blur 渲染，减少闪烁 */
 .backdrop-blur-3xl,
 .backdrop-blur-2xl {
-    transform: translateZ(0);
-    will-change: backdrop-filter;
+	transform: translateZ(0);
+	will-change: backdrop-filter;
 }

@@ -1,107 +1,118 @@
 .custom-md {
-    h1 {
-        @apply text-3xl;
-    }
+	h1 {
+		@apply text-3xl;
+	}
 
-    h1, h2, h3, h4, h5, h6 {
-        .anchor {
-            @apply transition -m-0.5 ml-[0.2ch] p-0.5 select-none opacity-0 no-underline !important;
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		.anchor {
+			@apply transition -m-0.5 ml-[0.2ch] p-0.5 select-none opacity-0 no-underline !important;
 
-            .anchor-icon {
-                @apply mx-[0.45ch] !important;
-            }
-        }
+			.anchor-icon {
+				@apply mx-[0.45ch] !important;
+			}
+		}
 
-        &:hover {
-            .anchor {
-                @apply opacity-100 !important;
-            }
-        }
-    }
+		&:hover {
+			.anchor {
+				@apply opacity-100 !important;
+			}
+		}
+	}
 
-    a:not(.no-styling) {
-        @apply relative bg-none font-medium text-orange-700
+	a:not(.no-styling) {
+		@apply relative bg-none font-medium text-orange-700
         underline decoration-orange-950/20 dark:decoration-white/20 decoration-1 decoration-dashed underline-offset-4;
-        box-decoration-break: clone;
-        -webkit-box-decoration-break: clone;
-    
-        &:hover, &:active {
-            @apply decoration-transparent;
-            background: rgba(230, 74, 25, 0.05);
-            border-bottom: 1px dashed #e64a19;
-            text-decoration: none;
-        }
-    }
+		box-decoration-break: clone;
+		-webkit-box-decoration-break: clone;
 
-    @media (prefers-color-scheme: dark) {
-        a:not(.no-styling) {
-            &:hover, &:active {
-                background: rgba(255, 255, 255, 0.1);
-            }
-        }
-    }
+		&:hover,
+		&:active {
+			@apply decoration-transparent;
+			background: rgba(230, 74, 25, 0.05);
+			border-bottom: 1px dashed #e64a19;
+			text-decoration: none;
+		}
+	}
 
-    code {
-        @apply bg-orange-950/5 dark:bg-white/10 text-orange-700 px-1 py-0.5 rounded-md overflow-hidden;
+	@media (prefers-color-scheme: dark) {
+		a:not(.no-styling) {
+			&:hover,
+			&:active {
+				background: rgba(255, 255, 255, 0.1);
+			}
+		}
+	}
 
-        font-family: 'JetBrains Mono Variable', 'JetBrains Mono', 'Fira Code', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-        &:before {
-            content:none;
-        }
-        &:after {
-            content:none;
-        }
+	code {
+		@apply bg-orange-950/5 dark:bg-white/10 text-orange-700 px-1 py-0.5 rounded-md overflow-hidden;
 
-        counter-reset: line;
-        span.line {
-            &:before {
-                @apply text-white/25 mr-4 w-4 inline-block;
-                content: counter(line);
-                counter-increment: line;
-                direction: rtl;
-            }
-            &:last-child:empty, &:last-child:has(> span:empty:only-child) {
-                display: none;
-            }
-        }
-    }
+		font-family:
+			"JetBrains Mono Variable", "JetBrains Mono", "Fira Code", Consolas, Monaco, "Andale Mono",
+			"Ubuntu Mono", monospace;
+		&:before {
+			content: none;
+		}
+		&:after {
+			content: none;
+		}
 
-    pre {
-        @apply bg-gray-900 dark:bg-gray-950 !important;
-        @apply rounded-xl px-5;
+		counter-reset: line;
+		span.line {
+			&:before {
+				@apply text-white/25 mr-4 w-4 inline-block;
+				content: counter(line);
+				counter-increment: line;
+				direction: rtl;
+			}
+			&:last-child:empty,
+			&:last-child:has(> span:empty:only-child) {
+				display: none;
+			}
+		}
+	}
 
-        code {
-            @apply bg-transparent text-inherit text-sm p-0;
+	pre {
+		@apply bg-gray-900 dark:bg-gray-950 !important;
+		@apply rounded-xl px-5;
 
-            ::selection {
-                @apply bg-orange-500/20;
-            }
-        }
-    }
+		code {
+			@apply bg-transparent text-inherit text-sm p-0;
 
-    ul, ol {
-        li::marker {
-            @apply text-orange-700;
-        }
-    }
+			::selection {
+				@apply bg-orange-500/20;
+			}
+		}
+	}
 
-    blockquote {
-        @apply not-italic border-transparent relative;
-        font-weight: inherit;
+	ul,
+	ol {
+		li::marker {
+			@apply text-orange-700;
+		}
+	}
 
-        &:before {
-            @apply content-[''] absolute -left-1 block transition bg-white/60 h-full w-1 rounded-full;
-        }
+	blockquote {
+		@apply not-italic border-transparent relative;
+		font-weight: inherit;
 
-        @media (prefers-color-scheme: dark) {
-            blockquote:before {
-                @apply bg-gray-700/80;
-            }
-        }
+		&:before {
+			@apply content-[''] absolute -left-1 block transition bg-white/60 h-full w-1 rounded-full;
+		}
 
-        p:before, p:after {
-            @apply content-none;
-        }
+		@media (prefers-color-scheme: dark) {
+			blockquote:before {
+				@apply bg-gray-700/80;
+			}
+		}
 
-    }
+		p:before,
+		p:after {
+			@apply content-none;
+		}
+	}
 }

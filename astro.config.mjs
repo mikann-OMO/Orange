@@ -43,7 +43,24 @@ export default defineConfig({
 	// 输出模式，使用服务端模式以支持 API 路由
 	output: "server",
 	// 部署适配器（Vercel）
-	adapter: vercel(),
+	adapter: vercel({
+		webAnalytics: {
+			enabled: true,
+		},
+		imageService: true,
+		devImageService: true,
+	}),
+	// 内容安全策略（CSP）- Astro 6 新功能
+	csp: {
+		mode: "auto",
+		directives: {
+			"default-src": ["'self'"],
+			"script-src": ["'self'", "'unsafe-inline'"],
+			"style-src": ["'self'", "'unsafe-inline'"],
+			"img-src": ["'self'", "data:", "https:"],
+			"font-src": ["'self'"],
+		},
+	},
 	// 启用内置预加载 - 与 View Transitions 兼容
 	prefetch: {
 		prefetchAll: false, // 只预加载用户悬停的链接，减少资源消耗
@@ -62,6 +79,8 @@ export default defineConfig({
 		minify: "esbuild",
 		// 是否生成 sourcemap
 		sourcemap: false,
+		// 清理输出目录
+		clean: true,
 	},
 
 	// 集成配置
@@ -84,7 +103,9 @@ export default defineConfig({
 			},
 		}),
 		// 站点地图集成
-		sitemap(),
+		sitemap({
+			filter: (page) => !page.includes("draft"),
+		}),
 	],
 
 	// Markdown 配置
@@ -137,6 +158,11 @@ export default defineConfig({
 				},
 			],
 		],
+		// 语法高亮
+		shikiConfig: {
+			theme: "github-dark",
+			wrap: true,
+		},
 	},
 
 	// 启用 HTML 压缩
@@ -169,74 +195,64 @@ export default defineConfig({
 			}),
 			// PWA 配置 - 暂时禁用
 			// VitePWA({
-			// 注册类型
-			// registerType: "autoUpdate",
-			// 包含的静态资源
-			// includeAssets: ["favicon/**/*", "images/**/*"],
-			// 应用清单
-			// manifest: {
-			// name: "我的博客", // 应用名称
-			// short_name: "博客", // 应用短名称
-			// description: "我的个人技术博客", // 应用描述
-			// theme_color: "#ffffff", // 主题颜色
-			// background_color: "#ffffff", // 背景颜色
-			// 应用图标
-			// icons: [
-			// {
-			// src: "favicon/favicon-light-192.webp",
-			// sizes: "192x192",
-			// type: "image/webp",
-			// purpose: "any maskable",
-			// },
-			// {
-			// src: "favicon/favicon-light-512.webp",
-			// sizes: "512x512",
-			// type: "image/webp",
-			// purpose: "any maskable",
-			// },
-			// ],
-			// },
-			// Workbox 配置
-			// workbox: {
-			// 缓存模式
-			// globPatterns: ["**/*.{js,css,html,ico,png,svg,webp,avif}"],
-			// globIgnores: ["**/*.yaml"],
-			// 最大缓存文件大小（字节）
-			// maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10 MiB
-			// 运行时缓存
-			// runtimeCaching: [
-			// {
-			// Google 字体缓存
-			// urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-			// handler: "CacheFirst",
-			// options: {
-			// cacheName: "google-fonts-cache",
-			// expiration: {
-			// maxEntries: 10,
-			// maxAgeSeconds: 60 * 60 * 24 * 365, // 1 年
-			// },
-			// cacheableResponse: {
-			// statuses: [0, 200],
-			// },
-			// },
-			// },
-			// {
-			// Google 字体静态资源缓存
-			// urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
-			// handler: "CacheFirst",
-			// options: {
-			// cacheName: "google-fonts-static-cache",
-			// expiration: {
-			// maxEntries: 10,
-			// maxAgeSeconds: 60 * 60 * 24 * 365, // 1 年
-			// },
-			// cacheableResponse: {
-			// statuses: [0, 200],
-			// },
-			// },
-			// },
-			// ],
-			// },
+			//  registerType: "autoUpdate",
+			//  includeAssets: ["favicon/**/*", "images/**/*"],
+			//  manifest: {
+			//      name: "我的博客",
+			//      short_name: "博客",
+			//      description: "我的个人技术博客",
+			//      theme_color: "#ffffff",
+			//      background_color: "#ffffff",
+			//      icons: [
+			//          {
+			//              src: "favicon/favicon-light-192.webp",
+			//              sizes: "192x192",
+			//              type: "image/webp",
+			//              purpose: "any maskable",
+			//          },
+			//          {
+			//              src: "favicon/favicon-light-512.webp",
+			//              sizes: "512x512",
+			//              type: "image/webp",
+			//              purpose: "any maskable",
+			//          },
+			//      ],
+			//  },
+			//  workbox: {
+			//      globPatterns: ["**/*.{js,css,html,ico,png,svg,webp,avif}"],
+			//      globIgnores: ["**/*.yaml"],
+			//      maximumFileSizeToCacheInBytes: 10 * 1024 * 1024,
+			//      runtimeCaching: [
+			//          {
+			//              urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+			//              handler: "CacheFirst",
+			//              options: {
+			//                  cacheName: "google-fonts-cache",
+			//                  expiration: {
+			//                      maxEntries: 10,
+			//                      maxAgeSeconds: 60 * 60 * 24 * 365,
+			//                  },
+			//                  cacheableResponse: {
+			//                      statuses: [0, 200],
+			//                  },
+			//              },
+			//          },
+			//          {
+			//              urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
+			//              handler: "CacheFirst",
+			//              options: {
+			//                  cacheName: "google-fonts-static-cache",
+			//                  expiration: {
+			//                      maxEntries: 10,
+			//                      maxAgeSeconds: 60 * 60 * 24 * 365,
+			//                  },
+			//                  cacheableResponse: {
+			//                      statuses: [0, 200],
+			//                  },
+			//              },
+			//          },
+			//      ],
+			//  },
 			// }),
 		],
 
@@ -264,7 +280,6 @@ export default defineConfig({
 							if (id.includes("photoswipe")) return "photoswipe";
 							if (id.includes("katex")) return "katex";
 							if (id.includes("markdown-it")) return "markdown";
-							if (id.includes("overlayscrollbars")) return "overlayscrollbars";
 							if (id.includes("iconify")) return "iconify";
 							if (id.includes("svelte")) return "svelte";
 							if (id.includes("@astrojs")) return "astro";

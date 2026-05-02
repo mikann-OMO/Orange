@@ -1,5 +1,5 @@
 {
-	"$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.4.9/schema.json",
 	"vcs": {
 		"enabled": true,
 		"clientKind": "git",
@@ -7,46 +7,77 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"ignore": [
-			"src/**/*.css",
-			"src/public/**/*",
-			"dist/**/*",
-			"node_modules/**/*",
-			".astro/**/*"
-		]
+		"includes": ["src/**/*.(js|ts|jsx|tsx|svelte|vue|json|jsonc|md|mdx|html)"],
+		"experimentalScannerIgnores": ["**/*.css", "src/public/**", "dist/**", "node_modules/**", ".astro/**"]
 	},
 	"formatter": {
 		"enabled": true,
-		"indentStyle": "tab"
+		"indentStyle": "tab",
+		"lineWidth": 100,
+		"lineEnding": "lf",
+		"formatWithErrors": true
 	},
-	"organizeImports": {
-		"enabled": true
+	"assist": {
+		"actions": {
+			"source": {
+				"organizeImports": "on"
+			}
+		}
 	},
 	"linter": {
 		"enabled": true,
 		"rules": {
 			"recommended": true,
+			"a11y": {
+				"recommended": true
+			},
+			"correctness": {
+				"recommended": true,
+				"noUnusedVariables": "error",
+				"noUndeclaredVariables": "error"
+			},
 			"complexity": {
+				"recommended": true,
 				"noForEach": "error"
 			},
+			"performance": {
+				"recommended": true
+			},
+			"security": {
+				"recommended": true
+			},
 			"style": {
+				"recommended": true,
 				"noUselessElse": "error",
 				"useNodejsImportProtocol": "error",
-				"noNonNullAssertion": "warn"
+				"noNonNullAssertion": "warn",
+				"useConst": "error"
 			},
 			"suspicious": {
-				"noExplicitAny": "error"
+				"recommended": true,
+				"noExplicitAny": "error",
+				"noDoubleEquals": "error"
 			}
 		}
 	},
 	"javascript": {
 		"formatter": {
-			"quoteStyle": "double"
+			"quoteStyle": "double",
+			"trailingCommas": "es5",
+			"semicolons": "always",
+			"arrowParentheses": "always",
+			"bracketSpacing": true,
+			"bracketSameLine": false
+		}
+	},
+	"json": {
+		"formatter": {
+			"trailingCommas": "none"
 		}
 	},
 	"overrides": [
 		{
-			"include": ["*.svelte", "*.vue"],
+			"includes": ["*.svelte", "*.vue"],
 			"linter": {
 				"rules": {
 					"style": {
