@@ -48,11 +48,11 @@ onMount(() => {
 	<MessageEditor {slug} parentId={null} on:added={handleMessageAdded} />
 
 	{#if loading}
-		<div class="py-8 text-center text-gray-500">加载中...</div>
+		<div class="py-8 text-center text-[var(--text-secondary)]">加载中...</div>
 	{:else if error}
-		<div class="py-8 text-center text-red-500">{error}</div>
+		<div class="py-8 text-center text-[#ef4444]">{error}</div>
 	{:else if messages.length === 0}
-		<div class="py-8 text-center text-gray-500">还没有留言，快来抢沙发吧！</div>
+		<div class="py-8 text-center text-[var(--text-secondary)]">还没有留言，快来抢沙发吧！</div>
 	{:else}
 		<div class="message-list space-y-6 mt-6">
 			{#each messages as message (message.id)}

@@ -3,19 +3,20 @@ import ImageWrapper from "./misc/ImageWrapper.astro";
 interface FriendData {
 	name: string;
 	avatar: string;
-	url: string;
+	url?: string;
 	description: string;
 	rarity: "common" | "rare" | "epic" | "legendary";
 	status?: "online" | "offline" | "busy";
+	applyMode?: boolean;
 }
 
 const props = Astro.props as FriendData;
 
 const rarityConfig = {
-	common: { color: "#9E9E9E", stars: 2 },
+	common: { color: "var(--text-secondary)", stars: 2 },
 	rare: { color: "#4CAF50", stars: 3 },
 	epic: { color: "#9C27B0", stars: 4 },
-	legendary: { color: "#FF6B35", stars: 5 },
+	legendary: { color: "var(--secondary)", stars: 5 },
 };
 
 const config = rarityConfig[props.rarity] || rarityConfig.common;
@@ -23,93 +24,122 @@ const rarityColor = config.color;
 const stars = Array(5).fill(0);
 const activeStars = config.stars;
 ---
-<a 
-    href={props.url} 
-    target="_blank" 
-    rel="noopener noreferrer"
-    class="friend-card"
-    data-rarity={props.rarity}
-    style={`--rarity-color: ${rarityColor}`}
-    aria-label={`访问 ${props.name} 的网站`}
->
-    <div class="card-inner">
-        <div class="card-background">
-            <div class="avatar-blur" style={`background-image: url(${props.avatar})`}></div>
-        </div>
-        <div class="card-glow"></div>
-        <div class="avatar-section">
-            <ImageWrapper
-                src={props.avatar}
-                alt={props.name}
-                class="avatar"
-            />
-        </div>
-        <div class="info-section">
-            <h3 class="friend-name font-['SimSun',serif]">{props.name}</h3>
-            <p class="friend-desc">{props.description}</p>
-        </div>
-        <div class="stars-section">
-            {stars.map((_, index) => (
-                <div class:list={["star", { "star-active": index < activeStars, "star-inactive": index >= activeStars }]}>★</div>
-            ))}
-        </div>
-        <div class="rarity-indicator">
-            <span class="rarity-text">{props.rarity.toUpperCase()}</span>
+{props.applyMode ? (
+    <div 
+        class="friend-card apply-friend-card"
+        data-rarity={props.rarity}
+        style={`--rarity-color: ${rarityColor}`}
+    >
+        <div class="card-inner">
+            <div class="card-background">
+                <div class="avatar-blur" style={`background-image: url(${props.avatar})`}></div>
+            </div>
+            <div class="card-glow"></div>
+            <div class="avatar-section">
+                <ImageWrapper
+                    src={props.avatar}
+                    alt={props.name}
+                    class="avatar"
+                />
+            </div>
+            <div class="info-section">
+                <h3 class="friend-name font-['SimSun',serif]">{props.name}</h3>
+                <p class="friend-desc">{props.description}</p>
+            </div>
+            <div class="stars-section">
+                {stars.map((_, index) => (
+                    <div class:list={["star", { "star-active": index < activeStars, "star-inactive": index >= activeStars }]}>★</div>
+                ))}
+            </div>
+            <div class="rarity-indicator">
+                <span class="rarity-text">{props.rarity.toUpperCase()}</span>
+            </div>
+            <slot />
         </div>
     </div>
-</a>
+) : (
+    <a 
+        href={props.url} 
+        target="_blank" 
+        rel="noopener noreferrer"
+        class="friend-card"
+        data-rarity={props.rarity}
+        style={`--rarity-color: ${rarityColor}`}
+        aria-label={`访问 ${props.name} 的网站`}
+    >
+        <div class="card-inner">
+            <div class="card-background">
+                <div class="avatar-blur" style={`background-image: url(${props.avatar})`}></div>
+            </div>
+            <div class="card-glow"></div>
+            <div class="avatar-section">
+                <ImageWrapper
+                    src={props.avatar}
+                    alt={props.name}
+                    class="avatar"
+                />
+            </div>
+            <div class="info-section">
+                <h3 class="friend-name font-['SimSun',serif]">{props.name}</h3>
+                <p class="friend-desc">{props.description}</p>
+            </div>
+            <div class="stars-section">
+                {stars.map((_, index) => (
+                    <div class:list={["star", { "star-active": index < activeStars, "star-inactive": index >= activeStars }]}>★</div>
+                ))}
+            </div>
+            <div class="rarity-indicator">
+                <span class="rarity-text">{props.rarity.toUpperCase()}</span>
+            </div>
+        </div>
+    </a>
+)}
 
 <style>
+/* ===== PC端：竖卡 ===== */
 .friend-card {
     width: 130px;
     height: 480px;
     perspective: 1000px;
     display: block;
     margin: 0 auto;
+    text-decoration: none;
+    color: inherit;
 }
 
 .card-inner {
     position: relative;
-    background: rgba(255, 250, 240, 0.4);
-    border: none;
+    background: color-mix(in srgb, var(--page-bg) 40%, transparent);
     border-radius: 0;
-    padding: 1rem;
+    padding: 1rem 1rem 1rem;
     padding-top: 140px;
     cursor: pointer;
     overflow: hidden;
     height: 100%;
     width: 100%;
-    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
 :global(.dark) .card-inner {
-    background: rgba(128, 128, 128, 0.25);
+    background: color-mix(in srgb, var(--page-bg) 50%, transparent);
 }
 
 .card-background {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
+    inset: 0;
     height: 130px;
     overflow: hidden;
-    opacity: 1;
 }
 
 .avatar-blur {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     background-size: cover;
     background-position: center top;
     filter: blur(15px) brightness(0.8);
     transform: scale(1.2);
-    opacity: 1;
 }
 
 .card-glow {
@@ -124,7 +154,6 @@ const activeStars = config.stars;
 }
 
 .avatar-section {
-    text-align: center;
     position: absolute;
     top: 0;
     left: 0;
@@ -139,7 +168,6 @@ const activeStars = config.stars;
 .avatar {
     width: 100px;
     height: 100px;
-    border-radius: 0;
     border: 3px solid var(--rarity-color);
     object-fit: cover;
     background-color: var(--card-bg);
@@ -158,9 +186,9 @@ const activeStars = config.stars;
 .friend-name {
     font-size: 1.1rem;
     font-weight: 700;
-    margin: 0 0 0.3rem 0;
+    margin: 0 0 0.3rem;
     color: var(--text-primary);
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-shadow: 0 2px 4px color-mix(in srgb, var(--text-primary) 10%, transparent);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -179,10 +207,6 @@ const activeStars = config.stars;
     color: var(--text-secondary);
 }
 
-:global(.dark) .friend-desc {
-    color: rgba(255, 255, 255, 0.5);
-}
-
 .stars-section {
     display: flex;
     justify-content: center;
@@ -191,20 +215,9 @@ const activeStars = config.stars;
     position: relative;
 }
 
-.star {
-    font-size: 1rem;
-    margin: 0 2px;
-}
-
-.star-active {
-    color: var(--rarity-color);
-    text-shadow: 0 0 10px var(--rarity-color);
-}
-
-.star-inactive {
-    color: var(--text-secondary);
-    opacity: 0.5;
-}
+.star { font-size: 1rem; margin: 0 2px; }
+.star-active { color: var(--rarity-color); text-shadow: 0 0 10px var(--rarity-color); }
+.star-inactive { color: var(--text-secondary); opacity: 0.5; }
 
 .rarity-indicator {
     position: absolute;
@@ -223,65 +236,100 @@ const activeStars = config.stars;
     text-transform: uppercase;
 }
 
-/* 移动端横向卡片 */
+/* ===== PC端：申请友链 hover ===== */
+.apply-friend-card .card-inner { transition: all 0.3s ease; }
+.apply-friend-card .card-glow { transition: opacity 0.3s ease; }
+.apply-friend-card:hover .card-glow { opacity: 0.3; }
+.apply-friend-card:hover .card-inner {
+    box-shadow: 0 0 30px var(--rarity-color), 0 16px 40px color-mix(in srgb, var(--text-primary) 20%, transparent);
+}
+.apply-friend-card .avatar { transition: box-shadow 0.3s ease; }
+.apply-friend-card:hover .avatar { box-shadow: 0 0 20px var(--rarity-color); }
+.apply-friend-card .friend-name { transition: all 0.3s ease; }
+.apply-friend-card:hover .friend-name {
+    text-shadow: 0 0 15px var(--rarity-color), 0 2px 4px color-mix(in srgb, var(--text-primary) 20%, transparent);
+}
+.apply-friend-card .friend-desc { transition: all 0.3s ease; }
+.apply-friend-card:hover .friend-desc { color: var(--text-primary); }
+:global(.dark) .apply-friend-card:hover .friend-desc {
+    color: color-mix(in srgb, var(--text-primary) 80%, transparent);
+}
+.apply-friend-card:hover .star-active { text-shadow: 0 0 15px var(--rarity-color); }
+
+/* ===== PC端：复制按钮（绝对定位，居中） ===== */
+:global(.copy-button) {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 6px 12px;
+    background: linear-gradient(135deg, var(--rarity-color) 0%, var(--primary) 100%);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--primary) 30%, transparent);
+    z-index: 3;
+    text-align: center;
+    width: 80px;
+}
+:global(.copy-button):hover {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--rarity-color) 100%);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--primary) 50%, transparent);
+    transform: translateX(-50%) translateY(-2px);
+}
+:global(.copy-button):active {
+    transform: translateX(-50%) translateY(0);
+    box-shadow: 0 2px 4px color-mix(in srgb, var(--primary) 30%, transparent);
+}
+
+/* ===== 移动端（<=768px）：横卡 ===== */
 @media (max-width: 768px) {
     .friend-card {
         width: 100%;
-        max-width: 100%;
         height: auto;
-        min-height: auto;
         perspective: none;
     }
-    
+
     .card-inner {
         flex-direction: row;
         align-items: center;
         padding: 12px;
         gap: 12px;
         height: auto;
-        min-height: auto;
         border-radius: 10px;
-        background: rgba(255, 248, 240, 0.95);
-        border: 1px solid rgba(255, 152, 0, 0.15);
-        box-shadow: 0 2px 8px rgba(230, 74, 25, 0.08);
+        background: color-mix(in srgb, var(--page-bg) 95%, transparent);
+        border: 1px solid color-mix(in srgb, var(--primary) 15%, transparent);
+        box-shadow: 0 2px 8px color-mix(in srgb, var(--secondary) 8%, transparent);
     }
-    
+
     :global(.dark) .card-inner {
-        background: rgba(28, 24, 20, 0.95);
-        border-color: rgba(255, 152, 0, 0.1);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        border-color: color-mix(in srgb, var(--primary) 10%, transparent);
+        box-shadow: 0 2px 8px color-mix(in srgb, var(--text-primary) 20%, transparent);
     }
-    
-    .card-background {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        height: 100%;
-        width: 100%;
-        border-radius: 10px;
+
+    .card-background,
+    .card-glow {
+        display: none;
     }
-    
-    .avatar-blur {
-        filter: blur(20px) brightness(0.7);
-        border-radius: 10px;
-    }
-    
+
     .avatar-section {
         position: relative;
         height: auto;
         flex-shrink: 0;
     }
-    
+
     .avatar {
-        width: 56px;
-        height: 56px;
+        width: 52px;
+        height: 52px;
         border-width: 2px;
         border-radius: 10px;
         margin: 0;
     }
-    
+
     .info-section {
         flex: 1;
         text-align: left;
@@ -289,97 +337,85 @@ const activeStars = config.stars;
         min-width: 0;
         overflow: hidden;
     }
-    
+
     .friend-name {
         font-size: 0.9375rem;
         margin-bottom: 4px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
         text-shadow: none;
     }
-    
+
     .friend-desc {
         font-size: 0.75rem;
         height: auto;
         -webkit-line-clamp: 2;
-        line-height: 1.4;
-        color: rgba(0, 0, 0, 0.6);
     }
-    
-    :global(.dark) .friend-desc {
-        color: rgba(255, 255, 255, 0.6);
+
+    .stars-section { display: none; }
+
+    .rarity-indicator { display: none; }
+
+    .friend-card:active .card-inner {
+        transform: scale(0.98);
+        background: color-mix(in srgb, var(--primary) 10%, transparent);
     }
-    
-    .stars-section {
-        display: none;
+
+    :global(.dark) .friend-card:active .card-inner {
+        background: color-mix(in srgb, var(--text-primary) 5%, transparent);
     }
-    
-    .rarity-indicator {
+
+    /* 移动端复制按钮：跟随 flex 行列 */
+    :global(.copy-button) {
         position: relative;
         bottom: auto;
         left: auto;
-        right: auto;
+        transform: none;
         flex-shrink: 0;
+        padding: 6px 12px;
+        font-size: 0.6875rem;
+        width: auto;
+        min-width: 56px;
+        box-shadow: none;
     }
-    
-    .rarity-text {
-        font-size: 0.625rem;
-        padding: 4px 8px;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 4px;
+    :global(.copy-button):hover {
+        background: linear-gradient(135deg, var(--rarity-color) 0%, var(--primary) 100%);
+        box-shadow: none;
+        transform: none;
     }
-    
-    :global(.dark) .rarity-text {
-        background: rgba(255, 255, 255, 0.05);
+    :global(.copy-button):active {
+        transform: scale(0.95);
+        box-shadow: none;
     }
-    
-    .friend-card:hover .card-inner {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-    
-    .friend-card:active .card-inner {
-        transform: scale(0.98);
-        background: rgba(255, 152, 0, 0.1);
-    }
-    
-    :global(.dark) .friend-card:active .card-inner {
-        background: rgba(255, 255, 255, 0.05);
-    }
-    
-    .friend-card:hover .avatar {
-        box-shadow: 0 0 10px var(--rarity-color);
-    }
-    
-    .card-glow {
-        display: none;
+
+    .apply-friend-card:hover .card-inner {
+        box-shadow: 0 4px 12px color-mix(in srgb, var(--text-primary) 15%, transparent);
     }
 }
 
-/* 超小屏幕优化 */
+/* ===== 超小屏幕（<=480px） ===== */
 @media (max-width: 480px) {
     .card-inner {
         padding: 10px;
         gap: 10px;
     }
-    
+
     .avatar {
-        width: 48px;
-        height: 48px;
+        width: 44px;
+        height: 44px;
     }
-    
+
     .friend-name {
         font-size: 0.875rem;
     }
-    
+
     .friend-desc {
         font-size: 0.6875rem;
         -webkit-line-clamp: 1;
     }
-    
-    .rarity-text {
-        font-size: 0.5625rem;
-        padding: 3px 6px;
+
+    :global(.copy-button) {
+        padding: 5px 8px;
+        font-size: 0.625rem;
+        min-width: 48px;
     }
 }
 </style>

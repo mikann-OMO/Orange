@@ -8,6 +8,7 @@ export const zh_CN: Translation = {
 	[Key.friends]: "友链",
 	[Key.notes]: "随记",
 	[Key.works]: "图集",
+	[Key.updates]: "更新",
 
 	[Key.tags]: "标签",
 	[Key.categories]: "分类",

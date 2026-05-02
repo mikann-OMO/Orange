@@ -25,7 +25,18 @@
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"recommended": true
+			"recommended": true,
+			"complexity": {
+				"noForEach": "error"
+			},
+			"style": {
+				"noUselessElse": "error",
+				"useNodejsImportProtocol": "error",
+				"noNonNullAssertion": "warn"
+			},
+			"suspicious": {
+				"noExplicitAny": "error"
+			}
 		}
 	},
 	"javascript": {

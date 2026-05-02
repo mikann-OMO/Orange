@@ -12,7 +12,7 @@ const { headings = [], title = "文章目录" } = Astro.props;
 
 {headings.length > 0 && (
   <div id="sidebar-toc-wrapper" class="sticky top-[var(--toc-offset,96px)] bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-none shadow-xl p-4" data-toc-root>
-    <div class="px-2 pb-2 max-h-[calc(100vh-120px)] overflow-y-auto">
+    <div class="px-2 pb-2 max-h-[calc(100dvh-120px)] overflow-y-auto">
       <h3 class="text-lg font-bold mb-4 text-orange-700 dark:text-white border-b border-gray-200/50 dark:border-gray-700/50 pb-2">{title}</h3>
       <TocTree headings={headings} />
     </div>

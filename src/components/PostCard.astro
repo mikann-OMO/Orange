@@ -112,8 +112,8 @@ const { remarkPluginFrontmatter } = await render(entry);
     .group {
         border-radius: 12px;
         margin-bottom: 0;
-        box-shadow: 0 2px 8px rgba(230, 74, 25, 0.06);
-        border: 1px solid rgba(255, 152, 0, 0.1);
+        box-shadow: 0 2px 8px color-mix(in srgb, var(--secondary) 6%, transparent);
+        border: 1px solid color-mix(in srgb, var(--primary) 10%, transparent);
         transition: all 0.2s ease;
     }
     
@@ -124,7 +124,7 @@ const { remarkPluginFrontmatter } = await render(entry);
     
     .group:active {
         transform: scale(0.98);
-        box-shadow: 0 1px 4px rgba(230, 74, 25, 0.08);
+        box-shadow: 0 1px 4px color-mix(in srgb, var(--secondary) 8%, transparent);
     }
     
     :global(.dark) .group:active {
@@ -133,7 +133,7 @@ const { remarkPluginFrontmatter } = await render(entry);
     
     .group:hover {
         transform: none;
-        box-shadow: 0 2px 8px rgba(230, 74, 25, 0.06);
+        box-shadow: 0 2px 8px color-mix(in srgb, var(--secondary) 6%, transparent);
     }
     
     .flex-1 {
@@ -204,7 +204,7 @@ const { remarkPluginFrontmatter } = await render(entry);
     
     .border-t-\[1px\] {
         margin: 8px 0;
-        border-color: rgba(255, 152, 0, 0.1);
+        border-color: color-mix(in srgb, var(--primary) 10%, transparent);
     }
     
     :global(.dark) .border-t-\[1px\] {

@@ -22,11 +22,7 @@ const { class: className } = Astro.props;
 
 <style>
   .profile-avatar-link {
-    background: linear-gradient(to bottom, rgba(255, 248, 225, 1) 0%, rgba(255, 248, 225, 0.9) 45px, rgba(255, 248, 225, 0.8) 100%);
-  }
-  
-  :global(.dark) .profile-avatar-link {
-    background: linear-gradient(to bottom, rgba(217, 208, 191, 1) 0%, rgba(217, 208, 191, 0.9) 45px, rgba(217, 208, 191, 0.8) 100%);
+    background: linear-gradient(to bottom, color-mix(in srgb, var(--page-bg) 100%, transparent) 0%, color-mix(in srgb, var(--page-bg) 90%, transparent) 45px, color-mix(in srgb, var(--page-bg) 80%, transparent) 100%);
   }
   
   .profile-avatar-link img {

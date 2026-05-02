@@ -32,13 +32,12 @@ import { Icon } from "astro-icon/components";
 }
 
 .back-to-top-btn button {
-    background: rgba(255, 255, 255, 0.9) !important;
+    background: color-mix(in srgb, var(--page-bg) 90%, transparent) !important;
     backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 152, 0, 0.2) !important;
+    border: 1px solid var(--card-border) !important;
 }
 
 :global(.dark) .back-to-top-btn button {
-    background: rgba(60, 60, 60, 0.9) !important;
     border-color: rgba(255, 255, 255, 0.1) !important;
 }
 

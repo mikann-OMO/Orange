@@ -27,9 +27,9 @@
         height: 100%;
         width: 0%;
         background: linear-gradient(90deg, 
-            var(--primary, #e64a19) 0%, 
-            #ff6b35 50%, 
-            #ff9800 100%
+            var(--primary) 0%, 
+            var(--secondary) 50%, 
+            var(--accent-text) 100%
         );
         position: relative;
         z-index: 2;
@@ -43,7 +43,7 @@
         width: 0%;
         background: linear-gradient(90deg, 
             transparent 0%,
-            rgba(255, 107, 53, 0.6) 50%,
+            color-mix(in srgb, var(--secondary) 60%, transparent) 50%,
             transparent 100%
         );
         filter: blur(4px);

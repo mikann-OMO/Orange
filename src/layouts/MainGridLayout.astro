@@ -66,7 +66,7 @@ const activeAnnouncement = announcementConfig || announcement;
 </div>
 
 {siteConfig.banner.enable && (
-    <div id="banner-wrapper" class="h-screen w-full fixed top-0 left-0 right-0 z-0 hidden md:block">
+    <div id="banner-wrapper" class="h-dvh w-full fixed top-0 left-0 right-0 z-0 hidden md:block">
         <Background src={bannerLight} cssVariable="--bg-light-lqip">
         <div id="banner-light-container"
              style={`position:absolute;inset:0;background-image:url(${bannerLight.src}),var(--bg-light-lqip);background-size:cover;background-position:center;background-attachment:fixed;background-color:#fff8f0;`}>
@@ -98,7 +98,7 @@ const activeAnnouncement = announcementConfig || announcement;
 <div id="main-wrapper" class="relative w-full z-10 min-h-screen">
     <div class:list={[
         "fixed top-0 bottom-0 z-[-1] mx-auto backdrop-blur-3xl rounded-none shadow-xl",
-        isPostPage ? "bg-[#fff8f0]/70 dark:bg-[#1c1814]/90" : "bg-white/10 dark:bg-[#1c1814]/60"
+        isPostPage ? "bg-[var(--page-bg)]/70 dark:bg-[var(--page-bg)]/90" : "bg-white/10 dark:bg-[var(--page-bg)]/60"
     ]} style="left: 50%; transform: translateX(-50%) scale(1); transform-origin: center center; max-width: var(--page-width); width: 100%;"></div>
     
     <div id="content-wrapper" class="relative max-w-[var(--page-width)] mx-auto h-full overflow-x-hidden">
@@ -300,9 +300,9 @@ const activeAnnouncement = announcementConfig || announcement;
     }
     
     #navbar-wrapper {
-        background: linear-gradient(180deg, 
-            rgba(255, 248, 240, 0.98) 0%, 
-            rgba(255, 248, 240, 0.95) 100%
+        background: linear-gradient(180deg,
+            var(--page-bg) 0%,
+            color-mix(in srgb, var(--page-bg) 95%, transparent) 100%
         );
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
@@ -310,10 +310,6 @@ const activeAnnouncement = announcementConfig || announcement;
     }
     
     :global(.dark) #navbar-wrapper {
-        background: linear-gradient(180deg, 
-            rgba(28, 24, 20, 0.98) 0%, 
-            rgba(28, 24, 20, 0.95) 100%
-        );
         border-bottom-color: rgba(255, 255, 255, 0.05);
     }
 }

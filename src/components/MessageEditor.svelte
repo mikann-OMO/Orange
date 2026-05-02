@@ -81,7 +81,7 @@ async function handleSubmit(e: Event) {
 					bind:value={nickname}
 					required
 					placeholder="你的昵称"
-					class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+					class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
 				/>
 			</div>
 			<div>
@@ -92,7 +92,7 @@ async function handleSubmit(e: Event) {
 					bind:value={email}
 					required
 					placeholder="your@email.com"
-					class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+					class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
 				/>
 			</div>
 			<div>
@@ -102,7 +102,7 @@ async function handleSubmit(e: Event) {
 					type="url"
 					bind:value={website}
 					placeholder="https://"
-					class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+					class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
 				/>
 			</div>
 		</div>
@@ -116,18 +116,18 @@ async function handleSubmit(e: Event) {
 			required
 			placeholder={isReply ? "写点什么..." : "支持 Markdown 和 ||剧透|| 语法哦~"}
 			rows={isReply ? 3 : 5}
-			class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+			class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
 		></textarea>
 	</div>
 
 	<div class="flex items-center justify-between">
 		{#if !isReply}
-			<span class="text-xs text-gray-500">支持简单的 Markdown 语法</span>
+			<span class="text-xs text-[var(--text-secondary)]">支持简单的 Markdown 语法</span>
 		{/if}
 		<button
 			type="submit"
 			disabled={submitting}
-			class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+			class="px-6 py-2 bg-[var(--btn-regular-bg)] text-white rounded-lg hover:bg-[var(--btn-regular-bg-hover)] disabled:opacity-50 disabled:cursor-not-allowed"
 		>
 			{submitting ? "发送中..." : "发送"}
 		</button>

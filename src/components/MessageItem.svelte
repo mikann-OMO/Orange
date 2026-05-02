@@ -43,13 +43,13 @@ async function handleReplyAdded() {
 		<div class="flex-1">
 			<div class="flex items-center justify-between mb-2">
 				<h4 class="font-semibold">{message.nickname}</h4>
-				<span class="text-xs text-gray-500">{new Date(message.createdAt).toLocaleString()}</span>
+				<span class="text-xs text-[var(--text-secondary)]">{new Date(message.createdAt).toLocaleString()}</span>
 			</div>
 			<div class="message-content mb-3">{@html message.content}</div>
 			<div class="flex items-center gap-2">
 				<button
 					on:click={toggleReply}
-					class="text-sm text-blue-600 hover:underline"
+					class="text-sm text-[var(--accent-text)] hover:underline"
 				>
 					{showReply ? "取消" : "回复"}
 				</button>
