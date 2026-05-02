@@ -88,10 +88,10 @@ const friendsCollection = defineCollection({
 	}),
 	schema: z.object({
 		title: z.string(),
-		siteurl: z.string().url(),
+		siteurl: z.string().regex(/https?:\/\/[^\s]+/),
 		desc: z.string().optional().default(""),
-		image: z.union([z.string().url(), z.string().startsWith("/")]),
-		rss: z.string().url().optional(),
+		image: z.union([z.string().regex(/https?:\/\/[^\s]+/), z.string().startsWith("/")]),
+		rss: z.string().regex(/https?:\/\/[^\s]+/).optional(),
 	}),
 });
 

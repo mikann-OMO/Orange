@@ -4,15 +4,15 @@ import Navbar from "@components/Navbar.astro";
 
 import type { MarkdownHeading } from "astro";
 import { Background } from "astro-lqip/components";
-import MobileTocDrawer from "../components/control/MobileTocDrawer.astro";
-import ImageWrapper from "../components/misc/ImageWrapper.astro";
-import SidebarToc from "../components/widget/SidebarToc.astro";
-import { siteConfig } from "../config";
-import Layout from "./Layout.astro";
+import MobileTocDrawer from "@components/control/MobileTocDrawer.astro";
+import ImageWrapper from "@components/misc/ImageWrapper.astro";
+import SidebarToc from "@components/widget/SidebarToc.astro";
+import { siteConfig } from "@/config";
+import Layout from "@layouts/Layout.astro";
 
-import bannerDark from "../assets/images/banner-dark.webp";
-import bannerLight from "../assets/images/banner-light.webp";
-import announcement from "../content/announcement.yaml";
+import bannerDark from "@assets/images/banner-dark.webp";
+import bannerLight from "@assets/images/banner-light.webp";
+import announcement from "@/content/announcement.yaml";
 
 interface AnnouncementConfig {
 	title: string;

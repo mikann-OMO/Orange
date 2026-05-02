@@ -7,7 +7,7 @@
     },
     "siteurl": {
       "type": "string",
-      "format": "uri"
+      "pattern": "https?:\\/\\/[^\\s]+"
     },
     "desc": {
       "default": "",
@@ -17,7 +17,7 @@
       "anyOf": [
         {
           "type": "string",
-          "format": "uri"
+          "pattern": "https?:\\/\\/[^\\s]+"
         },
         {
           "type": "string",
@@ -27,7 +27,7 @@
     },
     "rss": {
       "type": "string",
-      "format": "uri"
+      "pattern": "https?:\\/\\/[^\\s]+"
     },
     "$schema": {
       "type": "string"

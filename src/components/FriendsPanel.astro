@@ -103,7 +103,7 @@ const friendLinkHtml = [
 					<div class="rarity-indicator">
 						<span class="rarity-text">LEGENDARY</span>
 					</div>
-					<button class="copy-button" onclick="copyPersonalLink(event)" aria-label={i18n(I18nKey.copyButton)}>
+					<button class="copy-button" aria-label={i18n(I18nKey.copyButton)}>
 						<span class="copy-icon">
 							<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 								<rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
@@ -136,9 +136,8 @@ const friendLinkHtml = [
 	</div>
 
 	<script is:inline define:vars={{ personalCopyText, friendLinkHtml }}>
-		function copyPersonalLink(event) {
-			const e = event || window.event;
-			const button = e.currentTarget || e.target.closest('.copy-button');
+		function handleCopyClick(e) {
+			const button = e.currentTarget.closest('.copy-button');
 			if (!button || button.classList.contains('copying')) return;
 			button.classList.add('copying');
 
@@ -153,7 +152,13 @@ const friendLinkHtml = [
 				});
 			}
 		}
-		window.copyPersonalLink = copyPersonalLink;
+
+		document.addEventListener('DOMContentLoaded', () => {
+			const copyButton = document.querySelector('.copy-button');
+			if (copyButton) {
+				copyButton.addEventListener('click', handleCopyClick);
+			}
+		});
 	</script>
 </div>
 
