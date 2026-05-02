@@ -7,8 +7,14 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"includes": ["src/**/*.(js|ts|jsx|tsx|svelte|vue|json|jsonc|md|mdx|html)"],
-		"experimentalScannerIgnores": ["**/*.css", "src/public/**", "dist/**", "node_modules/**", ".astro/**"]
+		"includes": [
+			"src/**/*.(js|ts|jsx|tsx|svelte|vue|json|jsonc|md|mdx|html)",
+			"!!**/*.css",
+			"!!**/src/public",
+			"!!**/dist",
+			"!!**/node_modules",
+			"!!**/.astro"
+		]
 	},
 	"formatter": {
 		"enabled": true,
@@ -18,6 +24,7 @@
 		"formatWithErrors": true
 	},
 	"assist": {
+		"enabled": true,
 		"actions": {
 			"source": {
 				"organizeImports": "on"
