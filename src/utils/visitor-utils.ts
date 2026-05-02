@@ -4,13 +4,6 @@ const PAGE_VISITOR_KEY_PREFIX = "page_visitor_";
 
 type VisitorProvider = "busuanzi" | "leancloud" | "local" | "server";
 
-interface LeanCloudResponse {
-	objectId: string;
-	count: number;
-	createdAt?: string;
-	updatedAt?: string;
-}
-
 interface VisitorCountResult {
 	success: boolean;
 	count: number;

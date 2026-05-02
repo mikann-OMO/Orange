@@ -137,7 +137,8 @@ const friendLinkHtml = [
 
 	<script is:inline define:vars={{ personalCopyText, friendLinkHtml }}>
 		function copyPersonalLink(event) {
-			const button = event.currentTarget || event.target.closest('.copy-button');
+			const e = event || window.event;
+			const button = e.currentTarget || e.target.closest('.copy-button');
 			if (!button || button.classList.contains('copying')) return;
 			button.classList.add('copying');
 

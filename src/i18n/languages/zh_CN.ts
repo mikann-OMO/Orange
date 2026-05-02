@@ -40,4 +40,11 @@ export const zh_CN: Translation = {
 	[Key.publishedAt]: "发布于",
 	[Key.license]: "许可协议",
 	[Key.back_to_notes]: "返回随记列表",
+	[Key.friendsDesc]: "朋友们",
+	[Key.friendUnitText]: "位朋友",
+	[Key.applyForFriendLink]: "申请友链",
+	[Key.applyForFriendLinkDesc]: "欢迎交换友链",
+	[Key.copyButton]: "复制链接",
+	[Key.copySuccess]: "复制成功",
+	[Key.copyFailed]: "复制失败",
 };

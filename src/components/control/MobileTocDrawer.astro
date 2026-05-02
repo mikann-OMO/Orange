@@ -64,16 +64,24 @@ const { headings } = Astro.props;
 
     function openDrawer() {
       isOpen = true;
-      overlay.style.opacity = '1';
-      overlay.style.pointerEvents = 'auto';
-      panel.style.transform = 'translateY(0)';
+      if (overlay) {
+        overlay.style.opacity = '1';
+        overlay.style.pointerEvents = 'auto';
+      }
+      if (panel) {
+        panel.style.transform = 'translateY(0)';
+      }
     }
 
     function closeDrawer() {
       isOpen = false;
-      overlay.style.opacity = '0';
-      overlay.style.pointerEvents = 'none';
-      panel.style.transform = 'translateY(100%)';
+      if (overlay) {
+        overlay.style.opacity = '0';
+        overlay.style.pointerEvents = 'none';
+      }
+      if (panel) {
+        panel.style.transform = 'translateY(100%)';
+      }
     }
 
     fab.addEventListener('click', () => {
