@@ -64,7 +64,7 @@ const contentColClass = fullWidth
 
 <div id="top-row" class="z-[999] pointer-events-none fixed top-0 left-0 right-0 w-full">
 	<div id="reading-progress" class="fixed top-0 left-0 right-0 h-[2px] bg-[var(--primary)] z-[1000] transform-origin-left scale-x-0 transition-transform duration-150"></div>
-	<div id="navbar-wrapper" class="pointer-events-auto fixed top-0 left-0 right-0 w-full shadow-md z-[999]" style="background: color-mix(in srgb, var(--card-bg) 95%, transparent);">
+	<div id="navbar-wrapper" class="pointer-events-auto fixed top-0 left-0 right-0 w-full shadow-md z-[999] bg-orange-100/95 dark:bg-stone-800/95">
 		<Navbar></Navbar>
 	</div>
 </div>
@@ -101,7 +101,7 @@ const contentColClass = fullWidth
 
 <div id="main-wrapper" class="relative w-full z-10 min-h-screen min-h-full">
 	<div class:list={[
-		"absolute top-0 left-0 right-0 z-[-1] mx-auto backdrop-blur-3xl rounded-none shadow-xl pointer-events-none",
+		"absolute top-0 z-[-1] backdrop-blur-3xl rounded-none shadow-xl pointer-events-none",
 		isPostPage ? "bg-[var(--page-bg)]/70 dark:bg-[var(--page-bg)]/90" : "bg-white/10 dark:bg-[var(--page-bg)]/60"
 	]} style="left: 50%; transform: translateX(-50%); transform-origin: center center; max-width: var(--page-width); width: 100%; height: 100%; min-height: 100vh;"></div>
 
@@ -265,15 +265,19 @@ const contentColClass = fullWidth
 
 	#navbar-wrapper {
 		background: linear-gradient(180deg,
-			var(--page-bg) 0%,
-			color-mix(in srgb, var(--page-bg) 95%, transparent) 100%
+			#ffedd5 0%,
+			color-mix(in srgb, #ffedd5 95%, transparent) 100%
 		);
 		backdrop-filter: blur(12px);
 		-webkit-backdrop-filter: blur(12px);
 		border-bottom: 1px solid rgba(255, 152, 0, 0.1);
 	}
-
+	
 	:global(.dark) #navbar-wrapper {
+		background: linear-gradient(180deg,
+			#292524 0%,
+			color-mix(in srgb, #292524 95%, transparent) 100%
+		);
 		border-bottom-color: rgba(255, 255, 255, 0.05);
 	}
 }
