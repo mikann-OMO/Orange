@@ -26,6 +26,12 @@ function getRuntimeVisitorConfig(): {
 	provider: VisitorProvider;
 } {
 	const carrier = getCarrier();
+	
+	// 如果没有 carrier，默认启用并使用 server 或 local
+	if (!carrier) {
+		return { enable: true, provider: "local" };
+	}
+	
 	const enable = parseBool(carrier?.getAttribute("data-visitor-enable"));
 	const providerRaw = (
 		carrier?.getAttribute("data-visitor-provider") || ""
@@ -33,10 +39,10 @@ function getRuntimeVisitorConfig(): {
 	const provider = (
 		providerRaw === "server" || providerRaw === "local" || providerRaw === "leancloud"
 			? providerRaw
-			: "server"
+			: "local"
 	) as VisitorProvider;
 
-	return { enable, provider };
+	return { enable: enable !== undefined ? enable : true, provider };
 }
 
 function getStorageKey(key: string): string {
@@ -237,3 +243,5 @@ export function isVisitorTrackingEnabled(): boolean {
 export function getVisitorProvider(): string {
 	return getRuntimeVisitorConfig().provider;
 }
+
+export { getLocalCount, incrementLocalCount };

@@ -1,12 +1,13 @@
 <script lang="ts">
 import {
-	getVisitorProvider,
 	isVisitorTrackingEnabled,
 } from "@utils/visitor-utils";
 import {
 	formatCount,
 	getSiteVisitorCount,
 	incrementSiteVisitorCount,
+	getLocalCount,
+	incrementLocalCount,
 } from "@utils/visitor-utils";
 import { onMount } from "svelte";
 
@@ -17,6 +18,7 @@ let error = $state(false);
 let displayCount = $derived(formatCount(count));
 
 const TRACK_INTERVAL_KEY = "visitor_track_interval";
+const SITE_VISITOR_KEY = "site_visitor";
 const TRACK_INTERVAL_MS = 24 * 60 * 60 * 1000;
 
 function shouldTrack(): boolean {
@@ -41,27 +43,31 @@ onMount(async () => {
 	}
 
 	try {
+		// 首先尝试使用 localStorage 中的本地值
+		count = getLocalCount(SITE_VISITOR_KEY);
+		
 		if (shouldTrack()) {
 			const result = await incrementSiteVisitorCount();
 			if (result.success) {
 				count = result.count;
 				markTracked();
 			} else {
-				error = true;
-				const getResult = await getSiteVisitorCount();
-				if (getResult.success) {
-					count = getResult.count;
-				}
+				// 如果 API 失败，增加本地计数
+				count = incrementLocalCount(SITE_VISITOR_KEY);
+				markTracked();
 			}
 		} else {
 			const result = await getSiteVisitorCount();
 			if (result.success) {
 				count = result.count;
-			} else {
-				error = true;
 			}
 		}
-	} catch {
+	} catch (e) {
+		console.error("Visitor count error:", e);
+		// 如果出错，确保至少显示本地计数
+		if (count === 0) {
+			count = getLocalCount(SITE_VISITOR_KEY);
+		}
 		error = true;
 	} finally {
 		loading = false;
@@ -72,8 +78,6 @@ onMount(async () => {
 <div class="visitor-counter">
 	{#if loading}
 		<span class="count loading">---</span>
-	{:else if error}
-		<span class="count error">N/A</span>
 	{:else}
 		<span class="count">{displayCount}</span>
 	{/if}
@@ -92,10 +96,6 @@ onMount(async () => {
 
 	.count.loading {
 		animation: pulse 1.5s ease-in-out infinite;
-	}
-
-	.count.error {
-		opacity: 0.5;
 	}
 
 	@keyframes pulse {
