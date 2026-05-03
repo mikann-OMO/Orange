@@ -22,6 +22,7 @@ import { ClientRouter } from "astro:transitions";
 import BackToTop from "@components/control/BackToTop.astro";
 import PageProgress from "@components/control/PageProgress.astro";
 import SpeedInsights from "@vercel/speed-insights/astro";
+import Analytics from "@vercel/analytics/astro";
 
 // 自托管字体优化 - 仅加载实际使用的字重
 import "@fontsource/roboto/400.css";
@@ -264,6 +265,7 @@ const jsonLd = {
 		<slot />
 		<BackToTop />
 		<SpeedInsights />
+		<Analytics />
 		<!-- 页面加载完成后显示内容 -->
 		<script is:inline>
 			requestAnimationFrame(() => {

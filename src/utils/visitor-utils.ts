@@ -2,7 +2,7 @@ const STORAGE_KEY_PREFIX = "visitor_count_";
 const SITE_VISITOR_KEY = "site_visitor";
 const PAGE_VISITOR_KEY_PREFIX = "page_visitor_";
 
-type VisitorProvider = "busuanzi" | "leancloud" | "local" | "server";
+type VisitorProvider = "leancloud" | "local" | "server";
 
 interface VisitorCountResult {
 	success: boolean;
@@ -31,12 +31,9 @@ function getRuntimeVisitorConfig(): {
 		carrier?.getAttribute("data-visitor-provider") || ""
 	).trim();
 	const provider = (
-		providerRaw === "busuanzi" ||
-		providerRaw === "server" ||
-		providerRaw === "local" ||
-		providerRaw === "leancloud"
+		providerRaw === "server" || providerRaw === "local" || providerRaw === "leancloud"
 			? providerRaw
-			: "busuanzi"
+			: "server"
 	) as VisitorProvider;
 
 	return { enable, provider };
@@ -104,10 +101,6 @@ export async function getSiteVisitorCount(): Promise<VisitorCountResult> {
 			const count = await getLeanCloudCount(SITE_VISITOR_KEY);
 			return { success: true, count };
 		}
-		if (cfg.provider === "busuanzi") {
-			// For busuanzi, we'll let the client-side script handle the count
-			return { success: true, count: 0 };
-		}
 		if (cfg.provider === "server") {
 			const response = await fetch(
 				`/api/visitor?key=${encodeURIComponent(SITE_VISITOR_KEY)}&op=get`,
@@ -137,10 +130,6 @@ export async function incrementSiteVisitorCount(): Promise<VisitorCountResult> {
 		if (cfg.provider === "leancloud") {
 			const count = await incrementLeanCloudCount(SITE_VISITOR_KEY);
 			return { success: true, count };
-		}
-		if (cfg.provider === "busuanzi") {
-			// For busuanzi, the script automatically increments the count
-			return { success: true, count: 0 };
 		}
 		if (cfg.provider === "server") {
 			const response = await fetch(
@@ -177,10 +166,6 @@ export async function getPageVisitorCount(
 			const count = await getLeanCloudCount(key);
 			return { success: true, count };
 		}
-		if (cfg.provider === "busuanzi") {
-			// For busuanzi, we'll let the client-side script handle the count
-			return { success: true, count: 0 };
-		}
 		if (cfg.provider === "server") {
 			const response = await fetch(
 				`/api/visitor?key=${encodeURIComponent(key)}&op=get`,
@@ -214,10 +199,6 @@ export async function incrementPageVisitorCount(
 		if (cfg.provider === "leancloud") {
 			const count = await incrementLeanCloudCount(key);
 			return { success: true, count };
-		}
-		if (cfg.provider === "busuanzi") {
-			// For busuanzi, the script automatically increments the count
-			return { success: true, count: 0 };
 		}
 		if (cfg.provider === "server") {
 			const response = await fetch(

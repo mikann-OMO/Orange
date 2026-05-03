@@ -1,13 +1,13 @@
 ---
 
-import { siteConfig } from "../config";
+import { siteConfig, visitorConfig } from "../config";
 ---
 
 <div
 	id="config-carrier"
 	data-hue={siteConfig.themeColor.hue}
-	data-visitor-enable={import.meta.env.PUBLIC_VISITOR_ENABLE || ""}
-	data-visitor-provider={import.meta.env.PUBLIC_VISITOR_PROVIDER || ""}
+	data-visitor-enable={import.meta.env.PUBLIC_VISITOR_ENABLE || (visitorConfig.enable ? "1" : "")}
+	data-visitor-provider={import.meta.env.PUBLIC_VISITOR_PROVIDER || visitorConfig.provider}
 	data-message-api-base={import.meta.env.PUBLIC_MESSAGE_API_BASE || ""}
 >
 </div>

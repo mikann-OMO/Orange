@@ -138,10 +138,10 @@ export type VisitorConfig = {
 	// 是否启用访问量统计
 	enable: boolean;
 	// 统计服务类型
-	// 'busuanzi' - 使用不蒜子（免费，无需注册，推荐）
 	// 'leancloud' - 使用 LeanCloud 服务
 	// 'local' - 使用本地存储（仅用于测试）
-	provider: "busuanzi" | "leancloud" | "local";
+	// 'server' - 使用后端 API（推荐，支持 Vercel KV/Redis/本地文件）
+	provider: "leancloud" | "local" | "server";
 	// LeanCloud 配置（仅 provider 为 leancloud 时需要）
 	leancloud?: {
 		// LeanCloud 应用 ID

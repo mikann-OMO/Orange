@@ -3,9 +3,6 @@
 
 declare global {
 	interface Window {
-		busuanzi?: {
-			fetch: () => void;
-		};
 		__navbarRuntime?: {
 			menuOpen: boolean;
 			installed: boolean;

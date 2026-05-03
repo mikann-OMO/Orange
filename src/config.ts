@@ -59,7 +59,7 @@ export const licenseConfig: LicenseConfig = {
 
 export const visitorConfig: VisitorConfig = {
 	enable: true,
-	provider: "busuanzi",
+	provider: "server",
 	leancloud: {
 		appId: import.meta.env.VITE_APP_ID || "",
 		appKey: import.meta.env.VITE_APP_KEY || "",

@@ -1,5 +1,4 @@
 <script lang="ts">
-import { ensureBusuanziLoaded, shouldUseBusuanzi } from "@utils/busuanzi-utils";
 import {
 	getVisitorProvider,
 	isVisitorTrackingEnabled,
@@ -11,19 +10,9 @@ import {
 } from "@utils/visitor-utils";
 import { onMount } from "svelte";
 
-declare global {
-	interface Window {
-		busuanzi?: {
-			fetch: () => void;
-		};
-		BUSUANZI_SITE_PV?: number;
-	}
-}
-
 let count = $state(0);
 let loading = $state(true);
 let error = $state(false);
-let useBusuanzi = $state(false);
 
 let displayCount = $derived(formatCount(count));
 
@@ -45,37 +34,12 @@ function markTracked(): void {
 	localStorage.setItem(TRACK_INTERVAL_KEY, Date.now().toString());
 }
 
-function loadBusuanzi(): void {
-	if (typeof window === "undefined") return;
-
-	ensureBusuanziLoaded().then(() => {
-		window.busuanzi?.fetch?.();
-	});
-}
-
 onMount(async () => {
 	if (!isVisitorTrackingEnabled()) {
 		loading = false;
 		return;
 	}
 
-	const provider = getVisitorProvider();
-	useBusuanzi = provider === "busuanzi";
-
-	if (useBusuanzi && shouldUseBusuanzi()) {
-		loadBusuanzi();
-		loading = false;
-		// Add a fallback to ensure the count is displayed
-		setTimeout(() => {
-			const busuanziElement = document.getElementById("busuanzi_value_site_pv");
-			if (busuanziElement && busuanziElement.textContent === "---") {
-				busuanziElement.textContent = "0";
-			}
-		}, 2000);
-		return;
-	}
-	// Use local storage for local development or when busuanzi is not available
-	useBusuanzi = false;
 	try {
 		if (shouldTrack()) {
 			const result = await incrementSiteVisitorCount();
@@ -106,9 +70,7 @@ onMount(async () => {
 </script>
 
 <div class="visitor-counter">
-	{#if useBusuanzi}
-		<span id="busuanzi_value_site_pv" class="count">0</span>
-	{:else if loading}
+	{#if loading}
 		<span class="count loading">---</span>
 	{:else if error}
 		<span class="count error">N/A</span>
