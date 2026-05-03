@@ -33,6 +33,10 @@ const className = Astro.props.class;
     .collapsed {
         height: var(--collapsedHeight);
     }
+    
+    :global(.dark) widget-layout .font-bold::before {
+        background: #ffb74d;
+    }
 </style>
 
 <script>

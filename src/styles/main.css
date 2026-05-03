@@ -324,6 +324,11 @@ img[src]:not([src=""]) {
 	--line-divider: rgba(255, 255, 255, 0.08);
 }
 
+/* 暗色模式下所有竖线统一使用 #ffb74d 颜色 */
+.dark .border-orange-700 {
+	border-left-color: #ffb74d !important;
+}
+
 /* 优化 backdrop-blur 渲染，减少闪烁 */
 .backdrop-blur-3xl,
 .backdrop-blur-2xl {
