@@ -25,31 +25,25 @@
 	}
 
 	a:not(.no-styling) {
-		@apply relative bg-none font-medium text-orange-700
-        underline decoration-orange-950/20 dark:decoration-white/20 decoration-1 decoration-dashed underline-offset-4;
+		@apply relative bg-none font-medium underline decoration-1 decoration-dashed underline-offset-4;
+		color: var(--accent-text);
+		text-decoration-color: color-mix(in srgb, var(--text-primary) 20%, transparent);
 		box-decoration-break: clone;
 		-webkit-box-decoration-break: clone;
 
 		&:hover,
 		&:active {
 			@apply decoration-transparent;
-			background: rgba(230, 74, 25, 0.05);
-			border-bottom: 1px dashed #e64a19;
+			background: var(--surface-hover);
+			border-bottom: 1px dashed var(--secondary);
 			text-decoration: none;
 		}
 	}
 
-	@media (prefers-color-scheme: dark) {
-		a:not(.no-styling) {
-			&:hover,
-			&:active {
-				background: rgba(255, 255, 255, 0.1);
-			}
-		}
-	}
-
 	code {
-		@apply bg-orange-950/5 dark:bg-white/10 text-orange-700 px-1 py-0.5 rounded-md overflow-hidden;
+		@apply px-1 py-0.5 rounded-md overflow-hidden;
+		background: color-mix(in srgb, var(--text-primary) 5%, transparent);
+		color: var(--accent-text);
 
 		font-family:
 			"JetBrains Mono Variable", "JetBrains Mono", "Fira Code", Consolas, Monaco, "Andale Mono",
@@ -64,7 +58,8 @@
 		counter-reset: line;
 		span.line {
 			&:before {
-				@apply text-white/25 mr-4 w-4 inline-block;
+				color: color-mix(in srgb, var(--text-primary) 25%, transparent);
+				@apply mr-4 w-4 inline-block;
 				content: counter(line);
 				counter-increment: line;
 				direction: rtl;
@@ -77,14 +72,14 @@
 	}
 
 	pre {
-		@apply bg-gray-900 dark:bg-gray-950 !important;
+		background: color-mix(in srgb, var(--text-primary) 90%, transparent) !important;
 		@apply rounded-xl px-5;
 
 		code {
 			@apply bg-transparent text-inherit text-sm p-0;
 
 			::selection {
-				@apply bg-orange-500/20;
+				background: color-mix(in srgb, var(--primary) 20%, transparent);
 			}
 		}
 	}
@@ -92,7 +87,7 @@
 	ul,
 	ol {
 		li::marker {
-			@apply text-orange-700;
+			color: var(--accent-text);
 		}
 	}
 
@@ -101,13 +96,8 @@
 		font-weight: inherit;
 
 		&:before {
-			@apply content-[''] absolute -left-1 block transition bg-white/60 h-full w-1 rounded-full;
-		}
-
-		@media (prefers-color-scheme: dark) {
-			blockquote:before {
-				@apply bg-gray-700/80;
-			}
+			@apply content-[''] absolute -left-1 block transition h-full w-1 rounded-full;
+			background: color-mix(in srgb, var(--text-primary) 15%, transparent);
 		}
 
 		p:before,

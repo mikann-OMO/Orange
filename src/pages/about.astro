@@ -5,12 +5,12 @@ import Markdown from "@components/misc/Markdown.astro";
 import FriendsList from "@components/widget/FriendsList.astro";
 import Profile from "@components/widget/Profile.astro";
 import { Icon } from "astro-icon/components";
-import ImageWrapper from "../components/misc/ImageWrapper.astro";
+import ImageWrapper from "@components/misc/ImageWrapper.astro";
 
-import { profileConfig } from "../config";
-import I18nKey from "../i18n/i18nKey";
-import { i18n } from "../i18n/translation";
-import MainGridLayout from "../layouts/MainGridLayout.astro";
+import { profileConfig } from "@/config";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
 
 const aboutPost = await getEntry("about", "about");
 

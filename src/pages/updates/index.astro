@@ -1,9 +1,9 @@
 ---
 import { Icon } from "astro-icon/components";
-import updatesData from "../../data/updates.json";
-import I18nKey from "../../i18n/i18nKey";
-import { i18n } from "../../i18n/translation";
-import MainGridLayout from "../../layouts/MainGridLayout.astro";
+import updatesData from "@/data/updates.json";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
 
 const { platforms, updates } = updatesData;
 
@@ -53,7 +53,7 @@ const typeLabels: Record<string, string> = {
             </div>
             <div class="p-4">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {platforms.map((platform) => (
+                    {platforms.map((platform: { url: string; icon: string; name: string; description: string }) => (
                         <a
                             href={platform.url}
                             target="_blank"
@@ -89,19 +89,12 @@ const typeLabels: Record<string, string> = {
             <div class="p-4">
                 {sortedUpdates.length > 0 ? (
                     <div class="space-y-3">
-                        {sortedUpdates.map((update, index) => (
+                        {sortedUpdates.slice(0, 10).map((update) => (
                             <a
                                 href={update.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                class:list={[
-                                    "group flex items-start gap-3 p-3 rounded-lg",
-                                    "bg-orange-50/50 dark:bg-stone-700/30",
-                                    "hover:bg-orange-100/80 dark:hover:bg-stone-700/50",
-                                    "transition-all duration-200",
-                                    "border border-transparent hover:border-orange-300/50 dark:hover:border-orange-500/20",
-                                    { "hidden": index >= 10 }
-                                ]}
+                                class="group flex items-start gap-3 p-3 rounded-lg bg-orange-50/50 dark:bg-stone-700/30 hover:bg-orange-100/80 dark:hover:bg-stone-700/50 transition-all duration-200 border border-transparent hover:border-orange-300/50 dark:hover:border-orange-500/20"
                             >
                                 <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center flex-shrink-0 mt-0.5
                                     group-hover:shadow-md group-hover:shadow-amber-400/20 transition-shadow">

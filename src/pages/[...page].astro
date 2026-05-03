@@ -1,19 +1,19 @@
 ---
 import type { GetStaticPaths } from "astro";
 import { Icon } from "astro-icon/components";
-import PostPage from "../components/PostPage.astro";
-import VisitorCounter from "../components/VisitorCounter.svelte";
-import Pagination from "../components/control/Pagination.astro";
-import ImageWrapper from "../components/misc/ImageWrapper.astro";
-import Categories from "../components/widget/Categories.astro";
-import FriendsList from "../components/widget/FriendsList.astro";
-import Profile from "../components/widget/Profile.astro";
-import Tags from "../components/widget/Tags.astro";
-import { profileConfig } from "../config";
-import { PAGE_SIZE } from "../constants/constants";
-import announcement from "../content/announcement.yaml";
-import MainGridLayout from "../layouts/MainGridLayout.astro";
-import { getSortedPosts } from "../utils/content-utils";
+import PostPage from "@components/PostPage.astro";
+import VisitorCounter from "@components/VisitorCounter.svelte";
+import Pagination from "@components/control/Pagination.astro";
+import ImageWrapper from "@components/misc/ImageWrapper.astro";
+import Categories from "@components/widget/Categories.astro";
+import FriendsList from "@components/widget/FriendsList.astro";
+import Profile from "@components/widget/Profile.astro";
+import Tags from "@components/widget/Tags.astro";
+import { profileConfig, siteConfig } from "@/config";
+import { PAGE_SIZE } from "@constants/constants";
+import announcement from "@/content/announcement.yaml";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
+import { getSortedPosts } from "@utils/content-utils";
 
 export const getStaticPaths = (async ({ paginate }) => {
 	const allBlogPosts = await getSortedPosts();
@@ -67,7 +67,7 @@ const lastUpdateDateTime = latestPost
 	: "";
 ---
 
-<MainGridLayout fullWidth={false}>
+<MainGridLayout title={siteConfig.title} description={siteConfig.subtitle} fullWidth={false}>
     <div class="space-y-4 md:space-y-6">
         <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-2xl rounded-none shadow-xl p-4 md:p-6">
             <div class="flex flex-row items-center md:items-start gap-4 md:gap-6">

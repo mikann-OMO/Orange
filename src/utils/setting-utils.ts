@@ -26,7 +26,7 @@ export function applyThemeToDocument(theme: LIGHT_DARK_MODE): void {
 	const isDark = document.documentElement.classList.contains("dark");
 	document.documentElement.style.setProperty(
 		"--page-bg",
-		isDark ? "#121212" : "#faf8f5",
+		isDark ? "#1c1917" : "#faf8f5",
 	);
 
 	const event = new CustomEvent("themeChange", { detail: { theme } });

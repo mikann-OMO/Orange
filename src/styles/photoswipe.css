@@ -1,5 +1,12 @@
 .pswp__button {
-	@apply transition bg-orange-950/40 hover:bg-orange-950/50 active:bg-orange-950/60 flex items-center justify-center mr-0 w-12 h-12 !important;
+	background: color-mix(in srgb, var(--text-primary) 40%, transparent) !important;
+	@apply transition flex items-center justify-center mr-0 w-12 h-12 !important;
+	&:hover {
+		background: color-mix(in srgb, var(--text-primary) 50%, transparent) !important;
+	}
+	&:active {
+		background: color-mix(in srgb, var(--text-primary) 60%, transparent) !important;
+	}
 }
 .pswp__button--zoom,
 .pswp__button--close {

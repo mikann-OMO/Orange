@@ -146,6 +146,8 @@ function indentClass(depth: number): string {
     const items = Array.from(root.querySelectorAll<HTMLElement>('.toc-item'));
     if (items.length === 0) return;
 
+    const scrollContainer = root.closest('.overflow-y-auto') as HTMLElement | null;
+
     const headingIds = items.map(el => el.getAttribute('href')?.replace('#', '')).filter(Boolean) as string[];
     const childrenMap = new Map<string, HTMLElement[]>();
     items.forEach(el => {
@@ -176,6 +178,17 @@ function indentClass(depth: number): string {
       if (toggleIcon) toggleIcon.style.transform = '';
     }
 
+    function scrollTocToItem(el: HTMLElement) {
+      if (!scrollContainer) return;
+      const containerRect = scrollContainer.getBoundingClientRect();
+      const elRect = el.getBoundingClientRect();
+      const relativeTop = elRect.top - containerRect.top;
+      const containerH = containerRect.height;
+      if (relativeTop < 0 || relativeTop > containerH - elRect.height) {
+        scrollContainer.scrollTop += relativeTop - containerH / 3;
+      }
+    }
+
     function setActive(id: string | null) {
       items.forEach(el => {
         el.setAttribute('data-active', 'false');
@@ -202,6 +215,8 @@ function indentClass(depth: number): string {
           const parentId = activeEl.getAttribute('data-parent-id');
           if (parentId) expandChildren(parentId);
         }
+
+        scrollTocToItem(activeEl);
       }
 
       const h2Items = items.filter(el => el.getAttribute('data-depth') === '0');
@@ -240,11 +255,6 @@ function indentClass(depth: number): string {
           if (entry.isIntersecting) {
             activeId = entry.target.id;
             setActive(activeId);
-
-            const tocItem = root!.querySelector<HTMLElement>(`[data-toc-id="${activeId}"]`);
-            if (tocItem) {
-              tocItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
           }
         }
       },

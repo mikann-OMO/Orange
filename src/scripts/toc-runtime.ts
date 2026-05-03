@@ -94,22 +94,22 @@ export function initToc(options: TocRuntimeOptions = {}) {
 		}
 	};
 
-	// Setup smooth scroll for all TOC links
+	// Setup smooth scroll for TOC links only
 	const setupSmoothScroll = () => {
-		for (const a of document.querySelectorAll("a[href^='#']")) {
+		for (const a of document.querySelectorAll("[data-toc-id]")) {
 			a.addEventListener("click", (e) => {
-				const href = a.getAttribute("href");
-				if (!href) return;
+				e.preventDefault();
+				const id = a.getAttribute("data-toc-id");
+				if (!id) return;
 
-				const el = document.querySelector(href) as HTMLElement | null;
+				const el = document.getElementById(id) as HTMLElement | null;
 				if (!el) return;
 
-				e.preventDefault();
 				const top =
 					window.scrollY + el.getBoundingClientRect().top - getOffset();
 
 				window.scrollTo({ top, behavior: "smooth" });
-				history.replaceState(null, "", href);
+				history.replaceState(null, "", `#${id}`);
 			});
 		}
 	};

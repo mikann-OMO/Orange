@@ -45,11 +45,12 @@ const currentPath = Astro.url.pathname;
                     aria-current={isActive ? 'page' : 'false'}
                     tabindex="0"
                 >
-                    <div class="flex items-center text-orange-700 dark:text-white">
+                    <div class="flex items-center" style="color: var(--accent-text);">
                         {l.name}
                         {isExternal && <Icon 
                             name="fa6-solid:arrow-up-right-from-square" 
-                            class="text-[0.875rem] -translate-y-[1px] ml-1 text-orange-950/[0.2] dark:text-white/[0.2]"
+                            class="text-[0.875rem] -translate-y-[1px] ml-1"
+                            style={`color: color-mix(in srgb, var(--text-primary) 20%, transparent)`}
                             aria-hidden="true"
                         />}
                     </div>
@@ -67,8 +68,8 @@ const currentPath = Astro.url.pathname;
                 aria-controls="mobile-menu"
                 tabindex="0"
             >
-                <Icon name="material-symbols:menu-rounded" class="text-[1.5rem] menu-icon text-orange-700 dark:text-orange-400" />
-                <Icon name="material-symbols:close-rounded" class="text-[1.5rem] close-icon hidden text-orange-700 dark:text-orange-400" />
+                <Icon name="material-symbols:menu-rounded" class="text-[1.5rem] menu-icon" style="color: var(--accent-text)" />
+                <Icon name="material-symbols:close-rounded" class="text-[1.5rem] close-icon hidden" style="color: var(--accent-text)" />
             </button>
         </div>
     </div>
@@ -89,9 +90,10 @@ const currentPath = Astro.url.pathname;
                             "mobile-nav-link",
                             "flex items-center justify-between px-4 py-3 rounded-lg font-medium transition-all duration-200",
                             isActive 
-                                ? "bg-[var(--primary)]/15 text-[var(--accent-text)] dark:text-[var(--primary)]" 
-                                : "text-orange-950/75 dark:text-white/75 hover:bg-orange-950/5 dark:hover:bg-white/10"
+                                ? "bg-[var(--primary)]/15 text-[var(--accent-text)]" 
+                                : "hover:bg-[var(--surface-hover)]"
                         ]}
+                        style={isActive ? '' : 'color: color-mix(in srgb, var(--text-primary) 75%, transparent);'}
                         role="menuitem"
                         aria-current={isActive ? 'page' : 'false'}
                         tabindex="0"
@@ -146,14 +148,12 @@ const currentPath = Astro.url.pathname;
         background: transparent;
     }
     
-    @media (prefers-color-scheme: dark) {
-        .nav-underline {
-            box-shadow: 0 1px 4px color-mix(in srgb, var(--primary) 30%, transparent);
-        }
-        
-        .nav-link-active .nav-underline {
-            box-shadow: 0 2px 6px color-mix(in srgb, var(--primary) 40%, transparent);
-        }
+    :global(.dark) .nav-underline {
+        box-shadow: 0 1px 4px color-mix(in srgb, var(--primary) 30%, transparent);
+    }
+    
+    :global(.dark) .nav-link-active .nav-underline {
+        box-shadow: 0 2px 6px color-mix(in srgb, var(--primary) 40%, transparent);
     }
     
     .mobile-menu {

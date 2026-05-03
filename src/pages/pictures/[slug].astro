@@ -5,11 +5,11 @@ import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 import type { GetStaticPaths } from "astro";
 import { Icon } from "astro-icon/components";
-import ImageWrapper from "../../components/misc/ImageWrapper.astro";
-import MainGridLayout from "../../layouts/MainGridLayout.astro";
+import ImageWrapper from "@components/misc/ImageWrapper.astro";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
 
 // 图册页面专用公告配置
-import picturesAnnouncement from "../../content/exhibition-announcement.yaml";
+import picturesAnnouncement from "@/content/exhibition-announcement.yaml";
 
 interface AnnouncementConfig {
 	title: string;

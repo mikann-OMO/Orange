@@ -16,7 +16,6 @@ import type { Favicon } from "@/types/config";
 import { url, pathsEqual } from "@utils/url-utils";
 import "photoswipe/style.css";
 import "../styles/transition.css";
-import "../styles/mobile.css";
 import "../styles/main.css";
 import "../styles/markdown.css";
 import { ClientRouter } from "astro:transitions";
@@ -151,8 +150,8 @@ const jsonLd = {
 	document.documentElement.style.setProperty('--hue', hue);
 
 	const isDark = document.documentElement.classList.contains('dark');
-	document.documentElement.style.setProperty('--page-bg', isDark ? '#121212' : '#faf8f5');
-	document.documentElement.style.backgroundColor = isDark ? '#121212' : '#faf8f5';
+	document.documentElement.style.setProperty('--page-bg', isDark ? '#1c1917' : '#faf8f5');
+	document.documentElement.style.backgroundColor = isDark ? '#1c1917' : '#faf8f5';
 
 	const calculateBannerHeight = () => {
 		let offset = Math.floor(window.innerHeight * (BANNER_HEIGHT_EXTEND / 100));
@@ -164,8 +163,8 @@ const jsonLd = {
 	if (theme === AUTO_MODE) {
 		window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
 			document.documentElement.classList.toggle('dark', e.matches);
-			document.documentElement.style.setProperty('--page-bg', e.matches ? '#121212' : '#faf8f5');
-				document.documentElement.style.backgroundColor = e.matches ? '#121212' : '#faf8f5';
+			document.documentElement.style.setProperty('--page-bg', e.matches ? '#1c1917' : '#faf8f5');
+				document.documentElement.style.backgroundColor = e.matches ? '#1c1917' : '#faf8f5';
 			window.dispatchEvent(new CustomEvent('themeChange', { detail: { theme: AUTO_MODE } }));
 		});
 	}
@@ -257,8 +256,8 @@ const jsonLd = {
 		</style>
 	</head>
 	<!-- 性能优化：减少不必要的触摸事件延迟 -->
-	<body class:list={["min-h-screen", {"lg:is-home": isHomePage, "enable-banner": enableBanner}]}
-		  style="touch-action: manipulation; -webkit-tap-highlight-color: transparent;"
+	<body class:list={["min-h-screen min-h-full", {"lg:is-home": isHomePage, "enable-banner": enableBanner}]}
+		  style="-webkit-tap-highlight-color: transparent; overflow-y: auto;"
 	>
 		<ConfigCarrier></ConfigCarrier>
 		<PageProgress />
@@ -286,7 +285,7 @@ const jsonLd = {
 					const isDark = theme === 'dark' || (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
 					html.classList.toggle('dark', isDark);
-					html.style.setProperty('--page-bg', isDark ? '#121212' : '#faf8f5');
+					html.style.setProperty('--page-bg', isDark ? '#1c1917' : '#faf8f5');
 					html.style.setProperty('--hue', localStorage.getItem('hue') || '0');
 					window.dispatchEvent(new CustomEvent('themeChange', { detail: { theme } }));
 				}
@@ -341,6 +340,12 @@ const jsonLd = {
 				document.addEventListener('astro:page-load', () => {
 					applyTheme();
 					requestAnimationFrame(triggerEnterAnimations);
+					requestAnimationFrame(() => {
+						document.body.style.overflow = 'auto';
+						document.documentElement.style.overflowY = 'auto';
+						document.body.style.position = 'static';
+						document.documentElement.style.position = 'static';
+					});
 				});
 
 				document.addEventListener('astro:after-swap', applyTheme);
@@ -385,13 +390,8 @@ const jsonLd = {
 
 
 
-/* 平滑滚动优化 */
-html {
-	scroll-behavior: smooth;
-}
-
-/* 减少点击延迟 */
-* {
+/* 减少点击延迟 - 仅应用于交互元素 */
+button, a, [role="button"], [role="link"] {
 	touch-action: manipulation;
 	-webkit-tap-highlight-color: transparent;
 }
@@ -409,8 +409,6 @@ type Runtime = {
 	backToTopBtn: HTMLElement | null;
 	navbar: HTMLElement | null;
 	lastScrollY: number;
-	lastNavbarHidden: boolean;
-	lastBackToTopVisible: boolean;
 	scrollScheduled: boolean;
 	onPageLoad: () => void;
 };
@@ -424,8 +422,6 @@ function createRuntime(): Runtime {
 		backToTopBtn: null,
 		navbar: null,
 		lastScrollY: 0,
-		lastNavbarHidden: false,
-		lastBackToTopVisible: false,
 		scrollScheduled: false,
 		onPageLoad: () => {},
 	};
@@ -623,17 +619,4 @@ w.__layoutRuntime.onPageLoad();
 	})();
 </script>
 
-<style is:global>
-.pswp__button--custom-x {
-  font-size: 28px;
-  line-height: 1;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  opacity: 0.9;
-}
-.pswp__button--custom-x:hover { opacity: 1; }
-</style>
+

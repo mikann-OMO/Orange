@@ -2,23 +2,22 @@
 import path from "node:path";
 import { render } from "astro:content";
 import { Icon } from "astro-icon/components";
-import Comment from "../../components/Comment.astro";
+import Comment from "@components/Comment.astro";
 
-import LikeButton from "../../components/LikeButton.svelte";
-import PageViewCounter from "../../components/PageViewCounter.svelte";
-import PostMetadata from "../../components/PostMeta.astro";
-import Toc from "../../components/Toc.astro";
-import Breadcrumb from "../../components/control/Breadcrumb.astro";
-import ImageWrapper from "../../components/misc/ImageWrapper.astro";
-import License from "../../components/misc/License.astro";
-import Markdown from "../../components/misc/Markdown.astro";
-import { licenseConfig, profileConfig, siteConfig } from "../../config";
-import I18nKey from "../../i18n/i18nKey";
-import { i18n } from "../../i18n/translation";
-import MainGridLayout from "../../layouts/MainGridLayout.astro";
-import { getSortedPosts } from "../../utils/content-utils";
-import { formatDateToYYYYMMDD } from "../../utils/date-utils";
-import { getDir, getPostUrlBySlug } from "../../utils/url-utils";
+import LikeButton from "@components/LikeButton.svelte";
+import PageViewCounter from "@components/PageViewCounter.svelte";
+import PostMetadata from "@components/PostMeta.astro";
+import Breadcrumb from "@components/control/Breadcrumb.astro";
+import ImageWrapper from "@components/misc/ImageWrapper.astro";
+import License from "@components/misc/License.astro";
+import Markdown from "@components/misc/Markdown.astro";
+import { licenseConfig, profileConfig, siteConfig } from "@/config";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
+import { getSortedPosts } from "@utils/content-utils";
+import { formatDateToYYYYMMDD } from "@utils/date-utils";
+import { getDir, getPostUrlBySlug } from "@utils/url-utils";
 
 export async function getStaticPaths() {
 	const blogEntries = await getSortedPosts();
@@ -57,30 +56,6 @@ const jsonLd = {
     <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
     <div class="flex max-w-[50rem] mx-auto w-full rounded-[var(--radius-large)] overflow-hidden relative mb-3 md:mb-4">
         <div id="post-container" class:list={["card-base z-10 px-4 md:px-6 lg:px-9 pt-4 md:pt-6 pb-3 md:pb-4 relative w-full post-content-animate", {}]}>
-            <!-- 移动端目录按钮 -->
-            <div class="lg:hidden fixed bottom-6 right-6 z-50">
-                <button id="mobile-toc-toggle" class="w-12 h-12 rounded-full bg-[var(--primary)] text-white shadow-lg flex items-center justify-center">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
-                </button>
-            </div>
-            <!-- 移动端目录面板 -->
-            <div id="mobile-toc-panel" class="lg:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm flex items-end justify-center translate-y-full transition-transform duration-300">
-                <div class="bg-white dark:bg-stone-800 w-full max-h-[80vh] overflow-y-auto rounded-t-2xl shadow-xl">
-                    <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-                        <h3 class="text-lg font-bold text-orange-700 dark:text-white">文章目录</h3>
-                        <button id="mobile-toc-close" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="p-4">
-                        <Toc headings={headings} />
-                    </div>
-                </div>
-            </div>
             <Breadcrumb 
                 items={[
                     { label: "首页", url: "/" },
@@ -218,28 +193,20 @@ const jsonLd = {
 </MainGridLayout>
 
 <script is:inline>
-  // 移动端目录控制 - 使用 classList.toggle
-  (function() {
-    const toggleBtn = document.getElementById('mobile-toc-toggle');
-    const closeBtn = document.getElementById('mobile-toc-close');
-    const panel = document.getElementById('mobile-toc-panel');
-
-    if (!toggleBtn || !closeBtn || !panel) return;
-
-    const openPanel = () => panel.classList.remove('translate-y-full');
-    const closePanel = () => panel.classList.add('translate-y-full');
-
-    toggleBtn.addEventListener('click', openPanel);
-    closeBtn.addEventListener('click', closePanel);
-
-    panel.addEventListener('click', (e) => {
-      if (e.target === panel) closePanel();
-    });
-
-    for (const link of panel.querySelectorAll('a[data-id]')) {
-      link.addEventListener('click', closePanel);
+  window.addEventListener('load', () => {
+    if (window.location.hash) {
+      requestAnimationFrame(() => {
+        const id = window.location.hash.replace('#', '');
+        const element = document.getElementById(id);
+        if (element) {
+          const nav = document.getElementById('navbar-wrapper');
+          const offset = nav ? nav.offsetHeight + 20 : 100;
+          const top = element.getBoundingClientRect().top + window.scrollY - offset;
+          window.scrollTo({ top, behavior: 'instant' });
+        }
+      });
     }
-  })();
+  });
 </script>
 
 <style>
@@ -396,6 +363,29 @@ const jsonLd = {
     
     .text-\[1\.5rem\] {
         font-size: 1.25rem;
+    }
+
+    @media (max-width: 640px) {
+        .jiuhuashan-gallery :global(img) {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 1rem auto !important;
+        }
+
+        .jiuhuashan-gallery :global(div[style*="display: flex"]) {
+            flex-wrap: nowrap !important;
+            gap: 5px !important;
+            overflow-x: auto !important;
+            padding: 10px 0 !important;
+        }
+
+        .jiuhuashan-gallery :global(div[style*="display: flex"] img) {
+            width: 80px !important;
+            height: 80px !important;
+            object-fit: cover !important;
+            border-radius: 4px !important;
+            flex-shrink: 0 !important;
+        }
     }
 }
 </style>

@@ -1,11 +1,11 @@
 ---
 import { getCollection } from "astro:content";
 import { Icon } from "astro-icon/components";
-import NoteCard from "../../components/NoteCard.astro";
-import Pagination from "../../components/control/Pagination.astro";
-import I18nKey from "../../i18n/i18nKey";
-import { i18n } from "../../i18n/translation";
-import MainGridLayout from "../../layouts/MainGridLayout.astro";
+import NoteCard from "@components/NoteCard.astro";
+import Pagination from "@components/control/Pagination.astro";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
 
 // 获取所有随记
 const allNotes = await getCollection("notes", ({ data }) => !data.draft);

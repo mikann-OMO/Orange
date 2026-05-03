@@ -1,13 +1,13 @@
 ---
 
 import { getCollection, render } from "astro:content";
-import ImageWrapper from "../../components/misc/ImageWrapper.astro";
-import Markdown from "../../components/misc/Markdown.astro";
-import { profileConfig, siteConfig } from "../../config";
-import I18nKey from "../../i18n/i18nKey";
-import { i18n } from "../../i18n/translation";
-import MainGridLayout from "../../layouts/MainGridLayout.astro";
-import { formatDate, formatDateToYYYYMMDD } from "../../utils/date-utils";
+import ImageWrapper from "@components/misc/ImageWrapper.astro";
+import Markdown from "@components/misc/Markdown.astro";
+import { profileConfig, siteConfig } from "@/config";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
+import { formatDate, formatDateToYYYYMMDD } from "@utils/date-utils";
 
 // 获取所有随记并生成静态路径
 export async function getStaticPaths() {

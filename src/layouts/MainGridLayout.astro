@@ -5,7 +5,7 @@ import Navbar from "@components/Navbar.astro";
 import type { MarkdownHeading } from "astro";
 import { Background } from "astro-lqip/components";
 import MobileTocDrawer from "@components/control/MobileTocDrawer.astro";
-import ImageWrapper from "@components/misc/ImageWrapper.astro";
+import AnnouncementCard from "@components/widget/AnnouncementCard.astro";
 import SidebarToc from "@components/widget/SidebarToc.astro";
 import { siteConfig } from "@/config";
 import Layout from "@layouts/Layout.astro";
@@ -33,9 +33,6 @@ interface Props {
 	showAnnouncement?: boolean;
 	isPostPage?: boolean;
 	announcementConfig?: AnnouncementConfig;
-	keywords?: string[];
-	image?: string;
-	canonicalUrl?: string;
 }
 
 const {
@@ -52,7 +49,13 @@ const {
 	announcementConfig,
 } = Astro.props;
 
-const activeAnnouncement = announcementConfig || announcement;
+const activeAnnouncement: AnnouncementConfig = (announcementConfig || announcement) as AnnouncementConfig;
+
+const contentColClass = fullWidth
+	? "md:col-span-12 lg:col-span-12"
+	: centerContent
+		? "md:col-span-10 lg:col-span-10 md:col-start-2 lg:col-start-2"
+		: "md:col-span-8 lg:col-span-8";
 ---
 
 <Layout title={title} banner={banner} description={description} lang={lang} setOGTypeArticle={setOGTypeArticle}>
@@ -60,271 +63,226 @@ const activeAnnouncement = announcementConfig || announcement;
 <slot slot="head" name="head"></slot>
 
 <div id="top-row" class="z-[999] pointer-events-none fixed top-0 left-0 right-0 w-full">
-    <div id="reading-progress" class="fixed top-0 left-0 right-0 h-[2px] bg-[var(--primary)] z-[1000] transform-origin-left scale-x-0 transition-transform duration-150"></div>
-    <div id="navbar-wrapper" class="pointer-events-auto fixed top-0 left-0 right-0 w-full bg-orange-100 dark:bg-stone-800 shadow-md z-[999]">
-        <Navbar></Navbar>
-    </div>
+	<div id="reading-progress" class="fixed top-0 left-0 right-0 h-[2px] bg-[var(--primary)] z-[1000] transform-origin-left scale-x-0 transition-transform duration-150"></div>
+	<div id="navbar-wrapper" class="pointer-events-auto fixed top-0 left-0 right-0 w-full shadow-md z-[999]" style="background: color-mix(in srgb, var(--card-bg) 95%, transparent);">
+		<Navbar></Navbar>
+	</div>
 </div>
 
 {siteConfig.banner.enable && (
-    <div id="banner-wrapper" class="h-dvh w-full fixed top-0 left-0 right-0 z-0 hidden md:block">
-        <Background src={bannerLight} cssVariable="--bg-light-lqip">
-        <div id="banner-light-container"
-             style={`position:absolute;inset:0;background-image:url(${bannerLight.src}),var(--bg-light-lqip);background-size:cover;background-position:center;background-attachment:fixed;background-color:#faf8f5;`}>
-        </div>
-        </Background>
-        <Background src={bannerDark} cssVariable="--bg-dark-lqip">
-        <div id="banner-dark-container"
-             style={`position:absolute;inset:0;display:none;background-image:url(${bannerDark.src}),var(--bg-dark-lqip);background-size:cover;background-position:center;background-attachment:fixed;background-color:#121212;`}>
-        </div>
-        </Background>
-    </div>
+	<div id="banner-wrapper" class="h-dvh w-full fixed top-0 left-0 right-0 z-0 hidden md:block">
+		<Background src={bannerLight} cssVariable="--bg-light-lqip">
+			<div id="banner-light-container"
+				style={`position:absolute;inset:0;background-image:url(${bannerLight.src}),var(--bg-light-lqip);background-size:cover;background-position:center;background-attachment:fixed;background-color:#faf8f5;`}>
+			</div>
+		</Background>
+		<Background src={bannerDark} cssVariable="--bg-dark-lqip">
+			<div id="banner-dark-container"
+				style={`position:absolute;inset:0;display:none;background-image:url(${bannerDark.src}),var(--bg-dark-lqip);background-size:cover;background-position:center;background-attachment:fixed;background-color:#1c1917;`}>
+			</div>
+		</Background>
+	</div>
 )}
 
 <script is:inline define:vars={{enable: siteConfig.banner.enable}}>
-    if (enable) {
-        function syncBannerTheme() {
-            var isDark = document.documentElement.classList.contains('dark');
-            var lightEl = document.getElementById('banner-light-container');
-            var darkEl = document.getElementById('banner-dark-container');
-            if (lightEl) lightEl.style.display = isDark ? 'none' : 'block';
-            if (darkEl) darkEl.style.display = isDark ? 'block' : 'none';
-        }
+	if (enable) {
+		function syncBannerTheme() {
+			var isDark = document.documentElement.classList.contains('dark');
+			var lightEl = document.getElementById('banner-light-container');
+			var darkEl = document.getElementById('banner-dark-container');
+			if (lightEl) lightEl.style.display = isDark ? 'none' : 'block';
+			if (darkEl) darkEl.style.display = isDark ? 'block' : 'none';
+		}
 
-        syncBannerTheme();
-        window.addEventListener('themeChange', syncBannerTheme);
-    }
+		syncBannerTheme();
+		window.addEventListener('themeChange', syncBannerTheme);
+	}
 </script>
 
-<div id="main-wrapper" class="relative w-full z-10 min-h-screen">
-    <div class:list={[
-        "fixed top-0 bottom-0 z-[-1] mx-auto backdrop-blur-3xl rounded-none shadow-xl",
-        isPostPage ? "bg-[var(--page-bg)]/70 dark:bg-[var(--page-bg)]/90" : "bg-white/10 dark:bg-[var(--page-bg)]/60"
-    ]} style="left: 50%; transform: translateX(-50%) scale(1); transform-origin: center center; max-width: var(--page-width); width: 100%;"></div>
-    
-    <div id="content-wrapper" class="relative max-w-[var(--page-width)] mx-auto h-full overflow-x-hidden">
-        <div id="main-grid" class="w-full gap-4 md:gap-6 px-3 md:px-6 grid grid-cols-1 md:grid-cols-12 grid-rows-[auto_1fr_auto] h-full max-w-[var(--page-width)] items-start">
-            {isPostPage ? (
-                <>
-                    <main id="content-container" class="md:col-span-8 lg:col-span-8">
-                        <div class="w-full">
-                            <slot></slot>
-                        </div>
-                    </main>
-                    <aside class="md:col-span-4 lg:col-span-4 pt-0 mt-0 sticky top-20 self-start space-y-4">
-                        {activeAnnouncement.enabled && showAnnouncement && (
-                            <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-2xl shadow-xl p-4">
-                                <div class="flex items-start gap-4">
-                                    <div class="flex-shrink-0">
-                                        <ImageWrapper
-                                            src={activeAnnouncement.avatar as string}
-                                            alt="公告头像"
-                                            class="w-12 h-12 rounded-full object-cover border-2 border-orange-100 dark:border-stone-700"
-                                            loading="lazy"
-                                        />
-                                    </div>
-                                    <div class="flex-1">
-                                        <p class="font-bold text-orange-700 dark:text-white">{activeAnnouncement.title}：</p>
-                                        <p class="text-gray-600 dark:text-gray-300">{activeAnnouncement.content}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
+<div id="main-wrapper" class="relative w-full z-10 min-h-screen min-h-full">
+	<div class:list={[
+		"absolute top-0 left-0 right-0 z-[-1] mx-auto backdrop-blur-3xl rounded-none shadow-xl pointer-events-none",
+		isPostPage ? "bg-[var(--page-bg)]/70 dark:bg-[var(--page-bg)]/90" : "bg-white/10 dark:bg-[var(--page-bg)]/60"
+	]} style="left: 50%; transform: translateX(-50%); transform-origin: center center; max-width: var(--page-width); width: 100%; height: 100%; min-height: 100vh;"></div>
 
-                        {headings.length > 0 && (
-                            <div class="sticky top-4">
-                                <SidebarToc headings={headings} />
-                            </div>
-                        )}
+	<div id="content-wrapper" class="relative max-w-[var(--page-width)] mx-auto min-h-full overflow-x-hidden">
+		<div id="main-grid" class="w-full gap-4 md:gap-6 px-3 md:px-6 grid grid-cols-1 md:grid-cols-12 grid-rows-[auto_auto_auto] max-w-[var(--page-width)] items-start">
+			{isPostPage ? (
+				<>
+					<main id="content-container" class="md:col-span-8 lg:col-span-8">
+						<div class="w-full">
+							<slot></slot>
+						</div>
+					</main>
+					<aside class="md:col-span-4 lg:col-span-4 pt-0 mt-0 sticky top-20 self-start space-y-4">
+						{activeAnnouncement.enabled && showAnnouncement && (
+							<AnnouncementCard
+								title={activeAnnouncement.title}
+								content={activeAnnouncement.content}
+								avatar={activeAnnouncement.avatar}
+							/>
+						)}
 
-                        <button
-                            id="back-to-top"
-                            class="w-full py-2 px-4 rounded-lg bg-[var(--primary)]/10 hover:bg-[var(--primary)]/20 text-[var(--primary)] text-sm font-medium transition-colors flex items-center justify-center gap-2"
-                            aria-label="回到顶部"
-                        >
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
-                            </svg>
-                            回到顶部
-                        </button>
+						{headings.length > 0 && (
+							<div class="sticky top-4">
+								<SidebarToc headings={headings} />
+							</div>
+						)}
 
-                        <div class="mt-4">
-                            <slot name="sidebar"></slot>
-                        </div>
-                    </aside>
-                    <div class="footer col-span-2 hidden lg:block col-start-1">
-                        <Footer></Footer>
-                    </div>
-                </>
-            ) : (
-                <>
-                    <main id="content-container" class={`${fullWidth ? 'md:col-span-12 lg:col-span-12' : centerContent ? 'md:col-span-10 lg:col-span-10 md:col-start-2 lg:col-start-2' : 'md:col-span-8 lg:col-span-8'}`}>
-                        <div class="w-full">
-                            <slot></slot>
-                            <div class="footer col-span-2 hidden lg:block">
-                                <Footer></Footer>
-                            </div>
-                        </div>
-                    </main>
+						<div class="mt-4">
+							<slot name="sidebar"></slot>
+						</div>
+					</aside>
+					<div class="footer col-span-2 hidden lg:block col-start-1">
+						<Footer></Footer>
+					</div>
+				</>
+			) : (
+				<>
+					<main id="content-container" class={contentColClass}>
+						<div class="w-full">
+							<slot></slot>
+							<div class="footer col-span-2 hidden lg:block">
+								<Footer></Footer>
+							</div>
+						</div>
+					</main>
 
-                    {!fullWidth && (
-                        <aside class="md:col-span-4 lg:col-span-4 pt-0 mt-0 relative self-start">
-                            {activeAnnouncement.enabled && showAnnouncement && (
-                                <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-2xl shadow-xl p-4 mb-6">
-                                    <div class="flex items-start gap-4">
-                                        <div class="flex-shrink-0">
-                                            <ImageWrapper
-                                                src={activeAnnouncement.avatar as string}
-                                                alt="公告头像"
-                                                class="w-12 h-12 rounded-full object-cover border-2 border-orange-100 dark:border-stone-700"
-                                                loading="lazy"
-                                            />
-                                        </div>
-                                        <div class="flex-1">
-                                            <p class="font-bold text-orange-700 dark:text-white">{activeAnnouncement.title}：</p>
-                                            <p class="text-gray-600 dark:text-gray-300">{activeAnnouncement.content}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
+					{!fullWidth && (
+						<aside class="md:col-span-4 lg:col-span-4 pt-0 mt-0 relative self-start">
+							{activeAnnouncement.enabled && showAnnouncement && (
+								<AnnouncementCard
+									title={activeAnnouncement.title}
+									content={activeAnnouncement.content}
+									avatar={activeAnnouncement.avatar}
+								/>
+							)}
 
-                            <div class="mt-6">
-                                <slot name="sidebar"></slot>
-                            </div>
-                        </aside>
-                    )}
+							<div class="mt-6">
+								<slot name="sidebar"></slot>
+							</div>
+						</aside>
+					)}
 
-                    <div class="footer col-span-2 block lg:hidden">
-                        <Footer></Footer>
-                    </div>
-                </>
-            )}
+					<div class="footer col-span-2 block lg:hidden">
+						<Footer></Footer>
+					</div>
+				</>
+			)}
+		</div>
+	</div>
 </div>
 
 {isPostPage && headings.length > 0 && (
-    <MobileTocDrawer headings={headings} />
+	<MobileTocDrawer headings={headings} />
 )}
 
 </Layout>
 
 <script is:inline>
-  const initReadingProgress = () => {
-    const update = () => {
-      const scrollTop = window.scrollY;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = scrollTop / docHeight;
-      const bar = document.getElementById('reading-progress');
-      if (bar) {
-        bar.style.transform = `scaleX(${Math.max(0, Math.min(1, progress))})`;
-      }
-    };
+	const initReadingProgress = () => {
+		const update = () => {
+			const scrollTop = window.scrollY;
+			const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+			const progress = scrollTop / docHeight;
+			const bar = document.getElementById('reading-progress');
+			if (bar) {
+				bar.style.transform = `scaleX(${Math.max(0, Math.min(1, progress))})`;
+			}
+		};
 
-    window.addEventListener('scroll', update, { passive: true });
-    window.addEventListener('resize', update, { passive: true });
-    update();
-  };
+		window.addEventListener('scroll', update, { passive: true });
+		window.addEventListener('resize', update, { passive: true });
+		update();
+	};
 
-  const initBackToTop = () => {
-    const btn = document.getElementById('back-to-top');
-    if (!btn) return;
-
-    btn.addEventListener('click', () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-  };
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", () => {
-      initReadingProgress();
-      initBackToTop();
-    });
-  } else {
-    initReadingProgress();
-    initBackToTop();
-  }
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", initReadingProgress);
+	} else {
+		initReadingProgress();
+	}
 </script>
 
 <style>
 #main-wrapper {
-    position: relative;
-    width: 100%;
-    z-index: 10;
-    min-height: 100vh;
-    min-height: 100dvh;
+	position: relative;
+	width: 100%;
+	z-index: 10;
+	min-height: 100vh;
+	min-height: 100dvh;
 }
 
 #content-wrapper {
-    position: relative;
-    max-width: var(--page-width);
-    margin: 0 auto;
-    height: 100%;
-    overflow-x: hidden;
+	position: relative;
+	max-width: var(--page-width);
+	margin: 0 auto;
+	min-height: 100%;
+	overflow-x: hidden;
 }
 
 #main-grid {
-    width: 100%;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-    height: 100%;
-    max-width: var(--page-width);
+	width: 100%;
+	left: 0;
+	right: 0;
+	margin: 0 auto;
+	max-width: var(--page-width);
 }
 
 #content-container {
-    width: 100%;
+	width: 100%;
 }
 
 @media (max-width: 768px) {
-    #content-wrapper {
-        padding-top: 40px;
-    }
-    
-    #main-grid {
-        gap: 0;
-        padding: 0 0 0 0;
-        padding-top: 8px;
-    }
-    
-    #content-container {
-        padding: 12px;
-        background: transparent;
-    }
-    
-    aside {
-        display: none;
-    }
-    
-    .footer {
-        padding: 16px 12px;
-        background: transparent;
-    }
-    
-    #top-row {
-        position: fixed;
-    }
-    
-    #navbar-wrapper {
-        background: linear-gradient(180deg,
-            var(--page-bg) 0%,
-            color-mix(in srgb, var(--page-bg) 95%, transparent) 100%
-        );
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border-bottom: 1px solid rgba(255, 152, 0, 0.1);
-    }
-    
-    :global(.dark) #navbar-wrapper {
-        border-bottom-color: rgba(255, 255, 255, 0.05);
-    }
+	#content-wrapper {
+		padding-top: 40px;
+	}
+
+	#main-grid {
+		gap: 0;
+		padding: 0 0 0 0;
+		padding-top: 8px;
+	}
+
+	#content-container {
+		padding: 12px;
+		background: transparent;
+	}
+
+	aside {
+		display: none;
+	}
+
+	.footer {
+		padding: 16px 12px;
+		background: transparent;
+	}
+
+	#top-row {
+		position: fixed;
+	}
+
+	#navbar-wrapper {
+		background: linear-gradient(180deg,
+			var(--page-bg) 0%,
+			color-mix(in srgb, var(--page-bg) 95%, transparent) 100%
+		);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+		border-bottom: 1px solid rgba(255, 152, 0, 0.1);
+	}
+
+	:global(.dark) #navbar-wrapper {
+		border-bottom-color: rgba(255, 255, 255, 0.05);
+	}
 }
 
 @media (min-width: 769px) {
-    #content-wrapper {
-        padding-top: 1rem;
-    }
+	#content-wrapper {
+		padding-top: 1rem;
+	}
 
-    #main-grid {
-        padding-top: 0;
-    }
+	#main-grid {
+		padding-top: 0;
+	}
 }
 </style>

@@ -19,7 +19,8 @@
 	}
 
 	.float-panel {
-		@apply top-[5.25rem] rounded-t-none overflow-hidden bg-white/80 dark:bg-stone-800/80 shadow-lg dark:shadow-xl
+		@apply top-[5.25rem] rounded-t-none overflow-hidden shadow-lg dark:shadow-xl;
+		background: color-mix(in srgb, var(--card-bg) 80%, transparent);
 	}
 
 	.float-panel-closed {
@@ -27,40 +28,60 @@
 	}
 
 	#nav-menu-panel {
-		@apply right-4 border rounded-xl shadow-lg bg-white dark:bg-stone-800
+		@apply right-4 border rounded-xl shadow-lg;
+		background: var(--card-bg);
 	}
 
 	.btn-card {
-		@apply transition flex items-center justify-center hover:bg-orange-950/5 dark:hover:bg-white/10
-        active:bg-orange-950/10 dark:active:bg-white/15
+		@apply transition flex items-center justify-center;
+		&:hover {
+			background: var(--surface-hover);
+		}
+		&:active {
+			background: var(--surface-active);
+		}
 	}
 
 	.btn-card.disabled {
-		@apply pointer-events-none text-orange-950/10 dark:text-white/10
+		@apply pointer-events-none;
+		color: color-mix(in srgb, var(--text-primary) 10%, transparent);
 	}
 
 	.btn-plain {
-		@apply relative flex items-center justify-center bg-none
-        text-orange-950/75 dark:text-white/75;
+		@apply relative flex items-center justify-center bg-none;
+		color: color-mix(in srgb, var(--text-primary) 75%, transparent);
 		&:not(.scale-animation) {
 			@apply bg-transparent
 		}
 		&.scale-animation {
 			@apply bg-transparent;
 			&.current-theme-btn {
-				@apply text-orange-700
+				color: var(--accent-text);
 			}
 		}
 	}
 
 	.btn-regular {
-		@apply transition flex items-center justify-center bg-white/60 dark:bg-stone-700/80 hover:bg-white/80 dark:hover:bg-stone-600/80 active:bg-white/90 dark:active:bg-stone-500/80 backdrop-blur-sm
-        text-gray-900 dark:text-white
+		@apply transition flex items-center justify-center backdrop-blur-sm;
+		background: var(--icon-bg);
+		color: var(--icon-text);
+		&:hover {
+			background: color-mix(in srgb, var(--icon-bg) 85%, var(--icon-text));
+		}
+		&:active {
+			background: color-mix(in srgb, var(--icon-bg) 75%, var(--icon-text));
+		}
 	}
 
 	.link-underline {
-		@apply transition underline decoration-2 decoration-dashed decoration-orange-950/20 dark:decoration-white/20
-        hover:decoration-orange-500 active:decoration-orange-600 underline-offset-[0.25rem]
+		@apply transition underline decoration-2 decoration-dashed underline-offset-[0.25rem];
+		text-decoration-color: color-mix(in srgb, var(--text-primary) 20%, transparent);
+		&:hover {
+			text-decoration-color: var(--primary);
+		}
+		&:active {
+			text-decoration-color: var(--secondary);
+		}
 	}
 
 	#toc-inner-wrapper {
@@ -83,43 +104,52 @@
 	}
 
 	.text-90 {
-		@apply text-orange-950/90 dark:text-white/90
+		color: color-mix(in srgb, var(--text-primary) 90%, transparent);
 	}
 
 	.text-75 {
-		@apply text-orange-950/75 dark:text-white/75
+		color: color-mix(in srgb, var(--text-primary) 75%, transparent);
 	}
 
 	.text-50 {
-		@apply text-orange-950/50 dark:text-white/50
+		color: color-mix(in srgb, var(--text-primary) 50%, transparent);
 	}
 
 	.text-30 {
-		@apply text-orange-950/30 dark:text-white/30
+		color: color-mix(in srgb, var(--text-primary) 30%, transparent);
 	}
 
 	.text-25 {
-		@apply text-orange-950/25 dark:text-white/25
+		color: color-mix(in srgb, var(--text-primary) 25%, transparent);
 	}
 
 	.meta-icon {
-		@apply w-8 h-8 transition rounded-md flex items-center justify-center bg-white/60 dark:bg-gray-700/80 backdrop-blur-sm
-        text-gray-900 dark:text-white mr-2
+		@apply w-8 h-8 transition rounded-md flex items-center justify-center backdrop-blur-sm mr-2;
+		background: var(--icon-bg);
+		color: var(--icon-text);
 	}
 
 	.with-divider {
-		@apply before:content-["/"] before:ml-1.5 before:mr-1.5 before:text-gray-400 dark:before:text-gray-600 before:text-sm
-        before:font-medium before:first-of-type:hidden before:transition
+		@apply before:content-["/"] before:ml-1.5 before:mr-1.5 before:text-sm
+        before:font-medium before:first-of-type:hidden before:transition;
+		&::before {
+			color: var(--text-secondary);
+		}
 	}
 
 	.btn-regular-dark {
-		@apply flex items-center justify-center
-        bg-gray-700 hover:bg-gray-600 active:bg-gray-500
-        dark:bg-gray-800 dark:hover:bg-gray-700 dark:active:bg-gray-600
+		@apply flex items-center justify-center;
+		background: color-mix(in srgb, var(--text-primary) 20%, transparent);
+		&:hover {
+			background: color-mix(in srgb, var(--text-primary) 30%, transparent);
+		}
+		&:active {
+			background: color-mix(in srgb, var(--text-primary) 40%, transparent);
+		}
 	}
 
 	.btn-regular-dark.success {
-		@apply bg-green-500 dark:bg-green-500
+		background: var(--success);
 	}
 
 	.copy-btn-icon {
@@ -127,11 +157,13 @@
 	}
 
 	.copy-btn .copy-icon {
-		@apply opacity-100 fill-white dark:fill-white/75
+		@apply opacity-100;
+		fill: var(--icon-text);
 	}
 
 	.copy-btn.success .copy-icon {
-		@apply opacity-0 fill-gray-900 dark:fill-white
+		@apply opacity-0;
+		fill: var(--icon-text);
 	}
 
 	.copy-btn .success-icon {
@@ -156,36 +188,6 @@
 		max-width: 100% !important;
 		margin: 1rem auto !important;
 	}
-
-	/* 九华山游记图片样式，确保移动端和PC端一致 */
-	.jiuhuashan-gallery .custom-md img {
-		float: none !important;
-		display: block !important;
-		width: 100% !important;
-		max-width: 100% !important;
-		margin: 1rem auto !important;
-	}
-
-	/* 九华山游记中的弹性布局图片容器 */
-	.jiuhuashan-gallery div[style*="display: flex"] {
-		display: flex !important;
-		flex-wrap: nowrap !important;
-		gap: 5px !important;
-		margin: 20px 0 !important;
-		overflow-x: auto !important;
-		padding: 10px 0 !important;
-	}
-
-	/* 九华山游记中的图片 */
-	.jiuhuashan-gallery div[style*="display: flex"] img {
-		width: 80px !important;
-		height: 80px !important;
-		object-fit: cover !important;
-		border-radius: 4px !important;
-		transition: transform 0.2s ease !important;
-		cursor: pointer !important;
-		flex-shrink: 0 !important;
-	}
 }
 
 ::selection {
@@ -204,46 +206,62 @@
 	}
 }
 
-/* 移动端保持无滚动条 */
 @media (max-width: 768px) {
-	::-webkit-scrollbar-horizontal {
-		display: none;
+	html {
+		font-size: 14px;
+		-webkit-text-size-adjust: 100%;
 	}
 
 	body {
+		background-color: var(--page-bg) !important;
+		min-height: 100vh;
+		min-height: 100dvh;
+		overflow-x: hidden;
+		-webkit-overflow-scrolling: touch;
+		-webkit-tap-highlight-color: transparent;
 		scrollbar-width: none;
 		-ms-overflow-style: none;
 	}
+
+	::-webkit-scrollbar-horizontal {
+		display: none;
+	}
 }
 
-html,
-body {
-	overflow-x: hidden;
+html {
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-rendering: optimizeLegibility;
+	background-color: var(--page-bg);
+	overflow-x: hidden !important;
+	overflow-y: auto !important;
 	width: 100%;
+	height: auto !important;
+	min-height: 100vh;
+	min-height: 100dvh;
+	position: static !important;
+}
+
+body {
+	overflow-x: hidden !important;
+	overflow-y: auto !important;
+	width: 100%;
+	min-height: 100vh;
+	min-height: 100dvh;
+	margin: 0;
+	padding: 0;
+	position: static !important;
+	height: auto !important;
 }
 
 img {
-	background-color: rgba(255, 255, 255, 0.8);
+	background-color: color-mix(in srgb, var(--page-bg) 80%, transparent);
 	transition: opacity 0.3s ease;
 	opacity: 1;
 }
 
 img[src]:not([src=""]) {
 	background: transparent;
-}
-
-img[loading="lazy"] {
-	opacity: 1;
-}
-
-img[loading="lazy"].loaded,
-img[loading="lazy"][complete] {
-	opacity: 1;
-}
-
-#post-container {
-	content-visibility: auto;
-	contain-intrinsic-size: 0 500px;
 }
 
 :root {
@@ -261,6 +279,15 @@ img[loading="lazy"][complete] {
 	--btn-regular-bg-hover: rgba(255, 152, 0, 1);
 	--card-border: rgba(0, 0, 0, 0.06);
 	--card-bg: #ffffff;
+	--surface: #fff8f0;
+	--surface-hover: rgba(255, 152, 0, 0.05);
+	--surface-active: rgba(255, 152, 0, 0.10);
+	--divider: rgba(0, 0, 0, 0.06);
+	--icon-bg: rgba(255, 255, 255, 0.6);
+	--icon-text: #1a1816;
+	--shadow-color: rgba(0, 0, 0, 0.04);
+	--success: #16a34a;
+	--error: #dc2626;
 	--radius-large: 1rem;
 	--page-width: 68rem;
 	--elevation-1: rgba(0, 0, 0, 0.04);
@@ -270,25 +297,31 @@ img[loading="lazy"][complete] {
 }
 
 .dark {
-	--page-bg: #121212;
+	--page-bg: #1c1917;
 	--accent-text: #ffb74d;
-	--text-primary: #e7e5e4;
+	--text-primary: #f5f5f4;
 	--text-secondary: #a8a29e;
-	--card-bg: #1e1e1e;
+	--card-bg: #292524;
 	--card-border: rgba(255, 255, 255, 0.08);
 	--btn-plain-bg-hover: rgba(255, 152, 0, 0.1);
 	--btn-plain-bg-active: rgba(255, 152, 0, 0.18);
+	--btn-content: #ffb74d;
+	--deep-text: #ffb74d;
+	--btn-regular-bg: rgba(255, 152, 0, 0.7);
+	--btn-regular-bg-hover: rgba(255, 152, 0, 0.9);
+	--surface: rgba(41, 37, 36, 0.6);
+	--surface-hover: rgba(255, 152, 0, 0.08);
+	--surface-active: rgba(255, 152, 0, 0.14);
+	--divider: rgba(255, 255, 255, 0.08);
+	--icon-bg: rgba(41, 37, 36, 0.8);
+	--icon-text: #f5f5f4;
+	--shadow-color: rgba(0, 0, 0, 0.2);
+	--success: #22c55e;
+	--error: #ef4444;
 	--elevation-1: rgba(255, 255, 255, 0.04);
 	--elevation-2: rgba(255, 255, 255, 0.08);
 	--elevation-3: rgba(255, 255, 255, 0.12);
 	--line-divider: rgba(255, 255, 255, 0.08);
-}
-
-html {
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	text-rendering: optimizeLegibility;
-	background-color: var(--page-bg);
 }
 
 /* 优化 backdrop-blur 渲染，减少闪烁 */
