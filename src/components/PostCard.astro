@@ -1,13 +1,10 @@
 ---
-import path from "node:path";
 import type { CollectionEntry } from "astro:content";
 import { render } from "astro:content";
 import { Icon } from "astro-icon/components";
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
-import { getDir } from "../utils/url-utils";
 import PostMetadata from "./PostMeta.astro";
-import ImageWrapper from "./misc/ImageWrapper.astro";
 
 interface Props {
 	class?: string;
@@ -20,10 +17,8 @@ interface Props {
 	category: string;
 	image: string;
 	description: string;
-	draft: boolean;
-	style: string;
-	delay?: number;
 }
+
 const {
 	entry,
 	title,
@@ -34,181 +29,178 @@ const {
 	category,
 	image,
 	description,
-	style,
 } = Astro.props;
 const className = Astro.props.class;
 
-const hasCover = image !== undefined && image !== null && image !== "";
-
-const coverWidth = "28%";
-
 const { remarkPluginFrontmatter } = await render(entry);
 ---
-<div class:list={["group flex flex-col md:flex-row w-full rounded-[var(--radius-large)] overflow-hidden relative backdrop-blur-md bg-orange-100/18 dark:bg-stone-800 border border-orange-200/50 dark:border-stone-700/50 shadow-lg hover:border-[var(--primary)]/70 hover:shadow-[0_8px_24px_rgba(133,32,12,0.15)] transition-all duration-300 hover:-translate-y-1 post-card-animate", className]} style={style}>
-    <a href={url} aria-label={title} class="absolute inset-0 z-10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"></a>
-    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] scale-x-0 transition-transform duration-500 delay-300 origin-left group-hover:scale-x-100 z-20"></div>
 
-    <div class="flex-1 p-2.5 md:p-3">
-        <div class="rounded-md p-2.5 md:p-3 mb-1.5 md:mb-2 bg-orange-100 dark:bg-stone-700/90">
-            <div class="inline-block px-2 md:px-3 py-0.5 md:py-1 rounded-full text-xs font-medium bg-[var(--primary)]/10 text-[var(--accent-text)] dark:text-white mb-1.5 md:mb-2 group-hover:bg-[var(--primary)]/20 transition-all duration-200">
-                {category || i18n(I18nKey.uncategorized)}
-            </div>
+<div class:list={["post-card", className]}>
+	{image && (
+		<div class="card-bg" style={`background-image: url('${image}');`}></div>
+	)}
+	<div class="card-overlay"></div>
+	<a href={url} class="card-link"></a>
+	<div class="card-text">
+		<h2 class="title">{title}</h2>
+		<p class="excerpt">{description || remarkPluginFrontmatter.excerpt}</p>
 
-            <h2 class="block font-bold text-base md:text-lg md:text-xl text-orange-950 dark:text-white group-hover:text-[var(--accent-text)] transition-colors duration-200 mb-1.5 md:mb-2 font-['SimSun',serif] line-clamp-2 md:line-clamp-none">
-                {title}
-            </h2>
+		<div class="card-bottom">
+			<PostMetadata
+				published={published}
+				updated={updated}
+				tags={tags}
+				category={category}
+				hideTagsForMobile={true}
+				hideUpdateDate={true}
+				class="meta"
+			/>
+		</div>
 
-            <div>
-              <PostMetadata published={published} updated={updated} tags={tags} category={category} hideTagsForMobile={true} hideUpdateDate={true} class="mb-0 text-xs md:text-sm text-orange-950/60 dark:text-white/80 group-hover:text-[var(--accent-text)]/80 transition-colors duration-200"></PostMetadata>
-            </div>
-        </div>
-
-        <div class="px-0.5 md:px-1 pt-1.5 md:pt-2">
-            <div class:list={["text-xs md:text-sm text-orange-950/70 dark:text-white/70 mb-1.5 md:mb-2 line-clamp-2 md:line-clamp-3 group-hover:text-orange-950 dark:group-hover:text-white transition-colors duration-200"]}>
-                { description || remarkPluginFrontmatter.excerpt }
-            </div>
-
-            <div class="flex items-center justify-between transition-all duration-200">
-                <div class="text-xs md:text-sm text-[var(--accent-text)] dark:text-[var(--primary)] flex gap-2 md:gap-3 group-hover:text-[var(--secondary)] transition-colors duration-200">
-                    <span>{remarkPluginFrontmatter.words} {" " + i18n(I18nKey.wordsCount)}</span>
-                    <span>•</span>
-                    <span>{remarkPluginFrontmatter.minutes} {" " + i18n(I18nKey.minutesCount)}</span>
-                </div>
-                <div class="inline-flex items-center text-xs md:text-sm font-medium text-[var(--accent-text)] dark:text-[var(--primary)] hover:text-[var(--secondary)] transition-colors duration-200">
-                    <span class="hidden sm:inline">阅读全文</span>
-                    <Icon class="ml-1 md:ml-2 text-base md:text-lg" name="material-symbols:chevron-right-rounded" />
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    {hasCover && (
-        <div class="flex-shrink-0 md:flex items-center justify-center md:p-4 md:pt-4 md:pb-4 md:pr-4 md:pl-0">
-            <div class="w-full md:hidden h-32 overflow-hidden">
-                <ImageWrapper 
-                    src={image} 
-                    basePath={path.join("content/posts/", getDir(entry.id))} 
-                    alt="文章封面"
-                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
-                    position="center"
-                />
-            </div>
-            <div class="hidden md:block w-[180px] h-[180px] rounded-[var(--radius-large)] overflow-hidden shadow-md transition-all duration-300">
-                <ImageWrapper 
-                    src={image} 
-                    basePath={path.join("content/posts/", getDir(entry.id))} 
-                    alt="文章封面"
-                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
-                    position="center"
-                />
-            </div>
-        </div>
-    )}
+		<div class="more">
+			<span>{remarkPluginFrontmatter.words || 0}字·</span>
+			<span>阅读全文</span>
+			<Icon name="material-symbols:arrow-forward-rounded" class="arrow-icon" />
+		</div>
+	</div>
 </div>
-<div class="transition border-t-[1px] border-dashed mx-4 md:mx-6 border-orange-950/10 dark:border-white/[0.15] last:border-t-0 md:hidden"></div>
 
-<style define:vars={{coverWidth}}>
+<style>
+.post-card {
+	position: relative;
+	min-height: 150px;
+	overflow: hidden;
+}
+
+.card-bg {
+	position: absolute;
+	inset: 0;
+	background-size: cover;
+	background-position: center;
+	transition: transform 0.4s ease;
+}
+
+.card-overlay {
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(
+		to right,
+		color-mix(in srgb, var(--card-bg) 92%, transparent) 0%,
+		color-mix(in srgb, var(--card-bg) 88%, transparent) 45%,
+		color-mix(in srgb, var(--card-bg) 45%, transparent) 65%,
+		transparent 100%
+	);
+	pointer-events: none;
+}
+
+.post-card:hover .card-bg {
+	transform: scale(1.04);
+}
+
+.card-link {
+	position: absolute;
+	inset: 0;
+	z-index: 20;
+}
+
+.card-text {
+	position: relative;
+	z-index: 10;
+	padding: 14px 22px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	max-width: 65%;
+}
+
+
+
+.title {
+	margin: 0;
+	font-size: 1.15rem;
+	font-weight: 600;
+	line-height: 1.3;
+	color: var(--text-primary);
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	transition: color 0.3s ease;
+}
+
+.post-card:hover .title {
+	color: var(--accent-text);
+}
+
+.excerpt {
+	margin: 0;
+	font-size: 0.875rem;
+	line-height: 1.6;
+	color: var(--text-secondary);
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+.card-bottom {
+	padding-top: 8px;
+	border-top: 1px solid color-mix(in srgb, var(--text-primary) 10%, transparent);
+}
+
+:global(.meta) {
+	font-size: 0.75rem !important;
+	color: var(--text-secondary) !important;
+}
+
+.more {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 0.75rem;
+	color: var(--text-primary);
+	transition: color 0.3s ease;
+	align-self: flex-start;
+	padding-top: 4px;
+}
+
+.arrow-icon {
+	width: 16px;
+	height: 16px;
+	transition: transform 0.3s ease;
+}
+
+.post-card:hover .more {
+	color: var(--accent-text);
+}
+
+.post-card:hover .arrow-icon {
+	transform: translateX(4px);
+}
+
 @media (max-width: 768px) {
-    .group {
-        border-radius: 12px;
-        margin-bottom: 0;
-        box-shadow: 0 2px 8px color-mix(in srgb, var(--secondary) 6%, transparent);
-        border: 1px solid color-mix(in srgb, var(--primary) 10%, transparent);
-        transition: all 0.2s ease;
-    }
-    
-    :global(.dark) .group {
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        border-color: rgba(255, 255, 255, 0.05);
-    }
-    
-    .group:active {
-        transform: scale(0.98);
-        box-shadow: 0 1px 4px color-mix(in srgb, var(--secondary) 8%, transparent);
-    }
-    
-    :global(.dark) .group:active {
-        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-    }
-    
-    .group:hover {
-        transform: none;
-        box-shadow: 0 2px 8px color-mix(in srgb, var(--secondary) 6%, transparent);
-    }
-    
-    .flex-1 {
-        padding: 10px 12px;
-    }
-    
-    .rounded-md {
-        padding: 10px 12px;
-        margin-bottom: 8px;
-        border-radius: 8px;
-    }
-    
-    .inline-block {
-        padding: 3px 8px;
-        font-size: 0.6875rem;
-        margin-bottom: 6px;
-    }
-    
-    .font-bold.text-base {
-        font-size: 0.9375rem;
-        line-height: 1.4;
-        margin-bottom: 6px;
-        font-family: 'SimSun', serif;
-    }
-    
-    .text-xs {
-        font-size: 0.6875rem;
-    }
-    
-    .px-0\.5 {
-        padding-left: 0;
-        padding-right: 0;
-        padding-top: 0;
-    }
-    
-    .text-xs.md\:text-sm.text-orange-950\/70 {
-        font-size: 0.75rem;
-        line-height: 1.5;
-        margin-bottom: 8px;
-    }
-    
-    .flex.items-center.justify-between {
-        gap: 8px;
-    }
-    
-    .text-xs.md\:text-sm.text-\[var\(--primary\)\] {
-        font-size: 0.6875rem;
-        gap: 6px;
-    }
-    
-    .inline-flex.items-center {
-        font-size: 0.6875rem;
-    }
-    
-    .ml-1.md\:ml-2 {
-        margin-left: 4px;
-    }
-    
-    .w-full.md\:hidden.h-32 {
-        height: 120px;
-        border-radius: 8px 8px 0 0;
-        margin: 0;
-    }
-    
-    .absolute.top-0.left-0 {
-        height: 2px;
-    }
-    
-    .border-t-\[1px\] {
-        margin: 8px 0;
-        border-color: color-mix(in srgb, var(--primary) 10%, transparent);
-    }
-    
-    :global(.dark) .border-t-\[1px\] {
-        border-color: rgba(255, 255, 255, 0.05);
-    }
+	.post-card {
+		min-height: auto;
+	}
+
+	.card-overlay {
+		background: linear-gradient(
+			to top,
+			color-mix(in srgb, var(--card-bg) 92%, transparent) 0%,
+			color-mix(in srgb, var(--card-bg) 88%, transparent) 40%,
+			color-mix(in srgb, var(--card-bg) 40%, transparent) 65%,
+			transparent 100%
+		);
+	}
+
+	.card-text {
+		max-width: 100%;
+		padding: 14px 16px;
+	}
+
+	.title {
+		font-size: 1rem;
+		-webkit-line-clamp: 1;
+	}
 }
 </style>

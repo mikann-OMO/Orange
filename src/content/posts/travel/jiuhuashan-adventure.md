@@ -2,6 +2,7 @@
 title: 向山进发！九华山游记
 published: 2026-01-05
 description: "二〇二六 新年新气象 三天两夜九华山游记"
+image: "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/trip/czjs.jpg"
 tags:
   - 向山进发
 category: 游记

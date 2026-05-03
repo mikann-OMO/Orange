@@ -1,4 +1,8 @@
 .custom-md {
+	img {
+		@apply block mx-auto max-h-24 object-contain;
+	}
+
 	h1 {
 		@apply text-3xl;
 	}

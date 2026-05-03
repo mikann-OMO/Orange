@@ -84,14 +84,6 @@ const jsonLd = {
                     </div>
                     <div class="text-xs md:text-sm"><PageViewCounter slug={entry.id} /> 次阅读</div>
                 </div>
-                <div class="flex flex-row items-center">
-                    <div class="transition h-5 md:h-6 w-5 md:w-6 rounded-md bg-orange-950/5 dark:bg-white/10 text-orange-950/50 dark:text-white/50 flex items-center justify-center mr-1.5 md:mr-2">
-                        <Icon name="material-symbols:favorite-outline-rounded" class="text-sm md:text-base"></Icon>
-                    </div>
-                    <div class="text-xs md:text-sm">
-                        <LikeButton client:visible slug={entry.id} />
-                    </div>
-                </div>
             </div>
 
             <div>
@@ -186,10 +178,15 @@ const jsonLd = {
         )}
     </div>
 
-
+    <div class="flex md:hidden justify-center mb-4">
+        <LikeButton slug={entry.id} client:visible />
+    </div>
 
     <Comment slug={entry.id} />
 
+    <div slot="like" class="hidden md:block">
+        <LikeButton slug={entry.id} client:load />
+    </div>
 </MainGridLayout>
 
 <script is:inline>

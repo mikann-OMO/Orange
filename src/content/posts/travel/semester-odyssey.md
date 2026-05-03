@@ -2,7 +2,7 @@
 title: 大一旅行有感，分享我的个人故事
 published: 2025-10-01
 description: “南京苏州广州上海，所见所闻所感”
-image: ''
+image: 'https://mikann-1359996823.cos.ap-beijing.myqcloud.com/takamichika/ckorange.png'
 tags:
 - 旅行
 category: 游记
