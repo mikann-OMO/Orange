@@ -9,6 +9,7 @@ import type {
 	ProfileConfig,
 	SiteConfig,
 	VisitorConfig,
+	WalineConfig,
 } from "./types/config";
 import { LinkPreset } from "./types/config";
 
@@ -65,4 +66,13 @@ export const visitorConfig: VisitorConfig = {
 		appKey: import.meta.env.VITE_APP_KEY || "",
 		serverUrl: import.meta.env.VITE_LEANCLOUD_SERVER_URL || "",
 	},
+};
+
+export const walineConfig: WalineConfig = {
+	enable: true,
+	serverURL: import.meta.env.VITE_WALINE_SERVER_URL || "https://waline-orange.vercel.app",
+	lang: "zh-CN",
+	pageview: false,
+	requiredMeta: ["nick", "mail"],
+	dark: "html.dark",
 };

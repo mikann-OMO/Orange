@@ -154,6 +154,26 @@ export type VisitorConfig = {
 };
 
 /**
+ * Waline 评论系统配置类型
+ */
+export type WalineConfig = {
+	// 是否启用 Waline 评论系统
+	enable: boolean;
+	// Waline 服务端 URL
+	serverURL: string;
+	// 语言（可选，默认 'zh-CN'）
+	lang?: string;
+	// 表情列表（可选）
+	emoji?: string[];
+	// 暗色模式配置（可选）
+	dark?: string;
+	// 是否开启页面浏览量统计（可选）
+	pageview?: boolean;
+	// 必填项（可选，如 ['nick', 'mail']）
+	requiredMeta?: string[];
+};
+
+/**
  * 明暗模式类型
  */
 export type LIGHT_DARK_MODE =

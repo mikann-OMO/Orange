@@ -1,5 +1,5 @@
 ---
-import MessageBoard from "./MessageBoard.svelte";
+import { walineConfig } from "@/config";
 
 interface Props {
 	slug?: string;
@@ -9,6 +9,43 @@ const { slug: propSlug } = Astro.props;
 const slug = propSlug || Astro.url.pathname.replace(/\/$/, "");
 ---
 
-<div class="mt-8 mb-8">
-	<MessageBoard client:visible {slug} />
+<div class="mt-6 md:mt-8 mb-6 md:mb-8">
+	{walineConfig.enable && walineConfig.serverURL ? (
+		<>
+			<div class="flex items-center gap-3 mb-4 md:mb-6">
+				<div class="w-1 h-6 bg-[var(--primary)] rounded-full"></div>
+				<h3 class="text-xl md:text-2xl font-bold text-[var(--text-primary)]">
+					评论区
+				</h3>
+			</div>
+
+			<link rel="stylesheet" href="https://unpkg.com/@waline/client@v3/dist/waline.css" />
+			<div id="waline" class="waline-container"
+				data-server-url={walineConfig.serverURL}
+				data-path={slug}
+			></div>
+			<script type="module" is:inline>
+				import { init } from 'https://unpkg.com/@waline/client@v3/dist/waline.js';
+				
+				document.addEventListener('DOMContentLoaded', () => {
+					const walineContainer = document.getElementById('waline');
+					if (walineContainer) {
+						init({
+							el: '#waline',
+							serverURL: walineContainer.dataset.serverUrl,
+							path: walineContainer.dataset.path,
+							lang: 'zh-CN',
+							dark: 'html.dark',
+							login: 'disable',
+							copyright: false
+						});
+					}
+				});
+			</script>
+		</>
+	) : (
+		<div class="py-8 text-center text-[var(--text-secondary)]">
+			评论系统未配置，请设置 VITE_WALINE_SERVER_URL 环境变量
+		</div>
+	)}
 </div>
