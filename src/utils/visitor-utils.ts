@@ -54,9 +54,8 @@ async function fetchCount(key: string): Promise<VisitorResult> {
 	try {
 		const res = await fetch(`/api/visitor?key=${encodeURIComponent(key)}&op=get`);
 		if (!res.ok) throw new Error("Failed to get visitor count");
-		const data = (await res.json()) as { count?: number; success?: boolean };
-		if (data.success) return { count: data.count || 0, success: true };
-		return fallbackError();
+		const data = (await res.json()) as { count?: number };
+		return { count: data.count || 0, success: true };
 	} catch {
 		return fallbackError();
 	}
@@ -70,9 +69,8 @@ async function fetchIncrement(key: string): Promise<VisitorResult> {
 	try {
 		const res = await fetch(`/api/visitor?key=${encodeURIComponent(key)}&op=inc`);
 		if (!res.ok) throw new Error("Failed to increment visitor count");
-		const data = (await res.json()) as { count?: number; success?: boolean };
-		if (data.success) return { count: data.count || 0, success: true };
-		return fallbackError();
+		const data = (await res.json()) as { count?: number };
+		return { count: data.count || 0, success: true };
 	} catch {
 		return fallbackError();
 	}
