@@ -16,7 +16,7 @@
 
 /* 页面滑入动画 */
 .page-enter-animation {
-	animation: pageSlideIn 0.3s ease-out forwards;
+	animation: pageSlideIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 	will-change: opacity, transform;
 }
 
@@ -50,14 +50,14 @@
 
 /* 卡片进入动画 */
 .card-enter {
-	animation: cardSlideIn 0.3s ease-out forwards;
+	animation: cardSlideIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 	will-change: opacity, transform;
 }
 
 @keyframes cardSlideIn {
 	from {
 		opacity: 0;
-		transform: translateY(12px) scale(0.98);
+		transform: translateY(16px) scale(0.97);
 	}
 	to {
 		opacity: 1;
@@ -67,14 +67,14 @@
 
 /* 内容进入动画 */
 .content-enter {
-	animation: contentSlideIn 0.3s ease-out forwards;
+	animation: contentSlideIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 	will-change: opacity, transform;
 }
 
 @keyframes contentSlideIn {
 	from {
 		opacity: 0;
-		transform: translateY(8px);
+		transform: translateY(10px);
 	}
 	to {
 		opacity: 1;
@@ -84,17 +84,63 @@
 
 /* 侧边栏进入动画 */
 .sidebar-enter {
-	animation: sidebarSlideIn 0.3s ease-out forwards;
+	animation: sidebarSlideIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 	will-change: opacity, transform;
 }
 
 @keyframes sidebarSlideIn {
 	from {
 		opacity: 0;
-		transform: translateX(-8px);
+		transform: translateX(-10px);
 	}
 	to {
 		opacity: 1;
 		transform: translateX(0);
 	}
 }
+
+/* 图片淡入 */
+.img-reveal {
+	animation: imgReveal 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes imgReveal {
+	from {
+		opacity: 0;
+		transform: scale(0.98);
+		filter: blur(4px);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+		filter: blur(0);
+	}
+}
+
+/* 链接下划线动画 */
+.link-animated {
+	position: relative;
+	text-decoration: none;
+}
+
+.link-animated::after {
+	content: '';
+	position: absolute;
+	bottom: -2px;
+	left: 0;
+	width: 0;
+	height: 1.5px;
+	background: var(--primary);
+	transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+	border-radius: 1px;
+}
+
+.link-animated:hover::after {
+	width: 100%;
+}
+
+/* 淡入延迟工具类 */
+.fade-delay-1 { animation-delay: 0.05s; }
+.fade-delay-2 { animation-delay: 0.1s; }
+.fade-delay-3 { animation-delay: 0.15s; }
+.fade-delay-4 { animation-delay: 0.2s; }

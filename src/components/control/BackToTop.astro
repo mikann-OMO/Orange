@@ -5,46 +5,78 @@ import { Icon } from "astro-icon/components";
 <div id="back-to-top-btn" class="back-to-top-btn">
     <button 
         aria-label="Back to Top" 
-        class="btn-card h-11 w-11 md:h-12 md:w-12 rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:ring-offset-2" 
+        class="back-to-top-inner" 
         tabindex="0"
     >
-        <Icon name="material-symbols:keyboard-arrow-up-rounded" class="text-xl md:text-2xl text-[var(--accent-text)] dark:text-[var(--primary)]"></Icon>
+        <Icon name="material-symbols:keyboard-arrow-up-rounded" class="back-to-top-icon"></Icon>
     </button>
 </div>
 
 <style>
 .back-to-top-btn {
-	position: fixed !important;
-	bottom: 1.5rem !important;
-	right: 1.5rem !important;
-	z-index: 60 !important;
-	opacity: 1 !important;
-	transform: translateY(0) !important;
-	pointer-events: auto !important;
-	visibility: visible !important;
-	display: flex !important;
+	position: fixed;
+	bottom: 1.5rem;
+	right: 1.5rem;
+	z-index: 60;
+	opacity: 0;
+	visibility: hidden;
+	transform: translateY(8px);
+	transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .back-to-top-btn.visible {
-    opacity: 1 !important;
-    transform: translateY(0) !important;
-    visibility: visible !important;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
 }
 
-.back-to-top-btn button {
-    background: color-mix(in srgb, var(--page-bg) 90%, transparent) !important;
-    backdrop-filter: blur(8px);
-    border: 1px solid var(--card-border) !important;
+.back-to-top-inner {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, var(--card-bg) 80%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--card-border);
+    box-shadow: 0 2px 12px var(--shadow-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-:global(.dark) .back-to-top-btn button {
-    border-color: rgba(255, 255, 255, 0.1) !important;
+.back-to-top-inner:hover {
+    background: color-mix(in srgb, var(--primary) 15%, var(--card-bg));
+    border-color: color-mix(in srgb, var(--primary) 30%, var(--card-border));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px var(--shadow-color);
+}
+
+.back-to-top-inner:active {
+    transform: translateY(0) scale(0.95);
+}
+
+.back-to-top-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--accent-text);
 }
 
 @media (min-width: 768px) {
     .back-to-top-btn {
-        bottom: 2rem !important;
-        right: 1.5rem !important;
+        bottom: 2rem;
+        right: 1.5rem;
+    }
+
+    .back-to-top-inner {
+        width: 3rem;
+        height: 3rem;
+    }
+
+    .back-to-top-icon {
+        width: 1.5rem;
+        height: 1.5rem;
     }
 }
 </style>

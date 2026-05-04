@@ -5,51 +5,75 @@ import { url } from "../utils/url-utils";
 const currentYear = new Date().getFullYear();
 ---
 
-<div class="transition border-t border-[var(--line-divider)] my-6 md:my-10 border-dashed mx-4 md:mx-32"></div>
-<div class="transition border-dashed border-[var(--line-divider)] rounded-2xl mb-8 md:mb-12 flex flex-col items-center justify-center px-4 md:px-6">
-    <div class="transition text-50 text-xs md:text-sm text-center leading-relaxed">
+<div class="footer-divider"></div>
+<div class="footer-container">
+    <div class="footer-text">
         &copy; <span id="copyright-year">{currentYear}</span> {profileConfig.name}. All Rights Reserved. /
-        <a class="transition link text-[var(--accent-text)] dark:text-[var(--primary)] font-medium" target="_blank" href={url('rss.xml')}>RSS</a> /
-        <a class="transition link text-[var(--accent-text)] dark:text-[var(--primary)] font-medium" target="_blank" href={url('sitemap-index.xml')}>Sitemap</a><br>
+        <a class="footer-link" target="_blank" href={url('rss.xml')}>RSS</a> /
+        <a class="footer-link" target="_blank" href={url('sitemap-index.xml')}>Sitemap</a><br>
         Powered by
-        <a class="transition link text-[var(--accent-text)] dark:text-[var(--primary)] font-medium" target="_blank" href="https://astro.build">Astro</a>
+        <a class="footer-link" target="_blank" href="https://astro.build">Astro</a>
     </div>
 </div>
 
 <style>
-@media (max-width: 768px) {
-    .border-t {
-        margin: 16px 0;
-        border-color: rgba(255, 152, 0, 0.1);
+    .footer-divider {
+        border-top: 1px dashed var(--line-divider);
+        margin: 1.5rem 1rem;
     }
-    
-    :global(.dark) .border-t {
-        border-color: rgba(255, 255, 255, 0.05);
+
+    @media (min-width: 768px) {
+        .footer-divider {
+            margin: 1.5rem 8rem;
+        }
     }
-    
-    .rounded-2xl {
-        margin-bottom: 16px;
-        padding: 16px 12px;
-        border-radius: 12px;
+
+    .footer-container {
+        border: 1px dashed var(--line-divider);
+        border-radius: 1rem;
+        margin-bottom: 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem 1.5rem;
     }
-    
-    .text-center {
-        font-size: 0.6875rem;
+
+    @media (min-width: 768px) {
+        .footer-container {
+            margin-bottom: 3rem;
+        }
+    }
+
+    .footer-text {
+        color: color-mix(in srgb, var(--text-primary) 40%, transparent);
+        font-size: 0.75rem;
+        text-align: center;
         line-height: 1.6;
     }
-    
-    .text-center br {
-        display: block;
-        margin-bottom: 4px;
+
+    @media (min-width: 768px) {
+        .footer-text {
+            font-size: 0.875rem;
+        }
     }
-    
-    .link {
-        padding: 2px 4px;
-        border-radius: 4px;
+
+    .footer-link {
+        color: var(--accent-text);
+        text-decoration: none;
+        font-weight: 500;
+        padding: 0.125rem 0.25rem;
+        border-radius: 0.25rem;
+        transition: all 0.2s ease;
     }
-    
-    .link:active {
-        background: rgba(255, 152, 0, 0.1);
+
+    .footer-link:hover {
+        text-decoration: underline;
+        text-decoration-style: dashed;
+        text-underline-offset: 3px;
     }
-}
+
+    .footer-link:active {
+        background: color-mix(in srgb, var(--primary) 8%, transparent);
+    }
 </style>

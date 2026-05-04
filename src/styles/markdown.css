@@ -1,10 +1,38 @@
 .custom-md {
 	img {
 		@apply block mx-auto max-h-[30rem] object-contain;
+		transition: transform 0.3s ease, box-shadow 0.3s ease;
+		border-radius: 0.75rem;
+	}
+
+	img:hover {
+		transform: scale(1.02);
+		box-shadow: 0 8px 30px var(--shadow-color);
 	}
 
 	h1 {
 		@apply text-3xl;
+	}
+
+	h2 {
+		@apply text-2xl;
+		margin-top: 2.5rem;
+		margin-bottom: 1rem;
+		padding-bottom: 0.5rem;
+		border-bottom: 1px dashed var(--line-divider);
+	}
+
+	h3 {
+		@apply text-xl;
+		margin-top: 2rem;
+		margin-bottom: 0.75rem;
+	}
+
+	h4,
+	h5,
+	h6 {
+		margin-top: 1.5rem;
+		margin-bottom: 0.5rem;
 	}
 
 	h1,
@@ -13,6 +41,7 @@
 	h4,
 	h5,
 	h6 {
+		scroll-margin-top: 5rem;
 		.anchor {
 			@apply transition -m-0.5 ml-[0.2ch] p-0.5 select-none opacity-0 no-underline !important;
 
@@ -28,12 +57,18 @@
 		}
 	}
 
+	p {
+		line-height: 1.85;
+		letter-spacing: 0.01em;
+	}
+
 	a:not(.no-styling) {
 		@apply relative bg-none font-medium underline decoration-1 decoration-dashed underline-offset-4;
 		color: var(--accent-text);
 		text-decoration-color: color-mix(in srgb, var(--text-primary) 20%, transparent);
 		box-decoration-break: clone;
 		-webkit-box-decoration-break: clone;
+		transition: background 0.2s ease, border-color 0.2s ease;
 
 		&:hover,
 		&:active {
@@ -45,9 +80,11 @@
 	}
 
 	code {
-		@apply px-1 py-0.5 rounded-md overflow-hidden;
+		@apply px-1.5 py-0.5 rounded-md overflow-hidden;
 		background: color-mix(in srgb, var(--text-primary) 5%, transparent);
 		color: var(--accent-text);
+		font-size: 0.875em;
+		transition: background 0.2s ease;
 
 		font-family:
 			"JetBrains Mono Variable", "JetBrains Mono", "Fira Code", Consolas, Monaco, "Andale Mono",
@@ -77,10 +114,15 @@
 
 	pre {
 		background: color-mix(in srgb, var(--text-primary) 90%, transparent) !important;
-		@apply rounded-xl px-5;
+		@apply rounded-xl px-5 py-4;
+		overflow-x: auto;
+		scrollbar-width: thin;
+		scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
 
 		code {
 			@apply bg-transparent text-inherit text-sm p-0;
+			font-size: 0.8125rem;
+			line-height: 1.7;
 
 			::selection {
 				background: color-mix(in srgb, var(--primary) 20%, transparent);
@@ -93,20 +135,31 @@
 		li::marker {
 			color: var(--accent-text);
 		}
+
+		li {
+			line-height: 1.8;
+			margin: 0.25rem 0;
+		}
 	}
 
 	blockquote {
 		@apply not-italic border-transparent relative;
 		font-weight: inherit;
+		background: color-mix(in srgb, var(--primary) 4%, transparent);
+		padding: 0.75rem 1rem 0.75rem 1.25rem;
+		border-radius: 0 0.5rem 0.5rem 0;
+		margin: 1rem 0;
 
 		&:before {
 			@apply content-[''] absolute -left-1 block transition h-full w-1 rounded-full;
-			background: color-mix(in srgb, var(--text-primary) 15%, transparent);
+			background: linear-gradient(to bottom, var(--primary), color-mix(in srgb, var(--primary) 30%, transparent));
 		}
 
 		:global(.dark) & {
+			background: color-mix(in srgb, var(--primary) 6%, transparent);
+
 			&:before {
-				background: #ffb74d;
+				background: linear-gradient(to bottom, #ffb74d, color-mix(in srgb, #ffb74d 30%, transparent));
 			}
 		}
 
@@ -114,5 +167,64 @@
 		p:after {
 			@apply content-none;
 		}
+
+		p {
+			color: color-mix(in srgb, var(--text-primary) 85%, transparent);
+		}
+	}
+
+	hr {
+		border: none;
+		height: 1px;
+		background: linear-gradient(to right, transparent, var(--line-divider), transparent);
+		margin: 2rem 0;
+	}
+
+	table {
+		width: 100%;
+		border-collapse: collapse;
+		margin: 1rem 0;
+		font-size: 0.875rem;
+		overflow-x: auto;
+		display: block;
+	}
+
+	thead {
+		border-bottom: 2px solid var(--primary);
+	}
+
+	th {
+		padding: 0.625rem 0.75rem;
+		text-align: left;
+		font-weight: 600;
+		color: var(--text-primary);
+		background: color-mix(in srgb, var(--primary) 6%, transparent);
+		white-space: nowrap;
+	}
+
+	td {
+		padding: 0.5rem 0.75rem;
+		border-bottom: 1px solid var(--line-divider);
+		color: color-mix(in srgb, var(--text-primary) 90%, transparent);
+	}
+
+	tr:hover td {
+		background: color-mix(in srgb, var(--primary) 3%, transparent);
+	}
+
+	strong {
+		color: var(--text-primary);
+		font-weight: 700;
+	}
+
+	em {
+		color: var(--accent-text);
+	}
+
+	mark {
+		background: color-mix(in srgb, var(--primary) 20%, transparent);
+		color: inherit;
+		padding: 0.125rem 0.375rem;
+		border-radius: 0.25rem;
 	}
 }

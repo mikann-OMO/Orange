@@ -56,22 +56,57 @@ async function toggleScheme() {
 <button 
 	aria-label="Light/Dark Mode" 
 	role="menuitem" 
-	class="scheme-switch-btn relative flex items-center justify-center rounded-lg h-11 w-11 active:scale-90 transition-transform"
+	class="scheme-switch-btn"
 	id="scheme-switch" 
 	onclick={toggleScheme}
 	tabindex="0"
 >
-    <div class="absolute transition-all duration-300 ease-in-out" class:opacity-0={mode !== LIGHT_MODE} class:scale-0={mode !== LIGHT_MODE}>
-        <Icon icon="material-symbols:wb-sunny-outline-rounded" class="text-[1.25rem] text-orange-700 dark:text-orange-400"></Icon>
+    <div class="scheme-icon scheme-icon-light" class:opacity-0={mode !== LIGHT_MODE} class:scale-0={mode !== LIGHT_MODE}>
+        <Icon icon="material-symbols:wb-sunny-outline-rounded" class="scheme-icon-svg"></Icon>
     </div>
-    <div class="absolute transition-all duration-300 ease-in-out" class:opacity-0={mode !== DARK_MODE} class:scale-0={mode !== DARK_MODE}>
-        <Icon icon="material-symbols:dark-mode-outline-rounded" class="text-[1.25rem] text-orange-700 dark:text-orange-400"></Icon>
+    <div class="scheme-icon scheme-icon-dark" class:opacity-0={mode !== DARK_MODE} class:scale-0={mode !== DARK_MODE}>
+        <Icon icon="material-symbols:dark-mode-outline-rounded" class="scheme-icon-svg"></Icon>
     </div>
 </button>
 
 <style>
-	/* 移除按钮的默认 focus 样式 */
-	.scheme-switch-btn:focus {
-		outline: none;
+	.scheme-switch-btn {
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 0.5rem;
+		width: 2.75rem;
+		height: 2.75rem;
+		background: transparent;
+		border: none;
+		cursor: pointer;
+		transition: all 0.2s ease;
+	}
+
+	.scheme-switch-btn:hover {
+		background: var(--surface-hover);
+	}
+
+	.scheme-switch-btn:active {
+		transform: scale(0.9);
+	}
+
+	.scheme-switch-btn:focus-visible {
+		outline: 2px solid var(--primary);
+		outline-offset: 2px;
+	}
+
+	.scheme-icon {
+		position: absolute;
+		transition: all 0.3s ease-in-out;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.scheme-icon-svg {
+		font-size: 1.25rem;
+		color: var(--accent-text);
 	}
 </style>

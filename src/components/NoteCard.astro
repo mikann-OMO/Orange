@@ -38,28 +38,24 @@ if (isValidNote && entry.body) {
 {!isValidNote ? (
     <div class="note-card note-card-animate p-6 border border-[var(--primary)]/30 shadow-md bg-orange-50/60 text-orange-950/80 max-w-2xl mx-auto mb-4 dark:bg-stone-800/60 dark:text-white/80 dark:border-white/20">Invalid note</div>
 ) : (
-    <div class="note-card note-card-animate p-6 border border-[var(--primary)]/30 shadow-md hover:shadow-lg hover:shadow-orange-300/20 transition-all duration-300 bg-orange-50/60 text-orange-950/80 w-full dark:bg-stone-800/60 dark:text-white/80 dark:border-white/20" style={style}>
-        {/* 时间 - 直接显示标题的原始内容 */}
+    <div class="note-card note-card-animate" style={style}>
         {entry.data?.title && (
-            <div class="text-xs text-orange-950/50 font-mono mb-4 border-b border-orange-200/50 pb-2 dark:text-white/50 dark:border-white/10">
+            <div class="note-card-time">
                 {entry.data.title}
             </div>
         )}
         
-        {/* 内容和图片容器 */}
         <div class="flex flex-col md:flex-row gap-4">
-            {/* 主要内容 */}
-            <div class="text-orange-950/80 text-lg whitespace-pre-wrap break-words p-0 m-0 flex-1 dark:text-white/80" role="article">
+            <div class="note-card-content" role="article">
                 {noteContent}
             </div>
             
-            {/* 图片 */}
             {entry.data?.image && entry.data.image.trim() !== '' && (
-                <div class="note-image flex-shrink-0 overflow-hidden rounded-md" role="complementary">
+                <div class="note-image flex-shrink-0 overflow-hidden" role="complementary">
                     <ImageWrapper
                         src={entry.data.image}
                         alt={entry.data.title ? `${entry.data.title}` : "随记图片"}
-                        class="w-full h-auto max-w-40 max-h-64 object-contain transition-transform duration-300 hover:scale-102"
+                        class="note-card-img"
                         loading="lazy"
                         width={200}
                         height={150}
@@ -69,3 +65,53 @@ if (isValidNote && entry.body) {
         </div>
     </div>
 )}
+
+<style>
+    .note-card {
+        padding: 1.5rem;
+        border: 1px solid var(--card-border);
+        border-radius: 0.75rem;
+        background: color-mix(in srgb, var(--card-bg) 70%, transparent);
+        color: color-mix(in srgb, var(--text-primary) 80%, transparent);
+        width: 100%;
+        box-shadow: 0 2px 12px var(--shadow-color);
+        transition: all 0.3s ease;
+    }
+
+    .note-card:hover {
+        box-shadow: 0 6px 24px var(--shadow-color);
+        border-color: color-mix(in srgb, var(--primary) 20%, var(--card-border));
+    }
+
+    .note-card-time {
+        font-size: 0.75rem;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        color: var(--text-secondary);
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px dashed var(--line-divider);
+    }
+
+    .note-card-content {
+        color: color-mix(in srgb, var(--text-primary) 80%, transparent);
+        font-size: 1.125rem;
+        white-space: pre-wrap;
+        word-break: break-word;
+        flex: 1;
+        line-height: 1.8;
+    }
+
+    .note-card-img {
+        width: 100%;
+        height: auto;
+        max-width: 10rem;
+        max-height: 16rem;
+        object-fit: contain;
+        border-radius: 0.5rem;
+        transition: transform 0.3s ease;
+    }
+
+    .note-card-img:hover {
+        transform: scale(1.03);
+    }
+</style>

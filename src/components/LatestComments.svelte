@@ -64,37 +64,37 @@ onMount(() => {
 
 <div class="latest-comments">
 	{#if loading}
-		<div class="py-4 text-center text-orange-950/50 dark:text-white/50">加载中...</div>
+		<div class="lc-status">加载中...</div>
 	{:else if error}
-		<div class="py-4 text-center text-red-500">{error}</div>
+		<div class="lc-status lc-error">{error}</div>
 	{:else if comments.length === 0}
-		<div class="py-4 text-center text-orange-950/50 dark:text-white/50">暂无</div>
+		<div class="lc-status">暂无</div>
 	{:else}
-		<div class="space-y-3">
+		<div class="lc-list">
 			{#each comments as comment}
 				<a 
 					href={getBlogUrl(comment.url)} 
 					target="_blank" 
 					rel="noopener noreferrer"
-					class="group block p-3 rounded-lg bg-orange-50/50 dark:bg-stone-700/30 hover:bg-orange-100/80 dark:hover:bg-stone-700/50 transition-all duration-200"
+					class="lc-item group"
 				>
 					<div class="flex items-start gap-3">
 						<img 
 							src={comment.avatar}
 							alt={comment.nick}
-							class="w-8 h-8 rounded-full flex-shrink-0"
+							class="lc-avatar"
 							loading="lazy"
 						/>
 						<div class="flex-1 min-w-0">
-							<div class="flex items-center gap-2 mb-1">
-								<span class="text-sm font-bold text-orange-700 dark:text-white">
+							<div class="lc-meta">
+								<span class="lc-nick">
 									{#if comment.link}
 										<a 
 											href={comment.link.startsWith('http') ? comment.link : 'https://' + comment.link} 
 											target="_blank" 
 											rel="noopener noreferrer" 
 											on:click|stopPropagation 
-											class="hover:text-orange-600 dark:hover:text-orange-300 transition-colors"
+											class="lc-nick-link"
 										>
 											{comment.nick}
 										</a>
@@ -102,12 +102,12 @@ onMount(() => {
 										{comment.nick}
 									{/if}
 								</span>
-								<span class="text-xs text-orange-950/40 dark:text-white/40 flex items-center gap-1">
-									<Icon name="material-symbols:schedule-outline-rounded" class="w-3 h-3" />
+								<span class="lc-time">
+									<Icon name="material-symbols:schedule-outline-rounded" class="lc-time-icon" />
 									{formatDate(comment.time)}
 								</span>
 							</div>
-							<p class="text-xs text-orange-950/70 dark:text-white/70 line-clamp-2">
+							<p class="lc-text">
 								{@html comment.comment}
 							</p>
 						</div>
@@ -117,3 +117,103 @@ onMount(() => {
 		</div>
 	{/if}
 </div>
+
+<style>
+	.latest-comments {
+		font-family: inherit;
+	}
+
+	.lc-status {
+		padding: 1rem 0;
+		text-align: center;
+		color: var(--text-secondary);
+		font-size: 0.8125rem;
+	}
+
+	.lc-error {
+		color: var(--error);
+	}
+
+	.lc-list {
+		display: flex;
+		flex-direction: column;
+		gap: 0.625rem;
+	}
+
+	.lc-item {
+		display: block;
+		padding: 0.75rem;
+		border-radius: 0.625rem;
+		background: color-mix(in srgb, var(--primary) 4%, var(--card-bg));
+		border: 1px solid transparent;
+		transition: all 0.2s ease;
+		text-decoration: none;
+	}
+
+	.lc-item:hover {
+		background: color-mix(in srgb, var(--primary) 8%, var(--card-bg));
+		border-color: color-mix(in srgb, var(--primary) 15%, var(--card-border));
+		transform: translateY(-1px);
+	}
+
+	.lc-avatar {
+		width: 2rem;
+		height: 2rem;
+		border-radius: 50%;
+		border: 1.5px solid color-mix(in srgb, var(--primary) 30%, var(--card-border));
+		flex-shrink: 0;
+		transition: border-color 0.2s ease;
+	}
+
+	.lc-item:hover .lc-avatar {
+		border-color: var(--primary);
+	}
+
+	.lc-meta {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		margin-bottom: 0.25rem;
+	}
+
+	.lc-nick {
+		font-size: 0.8125rem;
+		font-weight: 600;
+		color: var(--text-primary);
+	}
+
+	.lc-nick-link {
+		color: inherit;
+		text-decoration: none;
+		transition: color 0.2s ease;
+	}
+
+	.lc-nick-link:hover {
+		color: var(--primary);
+	}
+
+	.lc-time {
+		font-size: 0.6875rem;
+		color: color-mix(in srgb, var(--text-secondary) 60%, transparent);
+		display: flex;
+		align-items: center;
+		gap: 0.25rem;
+		flex-shrink: 0;
+	}
+
+	:global(.lc-time-icon) {
+		width: 0.75rem;
+		height: 0.75rem;
+	}
+
+	.lc-text {
+		font-size: 0.75rem;
+		color: var(--text-secondary);
+		line-height: 1.6;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+		margin: 0;
+	}
+</style>

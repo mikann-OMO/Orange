@@ -192,15 +192,35 @@
 
 ::selection {
 	background-color: color-mix(in srgb, var(--primary) 20%, transparent);
+	color: var(--text-primary);
 }
 
 .collapsed {
 	height: var(--collapsedHeight);
 }
 
-/* 为PC端使用浏览器默认滚动条 */
+*:focus-visible {
+	outline: 2px solid var(--primary);
+	outline-offset: 2px;
+	border-radius: 4px;
+}
+
+html {
+	scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+	*, *::before, *::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+}
+
 @media (min-width: 769px) {
-	/* 移除所有自定义滚动条样式，使用浏览器默认样式 */
 	body {
 		overflow-y: auto;
 	}
@@ -329,9 +349,33 @@ img[src]:not([src=""]) {
 	border-left-color: #ffb74d !important;
 }
 
-/* 优化 backdrop-blur 渲染，减少闪烁 */
 .backdrop-blur-3xl,
 .backdrop-blur-2xl {
 	transform: translateZ(0);
 	will-change: backdrop-filter;
+}
+
+@media (min-width: 769px) {
+	::-webkit-scrollbar {
+		width: 6px;
+		height: 6px;
+	}
+	::-webkit-scrollbar-track {
+		background: transparent;
+	}
+	::-webkit-scrollbar-thumb {
+		background: color-mix(in srgb, var(--text-primary) 15%, transparent);
+		border-radius: 3px;
+	}
+	::-webkit-scrollbar-thumb:hover {
+		background: color-mix(in srgb, var(--primary) 40%, transparent);
+	}
+}
+
+.card-base {
+	transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.card-base:hover {
+	box-shadow: 0 4px 20px var(--shadow-color);
 }

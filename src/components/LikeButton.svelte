@@ -96,24 +96,21 @@ onMount(async () => {
 		display: inline-flex;
 		align-items: center;
 		gap: 0.5rem;
-		padding: 0.25rem 0.55rem;
+		padding: 0.3125rem 0.625rem;
 		border-radius: 999px;
-		border: 1px solid rgba(255, 152, 0, 0.25);
-		background: rgba(255, 255, 255, 0.35);
+		border: 1px solid color-mix(in srgb, var(--primary) 20%, var(--card-border));
+		background: color-mix(in srgb, var(--primary) 5%, var(--card-bg));
 		color: inherit;
-		transition: transform 150ms ease, background 150ms ease, border-color 150ms ease;
+		transition: all 0.2s ease;
 		user-select: none;
-	}
-	:global(.dark) .like-btn {
-		background: rgba(51, 41, 34, 0.25);
-		border-color: rgba(255, 255, 255, 0.08);
+		cursor: pointer;
 	}
 	.like-btn:hover {
-		background: rgba(255, 255, 255, 0.55);
-		border-color: rgba(255, 152, 0, 0.4);
+		background: color-mix(in srgb, var(--primary) 10%, var(--card-bg));
+		border-color: color-mix(in srgb, var(--primary) 35%, var(--card-border));
 	}
 	.like-btn:active {
-		transform: scale(0.98);
+		transform: scale(0.96);
 	}
 	.like-btn:disabled {
 		opacity: 0.6;
@@ -124,24 +121,34 @@ onMount(async () => {
 		font-size: 0.95rem;
 		line-height: 1;
 		transform: translateY(-0.5px);
-		transition: transform 150ms ease, color 150ms ease, opacity 150ms ease;
-		opacity: 0.9;
+		transition: transform 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+		opacity: 0.8;
 	}
 	.heart.on {
-		color: rgb(234 88 12);
-		transform: translateY(-0.5px) scale(1.05);
+		color: var(--primary);
+		transform: translateY(-0.5px) scale(1.1);
 		opacity: 1;
+		animation: heartPop 0.35s ease-out;
+	}
+	@keyframes heartPop {
+		0% { transform: translateY(-0.5px) scale(1); }
+		40% { transform: translateY(-0.5px) scale(1.3); }
+		100% { transform: translateY(-0.5px) scale(1.1); }
 	}
 	.heart.off {
-		color: rgba(234, 88, 12, 0.55);
+		color: color-mix(in srgb, var(--primary) 45%, var(--text-secondary));
 	}
 	.count {
-		font-size: 0.875rem;
+		font-size: 0.8125rem;
 		font-weight: 600;
+		color: var(--text-primary);
+		min-width: 1.25rem;
+		text-align: center;
 	}
 	.like-error {
 		margin-left: 0.5rem;
-		font-size: 0.75rem;
-		opacity: 0.7;
+		font-size: 0.6875rem;
+		color: var(--error);
+		opacity: 0.8;
 	}
 </style>
