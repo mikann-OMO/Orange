@@ -1,5 +1,6 @@
 ---
 import FriendsPanel from "@components/FriendsPanel.astro";
+import Comment from "@components/Comment.astro";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
@@ -7,4 +8,5 @@ import MainGridLayout from "@layouts/MainGridLayout.astro";
 
 <MainGridLayout title={i18n(I18nKey.friends)} showAnnouncement={false} fullWidth={false} centerContent={true}>
     <FriendsPanel></FriendsPanel>
+    <Comment slug="/friends" />
 </MainGridLayout>

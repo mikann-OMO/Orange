@@ -40,7 +40,7 @@ export const zh_CN: Translation = {
 	[Key.publishedAt]: "发布于",
 	[Key.license]: "许可协议",
 	[Key.back_to_notes]: "返回随记列表",
-	[Key.friendsDesc]: "朋友们",
+	[Key.friendsDesc]: "欢迎访问我的朋友们，也欢迎找我交换友链(⸝⸝>ᴗ(>ᴗ<⸝⸝)",
 	[Key.friendUnitText]: "位朋友",
 	[Key.applyForFriendLink]: "申请友链",
 	[Key.applyForFriendLinkDesc]: "欢迎交换友链",
