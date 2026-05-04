@@ -182,7 +182,10 @@ const contentColClass = fullWidth
 </Layout>
 
 <script is:inline>
-	const initReadingProgress = () => {
+	(function() {
+		if (window.__readingProgressInstalled) return;
+		window.__readingProgressInstalled = true;
+
 		const update = () => {
 			const scrollTop = window.scrollY;
 			const docHeight = document.documentElement.scrollHeight - window.innerHeight;
@@ -195,14 +198,13 @@ const contentColClass = fullWidth
 
 		window.addEventListener('scroll', update, { passive: true });
 		window.addEventListener('resize', update, { passive: true });
-		update();
-	};
 
-	if (document.readyState === "loading") {
-		document.addEventListener("DOMContentLoaded", initReadingProgress);
-	} else {
-		initReadingProgress();
-	}
+		if (document.readyState === "loading") {
+			document.addEventListener("DOMContentLoaded", update);
+		} else {
+			update();
+		}
+	})();
 </script>
 
 <style>

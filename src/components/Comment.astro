@@ -19,6 +19,8 @@ const slug = propSlug || Astro.url.pathname.replace(/\/$/, "");
 				</h3>
 			</div>
 
+			<link rel="preconnect" href="https://unpkg.com" />
+			<link rel="preload" as="style" href="https://unpkg.com/@waline/client@v3/dist/waline.css" />
 			<link rel="stylesheet" href="https://unpkg.com/@waline/client@v3/dist/waline.css" />
 			<div id="waline" class="waline-container"
 				data-server-url={walineConfig.serverURL}
@@ -27,45 +29,35 @@ const slug = propSlug || Astro.url.pathname.replace(/\/$/, "");
 			<script type="module" is:inline>
 				import { init } from 'https://unpkg.com/@waline/client@v3/dist/waline.js';
 				
-				document.addEventListener('DOMContentLoaded', () => {
-					const walineContainer = document.getElementById('waline');
-					if (walineContainer) {
-						init({
-							el: '#waline',
-							serverURL: walineContainer.dataset.serverUrl,
-							path: walineContainer.dataset.path,
-							lang: 'zh-CN',
-							dark: 'html.dark',
-							login: 'disable',
-							copyright: false,
-							requiredMeta: ['nick', 'mail']
-						});
-						
-						// 定期检查并修改输入框
-						const checkInputs = () => {
-							const inputs = walineContainer.querySelectorAll('input');
-							inputs.forEach(input => {
-								const name = input.getAttribute('name');
-								if (name === 'nick' && !input.getAttribute('placeholder')?.includes('必填')) {
-									input.setAttribute('placeholder', '(必填)');
-								} else if (name === 'mail' && !input.getAttribute('placeholder')?.includes('必填')) {
-									input.setAttribute('placeholder', '(必填)');
-								} else if (name === 'link' && !input.getAttribute('placeholder')?.includes('选填')) {
-									input.setAttribute('placeholder', '(ᗜᴗᗜ)');
-								}
-							});
-						};
-						
-						// 立即检查一次
-						setTimeout(checkInputs, 100);
-						setTimeout(checkInputs, 500);
-						setTimeout(checkInputs, 1000);
-						
-						// 监听变化
-						const observer = new MutationObserver(checkInputs);
-						observer.observe(walineContainer, { childList: true, subtree: true });
-					}
-				});
+				const walineContainer = document.getElementById('waline');
+				if (walineContainer) {
+					init({
+						el: '#waline',
+						serverURL: walineContainer.dataset.serverUrl,
+						path: walineContainer.dataset.path,
+						lang: 'zh-CN',
+						dark: 'html.dark',
+						login: 'disable',
+						copyright: false,
+						requiredMeta: ['nick', 'mail']
+					});
+					
+					const checkInputs = () => {
+						for (const input of walineContainer.querySelectorAll('input')) {
+							const name = input.getAttribute('name');
+							if (name === 'nick' && !input.placeholder?.includes('必填')) {
+								input.placeholder = '(必填)';
+							} else if (name === 'mail' && !input.placeholder?.includes('必填')) {
+								input.placeholder = '(必填)';
+							} else if (name === 'link' && !input.placeholder?.includes('选填')) {
+								input.placeholder = '(ᗜᴗᗜ)';
+							}
+						}
+					};
+					
+					setTimeout(checkInputs, 200);
+					new MutationObserver(checkInputs).observe(walineContainer, { childList: true, subtree: true });
+				}
 			</script>
 		</>
 	) : (
@@ -185,19 +177,6 @@ const slug = propSlug || Astro.url.pathname.replace(/\/$/, "");
 			display: none !important;
 			content: none !important;
 			border: none !important;
-		}
-
-		:global(.waline-container *[style*="border-bottom"]) {
-			border-bottom: none !important;
-		}
-
-		:global(.waline-container *[style*="dashed"]) {
-			border-style: none !important;
-			border: none !important;
-		}
-
-		:global(.waline-container *) {
-			border-style: none !important;
 		}
 
 		:global(.waline-container *:not(.wl-input):not(.wl-editor):not(.wl-btn):not(.wl-avatar)) {

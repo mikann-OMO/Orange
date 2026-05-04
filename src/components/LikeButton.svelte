@@ -1,12 +1,16 @@
 <script lang="ts">
 import { onMount } from "svelte";
 
-export let slug: string;
+interface Props {
+	slug: string;
+}
 
-let count = 0;
-let liked = false;
-let loading = true;
-let error = "";
+let { slug }: Props = $props();
+
+let count = $state(0);
+let liked = $state(false);
+let loading = $state(true);
+let error = $state("");
 
 const LIKE_KEY_PREFIX = "liked_v1_";
 
@@ -53,8 +57,7 @@ async function toggleLike(): Promise<void> {
 		const data = (await res.json()) as { count?: number };
 		count = typeof data.count === "number" ? data.count : count;
 		error = "";
-	} catch (e) {
-		// rollback optimistic state
+	} catch {
 		liked = !nextLiked;
 		writeLiked(liked);
 		error = "点赞失败";
@@ -77,11 +80,11 @@ onMount(async () => {
 	type="button"
 	class="like-btn"
 	aria-pressed={liked}
-	on:click={toggleLike}
+	onclick={toggleLike}
 	disabled={loading}
 	title={liked ? "取消点赞" : "点赞"}
 >
-	<span class="heart {liked ? 'on' : 'off'}" aria-hidden="true">♥</span>
+	<span class="heart {liked ? 'on' : 'off'}" aria-hidden="true">&#9829;</span>
 	<span class="count">{loading ? "---" : count}</span>
 </button>
 {#if error}
@@ -142,4 +145,3 @@ onMount(async () => {
 		opacity: 0.7;
 	}
 </style>
-
