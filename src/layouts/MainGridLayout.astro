@@ -183,8 +183,8 @@ const contentColClass = fullWidth
 
 <script is:inline>
 	(function() {
-		if (window.__readingProgressInstalled) return;
-		window.__readingProgressInstalled = true;
+		if (window['__readingProgressInstalled']) return;
+		window['__readingProgressInstalled'] = true;
 
 		const update = () => {
 			const scrollTop = window.scrollY;

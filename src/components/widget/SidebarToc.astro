@@ -32,14 +32,7 @@ const { headings = [], title = "文章目录" } = Astro.props;
     const announcementCard = document.querySelector('[data-announcement-card]');
 
     let isFixed = false;
-    let originalTop = 0;
     let originalWidth = 0;
-
-    function getOffsetTop() {
-      const rect = wrapper.getBoundingClientRect();
-      const scrollTop = window.scrollY || document.documentElement.scrollTop;
-      return rect.top + scrollTop;
-    }
 
     function isAnnouncementVisible() {
       if (!announcementCard) return true;
@@ -49,31 +42,30 @@ const { headings = [], title = "文章目录" } = Astro.props;
 
     function setFixed() {
       if (isFixed) return;
-      originalTop = getOffsetTop();
-      originalWidth = wrapper.offsetWidth;
-      wrapper.style.position = 'fixed';
-      wrapper.style.top = topOffset + 'px';
-      wrapper.style.width = originalWidth + 'px';
-      wrapper.style.zIndex = '40';
-      wrapper.style.maxHeight = 'none';
-      container.style.maxHeight = 'none';
+      originalWidth = wrapper!.offsetWidth;
+      wrapper!.style.position = 'fixed';
+      wrapper!.style.top = topOffset + 'px';
+      wrapper!.style.width = originalWidth + 'px';
+      wrapper!.style.zIndex = '40';
+      wrapper!.style.maxHeight = 'none';
+      container!.style.maxHeight = 'none';
       isFixed = true;
     }
 
     function setStatic() {
       if (!isFixed) return;
-      wrapper.style.position = '';
-      wrapper.style.top = '';
-      wrapper.style.width = '';
-      wrapper.style.zIndex = '';
-      wrapper.style.maxHeight = '';
-      container.style.maxHeight = '';
+      wrapper!.style.position = '';
+      wrapper!.style.top = '';
+      wrapper!.style.width = '';
+      wrapper!.style.zIndex = '';
+      wrapper!.style.maxHeight = '';
+      container!.style.maxHeight = '';
       isFixed = false;
     }
 
     function onScroll() {
       const announcementVisible = isAnnouncementVisible();
-      const wrapperRect = wrapper.getBoundingClientRect();
+      const wrapperRect = wrapper!.getBoundingClientRect();
 
       if (!isFixed && !announcementVisible && wrapperRect.top < 0) {
         setFixed();
