@@ -17,7 +17,6 @@
 		"check": "astro check && tsc --noEmit",
 		"clean": "node -e \"const fs=require('node:fs'); for (const p of ['.astro','dist','node_modules']) { try { fs.rmSync(p,{recursive:true,force:true}); } catch {} }\"",
 		"preinstall": "npx only-allow pnpm",
-		"test-cssnano": "node test-cssnano.mjs",
 		"test": "vitest run",
 		"test:watch": "vitest",
 		"upgrade": "npx @astrojs/upgrade"
