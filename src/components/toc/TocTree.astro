@@ -10,6 +10,19 @@ const { headings = [] } = Astro.props;
 
 const tree = buildTocTree(headings);
 
+function tocItemClass(depth: number): string {
+	switch (depth) {
+		case 0:
+			return "text-base font-semibold";
+		case 1:
+			return "text-[0.95rem] font-medium";
+		case 2:
+			return "text-[0.875rem]";
+		default:
+			return "text-[0.8rem]";
+	}
+}
+
 function indentClass(depth: number): string {
 	switch (depth) {
 		case 0:
@@ -22,6 +35,32 @@ function indentClass(depth: number): string {
 			return "pl-10";
 	}
 }
+
+function depthColor(depth: number): string {
+	switch (depth) {
+		case 0:
+			return "text-[var(--text-primary)]";
+		case 1:
+			return "text-[color-mix(in_srgb,var(--text-primary)_75%,transparent)]";
+		case 2:
+			return "text-[color-mix(in_srgb,var(--text-primary)_60%,transparent)]";
+		default:
+			return "text-[color-mix(in_srgb,var(--text-primary)_50%,transparent)]";
+	}
+}
+
+function depthHoverColor(depth: number): string {
+	switch (depth) {
+		case 0:
+			return "group-hover:text-[color-mix(in_srgb,var(--text-primary)_90%,transparent)]";
+		case 1:
+			return "group-hover:text-[color-mix(in_srgb,var(--text-primary)_85%,transparent)]";
+		case 2:
+			return "group-hover:text-[color-mix(in_srgb,var(--text-primary)_75%,transparent)]";
+		default:
+			return "group-hover:text-[color-mix(in_srgb,var(--text-primary)_65%,transparent)]";
+	}
+}
 ---
 
 {tree.map((g) => (
@@ -31,19 +70,16 @@ function indentClass(depth: number): string {
         href={`#${g.id}`}
         data-toc-id={g.id}
         data-depth="0"
-        class="toc-item px-2 flex gap-2 relative transition w-full min-h-8 rounded-lg py-1.5 group
+        class={`toc-item px-2 flex gap-2 relative transition w-full min-h-8 rounded-lg py-1.5 group
                hover:bg-[color-mix(in_srgb,var(--primary)_6%,transparent)]
                active:bg-[color-mix(in_srgb,var(--primary)_12%,transparent)]
-               mt-[2px]"
+               mt-[2px] ${tocItemClass(0)}`}
       >
         <div class="transition w-5 h-5 shrink-0 rounded-md text-xs flex items-center justify-center font-bold
                     bg-[color-mix(in_srgb,var(--primary)_8%,transparent)] text-[var(--primary)]">
           {g.num ?? "•"}
         </div>
-        <div class="transition text-sm overflow-hidden text-ellipsis whitespace-nowrap
-                    text-[color-mix(in_srgb,var(--text-primary)_60%,transparent)]
-                    group-hover:text-[color-mix(in_srgb,var(--text-primary)_80%,transparent)]
-                    group-active:text-[var(--primary)]" title={g.text}>
+        <div class={`transition overflow-hidden text-ellipsis whitespace-nowrap ${depthColor(0)} ${depthHoverColor(0)} group-active:text-[var(--primary)]`} title={g.text}>
           {g.text}
         </div>
         <div class="toc-active-bar absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r bg-[var(--primary)] opacity-0 transition-all"></div>
@@ -75,15 +111,12 @@ function indentClass(depth: number): string {
                   data-toc-id={c.id}
                   data-depth="1"
                   data-parent-id={g.id}
-                  class="toc-item px-2 flex gap-2 relative transition w-full min-h-8 rounded-lg py-1.5 group
+                  class={`toc-item px-2 flex gap-2 relative transition w-full min-h-8 rounded-lg py-1.5 group
                          hover:bg-[color-mix(in_srgb,var(--primary)_6%,transparent)]
                          active:bg-[color-mix(in_srgb,var(--primary)_12%,transparent)]
-                         mt-[2px]"
+                         mt-[2px] ${tocItemClass(1)}`}
                 >
-                  <div class="transition text-[0.8rem] overflow-hidden text-ellipsis whitespace-nowrap
-                              text-[color-mix(in_srgb,var(--text-primary)_45%,transparent)]
-                              group-hover:text-[color-mix(in_srgb,var(--text-primary)_70%,transparent)]
-                              group-active:text-[var(--primary)]" title={c.text}>
+                  <div class={`transition text-[0.8rem] overflow-hidden text-ellipsis whitespace-nowrap ${depthColor(1)} ${depthHoverColor(1)} group-active:text-[var(--primary)]`} title={c.text}>
                     {c.text}
                   </div>
                   <div class="toc-active-bar absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-4 rounded-r bg-[var(--primary)] opacity-0 transition-all"></div>
@@ -113,15 +146,12 @@ function indentClass(depth: number): string {
                         data-toc-id={d.id}
                         data-depth="2"
                         data-parent-id={c.id}
-                        class="toc-item px-2 flex gap-2 relative transition w-full min-h-8 rounded-lg py-1.5 group
+                        class={`toc-item px-2 flex gap-2 relative transition w-full min-h-8 rounded-lg py-1.5 group
                                hover:bg-[color-mix(in_srgb,var(--primary)_6%,transparent)]
                                active:bg-[color-mix(in_srgb,var(--primary)_12%,transparent)]
-                               mt-[2px]"
+                               mt-[2px] ${tocItemClass(2)}`}
                       >
-                        <div class="transition text-[0.75rem] overflow-hidden text-ellipsis whitespace-nowrap
-                                    text-[color-mix(in_srgb,var(--text-primary)_35%,transparent)]
-                                    group-hover:text-[color-mix(in_srgb,var(--text-primary)_60%,transparent)]
-                                    group-active:text-[var(--primary)]" title={d.text}>
+                        <div class={`transition text-[0.75rem] overflow-hidden text-ellipsis whitespace-nowrap ${depthColor(2)} ${depthHoverColor(2)} group-active:text-[var(--primary)]`} title={d.text}>
                           {d.text}
                         </div>
                         <div class="toc-active-bar absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-3.5 rounded-r bg-[var(--primary)] opacity-0 transition-all"></div>

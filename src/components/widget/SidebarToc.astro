@@ -11,10 +11,83 @@ const { headings = [], title = "文章目录" } = Astro.props;
 ---
 
 {headings.length > 0 && (
-  <div id="sidebar-toc-wrapper" class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-2xl shadow-xl p-4" data-toc-root>
-    <div class="px-2 pb-2 max-h-[calc(100dvh-120px)] overflow-y-auto">
+  <div id="sidebar-toc-wrapper" class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-3xl rounded-2xl shadow-xl p-4" data-toc-root data-toc-sticky>
+    <div class="px-2 pb-2 max-h-[calc(100dvh-120px)] overflow-y-auto" id="toc-scroll-container">
       <h3 class="text-lg font-bold mb-4 text-orange-700 dark:text-white border-b border-gray-200/50 dark:border-gray-700/50 pb-2">{title}</h3>
       <TocTree headings={headings} />
     </div>
   </div>
 )}
+
+<script>
+  function initTocSticky() {
+    const wrapper = document.getElementById('sidebar-toc-wrapper');
+    const container = document.getElementById('toc-scroll-container');
+    if (!wrapper || !container) return;
+
+    const navbar = document.getElementById('navbar-wrapper');
+    const navbarHeight = navbar ? navbar.offsetHeight : 72;
+    const topOffset = navbarHeight + 20;
+
+    const announcementCard = document.querySelector('[data-announcement-card]');
+
+    let isFixed = false;
+    let originalTop = 0;
+    let originalWidth = 0;
+
+    function getOffsetTop() {
+      const rect = wrapper.getBoundingClientRect();
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      return rect.top + scrollTop;
+    }
+
+    function isAnnouncementVisible() {
+      if (!announcementCard) return true;
+      const rect = announcementCard.getBoundingClientRect();
+      return rect.bottom > 0;
+    }
+
+    function setFixed() {
+      if (isFixed) return;
+      originalTop = getOffsetTop();
+      originalWidth = wrapper.offsetWidth;
+      wrapper.style.position = 'fixed';
+      wrapper.style.top = topOffset + 'px';
+      wrapper.style.width = originalWidth + 'px';
+      wrapper.style.zIndex = '40';
+      wrapper.style.maxHeight = 'none';
+      container.style.maxHeight = 'none';
+      isFixed = true;
+    }
+
+    function setStatic() {
+      if (!isFixed) return;
+      wrapper.style.position = '';
+      wrapper.style.top = '';
+      wrapper.style.width = '';
+      wrapper.style.zIndex = '';
+      wrapper.style.maxHeight = '';
+      container.style.maxHeight = '';
+      isFixed = false;
+    }
+
+    function onScroll() {
+      const announcementVisible = isAnnouncementVisible();
+      const wrapperRect = wrapper.getBoundingClientRect();
+
+      if (!isFixed && !announcementVisible && wrapperRect.top < 0) {
+        setFixed();
+      } else if (isFixed && announcementVisible) {
+        setStatic();
+      } else if (isFixed && !announcementVisible && wrapperRect.top > topOffset + 20) {
+        setStatic();
+      }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+
+  document.addEventListener('astro:page-load', initTocSticky);
+  if (document.readyState !== 'loading') initTocSticky();
+</script>
