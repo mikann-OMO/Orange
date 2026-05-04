@@ -1,6 +1,6 @@
 .custom-md {
 	img {
-		@apply block mx-auto max-h-24 object-contain;
+		@apply block mx-auto max-h-[30rem] object-contain;
 	}
 
 	h1 {
