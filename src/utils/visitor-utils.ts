@@ -67,7 +67,9 @@ async function fetchIncrement(key: string): Promise<VisitorResult> {
 		return { count: incrementLocalCount(key), success: true };
 	}
 	try {
-		const res = await fetch(`/api/visitor?key=${encodeURIComponent(key)}&op=inc`);
+		const res = await fetch(`/api/visitor?key=${encodeURIComponent(key)}&op=inc`, {
+			method: "POST",
+		});
 		if (!res.ok) throw new Error("Failed to increment visitor count");
 		const data = (await res.json()) as { count?: number };
 		return { count: data.count || 0, success: true };

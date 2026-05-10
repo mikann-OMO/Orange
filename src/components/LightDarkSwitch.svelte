@@ -24,14 +24,23 @@ onMount(() => {
 	mode = getDisplayMode();
 
 	const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-	const handleChange = () => {
+	const handleMediaChange = () => {
 		if (getStoredTheme() === AUTO_MODE) {
 			mode = mediaQuery.matches ? DARK_MODE : LIGHT_MODE;
 		}
 	};
-	mediaQuery.addEventListener("change", handleChange);
+	mediaQuery.addEventListener("change", handleMediaChange);
 
-	return () => mediaQuery.removeEventListener("change", handleChange);
+	// 监听主题变化事件（包括 View Transitions 期间）
+	const handleThemeChange = () => {
+		mode = getDisplayMode();
+	};
+	window.addEventListener("themeChange", handleThemeChange);
+
+	return () => {
+		mediaQuery.removeEventListener("change", handleMediaChange);
+		window.removeEventListener("themeChange", handleThemeChange);
+	};
 });
 
 async function switchScheme(newMode: LIGHT_DARK_MODE) {
@@ -62,10 +71,10 @@ async function toggleScheme() {
 	tabindex="0"
 >
     <div class="scheme-icon scheme-icon-light" class:opacity-0={mode !== LIGHT_MODE} class:scale-0={mode !== LIGHT_MODE}>
-        <Icon icon="material-symbols:wb-sunny-outline-rounded" class="scheme-icon-svg"></Icon>
+        <Icon icon="material-symbols:wb-sunny-outline-rounded" class="scheme-icon-svg" style="color: var(--accent-text)"></Icon>
     </div>
     <div class="scheme-icon scheme-icon-dark" class:opacity-0={mode !== DARK_MODE} class:scale-0={mode !== DARK_MODE}>
-        <Icon icon="material-symbols:dark-mode-outline-rounded" class="scheme-icon-svg"></Icon>
+        <Icon icon="material-symbols:dark-mode-outline-rounded" class="scheme-icon-svg" style="color: var(--accent-text)" id="dark-mode-icon"></Icon>
     </div>
 </button>
 
@@ -107,6 +116,9 @@ async function toggleScheme() {
 
 	.scheme-icon-svg {
 		font-size: 1.25rem;
-		color: var(--accent-text);
+	}
+
+	:global(.dark) #dark-mode-icon :global(svg) {
+		color: #ffffff !important;
 	}
 </style>

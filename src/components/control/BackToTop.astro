@@ -6,6 +6,7 @@ import { Icon } from "astro-icon/components";
     <button 
         aria-label="Back to Top" 
         class="back-to-top-inner" 
+        id="back-to-top-inner-btn"
         tabindex="0"
     >
         <Icon name="material-symbols:keyboard-arrow-up-rounded" class="back-to-top-icon"></Icon>
@@ -80,31 +81,3 @@ import { Icon } from "astro-icon/components";
     }
 }
 </style>
-
-<script is:inline>
-    (function() {
-        const backToTop = () => {
-            window.scrollTo({ top: 0, behavior: 'auto' });
-        };
-
-        const initButton = () => {
-            const btn = document.querySelector('#back-to-top-btn button');
-            if (btn) {
-                btn.addEventListener('click', backToTop);
-                btn.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        backToTop();
-                    }
-                });
-                document.querySelector('#back-to-top-btn')?.classList.add('visible');
-            }
-        };
-
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initButton);
-        } else {
-            initButton();
-        }
-    })();
-</script>

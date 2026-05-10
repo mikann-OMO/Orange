@@ -13,12 +13,11 @@ import { onMount } from "svelte";
 
 let count = $state(0);
 let loading = $state(true);
-let error = $state(false);
 
 let displayCount = $derived(formatCount(count));
 
-const TRACK_INTERVAL_KEY = "visitor_track_interval";
-const SITE_VISITOR_KEY = "site_visitor";
+const TRACK_INTERVAL_KEY = "site_visitor_tracked_at";
+const SITE_VISITOR_KEY = "site_visitor_count";
 const TRACK_INTERVAL_MS = 24 * 60 * 60 * 1000;
 
 function shouldTrack(): boolean {
@@ -43,33 +42,29 @@ onMount(async () => {
 	}
 
 	try {
-		// 首先尝试使用 localStorage 中的本地值
+		// 首先显示 localStorage 中的缓存值
 		count = getLocalCount(SITE_VISITOR_KEY);
-		
+		loading = false;
+
+		// 只在需要追踪时才调用 API（24小时一次）
 		if (shouldTrack()) {
 			const result = await incrementSiteVisitorCount();
 			if (result.success) {
 				count = result.count;
+				localStorage.setItem(SITE_VISITOR_KEY, count.toString());
 				markTracked();
 			} else {
-				// 如果 API 失败，增加本地计数
+				// API 失败，使用本地计数
 				count = incrementLocalCount(SITE_VISITOR_KEY);
 				markTracked();
 			}
-		} else {
-			const result = await getSiteVisitorCount();
-			if (result.success) {
-				count = result.count;
-			}
 		}
+		// 如果不需要追踪，直接使用 localStorage 缓存值，不调用 API
 	} catch (e) {
 		console.error("Visitor count error:", e);
-		// 如果出错，确保至少显示本地计数
 		if (count === 0) {
 			count = getLocalCount(SITE_VISITOR_KEY);
 		}
-		error = true;
-	} finally {
 		loading = false;
 	}
 });

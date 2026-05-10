@@ -18,46 +18,80 @@ const slug = propSlug || Astro.url.pathname.replace(/\/$/, "");
 				<span class="comment-title-dot"></span>
 			</div>
 
+			{/* 预连接 Waline 服务器和 CDN */}
+			<link rel="preconnect" href={walineConfig.serverURL} />
 			<link rel="preconnect" href="https://unpkg.com" />
 			<link rel="preload" as="style" href="https://unpkg.com/@waline/client@v3/dist/waline.css" />
 			<link rel="stylesheet" href="https://unpkg.com/@waline/client@v3/dist/waline.css" />
 			<div id="waline" class="waline-container"
 				data-server-url={walineConfig.serverURL}
 				data-path={slug}
-			></div>
+			>
+				<div class="waline-loading">
+					<div class="waline-loading-spinner"></div>
+					<span>评论加载中...</span>
+				</div>
+			</div>
 			<script type="module" is:inline>
-				import { init } from 'https://unpkg.com/@waline/client@v3/dist/waline.js';
-				
 				const walineContainer = document.getElementById('waline');
-				if (walineContainer) {
-					init({
-						el: '#waline',
-						serverURL: walineContainer.dataset.serverUrl,
-						path: walineContainer.dataset.path,
-						lang: 'zh-CN',
-						dark: 'html.dark',
-						login: 'disable',
-						copyright: false,
-						requiredMeta: ['nick', 'mail'],
-						emoji: false,
-						imageUploader: false
-					});
-					
-					const checkInputs = () => {
-						for (const input of walineContainer.querySelectorAll('input')) {
-							const name = input.getAttribute('name');
-							if (name === 'nick' && !input.placeholder?.includes('必填')) {
-								input.placeholder = '(必填)';
-							} else if (name === 'mail' && !input.placeholder?.includes('必填')) {
-								input.placeholder = '(必填)';
-							} else if (name === 'link' && !input.placeholder?.includes('选填')) {
-								input.placeholder = '(ᗜᴗᗜ)';
-							}
+				
+				const initWaline = async () => {
+					try {
+						const { init } = await import('https://unpkg.com/@waline/client@v3/dist/waline.js');
+						
+						if (walineContainer) {
+							init({
+								el: '#waline',
+								serverURL: walineContainer.dataset.serverUrl,
+								path: walineContainer.dataset.path,
+								lang: 'zh-CN',
+								dark: 'html.dark',
+								login: 'disable',
+								copyright: false,
+								requiredMeta: ['nick', 'mail'],
+								emoji: false,
+								imageUploader: false
+							});
+							
+							const checkInputs = () => {
+								for (const input of walineContainer.querySelectorAll('input')) {
+									const name = input.getAttribute('name');
+									if (name === 'nick' && !input.placeholder?.includes('必填')) {
+										input.placeholder = '(必填)';
+									} else if (name === 'mail' && !input.placeholder?.includes('必填')) {
+										input.placeholder = '(必填)';
+									} else if (name === 'link' && !input.placeholder?.includes('选填')) {
+										input.placeholder = '(ᗜᴗᗜ)';
+									}
+								}
+							};
+							
+							setTimeout(checkInputs, 200);
+							new MutationObserver(checkInputs).observe(walineContainer, { childList: true, subtree: true });
 						}
-					};
-					
-					setTimeout(checkInputs, 200);
-					new MutationObserver(checkInputs).observe(walineContainer, { childList: true, subtree: true });
+					} catch (error) {
+						console.error('Failed to load Waline:', error);
+						const loading = walineContainer?.querySelector('.waline-loading');
+						if (loading) {
+							loading.innerHTML = '<span>评论加载失败，请刷新页面重试</span>';
+						}
+					}
+				};
+
+				// 使用 IntersectionObserver 实现懒加载
+				const observer = new IntersectionObserver((entries) => {
+					entries.forEach(entry => {
+						if (entry.isIntersecting) {
+							initWaline();
+							observer.disconnect();
+						}
+					});
+				}, {
+					rootMargin: '200px' // 提前 200px 开始加载
+				});
+
+				if (walineContainer) {
+					observer.observe(walineContainer);
 				}
 			</script>
 		</>
@@ -161,12 +195,37 @@ const slug = propSlug || Astro.url.pathname.replace(/\/$/, "");
 			padding: 1.25rem;
 			border: 1px solid var(--card-border);
 			box-shadow: 0 4px 24px var(--shadow-color);
+			min-height: 200px;
 		}
 
 		@media (min-width: 768px) {
 			.waline-container {
 				padding: 1.5rem;
 			}
+		}
+
+		.waline-loading {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			gap: 1rem;
+			padding: 3rem 1rem;
+			color: var(--text-secondary);
+			font-size: 0.875rem;
+		}
+
+		.waline-loading-spinner {
+			width: 32px;
+			height: 32px;
+			border: 3px solid color-mix(in srgb, var(--primary) 20%, transparent);
+			border-top-color: var(--primary);
+			border-radius: 50%;
+			animation: spin 0.8s linear infinite;
+		}
+
+		@keyframes spin {
+			to { transform: rotate(360deg); }
 		}
 
 		:global(.wl-comment) {

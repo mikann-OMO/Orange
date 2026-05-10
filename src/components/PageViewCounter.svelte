@@ -17,12 +17,11 @@ let { slug }: Props = $props();
 
 let count = $state(0);
 let loading = $state(true);
-let error = $state(false);
 
 let displayCount = $derived(formatCount(count));
 
-const TRACK_INTERVAL_KEY_PREFIX = "page_track_interval_";
-const PAGE_VISITOR_KEY_PREFIX = "page_visitor_";
+const TRACK_INTERVAL_KEY_PREFIX = "page_tracked_at_";
+const PAGE_VISITOR_KEY_PREFIX = "page_count_";
 const TRACK_INTERVAL_MS = 5 * 60 * 1000;
 
 function getTrackKey(): string {
@@ -55,33 +54,29 @@ onMount(async () => {
 	}
 
 	try {
-		// 首先尝试使用 localStorage 中的本地值
+		// 首先显示 localStorage 中的缓存值
 		count = getLocalCount(getPageKey());
-		
+		loading = false;
+
+		// 只在需要追踪时才调用 API（5分钟一次）
 		if (shouldTrack()) {
 			const result = await incrementPageVisitorCount(slug);
 			if (result.success) {
 				count = result.count;
+				localStorage.setItem(getPageKey(), count.toString());
 				markTracked();
 			} else {
-				// 如果 API 失败，增加本地计数
+				// API 失败，使用本地计数
 				count = incrementLocalCount(getPageKey());
 				markTracked();
 			}
-		} else {
-			const result = await getPageVisitorCount(slug);
-			if (result.success) {
-				count = result.count;
-			}
 		}
+		// 如果不需要追踪，直接使用 localStorage 缓存值，不调用 API
 	} catch (e) {
 		console.error("Page view count error:", e);
-		// 如果出错，确保至少显示本地计数
 		if (count === 0) {
 			count = getLocalCount(getPageKey());
 		}
-		error = true;
-	} finally {
 		loading = false;
 	}
 });

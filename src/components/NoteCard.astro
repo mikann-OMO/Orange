@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import ImageWrapper from "./misc/ImageWrapper.astro";
+import LikeButton from "./LikeButton.svelte";
 
 interface Props {
 	entry: CollectionEntry<"notes">;
@@ -38,7 +39,10 @@ if (isValidNote && entry.body) {
 {!isValidNote ? (
     <div class="note-card note-card-animate p-6 border border-[var(--primary)]/30 shadow-md bg-orange-50/60 text-orange-950/80 max-w-2xl mx-auto mb-4 dark:bg-stone-800/60 dark:text-white/80 dark:border-white/20">Invalid note</div>
 ) : (
-    <div class="note-card note-card-animate" style={style}>
+    <div class="note-card note-card-animate relative" style={style}>
+        <div class="absolute top-4 right-4">
+            <LikeButton slug={entry.id} client:visible />
+        </div>
         {entry.data?.title && (
             <div class="note-card-time">
                 {entry.data.title}

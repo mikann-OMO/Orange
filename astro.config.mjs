@@ -13,11 +13,9 @@ import { defineConfig } from "astro/config";
 // Markdown 处理插件
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeComponents from "rehype-components";
-import rehypeKatex from "rehype-katex";
 import rehypeSlug from "rehype-slug";
 import remarkDirective from "remark-directive";
 import remarkGithubAdmonitionsToDirectives from "remark-github-admonitions-to-directives";
-import remarkMath from "remark-math";
 import remarkSectionize from "remark-sectionize";
 
 // PWA 支持 - 暂时禁用
@@ -89,11 +87,11 @@ export default defineConfig({
 
 		// 图标集成
 		icon({
-			// 包含的图标集
+			// 包含的图标集 - 仅包含实际使用的图标以减小构建体积
 			include: {
-				"fa6-brands": ["*"], // Font Awesome 6 品牌图标
-				"fa6-regular": ["*"], // Font Awesome 6 常规图标
-				"fa6-solid": ["*"], // Font Awesome 6 实心图标
+				"fa6-brands": ["github", "creative-commons", "zhihu", "bilibili"],
+				"fa6-regular": ["clock", "address-card"],
+				"fa6-solid": ["arrow-up-right-from-square", "users", "arrow-right"],
 			},
 		}),
 		// 站点地图集成
@@ -106,7 +104,6 @@ export default defineConfig({
 	markdown: {
 		// Remark 插件（用于处理 Markdown 内容）
 		remarkPlugins: [
-			remarkMath, // 数学公式支持
 			remarkReadingTime, // 阅读时间计算
 			remarkExcerpt, // 摘要提取
 			remarkGithubAdmonitionsToDirectives, // GitHub  admonitions 支持
@@ -117,7 +114,6 @@ export default defineConfig({
 		],
 		// Rehype 插件（用于处理 HTML 输出）
 		rehypePlugins: [
-			rehypeKatex, // KaTeX 数学公式渲染
 			rehypeSlug, // 自动添加锚点
 			[
 				rehypeComponents,
@@ -289,21 +285,6 @@ export default defineConfig({
 					chunkFileNames: "chunks/[name].[hash].js",
 					entryFileNames: "[name].[hash].js",
 					assetFileNames: "assets/[name].[hash].[ext]",
-				},
-			},
-			// Terser 配置
-			terserOptions: {
-				compress: {
-					drop_console: true, // 移除 console
-					drop_debugger: true, // 移除 debugger
-					unused: true, // 移除未使用的代码
-					dead_code: true, // 移除死代码
-					collapse_vars: true, // 折叠变量
-					reduce_vars: true, // 减少变量
-				},
-				format: {
-					comments: false, // 移除注释
-					beautify: false, // 不美化
 				},
 			},
 			// 资源优化
