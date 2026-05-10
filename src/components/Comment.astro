@@ -23,7 +23,33 @@ const slug = propSlug || Astro.url.pathname.replace(/\/$/, "");
 			<link rel="preconnect" href="https://unpkg.com" />
 			<link rel="preload" as="style" href="https://unpkg.com/@waline/client@v3/dist/waline.css" />
 			<link rel="stylesheet" href="https://unpkg.com/@waline/client@v3/dist/waline.css" />
-			<div id="waline" class="waline-container"
+
+			{/* 原生输入表单 - 立即显示 */}
+			<form class="comment-form" id="comment-form"
+				data-server-url={walineConfig.serverURL}
+				data-path={slug}
+			>
+				<div class="comment-form-row">
+					<input type="text" name="nick" class="comment-input" placeholder="昵称 (必填)" required />
+					<input type="email" name="mail" class="comment-input" placeholder="邮箱 (必填)" required />
+					<input type="url" name="link" class="comment-input" placeholder="网址 (选填)" />
+				</div>
+				<textarea name="comment" class="comment-textarea" placeholder="写下你的评论..." required rows="3"></textarea>
+				<div class="comment-form-footer">
+					<span class="comment-form-hint">支持 Markdown 语法</span>
+					<button type="submit" class="comment-submit-btn" id="comment-submit-btn">
+						<span class="comment-submit-text">提交评论</span>
+						<span class="comment-submit-loading" style="display: none;">
+							<span class="comment-submit-spinner"></span>
+							提交中...
+						</span>
+					</button>
+				</div>
+				<div class="comment-form-message" id="comment-form-message" style="display: none;"></div>
+			</form>
+
+			{/* 评论列表区域 */}
+			<div id="waline-comments" class="waline-comments-container"
 				data-server-url={walineConfig.serverURL}
 				data-path={slug}
 			>
@@ -33,17 +59,21 @@ const slug = propSlug || Astro.url.pathname.replace(/\/$/, "");
 				</div>
 			</div>
 			<script type="module" is:inline>
-				const walineContainer = document.getElementById('waline');
+				const commentsContainer = document.getElementById('waline-comments');
+				const commentForm = document.getElementById('comment-form');
+				const submitBtn = document.getElementById('comment-submit-btn');
+				const formMessage = document.getElementById('comment-form-message');
 				
+				// 立即加载 Waline 评论列表
 				const initWaline = async () => {
 					try {
 						const { init } = await import('https://unpkg.com/@waline/client@v3/dist/waline.js');
 						
-						if (walineContainer) {
+						if (commentsContainer) {
 							init({
-								el: '#waline',
-								serverURL: walineContainer.dataset.serverUrl,
-								path: walineContainer.dataset.path,
+								el: '#waline-comments',
+								serverURL: commentsContainer.dataset.serverUrl,
+								path: commentsContainer.dataset.path,
 								lang: 'zh-CN',
 								dark: 'html.dark',
 								login: 'disable',
@@ -52,46 +82,103 @@ const slug = propSlug || Astro.url.pathname.replace(/\/$/, "");
 								emoji: false,
 								imageUploader: false
 							});
-							
-							const checkInputs = () => {
-								for (const input of walineContainer.querySelectorAll('input')) {
-									const name = input.getAttribute('name');
-									if (name === 'nick' && !input.placeholder?.includes('必填')) {
-										input.placeholder = '(必填)';
-									} else if (name === 'mail' && !input.placeholder?.includes('必填')) {
-										input.placeholder = '(必填)';
-									} else if (name === 'link' && !input.placeholder?.includes('选填')) {
-										input.placeholder = '(ᗜᴗᗜ)';
-									}
-								}
-							};
-							
-							setTimeout(checkInputs, 200);
-							new MutationObserver(checkInputs).observe(walineContainer, { childList: true, subtree: true });
 						}
 					} catch (error) {
 						console.error('Failed to load Waline:', error);
-						const loading = walineContainer?.querySelector('.waline-loading');
+						const loading = commentsContainer?.querySelector('.waline-loading');
 						if (loading) {
 							loading.innerHTML = '<span>评论加载失败，请刷新页面重试</span>';
 						}
 					}
 				};
 
-				// 使用 IntersectionObserver 实现懒加载
-				const observer = new IntersectionObserver((entries) => {
-					entries.forEach(entry => {
-						if (entry.isIntersecting) {
-							initWaline();
-							observer.disconnect();
+				// 立即加载评论列表
+				initWaline();
+
+				// 表单提交逻辑
+				if (commentForm) {
+					commentForm.addEventListener('submit', async (e) => {
+						e.preventDefault();
+						
+						const serverURL = commentForm.dataset.serverUrl;
+						const path = commentForm.dataset.path;
+						
+						if (!serverURL) {
+							showMessage('错误：未配置评论服务器', 'error');
+							return;
+						}
+						
+						// 获取表单数据
+						const formData = new FormData(commentForm);
+						const commentData = {
+							comment: formData.get('comment'),
+							nick: formData.get('nick'),
+							mail: formData.get('mail'),
+							link: formData.get('link') || '',
+							url: path,
+							ua: navigator.userAgent
+						};
+						
+						// 验证必填项
+						if (!commentData.nick || !commentData.mail || !commentData.comment) {
+							showMessage('请填写昵称、邮箱和评论内容', 'error');
+							return;
+						}
+						
+						// 显示提交中状态
+						setSubmitting(true);
+						
+						try {
+							const response = await fetch(`${serverURL}/api/comment`, {
+								method: 'POST',
+								headers: {
+									'Content-Type': 'application/json'
+								},
+								body: JSON.stringify(commentData)
+							});
+							
+							const result = await response.json();
+							
+							if (response.ok && result.errno === 0) {
+								showMessage('评论提交成功！', 'success');
+								commentForm.reset();
+								// 刷新评论列表
+								initWaline();
+							} else {
+								showMessage(result.errmsg || '提交失败，请稍后重试', 'error');
+							}
+						} catch (error) {
+							console.error('Comment submit error:', error);
+							showMessage('网络错误，请稍后重试', 'error');
+						} finally {
+							setSubmitting(false);
 						}
 					});
-				}, {
-					rootMargin: '200px' // 提前 200px 开始加载
-				});
-
-				if (walineContainer) {
-					observer.observe(walineContainer);
+				}
+				
+				function setSubmitting(isSubmitting) {
+					if (!submitBtn) return;
+					const textEl = submitBtn.querySelector('.comment-submit-text');
+					const loadingEl = submitBtn.querySelector('.comment-submit-loading');
+					if (isSubmitting) {
+						textEl.style.display = 'none';
+						loadingEl.style.display = 'inline-flex';
+						submitBtn.disabled = true;
+					} else {
+						textEl.style.display = 'inline';
+						loadingEl.style.display = 'none';
+						submitBtn.disabled = false;
+					}
+				}
+				
+				function showMessage(message, type) {
+					if (!formMessage) return;
+					formMessage.textContent = message;
+					formMessage.className = 'comment-form-message comment-form-message-' + type;
+					formMessage.style.display = 'block';
+					setTimeout(() => {
+						formMessage.style.display = 'none';
+					}, 3000);
 				}
 			</script>
 		</>
@@ -185,23 +272,6 @@ const slug = propSlug || Astro.url.pathname.replace(/\/$/, "");
 			background: color-mix(in srgb, var(--card-bg) 60%, transparent);
 			border-radius: 1rem;
 			border: 1px dashed var(--card-border);
-		}
-
-		.waline-container {
-			background: color-mix(in srgb, var(--card-bg) 80%, transparent) !important;
-			backdrop-filter: blur(16px);
-			-webkit-backdrop-filter: blur(16px);
-			border-radius: 1rem;
-			padding: 1.25rem;
-			border: 1px solid var(--card-border);
-			box-shadow: 0 4px 24px var(--shadow-color);
-			min-height: 200px;
-		}
-
-		@media (min-width: 768px) {
-			.waline-container {
-				padding: 1.5rem;
-			}
 		}
 
 		.waline-loading {
@@ -554,6 +624,206 @@ const slug = propSlug || Astro.url.pathname.replace(/\/$/, "");
 			:global(.wl-editor) {
 				min-height: 60px !important;
 				font-size: 1rem !important;
+			}
+		}
+
+		/* 原生评论表单样式 */
+		.comment-form {
+			background: color-mix(in srgb, var(--card-bg) 80%, transparent);
+			backdrop-filter: blur(16px);
+			-webkit-backdrop-filter: blur(16px);
+			border-radius: 1rem;
+			padding: 1.25rem;
+			border: 1px solid var(--card-border);
+			box-shadow: 0 4px 24px var(--shadow-color);
+			margin-bottom: 1rem;
+		}
+
+		@media (min-width: 768px) {
+			.comment-form {
+				padding: 1.5rem;
+			}
+		}
+
+		.comment-form-row {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem;
+			margin-bottom: 0.75rem;
+		}
+
+		.comment-input {
+			flex: 1;
+			min-width: 120px;
+			background: color-mix(in srgb, var(--page-bg) 70%, transparent);
+			border: 1px solid var(--card-border);
+			border-radius: 0.625rem;
+			color: var(--text-primary);
+			padding: 0.5rem 0.75rem;
+			font-size: 0.8125rem;
+			transition: border-color 0.2s ease, box-shadow 0.2s ease;
+			outline: none;
+		}
+
+		.comment-input:focus {
+			border-color: var(--primary);
+			box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 12%, transparent);
+		}
+
+		.comment-input::placeholder {
+			color: color-mix(in srgb, var(--text-secondary) 60%, transparent);
+		}
+
+		.comment-textarea {
+			width: 100%;
+			background: color-mix(in srgb, var(--page-bg) 70%, transparent);
+			border: 1px solid var(--card-border);
+			border-radius: 0.75rem;
+			color: var(--text-primary);
+			padding: 0.75rem;
+			font-size: 0.9375rem;
+			line-height: 1.7;
+			resize: vertical;
+			min-height: 80px;
+			transition: border-color 0.2s ease, box-shadow 0.2s ease;
+			outline: none;
+			font-family: inherit;
+		}
+
+		.comment-textarea:focus {
+			border-color: var(--primary);
+			box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 12%, transparent);
+		}
+
+		.comment-textarea::placeholder {
+			color: color-mix(in srgb, var(--text-secondary) 60%, transparent);
+		}
+
+		.comment-form-footer {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-top: 0.75rem;
+		}
+
+		.comment-form-hint {
+			color: var(--text-secondary);
+			font-size: 0.75rem;
+		}
+
+		.comment-submit-btn {
+			background: var(--primary);
+			color: #fff;
+			border: none;
+			border-radius: 0.5rem;
+			padding: 0.5rem 1.25rem;
+			font-weight: 600;
+			font-size: 0.8125rem;
+			transition: all 0.2s ease;
+			cursor: pointer;
+			letter-spacing: 0.02em;
+			display: inline-flex;
+			align-items: center;
+			gap: 0.5rem;
+		}
+
+		.comment-submit-btn:hover:not(:disabled) {
+			background: color-mix(in srgb, var(--primary) 90%, #000);
+			transform: translateY(-1px);
+			box-shadow: 0 4px 12px color-mix(in srgb, var(--primary) 30%, transparent);
+		}
+
+		.comment-submit-btn:active:not(:disabled) {
+			transform: translateY(0) scale(0.98);
+		}
+
+		.comment-submit-btn:disabled {
+			opacity: 0.7;
+			cursor: not-allowed;
+		}
+
+		.comment-submit-spinner {
+			width: 14px;
+			height: 14px;
+			border: 2px solid rgba(255, 255, 255, 0.3);
+			border-top-color: #fff;
+			border-radius: 50%;
+			animation: spin 0.8s linear infinite;
+			display: inline-block;
+		}
+
+		.comment-form-message {
+			margin-top: 0.75rem;
+			padding: 0.625rem 1rem;
+			border-radius: 0.5rem;
+			font-size: 0.8125rem;
+			animation: fadeIn 0.3s ease;
+		}
+
+		.comment-form-message-success {
+			background: color-mix(in srgb, #10b981 15%, transparent);
+			color: #10b981;
+			border: 1px solid color-mix(in srgb, #10b981 30%, transparent);
+		}
+
+		.comment-form-message-error {
+			background: color-mix(in srgb, #ef4444 15%, transparent);
+			color: #ef4444;
+			border: 1px solid color-mix(in srgb, #ef4444 30%, transparent);
+		}
+
+		@keyframes fadeIn {
+			from { opacity: 0; transform: translateY(-4px); }
+			to { opacity: 1; transform: translateY(0); }
+		}
+
+		.waline-comments-container {
+			background: color-mix(in srgb, var(--card-bg) 80%, transparent) !important;
+			backdrop-filter: blur(16px);
+			-webkit-backdrop-filter: blur(16px);
+			border-radius: 1rem;
+			padding: 1.25rem;
+			border: 1px solid var(--card-border);
+			box-shadow: 0 4px 24px var(--shadow-color);
+			min-height: 100px;
+		}
+
+		@media (min-width: 768px) {
+			.waline-comments-container {
+				padding: 1.5rem;
+			}
+		}
+
+		@media (max-width: 640px) {
+			.comment-form {
+				padding: 0.875rem;
+				border-radius: 0.75rem;
+			}
+
+			.comment-form-row {
+				flex-direction: column;
+			}
+
+			.comment-input {
+				min-width: 100%;
+				padding: 0.4375rem 0.625rem;
+				font-size: 1rem;
+			}
+
+			.comment-textarea {
+				min-height: 60px;
+				font-size: 1rem;
+			}
+
+			.comment-submit-btn {
+				width: 100%;
+				padding: 0.625rem 1rem;
+				justify-content: center;
+			}
+
+			.waline-comments-container {
+				padding: 0.875rem;
+				border-radius: 0.75rem;
 			}
 		}
 	</style>
