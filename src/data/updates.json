@@ -1,6 +1,12 @@
 {
 	"platforms": [
 		{
+			"name": "Twitter / X",
+			"icon": "fa6-brands:twitter",
+			"url": "https://x.com/YueOrange12019",
+			"description": "推特账号"
+		},
+		{
 			"name": "知乎",
 			"icon": "fa6-brands:zhihu",
 			"url": "https://www.zhihu.com/people/pxlswae",

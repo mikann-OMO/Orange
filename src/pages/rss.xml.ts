@@ -2,7 +2,7 @@ import rss from "@astrojs/rss";
 import type { APIContext } from "astro";
 import MarkdownIt from "markdown-it";
 import sanitizeHtml from "sanitize-html";
-import { siteConfig } from "../config";
+import { profileConfig, siteConfig } from "../config";
 import { getSortedPosts } from "../utils/content-utils";
 
 const parser = new MarkdownIt();
@@ -23,6 +23,8 @@ export async function GET(context: APIContext): Promise<Response> {
 				pubDate: post.data.published,
 				description: post.data.description || "",
 				link: `/posts/${post.id}/`,
+				author: profileConfig.name,
+				categories: post.data.tags || [],
 				content: sanitizeHtml(parser.render(content), {
 					allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img"]),
 				}),

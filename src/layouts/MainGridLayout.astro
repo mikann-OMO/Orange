@@ -33,6 +33,11 @@ interface Props {
 	showAnnouncement?: boolean;
 	isPostPage?: boolean;
 	announcementConfig?: AnnouncementConfig;
+	image?: string;
+	keywords?: string[];
+	published?: Date;
+	updated?: Date;
+	tags?: string[];
 }
 
 const {
@@ -47,6 +52,11 @@ const {
 	showAnnouncement = true,
 	isPostPage = false,
 	announcementConfig,
+	image,
+	keywords,
+	published,
+	updated,
+	tags,
 } = Astro.props;
 
 const activeAnnouncement: AnnouncementConfig = (announcementConfig || announcement) as AnnouncementConfig;
@@ -58,7 +68,18 @@ const contentColClass = fullWidth
 		: "md:col-span-8 lg:col-span-8";
 ---
 
-<Layout title={title} banner={banner} description={description} lang={lang} setOGTypeArticle={setOGTypeArticle}>
+<Layout 
+	title={title} 
+	banner={banner} 
+	description={description} 
+	lang={lang} 
+	setOGTypeArticle={setOGTypeArticle}
+	image={image}
+	keywords={keywords}
+	published={published}
+	updated={updated}
+	tags={tags}
+>
 
 <slot slot="head" name="head"></slot>
 
