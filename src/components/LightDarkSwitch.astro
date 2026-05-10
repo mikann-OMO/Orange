@@ -62,9 +62,13 @@ import { Icon } from "astro-icon/components";
 		updateIcons(newMode);
 	}
 	
-	// 初始化
-	const btn = document.getElementById('scheme-switch');
-	if (btn) {
+	function init() {
+		const btn = document.getElementById('scheme-switch');
+		if (!btn) return;
+		// 避免重复绑定（View Transitions 期间会重新执行 init）
+		if (btn.dataset.bound === 'true') return;
+		btn.dataset.bound = 'true';
+		
 		btn.addEventListener('click', toggleScheme);
 		updateIcons(getDisplayMode());
 		
@@ -80,6 +84,15 @@ import { Icon } from "astro-icon/components";
 			updateIcons(getDisplayMode());
 		});
 	}
+	
+	// 在 DOM 完全就绪后绑定，避免 View Transitions 期间绑定到旧 DOM
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', init, { once: true });
+	} else {
+		init();
+	}
+	// View Transitions 页面切换后重新绑定
+	document.addEventListener('astro:page-load', init);
 })();
 </script>
 

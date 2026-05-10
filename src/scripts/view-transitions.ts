@@ -34,6 +34,14 @@
 			);
 		}
 
+		// 移动端跳过卡片入场动画，减少开销
+		if (window.innerWidth <= 768) return;
+
+		const cards = document.querySelectorAll(
+			".post-card-animate, .friend-card-animate, .note-card-animate",
+		);
+		if (cards.length === 0) return;
+
 		const cardObserver = new IntersectionObserver(
 			(entries) => {
 				let index = 0;
@@ -49,19 +57,19 @@
 								},
 								{ once: true },
 							);
-						}, idx * 20);
+						}, idx * 15);
 						cardObserver.unobserve(entry.target);
 					}
 					index++;
 				}
 			},
-			{ threshold: 0.1, rootMargin: "20px" },
+			{ threshold: 0.05, rootMargin: "50px" },
 		);
 
-		for (const card of document.querySelectorAll(
-			".post-card-animate, .friend-card-animate, .note-card-animate",
-		)) {
-			cardObserver.observe(card);
+		// 只观察前 10 个卡片
+		const limit = Math.min(cards.length, 10);
+		for (let i = 0; i < limit; i++) {
+			cardObserver.observe(cards[i]);
 		}
 
 		const postContent = document.querySelector(".post-content-animate");

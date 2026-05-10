@@ -403,3 +403,30 @@ img[src]:not([src=""]) {
 		background-attachment: scroll !important;
 	}
 }
+
+/* 性能优化: 跳过屏幕外内容的渲染 */
+.post-card-animate,
+.friend-card-animate,
+.note-card-animate {
+	content-visibility: auto;
+	contain-intrinsic-size: auto 120px;
+}
+
+/* 性能优化: 隔离独立区块，减少回流范围 */
+.card-base,
+#content-container,
+aside {
+	contain: layout style paint;
+}
+
+/* 性能优化: 减少非交互元素的绘制开销 */
+img,
+video {
+	content-visibility: auto;
+	contain-intrinsic-size: auto 300px;
+}
+
+/* 字体加载优化: 确保文本在字体加载期间可见 */
+@font-face {
+	font-display: swap;
+}
