@@ -202,31 +202,7 @@ const contentColClass = fullWidth
 
 </Layout>
 
-<script is:inline>
-	(function() {
-		if (window['__readingProgressInstalled']) return;
-		window['__readingProgressInstalled'] = true;
-
-		const update = () => {
-			const scrollTop = window.scrollY;
-			const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-			const progress = scrollTop / docHeight;
-			const bar = document.getElementById('reading-progress');
-			if (bar) {
-				bar.style.transform = `scaleX(${Math.max(0, Math.min(1, progress))})`;
-			}
-		};
-
-		window.addEventListener('scroll', update, { passive: true });
-		window.addEventListener('resize', update, { passive: true });
-
-		if (document.readyState === "loading") {
-			document.addEventListener("DOMContentLoaded", update);
-		} else {
-			update();
-		}
-	})();
-</script>
+<script src="../scripts/reading-progress.ts"></script>
 
 <style>
 #main-wrapper {
