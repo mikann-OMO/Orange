@@ -1,0 +1,130 @@
+---
+import { Icon } from "astro-icon/components";
+---
+
+<button 
+	aria-label="Light/Dark Mode" 
+	role="menuitem" 
+	class="scheme-switch-btn"
+	id="scheme-switch" 
+	tabindex="0"
+>
+    <div class="scheme-icon scheme-icon-light" id="scheme-icon-light">
+        <Icon name="material-symbols:wb-sunny-outline-rounded" class="scheme-icon-svg" />
+    </div>
+    <div class="scheme-icon scheme-icon-dark" id="scheme-icon-dark">
+        <Icon name="material-symbols:dark-mode-outline-rounded" class="scheme-icon-svg" id="dark-mode-icon" />
+    </div>
+</button>
+
+<script is:inline>
+(function() {
+	const LIGHT_MODE = 'light';
+	const DARK_MODE = 'dark';
+	const AUTO_MODE = 'auto';
+	
+	function getStoredTheme() {
+		return localStorage.getItem('theme') || AUTO_MODE;
+	}
+	
+	function setTheme(mode) {
+		localStorage.setItem('theme', mode);
+		document.documentElement.classList.toggle('dark', mode === DARK_MODE || 
+			(mode === AUTO_MODE && window.matchMedia('(prefers-color-scheme: dark)').matches));
+		window.dispatchEvent(new CustomEvent('themeChange'));
+	}
+	
+	function getDisplayMode() {
+		const storedTheme = getStoredTheme();
+		if (storedTheme === LIGHT_MODE) return LIGHT_MODE;
+		if (storedTheme === DARK_MODE) return DARK_MODE;
+		if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+			return DARK_MODE;
+		}
+		return LIGHT_MODE;
+	}
+	
+	function updateIcons(mode) {
+		const lightIcon = document.getElementById('scheme-icon-light');
+		const darkIcon = document.getElementById('scheme-icon-dark');
+		if (lightIcon && darkIcon) {
+			lightIcon.style.opacity = mode === LIGHT_MODE ? '1' : '0';
+			lightIcon.style.transform = mode === LIGHT_MODE ? 'scale(1)' : 'scale(0)';
+			darkIcon.style.opacity = mode === DARK_MODE ? '1' : '0';
+			darkIcon.style.transform = mode === DARK_MODE ? 'scale(1)' : 'scale(0)';
+		}
+	}
+	
+	function toggleScheme() {
+		const currentMode = getDisplayMode();
+		const newMode = currentMode === LIGHT_MODE ? DARK_MODE : LIGHT_MODE;
+		setTheme(newMode);
+		updateIcons(newMode);
+	}
+	
+	// 初始化
+	const btn = document.getElementById('scheme-switch');
+	if (btn) {
+		btn.addEventListener('click', toggleScheme);
+		updateIcons(getDisplayMode());
+		
+		// 监听系统主题变化
+		window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+			if (getStoredTheme() === AUTO_MODE) {
+				updateIcons(getDisplayMode());
+			}
+		});
+		
+		// 监听主题变化事件（View Transitions）
+		window.addEventListener('themeChange', () => {
+			updateIcons(getDisplayMode());
+		});
+	}
+})();
+</script>
+
+<style>
+	.scheme-switch-btn {
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 0.5rem;
+		width: 2.75rem;
+		height: 2.75rem;
+		background: transparent;
+		border: none;
+		cursor: pointer;
+		transition: all 0.2s ease;
+	}
+
+	.scheme-switch-btn:hover {
+		background: var(--surface-hover);
+	}
+
+	.scheme-switch-btn:active {
+		transform: scale(0.9);
+	}
+
+	.scheme-switch-btn:focus-visible {
+		outline: 2px solid var(--primary);
+		outline-offset: 2px;
+	}
+
+	.scheme-icon {
+		position: absolute;
+		transition: all 0.3s ease-in-out;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.scheme-icon-svg {
+		font-size: 1.25rem;
+		color: var(--accent-text);
+	}
+
+	:global(.dark) #dark-mode-icon :global(svg) {
+		color: #ffffff !important;
+	}
+</style>

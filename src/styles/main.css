@@ -379,3 +379,27 @@ img[src]:not([src=""]) {
 .card-base:hover {
 	box-shadow: 0 4px 20px var(--shadow-color);
 }
+
+/* 移动端禁用 backdrop-filter 以提升性能 */
+@media (max-width: 768px) {
+	.backdrop-blur,
+	.backdrop-blur-sm,
+	.backdrop-blur-md,
+	.backdrop-blur-lg,
+	.backdrop-blur-xl,
+	.backdrop-blur-2xl,
+	.backdrop-blur-3xl {
+		backdrop-filter: none !important;
+		-webkit-backdrop-filter: none !important;
+	}
+	
+	/* 为需要 backdrop-filter 的元素添加背景色替代 */
+	[class*="backdrop-blur"] {
+		background-color: color-mix(in srgb, var(--card-bg) 95%, transparent) !important;
+	}
+	
+	/* 移动端禁用 background-attachment: fixed 以提升性能 */
+	[style*="background-attachment: fixed"] {
+		background-attachment: scroll !important;
+	}
+}

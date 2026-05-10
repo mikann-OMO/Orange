@@ -18,11 +18,9 @@ const slug = propSlug || Astro.url.pathname.replace(/\/$/, "");
 				<span class="comment-title-dot"></span>
 			</div>
 
-			{/* 预连接 Waline 服务器和 CDN */}
-			<link rel="preconnect" href={walineConfig.serverURL} />
-			<link rel="preconnect" href="https://unpkg.com" />
-			<link rel="preload" as="style" href="https://unpkg.com/@waline/client@v3/dist/waline.css" />
-			<link rel="stylesheet" href="https://unpkg.com/@waline/client@v3/dist/waline.css" />
+			{/* Waline CSS 异步加载 */}
+			<link rel="stylesheet" href="/waline/waline.css" media="print" onload="this.media='all'" />
+			<noscript><link rel="stylesheet" href="/waline/waline.css" /></noscript>
 
 			{/* 原生输入表单 - 立即显示 */}
 			<form class="comment-form" id="comment-form"
@@ -64,10 +62,10 @@ const slug = propSlug || Astro.url.pathname.replace(/\/$/, "");
 				const submitBtn = document.getElementById('comment-submit-btn');
 				const formMessage = document.getElementById('comment-form-message');
 				
-				// 立即加载 Waline 评论列表
+				// 使用本地 Waline 文件
 				const initWaline = async () => {
 					try {
-						const { init } = await import('https://unpkg.com/@waline/client@v3/dist/waline.js');
+						const { init } = await import('/waline/waline.js');
 						
 						if (commentsContainer) {
 							init({
@@ -92,8 +90,21 @@ const slug = propSlug || Astro.url.pathname.replace(/\/$/, "");
 					}
 				};
 
-				// 立即加载评论列表
-				initWaline();
+				// IntersectionObserver 懒加载评论列表
+				const observer = new IntersectionObserver((entries) => {
+					entries.forEach(entry => {
+						if (entry.isIntersecting) {
+							initWaline();
+							observer.disconnect();
+						}
+					});
+				}, {
+					rootMargin: '200px' // 提前 200px 开始加载
+				});
+
+				if (commentsContainer) {
+					observer.observe(commentsContainer);
+				}
 
 				// 表单提交逻辑
 				if (commentForm) {
@@ -625,6 +636,11 @@ const slug = propSlug || Astro.url.pathname.replace(/\/$/, "");
 				min-height: 60px !important;
 				font-size: 1rem !important;
 			}
+		}
+
+		/* 隐藏 Waline 自带的输入框，只显示评论列表 */
+		:global(.wl-panel) {
+			display: none !important;
 		}
 
 		/* 原生评论表单样式 */

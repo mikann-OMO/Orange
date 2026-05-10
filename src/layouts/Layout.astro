@@ -14,7 +14,6 @@ import {
 import { defaultFavicons } from "@constants/icon";
 import type { Favicon } from "@/types/config";
 import { url, pathsEqual } from "@utils/url-utils";
-import "photoswipe/style.css";
 import "../styles/transition.css";
 import "../styles/main.css";
 import "../styles/markdown.css";
@@ -589,6 +588,14 @@ w.__layoutRuntime.onPageLoad();
 			}
 
 			try {
+				// 动态加载 PhotoSwipe CSS
+				if (!document.querySelector('link[href="/photoswipe.css"]')) {
+					const link = document.createElement('link');
+					link.rel = 'stylesheet';
+					link.href = '/photoswipe.css';
+					document.head.appendChild(link);
+				}
+
 				const { default: PhotoSwipeLightbox } = await import("photoswipe/lightbox");
 				const { default: PhotoSwipe } = await import("photoswipe");
 
