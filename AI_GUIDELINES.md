@@ -69,7 +69,7 @@
 | 集合 | 路径 | 用途 | 文件格式 |
 |------|------|------|----------|
 | **posts** | `src/content/posts/` | 博客文章（可含子文件夹，如 `travel/`） | `.md` / `.mdx` |
-| **notes** | `src/content/notes/` | 随记/碎碎念 | `.md` / `.mdx` |
+| **notes** | `src/content/notes/` | 碎碎念/碎碎念 | `.md` / `.mdx` |
 | **exhibition** | `src/content/exhibition/` | 图册/相册 | `.md` / `.mdx` / `.yaml` / `.json` |
 | **friends** | `src/content/friends/` | 友链（每个文件代表一个友链） | `.md` / `.mdx` |
 | **about** | `src/content/about/` | 关于页面内容 | `.md` / `.mdx` |
@@ -114,7 +114,7 @@ lang: ""                   # 可选，文章语言
 | **标签系统** | 按 tags 字段分组，有标签总览页和标签详情页 | `pages/archive/tags.astro` + `pages/archive/tag/[tag].astro` |
 | **归档页** | 展示所有文章的时间线 | `pages/archive/index.astro` → `ArchivePanel.astro` |
 | **搜索** | 生产环境使用 Pagefind（构建后自动生成索引），开发环境使用 RSS + pinyin-pro | `Search.svelte`（动态加载） |
-| **随记/笔记** | 独立于文章的短内容，有自己的列表和详情页 | `pages/notes/` |
+| **碎碎念/笔记** | 独立于文章的短内容，有自己的列表和详情页 | `pages/notes/` |
 | **图册/作品展** | 照片相册展示，支持 Markdown 内图片、YAML 配置图片、本地图片三种来源 | `pages/pictures.astro` + `pages/pictures/[slug].astro` |
 | **友链** | 展示友站链接，数据来自 `src/content/friends/` | `pages/friends/index.astro` → `FriendsPanel.astro` |
 | **跨平台更新** | 汇总其他平台的内容链接，数据来自 `src/data/updates.json` | `pages/updates/index.astro` |
@@ -148,8 +148,8 @@ lang: ""                   # 可选，文章语言
 /archive/tag/{tag}/        → 按标签筛选
 /archive/category/{cat}/   → 按分类筛选
 /archive/category/uncategorized/ → 未分类文章
-/notes/                    → 随记列表
-/notes/{slug}/             → 随记详情
+/notes/                    → 碎碎念列表
+/notes/{slug}/             → 碎碎念详情
 /friends/                  → 友链页
 /pictures/                 → 图册列表
 /pictures/{slug}/          → 相册详情
@@ -232,7 +232,7 @@ pnpm check
 ### 三、内容修改规范
 
 1. **新增文章**放在 `src/content/posts/` 下，可按分类建子文件夹（如 `travel/`）
-2. **新增随记**放在 `src/content/notes/` 下
+2. **新增碎碎念**放在 `src/content/notes/` 下
 3. **新增友链**放在 `src/content/friends/` 下，一个 `.md` 文件对应一个友链
 4. **新增相册**放在 `src/content/exhibition/` 下
 5. **Frontmatter 中的 `draft: true`** 会在生产环境中隐藏该文章
@@ -290,7 +290,7 @@ pnpm preview
 这个博客既不是极简风格，也不是"功能堆砌"的重型 CMS。它的性格可以概括为：
 
 - **温暖的橙色调**：整个项目以 `#ff9800`（橙色）为主色调，亮色模式背景为 `#fff8f0`（暖白），暗色模式背景为 `#1c1814`（暖黑），视觉上给人温馨的感觉。
-- **功能丰富但不臃肿**：具备文章、随记、图册、友链、跨平台更新、搜索、评论、点赞、访问统计等完整功能，但每个功能都做得精致而非粗糙。
+- **功能丰富但不臃肿**：具备文章、碎碎念、图册、友链、跨平台更新、搜索、评论、点赞、访问统计等完整功能，但每个功能都做得精致而非粗糙。
 - **移动端优先的设计感**：有大量针对 768px 以下的样式优化，包括移动端目录弹出面板、自适应布局等。
 - **注重性能**：手动代码分割（manualChunks）、图片懒加载、HTML 压缩、CSS 代码分割、content-visibility 优化、LQIP（低质量图片占位符）等。
 - **SEO 友好**：完整的 Open Graph、Twitter Card、JSON-LD 结构化数据、RSS、Sitemap。

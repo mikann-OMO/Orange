@@ -13,7 +13,7 @@ const { entry, style } = Astro.props;
 // 添加防御性检查标志
 const isValidNote = entry?.data;
 
-// 直接提取随记内容，简单处理
+// 直接提取碎碎念内容，简单处理
 let noteContent = "";
 if (isValidNote && entry.body) {
 	// 简单处理，直接提取内容部分
@@ -58,7 +58,7 @@ if (isValidNote && entry.body) {
                 <div class="note-image flex-shrink-0 overflow-hidden" role="complementary">
                     <ImageWrapper
                         src={entry.data.image}
-                        alt={entry.data.title ? `${entry.data.title}` : "随记图片"}
+                        alt={entry.data.title ? `${entry.data.title}` : "碎碎念图片"}
                         class="note-card-img"
                         loading="lazy"
                         width={200}

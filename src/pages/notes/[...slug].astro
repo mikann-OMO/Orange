@@ -9,7 +9,7 @@ import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { formatDate, formatDateToYYYYMMDD } from "@utils/date-utils";
 
-// 获取所有随记并生成静态路径
+// 获取所有碎碎念并生成静态路径
 export async function getStaticPaths() {
 	const notes = await getCollection("notes");
 	const validNotes = notes.filter((note) => {
@@ -32,7 +32,7 @@ export async function getStaticPaths() {
 // 预渲染为静态HTML
 export const prerender = true;
 
-// 获取当前随记数据
+// 获取当前碎碎念数据
 const { note } = Astro.props;
 const { Content, headings } = await render(note);
 
@@ -40,8 +40,8 @@ const { Content, headings } = await render(note);
 const jsonLd = {
 	"@context": "https://schema.org",
 	"@type": "NoteDigitalDocument",
-	headline: note.data.title || "随记",
-	description: "随记内容",
+	headline: note.data.title || "碎碎念",
+	description: "碎碎念内容",
 	author: {
 		"@type": "Person",
 		name: profileConfig.name,
@@ -54,24 +54,24 @@ const jsonLd = {
 };
 ---
 
-<MainGridLayout title={note.data.title || "随记"} description="随记内容" lang={note.data.lang} setOGTypeArticle={true} headings={headings}>
+<MainGridLayout title={note.data.title || "碎碎念"} description="碎碎念内容" lang={note.data.lang} setOGTypeArticle={true} headings={headings}>
     <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
     
     <div class="bg-white/15 dark:bg-stone-800/15 backdrop-blur-3xl rounded-none shadow-xl overflow-hidden p-6">
         <div class="max-w-2xl mx-auto w-full">
-            <!-- 随记图片 -->
+            <!-- 碎碎念图片 -->
             {note.data.image && (
                 <div class="note-image w-full mb-4 overflow-hidden rounded-md">
                     <ImageWrapper
                         src={note.data.image}
-                        alt="随记图片"
+                        alt="碎碎念图片"
                         class="w-full h-auto max-h-64 object-contain transition-transform duration-500 hover:scale-102"
                         loading="lazy"
                     />
                 </div>
             )}
             
-            <!-- 随记头部 -->
+            <!-- 碎碎念头部 -->
             <div class="note-header mb-4">
                 <!-- 日期 -->
                 <div class="text-xs text-orange-950/60 dark:text-white/60 font-mono mb-4 border-b border-orange-200/30 dark:border-white/10 pb-2">
@@ -86,14 +86,14 @@ const jsonLd = {
                 )}
             </div>
 
-            <!-- 随记内容 -->
+            <!-- 碎碎念内容 -->
             <div class="note-content whitespace-pre-wrap">
                 <Markdown class="markdown-content prose dark:prose-invert max-w-none">
                     <Content />
                 </Markdown>
             </div>
 
-            <!-- 返回随记列表 -->
+            <!-- 返回碎碎念列表 -->
             <div class="mt-6">
                 <a 
                     href="/notes/"
@@ -109,7 +109,7 @@ const jsonLd = {
     </div>
 
     <style>
-        /* 随记内容样式 */
+        /* 碎碎念内容样式 */
         .note-content {
             overflow: auto;
             max-height: calc(100dvh - 400px);

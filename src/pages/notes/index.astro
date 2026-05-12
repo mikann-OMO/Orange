@@ -7,7 +7,7 @@ import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 
-// 获取所有随记
+// 获取所有碎碎念
 const allNotes = await getCollection("notes", ({ data }) => !data.draft);
 
 // 按发布日期降序排序
@@ -18,7 +18,7 @@ const sortedNotes = allNotes.sort((a, b) => {
 });
 
 // 分页配置
-const pageSize = 10; // 每页显示10条随记
+const pageSize = 10; // 每页显示10条碎碎念
 const totalNotes = sortedNotes.length;
 const totalPages = Math.ceil(totalNotes / pageSize);
 
@@ -72,7 +72,7 @@ const page = {
                     </div>
                     <div>
                         <p class="text-2xl font-bold text-orange-700 dark:text-white">{totalNotes}</p>
-                        <p class="text-sm text-orange-600/70 dark:text-gray-400">篇随记</p>
+                        <p class="text-sm text-orange-600/70 dark:text-gray-400">篇碎碎念</p>
                     </div>
                 </div>
             </div>
@@ -89,7 +89,7 @@ const page = {
             </div>
         </div>
         
-        <!-- 随记列表 -->
+        <!-- 碎碎念列表 -->
         {totalNotes > 0 ? (
             <>
                 <div class="space-y-6 w-full max-w-3xl">
