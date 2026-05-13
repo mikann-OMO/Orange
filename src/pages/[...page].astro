@@ -30,7 +30,7 @@ const latestPost = page.data[0];
 
 function getGitLastCommitDate(): Date | null {
 	try {
-		const iso = execSync("git log -1 --format=%cI", { encoding: "utf-8" }).trim();
+		const iso = execSync("git log -1 --format=%cI -- src/content/posts/", { encoding: "utf-8" }).trim();
 		return new Date(iso);
 	} catch {
 		return null;
