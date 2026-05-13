@@ -1,0 +1,189 @@
+<script>
+import Icon from "@iconify/svelte";
+import MessageEditor from "./MessageEditor.svelte";
+import MessageItem from "./MessageItem.svelte";
+
+/** @type {{ slug?: string }} */
+let { slug = "message-board" } = $props();
+
+let messages = $state([]);
+let loading = $state(true);
+let showSuccess = $state(false);
+
+async function fetchMessages() {
+	loading = true;
+	try {
+		const res = await fetch(`/api/messages/?slug=${slug}`);
+		if (res.ok) {
+			const rawMessages = await res.json();
+
+			const messageMap = new Map();
+			rawMessages.forEach((m) => {
+				m.replies = [];
+				messageMap.set(m.id, m);
+			});
+
+			const rootMessages = [];
+			rawMessages.forEach((m) => {
+				if (m.parentId && messageMap.has(m.parentId)) {
+					messageMap.get(m.parentId).replies.push(m);
+				} else {
+					rootMessages.push(m);
+				}
+			});
+
+			rootMessages.sort((a, b) => b.createdAt - a.createdAt);
+
+			rawMessages.forEach((m) => {
+				if (m.replies) {
+					m.replies.sort((a, b) => a.createdAt - b.createdAt);
+				}
+			});
+
+			messages = rootMessages;
+		}
+	} catch (e) {
+		console.error("Failed to fetch messages", e);
+	} finally {
+		loading = false;
+	}
+}
+
+function handleSuccess(e) {
+	showSuccess = true;
+	setTimeout(() => {
+		showSuccess = false;
+	}, 3000);
+
+	fetchMessages();
+}
+
+$effect(() => {
+	const timer = setTimeout(() => {
+		fetchMessages();
+	}, 100);
+	return () => clearTimeout(timer);
+});
+</script>
+
+<div class="flex flex-col gap-8">
+	{#if showSuccess}
+		<div class="fixed top-20 right-4 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-bounce-in">
+			<Icon icon="fa6-solid:check" />
+			<span>发送成功！</span>
+		</div>
+	{/if}
+
+	<div class="card-base !overflow-visible p-6 border border-black/5 dark:border-white/5">
+		<div class="flex items-center gap-2 mb-4 font-bold text-lg text-90">
+			<Icon icon="fa6-solid:pen-to-square" class="text-[var(--primary)]" />
+			留下你的足迹
+		</div>
+		
+		<MessageEditor on:success={handleSuccess} {slug} />
+	</div>
+
+	<div class="flex flex-col gap-4">
+		{#if loading}
+			<div class="flex justify-center py-10">
+				<Icon icon="eos-icons:loading" class="text-3xl text-30" />
+			</div>
+		{:else if messages.length === 0}
+			<div class="flex flex-col items-center justify-center py-10 text-30 gap-2">
+				<Icon icon="fa6-solid:comment-slash" class="text-3xl" />
+				<span>还没有留言，快来抢沙发吧！</span>
+			</div>
+		{:else}
+			{#each messages as msg (msg.id)}
+				<MessageItem message={msg} on:replySuccess={handleSuccess} {slug} />
+			{/each}
+		{/if}
+	</div>
+</div>
+
+<style>
+	.card-base {
+		border-radius: var(--radius-large);
+		background-color: var(--card-bg);
+	}
+	@keyframes bounce-in {
+		0% { transform: translateY(-20px); opacity: 0; }
+		50% { transform: translateY(5px); }
+		100% { transform: translateY(0); opacity: 1; }
+	}
+	.animate-bounce-in {
+		animation: bounce-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+	}
+	:global(.markdown-content p) {
+		margin-bottom: 0.5em;
+	}
+	:global(.markdown-content p:last-child) {
+		margin-bottom: 0;
+	}
+	:global(.markdown-content a) {
+		color: var(--primary);
+		text-decoration: underline;
+	}
+	:global(.markdown-content ul), :global(.markdown-content ol) {
+		margin-left: 1.5em;
+		margin-bottom: 0.5em;
+	}
+	:global(.markdown-content ul) {
+		list-style-type: disc;
+	}
+	:global(.markdown-content ol) {
+		list-style-type: decimal;
+	}
+	:global(.markdown-content blockquote) {
+		border-left: 3px solid var(--primary);
+		padding-left: 1em;
+		margin-left: 0;
+		margin-bottom: 0.5em;
+		color: #666;
+	}
+	:global(.dark .markdown-content blockquote) {
+		color: #aaa;
+	}
+	:global(.markdown-content code) {
+		background-color: rgba(0, 0, 0, 0.1);
+		padding: 0.2em 0.4em;
+		border-radius: 4px;
+		font-family: monospace;
+		font-size: 0.9em;
+	}
+	:global(.dark .markdown-content code) {
+		background-color: rgba(255, 255, 255, 0.1);
+	}
+	:global(.markdown-content pre) {
+		background-color: #f5f5f5;
+		padding: 1em;
+		border-radius: 8px;
+		overflow-x: auto;
+		margin-bottom: 0.5em;
+	}
+	:global(.dark .markdown-content pre) {
+		background-color: #1a1a1a;
+	}
+	:global(.markdown-content pre code) {
+		background-color: transparent;
+		padding: 0;
+	}
+	:global(.markdown-content .spoiler) {
+		background-color: #000;
+		color: #000;
+		padding: 0 4px;
+		border-radius: 4px;
+		cursor: pointer;
+		transition: color 0.3s;
+	}
+	:global(.dark .markdown-content .spoiler) {
+		background-color: #fff;
+		color: #fff;
+	}
+	:global(.markdown-content .spoiler:hover) {
+		color: #fff;
+	}
+	:global(.dark .markdown-content .spoiler:hover) {
+		color: #000;
+	}
+</style>

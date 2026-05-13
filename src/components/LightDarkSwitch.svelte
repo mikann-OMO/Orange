@@ -3,7 +3,7 @@ import type { LIGHT_DARK_MODE } from "@/types/config";
 import { AUTO_MODE, DARK_MODE, LIGHT_MODE } from "@constants/constants";
 import Icon from "@iconify/svelte";
 import { getStoredTheme, setTheme } from "@utils/setting-utils";
-import { onMount, tick } from "svelte";
+import { tick } from "svelte";
 
 let mode: LIGHT_DARK_MODE = $state(LIGHT_MODE);
 
@@ -20,7 +20,7 @@ function getDisplayMode(): LIGHT_DARK_MODE {
 	return LIGHT_MODE;
 }
 
-onMount(() => {
+$effect(() => {
 	mode = getDisplayMode();
 
 	const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");

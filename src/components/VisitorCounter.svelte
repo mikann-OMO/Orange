@@ -9,7 +9,7 @@ import {
 	getLocalCount,
 	incrementLocalCount,
 } from "@utils/visitor-utils";
-import { onMount } from "svelte";
+
 
 let count = $state(0);
 let loading = $state(true);
@@ -35,38 +35,41 @@ function markTracked(): void {
 	localStorage.setItem(TRACK_INTERVAL_KEY, Date.now().toString());
 }
 
-onMount(async () => {
+$effect(() => {
 	if (!isVisitorTrackingEnabled()) {
 		loading = false;
 		return;
 	}
 
-	try {
-		// 首先显示 localStorage 中的缓存值
-		count = getLocalCount(SITE_VISITOR_KEY);
-		loading = false;
-
-		// 只在需要追踪时才调用 API（24小时一次）
-		if (shouldTrack()) {
-			const result = await incrementSiteVisitorCount();
-			if (result.success) {
-				count = result.count;
-				localStorage.setItem(SITE_VISITOR_KEY, count.toString());
-				markTracked();
-			} else {
-				// API 失败，使用本地计数
-				count = incrementLocalCount(SITE_VISITOR_KEY);
-				markTracked();
-			}
-		}
-		// 如果不需要追踪，直接使用 localStorage 缓存值，不调用 API
-	} catch (e) {
-		console.error("Visitor count error:", e);
-		if (count === 0) {
+	async function init() {
+		try {
+			// 首先显示 localStorage 中的缓存值
 			count = getLocalCount(SITE_VISITOR_KEY);
+			loading = false;
+
+			// 只在需要追踪时才调用 API（24小时一次）
+			if (shouldTrack()) {
+				const result = await incrementSiteVisitorCount();
+				if (result.success) {
+					count = result.count;
+					localStorage.setItem(SITE_VISITOR_KEY, count.toString());
+					markTracked();
+				} else {
+					// API 失败，使用本地计数
+					count = incrementLocalCount(SITE_VISITOR_KEY);
+					markTracked();
+				}
+			}
+			// 如果不需要追踪，直接使用 localStorage 缓存值，不调用 API
+		} catch (e) {
+			console.error("Visitor count error:", e);
+			if (count === 0) {
+				count = getLocalCount(SITE_VISITOR_KEY);
+			}
+			loading = false;
 		}
-		loading = false;
 	}
+	init();
 });
 </script>
 

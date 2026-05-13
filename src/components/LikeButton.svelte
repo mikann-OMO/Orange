@@ -1,5 +1,5 @@
 <script lang="ts">
-import { onMount } from "svelte";
+
 
 interface Props {
 	slug: string;
@@ -64,15 +64,18 @@ async function toggleLike(): Promise<void> {
 	}
 }
 
-onMount(async () => {
+$effect(() => {
 	liked = readLiked();
-	try {
-		await refreshCount();
-	} catch {
-		error = "加载失败";
-	} finally {
-		loading = false;
+	async function init() {
+		try {
+			await refreshCount();
+		} catch {
+			error = "加载失败";
+		} finally {
+			loading = false;
+		}
 	}
+	init();
 });
 </script>
 

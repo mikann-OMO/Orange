@@ -4,7 +4,6 @@ import updatesData from "@/data/updates.json";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
-import LatestComments from "@components/LatestComments.svelte";
 
 const { platforms, updates } = updatesData;
 
@@ -135,7 +134,7 @@ const typeLabels: Record<string, string> = {
                         <Icon name="material-symbols:chat-bubble-outline-rounded" class="text-lg text-orange-700 dark:text-orange-300" />
                         <h3 class="text-lg font-bold text-orange-700 dark:text-white">最新评论</h3>
                     </div>
-                    <LatestComments client:visible />
+                    <p class="text-sm text-orange-950/50 dark:text-white/50 text-center py-6">评论功能已迁移至文章页面</p>
                 </div>
             </div>
         </div>

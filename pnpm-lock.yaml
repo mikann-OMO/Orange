@@ -83,6 +83,9 @@ importers:
       mdast-util-to-string:
         specifier: ^4.0.0
         version: 4.0.0
+      nodemailer:
+        specifier: ^8.0.7
+        version: 8.0.7
       photoswipe:
         specifier: ^5.4.4
         version: 5.4.4
@@ -156,6 +159,9 @@ importers:
       '@types/mdast':
         specifier: ^4.0.4
         version: 4.0.4
+      '@types/nodemailer':
+        specifier: ^8.0.0
+        version: 8.0.0
       '@types/sanitize-html':
         specifier: ^2.16.0
         version: 2.16.0
@@ -1032,6 +1038,9 @@ packages:
 
   '@types/node@25.0.2':
     resolution: {integrity: sha512-gWEkeiyYE4vqjON/+Obqcoeffmk0NF15WSBwSs7zwVA2bAbTaE0SJ7P0WNGoJn8uE7fiaV5a7dKYIJriEqOrmA==}
+
+  '@types/nodemailer@8.0.0':
+    resolution: {integrity: sha512-fyf8jWULsCo0d0BuoQ75i6IeoHs47qcqxWc7yUdUcV0pOZGjUTTOvwdG1PRXUDqN/8A64yQdQdnA2pZgcdi+cA==}
 
   '@types/sanitize-html@2.16.0':
     resolution: {integrity: sha512-l6rX1MUXje5ztPT0cAFtUayXF06DqPhRyfVXareEN5gGCFaP/iwsxIyKODr9XDhfxPpN6vXUFNfo5kZMXCxBtw==}
@@ -2281,6 +2290,10 @@ packages:
 
   node-releases@2.0.38:
     resolution: {integrity: sha512-3qT/88Y3FbH/Kx4szpQQ4HzUbVrHPKTLVpVocKiLfoYvw9XSGOX2FmD2d6DrXbVYyAQTF2HeF6My8jmzx7/CRw==}
+
+  nodemailer@8.0.7:
+    resolution: {integrity: sha512-pkjE4mkBzQjdJT4/UmlKl3pX0rC9fZmjh7c6C9o7lv66Ac6w9WCnzPzhbPNxwZAzlF4mdq4CSWB5+FbK6FWCow==}
+    engines: {node: '>=6.0.0'}
 
   nopt@8.1.0:
     resolution: {integrity: sha512-ieGu42u/Qsa4TFktmaKEwM6MQH0pOWnaB3htzh0JRtx84+Mebc0cbZYN5bC+6WTZ4+77xrL9Pn5m7CV6VIkV7A==}
@@ -4276,7 +4289,10 @@ snapshots:
   '@types/node@25.0.2':
     dependencies:
       undici-types: 7.16.0
-    optional: true
+
+  '@types/nodemailer@8.0.0':
+    dependencies:
+      '@types/node': 25.0.2
 
   '@types/sanitize-html@2.16.0':
     dependencies:
@@ -5884,6 +5900,8 @@ snapshots:
   node-releases@2.0.27: {}
 
   node-releases@2.0.38: {}
+
+  nodemailer@8.0.7: {}
 
   nopt@8.1.0:
     dependencies:
