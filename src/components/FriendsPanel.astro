@@ -43,24 +43,19 @@ const personalCard = {
 	url: "https://www.mikann.fun",
 };
 
-const personalCopyText = `站点名称：${personalCard.name}
-站点地址：${personalCard.url}
-站点头像：${personalCard.avatar}
-站点描述：${personalCard.desc}`;
-
-// 拼接 HTML 字符串作为一键复制的内容
-const friendLinkHtml = [
-	`<a target="_blank" href="${personalCard.url}">
-  <img src="${personalCard.avatar}" width="48" height="48" alt="${personalCard.name}" />
-  <span>${personalCard.name}</span>
-</a>`,
-	...items.map(
-		(item) => `<a target="_blank" href="${item.url}">
-  <img src="${item.avatar}" width="48" height="48" alt="${item.name}" />
-  <span>${item.name}</span>
-</a>`,
-	),
-].join("\n");
+const copyFriendData = JSON.stringify(
+	[
+		{
+			title: personalCard.name,
+			image: personalCard.avatar,
+			desc: personalCard.desc,
+			siteurl: personalCard.url,
+			tags: [""],
+		},
+	],
+	null,
+	2,
+);
 ---
 
 <div class="friends-panel">
@@ -144,14 +139,16 @@ const friendLinkHtml = [
 		))}
 	</div>
 
-	<script is:inline define:vars={{ personalCopyText, friendLinkHtml }}>
+	<script is:inline define:vars={{ copyFriendData }}>
 		function handleCopyClick(e) {
 			const button = e.currentTarget.closest('.copy-button');
 			if (!button || button.classList.contains('copying')) return;
 			button.classList.add('copying');
 
+			const text = copyFriendData;
+
 			if (navigator.clipboard && window.isSecureContext) {
-				navigator.clipboard.writeText(personalCopyText).then(() => {
+				navigator.clipboard.writeText(text).then(() => {
 					button.classList.add('copy-success-state');
 					setTimeout(() => {
 						button.classList.remove('copying', 'copy-success-state');
@@ -159,15 +156,36 @@ const friendLinkHtml = [
 				}).catch(() => {
 					button.classList.remove('copying');
 				});
+			} else {
+				// Fallback: legacy execCommand
+				const textarea = document.createElement('textarea');
+				textarea.value = text;
+				textarea.style.position = 'fixed';
+				textarea.style.opacity = '0';
+				document.body.appendChild(textarea);
+				textarea.select();
+				try {
+					document.execCommand('copy');
+					button.classList.add('copy-success-state');
+					setTimeout(() => {
+						button.classList.remove('copying', 'copy-success-state');
+					}, 2000);
+				} catch {
+					button.classList.remove('copying');
+				}
+				document.body.removeChild(textarea);
 			}
 		}
 
-		document.addEventListener('DOMContentLoaded', () => {
+		function bindCopyButton() {
 			const copyButton = document.querySelector('.copy-button');
-			if (copyButton) {
-				copyButton.addEventListener('click', handleCopyClick);
-			}
-		});
+			if (!copyButton || copyButton.dataset.bound === 'true') return;
+			copyButton.dataset.bound = 'true';
+			copyButton.addEventListener('click', handleCopyClick);
+		}
+
+		document.addEventListener('astro:page-load', bindCopyButton);
+		if (document.readyState !== 'loading') bindCopyButton();
 	</script>
 </div>
 

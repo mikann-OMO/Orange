@@ -44,7 +44,7 @@ export const zh_CN: Translation = {
 	[Key.friendUnitText]: "位朋友",
 	[Key.applyForFriendLink]: "申请友链",
 	[Key.applyForFriendLinkDesc]: "欢迎交换友链",
-	[Key.copyButton]: "复制链接",
+	[Key.copyButton]: "复制友链",
 	[Key.copySuccess]: "复制成功",
 	[Key.copyFailed]: "复制失败",
 };
