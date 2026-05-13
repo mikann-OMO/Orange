@@ -142,7 +142,7 @@ export const POST: APIRoute = async ({ request }) => {
 			});
 		}
 
-		let avatar = `https://api.dicebear.com/7.x/identicon/svg?seed=${nickname}`;
+		let avatar = `/assets/avatars/default-avatar-1.webp`;
 		if (finalQQ) {
 			avatar = `https://q1.qlogo.cn/g?b=qq&nk=${finalQQ}&s=100`;
 		}

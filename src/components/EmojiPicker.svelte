@@ -41,13 +41,16 @@ function handleEmojiClick(emojiName) {
 <div class="relative">
 	<button
 		type="button"
-		class="btn-regular gap-1.5 rounded-lg px-3 py-1.5 text-sm transition-all active:scale-95"
+		class="gap-1.5 rounded-lg px-3 py-1.5 text-sm transition-all active:scale-95 flex items-center"
+		style="background: color-mix(in srgb, var(--text-primary) 5%, transparent); color: color-mix(in srgb, var(--text-primary) 55%, transparent);"
+		on:mouseenter={(e) => { e.target.style.background = 'color-mix(in srgb, var(--primary) 12%, transparent)'; e.target.style.color = 'var(--primary)'; }}
+		on:mouseleave={(e) => { e.target.style.background = 'color-mix(in srgb, var(--text-primary) 5%, transparent)'; e.target.style.color = 'color-mix(in srgb, var(--text-primary) 55%, transparent)'; }}
 		aria-label="选择表情"
 		aria-expanded={isOpen}
 		on:click={() => (isOpen = !isOpen)}
 	>
 		<Icon icon="fa6-regular:face-smile" class="text-base" />
-		<span>表情</span>
+		<span class="text-xs font-medium">表情</span>
 	</button>
 
 	{#if isOpen && activePack}
@@ -60,7 +63,8 @@ function handleEmojiClick(emojiName) {
 		></div>
 
 		<div
-			class="absolute bottom-full left-0 z-50 mb-3 w-[min(22.5rem,calc(100vw-2rem))] overflow-hidden rounded-[var(--radius-large)] bg-[var(--float-panel-bg)] shadow-2xl transition-all border border-black/5 dark:border-white/5"
+			class="absolute bottom-full left-0 z-50 mb-3 w-[min(22.5rem,calc(100vw-2rem))] overflow-hidden rounded-[var(--radius-large)] shadow-2xl transition-all border-0"
+			style="background: var(--card-bg); box-shadow: 0 8px 40px var(--shadow-color);"
 			transition:fly={{ y: 10, duration: 200 }}
 		>
 			<div class="max-h-[18rem] overflow-y-auto p-2 custom-scrollbar">
@@ -138,6 +142,10 @@ function handleEmojiClick(emojiName) {
 </div>
 
 <style>
+	.custom-scrollbar {
+		scrollbar-width: thin;
+		scrollbar-color: color-mix(in srgb, var(--text-primary) 15%, transparent) transparent;
+	}
 	.custom-scrollbar::-webkit-scrollbar {
 		width: 4px;
 		height: 4px;
@@ -146,10 +154,10 @@ function handleEmojiClick(emojiName) {
 		background: transparent;
 	}
 	.custom-scrollbar::-webkit-scrollbar-thumb {
-		background: var(--scrollbar-bg);
+		background: color-mix(in srgb, var(--text-primary) 15%, transparent);
 		border-radius: 10px;
 	}
 	.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-		background: var(--scrollbar-bg-hover);
+		background: color-mix(in srgb, var(--primary) 40%, transparent);
 	}
 </style>

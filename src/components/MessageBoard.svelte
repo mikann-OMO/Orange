@@ -66,32 +66,37 @@ $effect(() => {
 });
 </script>
 
-<div class="flex flex-col gap-8">
+<div class="flex flex-col gap-6">
 	{#if showSuccess}
-		<div class="fixed top-20 right-4 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-bounce-in">
-			<Icon icon="fa6-solid:check" />
+		<div class="fixed top-20 right-4 z-50 bg-[var(--success)] text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-2 animate-bounce-in text-sm font-medium">
+			<Icon icon="fa6-solid:check" class="text-lg" />
 			<span>发送成功！</span>
 		</div>
 	{/if}
 
-	<div class="card-base !overflow-visible p-6 border border-black/5 dark:border-white/5">
-		<div class="flex items-center gap-2 mb-4 font-bold text-lg text-90">
-			<Icon icon="fa6-solid:pen-to-square" class="text-[var(--primary)]" />
-			留下你的足迹
+	<div class="card-base !overflow-visible p-5 sm:p-6 border-0 shadow-sm" style="background: linear-gradient(135deg, var(--card-bg) 0%, color-mix(in srgb, var(--surface) 60%, var(--card-bg)) 100%);">
+		<div class="flex items-center gap-3 mb-5">
+			<div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, var(--primary), var(--secondary));">
+				<Icon icon="fa6-solid:pen-to-square" class="text-white text-base" />
+			</div>
+			<span class="font-bold text-lg text-90 tracking-wide">留下你的足迹</span>
+			<div class="flex-1 h-px ml-2" style="background: linear-gradient(to right, var(--line-divider) 0%, transparent 100%);"></div>
 		</div>
 		
 		<MessageEditor on:success={handleSuccess} {slug} />
 	</div>
 
-	<div class="flex flex-col gap-4">
+	<div class="flex flex-col gap-3">
 		{#if loading}
-			<div class="flex justify-center py-10">
-				<Icon icon="eos-icons:loading" class="text-3xl text-30" />
+			<div class="flex justify-center py-12">
+				<div class="w-8 h-8 border-2 border-[var(--primary)] border-t-transparent rounded-full animate-spin"></div>
 			</div>
 		{:else if messages.length === 0}
-			<div class="flex flex-col items-center justify-center py-10 text-30 gap-2">
-				<Icon icon="fa6-solid:comment-slash" class="text-3xl" />
-				<span>还没有留言，快来抢沙发吧！</span>
+			<div class="flex flex-col items-center justify-center py-12 text-30 gap-3">
+				<div class="w-16 h-16 rounded-2xl flex items-center justify-center" style="background: color-mix(in srgb, var(--surface) 60%, transparent);">
+					<Icon icon="fa6-solid:comment-dots" class="text-3xl" style="color: color-mix(in srgb, var(--primary) 40%, transparent);" />
+				</div>
+				<span class="text-sm text-50">还没有留言，快来抢沙发吧！</span>
 			</div>
 		{:else}
 			{#each messages as msg (msg.id)}
