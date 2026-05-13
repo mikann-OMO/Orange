@@ -414,8 +414,7 @@ img[src]:not([src=""]) {
 
 /* 性能优化: 隔离独立区块，减少回流范围 */
 .card-base,
-#content-container,
-aside {
+#content-container {
 	contain: layout style paint;
 }
 

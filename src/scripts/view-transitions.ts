@@ -15,6 +15,7 @@
 
 		html.classList.toggle("dark", isDark);
 		html.style.setProperty("--page-bg", isDark ? "#1c1917" : "#faf8f5");
+		html.style.backgroundColor = isDark ? "#1c1917" : "#faf8f5";
 		html.style.setProperty("--hue", localStorage.getItem("hue") || "0");
 		window.dispatchEvent(
 			new CustomEvent("themeChange", { detail: { theme } }),

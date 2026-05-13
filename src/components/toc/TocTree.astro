@@ -65,7 +65,7 @@ function depthHoverColor(depth: number): string {
 
 {tree.map((g) => (
   <div class="toc-group" data-depth="0">
-    <div class="flex items-center">
+    <div class="flex items-center relative">
       <a
         href={`#${g.id}`}
         data-toc-id={g.id}
@@ -105,7 +105,7 @@ function depthHoverColor(depth: number): string {
         <div class="pl-2 border-l-2 border-[var(--line-divider)]">
           {g.children.map((c) => (
             <div class="toc-group" data-depth="1">
-              <div class="flex items-center">
+              <div class="flex items-center relative">
                 <a
                   href={`#${c.id}`}
                   data-toc-id={c.id}
@@ -176,7 +176,7 @@ function depthHoverColor(depth: number): string {
     const items = Array.from(root.querySelectorAll<HTMLElement>('.toc-item'));
     if (items.length === 0) return;
 
-    const scrollContainer = root.closest('.overflow-y-auto') as HTMLElement | null;
+    const scrollContainer = (root.closest('.overflow-y-auto') || document.getElementById('toc-scroll-container')) as HTMLElement | null;
 
     const headingIds = items.map(el => el.getAttribute('href')?.replace('#', '')).filter(Boolean) as string[];
     const childrenMap = new Map<string, HTMLElement[]>();
@@ -273,25 +273,59 @@ function depthHoverColor(depth: number): string {
     }
 
     let activeId: string | null = null;
+    const visibleHeadings = new Set<string>();
     const headingEls = headingIds
       .map(id => document.getElementById(id))
       .filter(Boolean) as HTMLElement[];
 
     if (headingEls.length === 0) return;
 
+    function updateActiveFromVisible() {
+      if (visibleHeadings.size === 0) return;
+      let closestId: string | null = null;
+      let minTop = Infinity;
+      for (const id of visibleHeadings) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        const rect = el.getBoundingClientRect();
+        if (rect.top < minTop) {
+          minTop = rect.top;
+          closestId = id;
+        }
+      }
+      if (closestId && closestId !== activeId) {
+        activeId = closestId;
+        setActive(activeId);
+      }
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
+        let changed = false;
         for (const entry of entries) {
           if (entry.isIntersecting) {
-            activeId = entry.target.id;
-            setActive(activeId);
+            const sizeBefore = visibleHeadings.size;
+            visibleHeadings.add(entry.target.id);
+            if (visibleHeadings.size !== sizeBefore) changed = true;
+          } else {
+            if (visibleHeadings.delete(entry.target.id)) changed = true;
           }
         }
+        if (changed) updateActiveFromVisible();
       },
       { rootMargin: '-80px 0px -60% 0px', threshold: 0 }
     );
 
     headingEls.forEach(el => observer.observe(el));
+
+    // Initial scan for headings already in view
+    headingEls.forEach(el => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top >= -80 && rect.top <= window.innerHeight * 0.4) {
+        visibleHeadings.add(el.id);
+      }
+    });
+    if (visibleHeadings.size > 0) updateActiveFromVisible();
 
     const toggleBtns = root.querySelectorAll<HTMLElement>('.toc-toggle');
     toggleBtns.forEach(btn => {

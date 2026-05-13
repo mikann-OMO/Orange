@@ -75,15 +75,17 @@ const { headings = [], title = "文章目录" } = Astro.props;
 
     let isFixed = false;
     let originalWidth = 0;
+    let staticTop = 0;
 
     function isAnnouncementVisible() {
-      if (!announcementCard) return true;
+      if (!announcementCard) return false;
       const rect = announcementCard.getBoundingClientRect();
       return rect.bottom > 0;
     }
 
     function setFixed() {
       if (isFixed) return;
+      staticTop = wrapper!.getBoundingClientRect().top + window.scrollY;
       originalWidth = wrapper!.offsetWidth;
       wrapper!.style.position = 'fixed';
       wrapper!.style.top = topOffset + 'px';
@@ -107,14 +109,18 @@ const { headings = [], title = "文章目录" } = Astro.props;
 
     function onScroll() {
       const announcementVisible = isAnnouncementVisible();
-      const wrapperRect = wrapper!.getBoundingClientRect();
 
-      if (!isFixed && !announcementVisible && wrapperRect.top < 0) {
-        setFixed();
-      } else if (isFixed && announcementVisible) {
-        setStatic();
-      } else if (isFixed && !announcementVisible && wrapperRect.top > topOffset + 20) {
-        setStatic();
+      if (!isFixed && !announcementVisible) {
+        const wrapperRect = wrapper!.getBoundingClientRect();
+        if (wrapperRect.top < 0) {
+          setFixed();
+        }
+      } else if (isFixed) {
+        if (announcementVisible) {
+          setStatic();
+        } else if (window.scrollY + topOffset < staticTop) {
+          setStatic();
+        }
       }
     }
 

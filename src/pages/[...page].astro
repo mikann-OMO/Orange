@@ -1,6 +1,7 @@
 ---
 import type { GetStaticPaths } from "astro";
 import { Icon } from "astro-icon/components";
+import { execSync } from "node:child_process";
 import PostPage from "@components/PostPage.astro";
 import VisitorCounter from "@components/VisitorCounter.svelte";
 import Pagination from "@components/control/Pagination.astro";
@@ -26,6 +27,15 @@ export const prerender = true;
 
 const { page } = Astro.props;
 const latestPost = page.data[0];
+
+function getGitLastCommitDate(): Date | null {
+	try {
+		const iso = execSync("git log -1 --format=%cI", { encoding: "utf-8" }).trim();
+		return new Date(iso);
+	} catch {
+		return null;
+	}
+}
 
 function formatLastUpdateTime(date: Date): string {
 	const now = new Date();
@@ -54,11 +64,11 @@ function formatLastUpdateTime(date: Date): string {
 	});
 }
 
-const lastUpdateTime = latestPost
-	? formatLastUpdateTime(new Date(latestPost.data.published))
-	: "暂无更新";
-const lastUpdateDateTime = latestPost
-	? new Date(latestPost.data.published).toLocaleString("zh-CN", {
+const gitCommitDate = getGitLastCommitDate();
+const lastUpdateDate = gitCommitDate ?? (latestPost ? new Date(latestPost.data.published) : null);
+const lastUpdateTime = lastUpdateDate ? formatLastUpdateTime(lastUpdateDate) : "暂无更新";
+const lastUpdateDateTime = lastUpdateDate
+	? lastUpdateDate.toLocaleString("zh-CN", {
 			year: "numeric",
 			month: "2-digit",
 			day: "2-digit",
