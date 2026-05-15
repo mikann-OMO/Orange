@@ -143,12 +143,12 @@ function depthHoverColor(depth: number): string {
                     class="toc-toggle absolute right-2 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center
                            rounded-full hover:bg-[color-mix(in_srgb,var(--primary)_12%,transparent)] transition-colors"
                   >
-                    <svg class="w-3 h-3 text-[color-mix(in_srgb,var(--text-primary)_40%,transparent)] transition-transform duration-200 toc-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M6 9l6 6 6-6"/>
-                    </svg>
-                  </button>
-                )}
-              </div>
+                  <svg class="w-3 h-3 text-[color-mix(in_srgb,var(--text-primary)_40%,transparent)] transition-transform duration-200 toc-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 9l6 6 6-6"/>
+                  </svg>
+                </button>
+              )}
+            </div>
 
               {c.children.length > 0 && (
                 <div class={`toc-children overflow-hidden transition-all duration-300 ${indentClass(2)}`}
@@ -330,6 +330,16 @@ function depthHoverColor(depth: number): string {
       }
     });
 
+    function updateAncestorHeights(el: HTMLElement) {
+      let parent = el.parentElement;
+      while (parent) {
+        if (parent.classList.contains('toc-children') && parent.getAttribute('data-collapsed') === 'false' && parent.style.maxHeight) {
+          parent.style.maxHeight = parent.scrollHeight + 'px';
+        }
+        parent = parent.parentElement;
+      }
+    }
+
     function expandChildren(parentId: string) {
       const container = root!.querySelector<HTMLElement>(`[data-children-for="${parentId}"]`);
       if (!container || container.getAttribute('data-collapsed') !== 'true') return;
@@ -338,6 +348,7 @@ function depthHoverColor(depth: number): string {
       container.style.opacity = '1';
       const toggleIcon = container.previousElementSibling?.querySelector<HTMLElement>('.toc-toggle-icon');
       if (toggleIcon) toggleIcon.style.transform = 'rotate(180deg)';
+      updateAncestorHeights(container);
     }
 
     function collapseChildren(parentId: string) {
@@ -348,6 +359,7 @@ function depthHoverColor(depth: number): string {
       container.style.opacity = '0';
       const toggleIcon = container.previousElementSibling?.querySelector<HTMLElement>('.toc-toggle-icon');
       if (toggleIcon) toggleIcon.style.transform = '';
+      updateAncestorHeights(container);
     }
 
     function scrollTocToItem(el: HTMLElement) {
@@ -383,28 +395,27 @@ function depthHoverColor(depth: number): string {
         }
 
         const depth = activeEl.getAttribute('data-depth');
+        const expandSet = new Set<string>();
         if (depth && depth !== '0') {
           let parentId = activeEl.getAttribute('data-parent-id');
           while (parentId) {
+            expandSet.add(parentId);
             expandChildren(parentId);
             const parentEl = root!.querySelector<HTMLElement>(`[data-toc-id="${parentId}"]`);
             parentId = parentEl?.getAttribute('data-parent-id') ?? null;
           }
         }
 
+        const allContainers = root!.querySelectorAll<HTMLElement>('.toc-children');
+        allContainers.forEach(container => {
+          const containerFor = container.getAttribute('data-children-for');
+          if (containerFor && !expandSet.has(containerFor) && container.getAttribute('data-collapsed') === 'false') {
+            collapseChildren(containerFor);
+          }
+        });
+
         scrollTocToItem(activeEl);
       }
-
-      const h2Items = items.filter(el => el.getAttribute('data-depth') === '0');
-      h2Items.forEach(h2 => {
-        const h2Id = h2.getAttribute('data-toc-id');
-        if (h2Id && h2Id !== id) {
-          const isActive = isParentActive(h2Id, id!);
-          if (isActive) {
-            expandChildren(h2Id);
-          }
-        }
-      });
     }
 
     function isParentActive(parentId: string, activeId: string): boolean {
