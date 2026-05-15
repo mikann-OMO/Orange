@@ -18,8 +18,12 @@ function tocItemClass(depth: number): string {
 			return "text-[0.95rem] font-medium";
 		case 2:
 			return "text-[0.875rem]";
-		default:
+		case 3:
 			return "text-[0.8rem]";
+		case 4:
+			return "text-[0.75rem]";
+		default:
+			return "text-[0.7rem]";
 	}
 }
 
@@ -31,8 +35,12 @@ function indentClass(depth: number): string {
 			return "pl-4";
 		case 2:
 			return "pl-8";
+		case 3:
+			return "pl-12";
+		case 4:
+			return "pl-16";
 		default:
-			return "pl-10";
+			return "pl-20";
 	}
 }
 
@@ -44,8 +52,12 @@ function depthColor(depth: number): string {
 			return "text-[color-mix(in_srgb,var(--text-primary)_75%,transparent)]";
 		case 2:
 			return "text-[color-mix(in_srgb,var(--text-primary)_60%,transparent)]";
-		default:
+		case 3:
 			return "text-[color-mix(in_srgb,var(--text-primary)_50%,transparent)]";
+		case 4:
+			return "text-[color-mix(in_srgb,var(--text-primary)_40%,transparent)]";
+		default:
+			return "text-[color-mix(in_srgb,var(--text-primary)_35%,transparent)]";
 	}
 }
 
@@ -57,8 +69,12 @@ function depthHoverColor(depth: number): string {
 			return "group-hover:text-[color-mix(in_srgb,var(--text-primary)_85%,transparent)]";
 		case 2:
 			return "group-hover:text-[color-mix(in_srgb,var(--text-primary)_75%,transparent)]";
-		default:
+		case 3:
 			return "group-hover:text-[color-mix(in_srgb,var(--text-primary)_65%,transparent)]";
+		case 4:
+			return "group-hover:text-[color-mix(in_srgb,var(--text-primary)_55%,transparent)]";
+		default:
+			return "group-hover:text-[color-mix(in_srgb,var(--text-primary)_50%,transparent)]";
 	}
 }
 ---
@@ -140,23 +156,149 @@ function depthHoverColor(depth: number): string {
                      data-collapsed="true"
                      style="max-height:0;opacity:0">
                   <div class="pl-2 border-l-2 border-[var(--line-divider)]">
-                    {c.children.map((d) => (
-                      <a
-                        href={`#${d.id}`}
-                        data-toc-id={d.id}
-                        data-depth="2"
-                        data-parent-id={c.id}
-                        class={`toc-item px-2 flex gap-2 relative transition w-full min-h-8 rounded-lg py-1.5 group
-                               hover:bg-[color-mix(in_srgb,var(--primary)_6%,transparent)]
-                               active:bg-[color-mix(in_srgb,var(--primary)_12%,transparent)]
-                               mt-[2px] ${tocItemClass(2)}`}
+              {c.children.map((d) => (
+                <div class="toc-group" data-depth="2">
+                  <div class="flex items-center relative">
+                    <a
+                      href={`#${d.id}`}
+                      data-toc-id={d.id}
+                      data-depth="2"
+                      data-parent-id={c.id}
+                      class={`toc-item px-2 flex gap-2 relative transition w-full min-h-8 rounded-lg py-1.5 group
+                             hover:bg-[color-mix(in_srgb,var(--primary)_6%,transparent)]
+                             active:bg-[color-mix(in_srgb,var(--primary)_12%,transparent)]
+                             mt-[2px] ${tocItemClass(2)}`}
+                    >
+                      <div class={`transition text-[0.75rem] overflow-hidden text-ellipsis whitespace-nowrap ${depthColor(2)} ${depthHoverColor(2)} group-active:text-[var(--primary)]`} title={d.text}>
+                        {d.text}
+                      </div>
+                      <div class="toc-active-bar absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-3.5 rounded-r bg-[var(--primary)] opacity-0 transition-all"></div>
+                    </a>
+                    {d.children.length > 0 && (
+                      <button
+                        data-toggle-for={d.id}
+                        class="toc-toggle absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 flex items-center justify-center
+                               rounded-full hover:bg-[color-mix(in_srgb,var(--primary)_12%,transparent)] transition-colors"
                       >
-                        <div class={`transition text-[0.75rem] overflow-hidden text-ellipsis whitespace-nowrap ${depthColor(2)} ${depthHoverColor(2)} group-active:text-[var(--primary)]`} title={d.text}>
-                          {d.text}
-                        </div>
-                        <div class="toc-active-bar absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-3.5 rounded-r bg-[var(--primary)] opacity-0 transition-all"></div>
-                      </a>
-                    ))}
+                        <svg class="w-2.5 h-2.5 text-[color-mix(in_srgb,var(--text-primary)_40%,transparent)] transition-transform duration-200 toc-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                      </button>
+                    )}
+                  </div>
+
+                  {d.children.length > 0 && (
+                    <div class={`toc-children overflow-hidden transition-all duration-300 ${indentClass(3)}`}
+                         data-children-for={d.id}
+                         data-collapsed="true"
+                         style="max-height:0;opacity:0">
+                      <div class="pl-2 border-l-2 border-[var(--line-divider)]">
+                        {d.children.map((e) => (
+                          <div class="toc-group" data-depth="3">
+                            <div class="flex items-center relative">
+                              <a
+                                href={`#${e.id}`}
+                                data-toc-id={e.id}
+                                data-depth="3"
+                                data-parent-id={d.id}
+                                class={`toc-item px-2 flex gap-2 relative transition w-full min-h-8 rounded-lg py-1.5 group
+                                       hover:bg-[color-mix(in_srgb,var(--primary)_6%,transparent)]
+                                       active:bg-[color-mix(in_srgb,var(--primary)_12%,transparent)]
+                                       mt-[2px] ${tocItemClass(3)}`}
+                              >
+                                <div class={`transition text-[0.7rem] overflow-hidden text-ellipsis whitespace-nowrap ${depthColor(3)} ${depthHoverColor(3)} group-active:text-[var(--primary)]`} title={e.text}>
+                                  {e.text}
+                                </div>
+                                <div class="toc-active-bar absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-3 rounded-r bg-[var(--primary)] opacity-0 transition-all"></div>
+                              </a>
+                              {e.children.length > 0 && (
+                                <button
+                                  data-toggle-for={e.id}
+                                  class="toc-toggle absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 flex items-center justify-center
+                                         rounded-full hover:bg-[color-mix(in_srgb,var(--primary)_12%,transparent)] transition-colors"
+                                >
+                                  <svg class="w-2.5 h-2.5 text-[color-mix(in_srgb,var(--text-primary)_40%,transparent)] transition-transform duration-200 toc-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M6 9l6 6 6-6"/>
+                                  </svg>
+                                </button>
+                              )}
+                            </div>
+
+                            {e.children.length > 0 && (
+                              <div class={`toc-children overflow-hidden transition-all duration-300 ${indentClass(4)}`}
+                                   data-children-for={e.id}
+                                   data-collapsed="true"
+                                   style="max-height:0;opacity:0">
+                                <div class="pl-2 border-l-2 border-[var(--line-divider)]">
+                                  {e.children.map((f) => (
+                                    <div class="toc-group" data-depth="4">
+                                      <div class="flex items-center relative">
+                                        <a
+                                          href={`#${f.id}`}
+                                          data-toc-id={f.id}
+                                          data-depth="4"
+                                          data-parent-id={e.id}
+                                          class={`toc-item px-2 flex gap-2 relative transition w-full min-h-8 rounded-lg py-1.5 group
+                                                 hover:bg-[color-mix(in_srgb,var(--primary)_6%,transparent)]
+                                                 active:bg-[color-mix(in_srgb,var(--primary)_12%,transparent)]
+                                                 mt-[2px] ${tocItemClass(4)}`}
+                                        >
+                                          <div class={`transition text-[0.7rem] overflow-hidden text-ellipsis whitespace-nowrap ${depthColor(4)} ${depthHoverColor(4)} group-active:text-[var(--primary)]`} title={f.text}>
+                                            {f.text}
+                                          </div>
+                                          <div class="toc-active-bar absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-2.5 rounded-r bg-[var(--primary)] opacity-0 transition-all"></div>
+                                        </a>
+                                        {f.children.length > 0 && (
+                                          <button
+                                            data-toggle-for={f.id}
+                                            class="toc-toggle absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 flex items-center justify-center
+                                                   rounded-full hover:bg-[color-mix(in_srgb,var(--primary)_12%,transparent)] transition-colors"
+                                          >
+                                            <svg class="w-2.5 h-2.5 text-[color-mix(in_srgb,var(--text-primary)_40%,transparent)] transition-transform duration-200 toc-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                              <path d="M6 9l6 6 6-6"/>
+                                            </svg>
+                                          </button>
+                                        )}
+                                      </div>
+
+                                      {f.children.length > 0 && (
+                                        <div class={`toc-children overflow-hidden transition-all duration-300 ${indentClass(5)}`}
+                                             data-children-for={f.id}
+                                             data-collapsed="true"
+                                             style="max-height:0;opacity:0">
+                                          <div class="pl-2 border-l-2 border-[var(--line-divider)]">
+                                            {f.children.map((x) => (
+                                              <a
+                                                href={`#${x.id}`}
+                                                data-toc-id={x.id}
+                                                data-depth="5"
+                                                data-parent-id={f.id}
+                                                class={`toc-item px-2 flex gap-2 relative transition w-full min-h-8 rounded-lg py-1.5 group
+                                                       hover:bg-[color-mix(in_srgb,var(--primary)_6%,transparent)]
+                                                       active:bg-[color-mix(in_srgb,var(--primary)_12%,transparent)]
+                                                       mt-[2px] ${tocItemClass(5)}`}
+                                              >
+                                                <div class={`transition text-[0.7rem] overflow-hidden text-ellipsis whitespace-nowrap ${depthColor(5)} ${depthHoverColor(5)} group-active:text-[var(--primary)]`} title={x.text}>
+                                                  {x.text}
+                                                </div>
+                                                <div class="toc-active-bar absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-2 rounded-r bg-[var(--primary)] opacity-0 transition-all"></div>
+                                              </a>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
                   </div>
                 </div>
               )}
@@ -241,9 +383,13 @@ function depthHoverColor(depth: number): string {
         }
 
         const depth = activeEl.getAttribute('data-depth');
-        if (depth === '1' || depth === '2') {
-          const parentId = activeEl.getAttribute('data-parent-id');
-          if (parentId) expandChildren(parentId);
+        if (depth && depth !== '0') {
+          let parentId = activeEl.getAttribute('data-parent-id');
+          while (parentId) {
+            expandChildren(parentId);
+            const parentEl = root!.querySelector<HTMLElement>(`[data-toc-id="${parentId}"]`);
+            parentId = parentEl?.getAttribute('data-parent-id') ?? null;
+          }
         }
 
         scrollTocToItem(activeEl);
