@@ -1,119 +1,368 @@
 ---
-import { getCollection } from "astro:content";
+import { getCollection, render } from "astro:content";
 import { Icon } from "astro-icon/components";
-import NoteCard from "@components/NoteCard.astro";
-import Pagination from "@components/control/Pagination.astro";
+import LikeButton from "@components/LikeButton.svelte";
+import Markdown from "@components/misc/Markdown.astro";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
-import MainGridLayout from "@layouts/MainGridLayout.astro";
+import { formatDate } from "@utils/date-utils";
+import { getNoteTagList, getNoteCategoryList } from "@utils/content-utils";
 
-// 获取所有碎碎念
 const allNotes = await getCollection("notes", ({ data }) => !data.draft);
+const sortedNotes = allNotes.sort(
+	(a, b) => new Date(b.data.published).getTime() - new Date(a.data.published).getTime(),
+);
 
-// 按发布日期降序排序
-const sortedNotes = allNotes.sort((a, b) => {
-	const dateA = new Date(a.data.published);
-	const dateB = new Date(b.data.published);
-	return dateB.getTime() - dateA.getTime();
-});
-
-// 分页配置
-const pageSize = 10; // 每页显示10条碎碎念
-const totalNotes = sortedNotes.length;
-const totalPages = Math.ceil(totalNotes / pageSize);
-
-// 获取当前页码（从URL参数中获取，默认为1）
 const url = new URL(Astro.request.url);
-const currentPage = Number.parseInt(url.searchParams.get("page") || "1");
-const currentPageNum = Math.max(1, Math.min(currentPage, totalPages));
+const categoryFilter = url.searchParams.get("category");
+const tagFilter = url.searchParams.get("tag");
+const activeSlug = url.searchParams.get("p");
 
-// 计算当前页显示的笔记范围
-const startIndex = (currentPageNum - 1) * pageSize;
-const endIndex = startIndex + pageSize;
-const paginatedNotes = sortedNotes.slice(startIndex, endIndex);
+let filteredNotes = sortedNotes;
+if (categoryFilter) {
+	filteredNotes = filteredNotes.filter((n) => n.data.category === categoryFilter);
+}
+if (tagFilter) {
+	filteredNotes = filteredNotes.filter((n) => n.data.tags?.includes(tagFilter));
+}
 
-// 创建分页对象
-const page = {
-	currentPage: currentPageNum,
-	lastPage: totalPages,
-	url: {
-		prev: currentPageNum > 1 ? `/notes?page=${currentPageNum - 1}` : undefined,
-		next:
-			currentPageNum < totalPages
-				? `/notes?page=${currentPageNum + 1}`
-				: undefined,
-	},
-};
+let activeIndex = 0;
+if (activeSlug) {
+	const idx = filteredNotes.findIndex((n) => n.id === activeSlug);
+	if (idx >= 0) activeIndex = idx;
+}
+const activeNote = filteredNotes[activeIndex];
+const totalFiltered = filteredNotes.length;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let Content: any;
+if (activeNote) {
+	const result = await render(activeNote);
+	({ Content } = result);
+}
+
+const allTags = await getNoteTagList();
+const allCategories = await getNoteCategoryList();
+
+// Circular navigation
+const prevIndex = totalFiltered > 0 ? (activeIndex - 1 + totalFiltered) % totalFiltered : 0;
+const nextIndex = totalFiltered > 0 ? (activeIndex + 1) % totalFiltered : 0;
+const prevNote = totalFiltered > 1 ? filteredNotes[prevIndex] : null;
+const nextNote = totalFiltered > 1 ? filteredNotes[nextIndex] : null;
+
+function buildUrl(params: Record<string, string>) {
+	const sp = new URLSearchParams();
+	for (const [k, v] of Object.entries(params)) {
+		if (v) sp.set(k, v);
+	}
+	const qs = sp.toString();
+	return qs ? `/bits/?${qs}` : "/bits/";
+}
+
+const firstNote = filteredNotes.length > 0 ? filteredNotes[0] : null;
+const prevUrl = prevNote
+	? buildUrl({ category: categoryFilter || "", tag: tagFilter || "", p: prevNote.id })
+	: undefined;
+const nextUrl = nextNote
+	? buildUrl({ category: categoryFilter || "", tag: tagFilter || "", p: nextNote.id })
+	: undefined;
+const firstUrl = firstNote
+	? buildUrl({ category: categoryFilter || "", tag: tagFilter || "", p: firstNote.id })
+	: undefined;
 ---
 
 <MainGridLayout title={i18n(I18nKey.notes)} description={i18n(I18nKey.notes)} showAnnouncement={false} fullWidth={false} centerContent={true}>
-    <div class="space-y-6 w-full flex flex-col items-center px-4 md:px-8">
-        <!-- 提示卡片 -->
-        <div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden rounded-lg w-full max-w-3xl">
-            <div class="bg-orange-100/80 dark:bg-stone-700/70 backdrop-blur-3xl border-l-4 border-orange-700 p-4">
-                <div class="flex items-center gap-3">
-                    <Icon name="material-symbols:info-rounded" class="text-xl text-orange-700 dark:text-orange-300" />
-                    <h2 class="text-lg font-bold text-orange-700 dark:text-white">页面说明</h2>
-                </div>
-            </div>
-            <div class="p-4">
-                <p class="text-sm text-orange-950/70 dark:text-white/70">
-                    生活中的一些碎碎念，无意义，但想记录下来
-                </p>
-            </div>
-        </div>
-        
-        <!-- 统计卡片 -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-3xl">
-            <div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden rounded-lg">
-                <div class="p-4 flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center flex-shrink-0">
-                        <Icon name="material-symbols:note-rounded" class="text-2xl text-white" />
-                    </div>
-                    <div>
-                        <p class="text-2xl font-bold text-orange-700 dark:text-white">{totalNotes}</p>
-                        <p class="text-sm text-orange-600/70 dark:text-gray-400">篇碎碎念</p>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden rounded-lg">
-                <div class="p-4 flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center flex-shrink-0">
-                        <Icon name="material-symbols:schedule-rounded" class="text-2xl text-white" />
-                    </div>
-                    <div>
-                        <p class="text-2xl font-bold text-orange-700 dark:text-white">{totalNotes > 0 ? new Date(sortedNotes[0].data.published).toLocaleDateString('zh-CN') : '暂无'}</p>
-                        <p class="text-sm text-orange-600/70 dark:text-gray-400">最近更新</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- 碎碎念列表 -->
-        {totalNotes > 0 ? (
-            <>
-                <div class="space-y-6 w-full max-w-3xl">
-                    {paginatedNotes.map((note) => (
-                        <NoteCard
-                            entry={note}
-                            style=""
-                        />
-                    ))}
-                </div>
-                
-                <!-- 分页控件 -->
-                {totalPages > 1 && (
-                    <div class="flex justify-center mt-8">
-                        <Pagination
-                            page={page}
-                        />
+    <div class="space-y-4 md:space-y-6">
+        {/* Filter Bar */}
+        {(allCategories.length > 0 || allTags.length > 0) && (
+            <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-2xl rounded-none shadow-xl p-3 md:p-4 w-full max-w-3xl">
+                {allCategories.length > 0 && (
+                    <div class="flex flex-wrap gap-2 items-center mb-2">
+                        <span class="text-xs text-orange-950/60 dark:text-white/60 font-bold">分类</span>
+                        <button
+                            type="button"
+                            onclick={`window.location.href='/bits/'`}
+                            class:list={[
+                                "px-2.5 py-0.5 rounded-full text-xs transition-all duration-200",
+                                !categoryFilter
+                                    ? "bg-orange-100/80 dark:bg-stone-700/60 text-orange-800 dark:text-white"
+                                    : "bg-white/30 dark:bg-stone-700/30 text-orange-950/60 dark:text-white/60 hover:bg-orange-100/80 dark:hover:bg-stone-600",
+                            ]}
+                        >
+                            全部
+                        </button>
+                        {allCategories.map((cat) => (
+                            <button
+                                type="button"
+                                onclick={`window.location.href='${buildUrl({ category: cat.name, tag: tagFilter || "", p: "" })}'`}
+                                class:list={[
+                                    "px-2.5 py-0.5 rounded-full text-xs transition-all duration-200",
+                                    categoryFilter === cat.name
+                                        ? "bg-orange-100/80 dark:bg-stone-700/60 text-orange-800 dark:text-white"
+                                        : "bg-white/30 dark:bg-stone-700/30 text-orange-950/60 dark:text-white/60 hover:bg-orange-100/80 dark:hover:bg-stone-600",
+                                ]}
+                            >
+                                {cat.name} ({cat.count})
+                            </button>
+                        ))}
                     </div>
                 )}
-            </>
-        ) : (
-            <div class="text-center py-16 text-orange-950/60 dark:text-white/60 text-lg">
+                {allTags.length > 0 && (
+                    <div class="flex flex-wrap gap-2 items-center">
+                        <span class="text-xs text-orange-950/60 dark:text-white/60 font-bold">标签</span>
+                        {allTags.map((tag) => (
+                            <button
+                                type="button"
+                                onclick={`window.location.href='${buildUrl({ category: categoryFilter || "", tag: tag.name, p: "" })}'`}
+                                class:list={[
+                                    "px-2.5 py-0.5 rounded-full text-xs transition-all duration-200",
+                                    tagFilter === tag.name
+                                        ? "bg-orange-100/80 dark:bg-stone-700/60 text-orange-800 dark:text-white"
+                                        : "bg-white/30 dark:bg-stone-700/30 text-orange-950/60 dark:text-white/60 hover:bg-orange-100/80 dark:hover:bg-stone-600",
+                                ]}
+                            >
+                                #{tag.name} ({tag.count})
+                            </button>
+                        ))}
+                    </div>
+                )}
+            </div>
+        )}
+
+        {/* Reader Section */}
+        {filteredNotes.length === 0 ? (
+            <div class="text-center py-16 text-orange-950/50 dark:text-white/50 text-lg">
                 {i18n(I18nKey.no_notes_yet)}
+            </div>
+        ) : activeNote ? (
+            <div class="w-full max-w-3xl">
+                {/* Navigation Bar */}
+                <div class="flex items-center justify-between mb-3 px-1">
+                    <button
+                        type="button"
+                        onclick={prevUrl ? `window.location.href='${prevUrl}'` : undefined}
+                        disabled={!prevUrl}
+                        class:list={[
+                            "inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs transition-all duration-200",
+                            prevUrl
+                                ? "bg-orange-100/80 dark:bg-stone-700/60 text-orange-800 dark:text-white hover:bg-orange-200 dark:hover:bg-stone-600"
+                                : "bg-white/30 dark:bg-stone-700/30 text-orange-950/30 dark:text-white/30 cursor-not-allowed",
+                        ]}
+                    >
+                        <Icon name="material-symbols:chevron-left-rounded" class="w-4 h-4" />
+                        上一篇
+                    </button>
+
+                    <div class="flex items-center gap-2">
+                        {activeIndex !== 0 && firstUrl && (
+                            <button
+                                type="button"
+                                onclick={`window.location.href='${firstUrl}'`}
+                                class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs border border-dashed border-orange-300/60 dark:border-stone-600/60 text-orange-700 dark:text-orange-300 hover:bg-orange-100/80 dark:hover:bg-stone-600 transition-all duration-200"
+                            >
+                                <Icon name="material-symbols:first-page-rounded" class="w-3.5 h-3.5" />
+                                第一篇
+                            </button>
+                        )}
+                        <span class="text-xs text-orange-950/50 dark:text-white/50 font-mono tabular-nums">
+                            {activeIndex + 1} / {totalFiltered}
+                        </span>
+                    </div>
+
+                    <button
+                        type="button"
+                        onclick={nextUrl ? `window.location.href='${nextUrl}'` : undefined}
+                        disabled={!nextUrl}
+                        class:list={[
+                            "inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs transition-all duration-200",
+                            nextUrl
+                                ? "bg-orange-100/80 dark:bg-stone-700/60 text-orange-800 dark:text-white hover:bg-orange-200 dark:hover:bg-stone-600"
+                                : "bg-white/30 dark:bg-stone-700/30 text-orange-950/30 dark:text-white/30 cursor-not-allowed",
+                        ]}
+                    >
+                        下一篇
+                        <Icon name="material-symbols:chevron-right-rounded" class="w-4 h-4" />
+                    </button>
+                </div>
+
+                {/* Article Card */}
+                <div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden rounded-lg">
+                    <div class="p-4 md:p-6">
+                        <div class="flex items-start justify-between gap-3 mb-3">
+                            <div class="flex-1 min-w-0">
+                                {activeNote.data.title && (
+                                    <h2 class="text-lg md:text-xl font-bold text-orange-950 dark:text-white">
+                                        {activeNote.data.title}
+                                    </h2>
+                                )}
+                                <div class="flex items-center gap-2 mt-1.5 text-xs text-orange-950/60 dark:text-white/60">
+                                    <Icon name="material-symbols:calendar-today-outline" class="w-3.5 h-3.5" />
+                                    <span>{formatDate(activeNote.data.published)}</span>
+                                    {activeNote.data.category && (
+                                        <>
+                                            <span class="text-orange-950/30 dark:text-white/30">·</span>
+                                            <Icon name="material-symbols:book-outline" class="w-3.5 h-3.5" />
+                                            <span>{activeNote.data.category}</span>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <LikeButton slug={activeNote.id} client:visible />
+                            </div>
+                        </div>
+
+                        {activeNote.data.image && activeNote.data.image.trim() !== "" && (
+                            <div class="mb-4 overflow-hidden rounded-md border border-orange-200/30 dark:border-stone-600/30">
+                                <img
+                                    src={activeNote.data.image}
+                                    alt={activeNote.data.title || "文章图片"}
+                                    class="w-full h-auto max-h-72 object-cover"
+                                    loading="lazy"
+                                />
+                            </div>
+                        )}
+
+                        <div class="reader-content">
+                            <Markdown class="markdown-content prose dark:prose-invert max-w-none">
+                                <Content />
+                            </Markdown>
+                        </div>
+
+                        {activeNote.data.tags && activeNote.data.tags.length > 0 && (
+                            <div class="flex flex-wrap gap-1.5 mt-4 pt-3 border-t border-orange-200/50 dark:border-stone-600/50">
+                                {activeNote.data.tags.map((tag) => (
+                                    <button
+                                        type="button"
+                                        onclick={`window.location.href='${buildUrl({ category: categoryFilter || "", tag: tag, p: activeNote.id })}'`}
+                                        class="px-2 py-0.5 rounded-full text-xs bg-orange-100/80 dark:bg-stone-700/60 text-orange-800 dark:text-white hover:bg-orange-200 dark:hover:bg-stone-600 transition-colors"
+                                    >
+                                        #{tag}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Bottom Navigation */}
+                <div class="flex items-center justify-between mt-3 px-1">
+                    <button
+                        type="button"
+                        onclick={prevUrl ? `window.location.href='${prevUrl}'` : undefined}
+                        disabled={!prevUrl}
+                        class:list={[
+                            "inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs transition-all duration-200",
+                            prevUrl
+                                ? "bg-orange-100/80 dark:bg-stone-700/60 text-orange-800 dark:text-white hover:bg-orange-200 dark:hover:bg-stone-600"
+                                : "bg-white/30 dark:bg-stone-700/30 text-orange-950/30 dark:text-white/30 cursor-not-allowed",
+                        ]}
+                    >
+                        <Icon name="material-symbols:chevron-left-rounded" class="w-4 h-4" />
+                        上一篇
+                    </button>
+
+                    {activeIndex !== 0 && firstUrl && (
+                        <button
+                            type="button"
+                            onclick={`window.location.href='${firstUrl}'`}
+                            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs border border-dashed border-orange-300/60 dark:border-stone-600/60 text-orange-700 dark:text-orange-300 hover:bg-orange-100/80 dark:hover:bg-stone-600 transition-all duration-200"
+                        >
+                            <Icon name="material-symbols:first-page-rounded" class="w-3.5 h-3.5" />
+                            回到第一篇
+                        </button>
+                    )}
+
+                    <button
+                        type="button"
+                        onclick={nextUrl ? `window.location.href='${nextUrl}'` : undefined}
+                        disabled={!nextUrl}
+                        class:list={[
+                            "inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs transition-all duration-200",
+                            nextUrl
+                                ? "bg-orange-100/80 dark:bg-stone-700/60 text-orange-800 dark:text-white hover:bg-orange-200 dark:hover:bg-stone-600"
+                                : "bg-white/30 dark:bg-stone-700/30 text-orange-950/30 dark:text-white/30 cursor-not-allowed",
+                        ]}
+                    >
+                        下一篇
+                        <Icon name="material-symbols:chevron-right-rounded" class="w-4 h-4" />
+                    </button>
+                </div>
+            </div>
+        ) : null}
+
+        {/* Article List */}
+        {filteredNotes.length > 0 && (
+            <div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden rounded-lg px-3 md:px-5 py-3 md:py-5 w-full max-w-3xl">
+                <div class="flex items-center gap-2 mb-3 pb-2 border-b border-orange-200/70 dark:border-stone-600/50">
+                    <span class="text-base md:text-lg font-bold text-orange-950 dark:text-white">文章列表</span>
+                    <span class="text-xs text-orange-950/50 dark:text-white/50">({totalFiltered})</span>
+                </div>
+                <div class="relative pl-4 md:pl-5 border-l border-orange-200 dark:border-stone-600">
+                    {filteredNotes.map((note, i) => {
+                        const noteUrl = buildUrl({
+                            category: categoryFilter || "",
+                           	tag: tagFilter || "",
+                           	p: note.id,
+                       	});
+                        const isActive = note.id === activeNote?.id;
+                        return (
+                            <button
+                                type="button"
+                                onclick={`window.location.href='${noteUrl}'`}
+                                class:list={[
+                                    "w-full text-left flex items-start gap-2 md:gap-3 py-2 md:py-2.5 relative group",
+                                    isActive && "bg-orange-100/40 dark:bg-stone-700/20 rounded-md -ml-4 md:-ml-5 pl-4 md:pl-5 border-l-2 border-orange-400 dark:border-stone-400",
+                                ]}
+                            >
+                                {!isActive && (
+                                    <div class="absolute left-[-1.1rem] md:left-[-1.35rem] top-3 w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-orange-400 dark:bg-stone-400 group-hover:bg-[var(--primary)] transition-colors duration-200"></div>
+                                )}
+                                {isActive && (
+                                    <div class="absolute left-[-1.1rem] md:left-[-1.35rem] top-3 w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-orange-400 dark:bg-stone-400 shadow-[0_0_0_3px_rgba(255,152,0,0.2)]"></div>
+                                )}
+                                <div class="flex-shrink-0 w-10 md:w-12 text-xs text-orange-950/60 dark:text-white/60 group-hover:text-[var(--accent-text)] dark:group-hover:text-[var(--primary)] transition-colors">
+                                    {formatDate(note.data.published)}
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class:list={[
+                                        "text-sm md:text-base truncate transition-colors",
+                                        isActive
+                                            ? "text-orange-950 dark:text-white font-semibold"
+                                            : "text-orange-950 dark:text-white group-hover:text-[var(--accent-text)] dark:group-hover:text-[var(--primary)]",
+                                    ]}>
+                                        {note.data.title || "无标题"}
+                                    </div>
+                                    {note.data.tags && note.data.tags.length > 0 && (
+                                        <div class="mt-0.5 text-xs text-orange-950/50 dark:text-white/50 truncate hidden md:block">
+                                            {note.data.tags.slice(0, 3).map((t) => `#${t}`).join(" ")}
+                                        </div>
+                                    )}
+                                </div>
+                                <span class="text-xs text-orange-950/30 dark:text-white/30 font-mono flex-shrink-0">
+                                    {i + 1}
+                                </span>
+                            </button>
+                        );
+                    })}
+                </div>
             </div>
         )}
     </div>
 </MainGridLayout>
+
+<style>
+    .reader-content {
+        line-height: 1.8;
+    }
+    .reader-content :global(p) {
+        margin-bottom: 0.875rem;
+    }
+    .reader-content :global(img) {
+        max-width: 100%;
+        height: auto;
+        border-radius: 6px;
+        margin: 1rem 0;
+    }
+</style>

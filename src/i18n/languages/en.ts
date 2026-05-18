@@ -6,9 +6,9 @@ export const en: Translation = {
 	[Key.about]: "Profile",
 	[Key.archive]: "Archive",
 	[Key.friends]: "Friends",
-	[Key.notes]: "Notes",
+	[Key.notes]: "Quick Reads",
 	[Key.works]: "Works",
-	[Key.updates]: "Updates",
+	[Key.rec]: "Cross-link",
 
 	[Key.tags]: "Tags",
 	[Key.categories]: "Categories",
@@ -17,7 +17,7 @@ export const en: Translation = {
 	[Key.untitled]: "Untitled",
 	[Key.uncategorized]: "Uncategorized",
 	[Key.noTags]: "No Tags",
-	[Key.no_notes_yet]: "No notes yet",
+	[Key.no_notes_yet]: "No articles yet",
 
 	[Key.wordCount]: "word",
 	[Key.wordsCount]: "words",
@@ -39,7 +39,7 @@ export const en: Translation = {
 	[Key.author]: "Author",
 	[Key.publishedAt]: "Published at",
 	[Key.license]: "License",
-	[Key.back_to_notes]: "Back to Notes",
+	[Key.back_to_notes]: "Back to Quick Reads",
 
 	[Key.friendsDesc]: "Like-minded friends",
 	[Key.friendUnitText]: "friends",

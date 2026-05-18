@@ -93,3 +93,50 @@ export async function getCategoryList(): Promise<Category[]> {
 		.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
 		.map((key) => ({ name: key, count: count[key] }));
 }
+
+export async function getNoteTagList(): Promise<Tag[]> {
+	const allNotes = await getCollection<"notes">("notes", ({ data }) => {
+		return import.meta.env.PROD ? data.draft !== true : true;
+	});
+
+	const countMap: { [key: string]: number } = {};
+	for (const note of allNotes) {
+		if (note.data.tags) {
+			for (const tag of note.data.tags) {
+				countMap[tag] = (countMap[tag] || 0) + 1;
+			}
+		}
+	}
+
+	return Object.keys(countMap)
+		.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
+		.map((key) => ({ name: key, count: countMap[key] }));
+}
+
+export async function getNoteCategoryList(): Promise<Category[]> {
+	const allNotes = await getCollection<"notes">("notes", ({ data }) => {
+		return import.meta.env.PROD ? data.draft !== true : true;
+	});
+
+	const count: { [key: string]: number } = {};
+	const uncategorizedKey = i18n(I18nKey.uncategorized);
+
+	for (const note of allNotes) {
+		let categoryName: string;
+
+		if (!note.data.category) {
+			categoryName = uncategorizedKey;
+		} else {
+			categoryName =
+				typeof note.data.category === "string"
+					? note.data.category.trim()
+					: String(note.data.category).trim();
+		}
+
+		count[categoryName] = (count[categoryName] || 0) + 1;
+	}
+
+	return Object.keys(count)
+		.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
+		.map((key) => ({ name: key, count: count[key] }));
+}

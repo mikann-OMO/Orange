@@ -22,16 +22,16 @@ export const LinkPresets: { [key in LinkPreset]: NavBarLink } = {
 
 	[LinkPreset.Works]: {
 		name: i18n(I18nKey.works),
-		url: "/pictures/",
+		url: "/pix/",
 	},
 
 	[LinkPreset.Notes]: {
 		name: i18n(I18nKey.notes),
-		url: "/notes/",
+		url: "/bits/",
 	},
 
-	[LinkPreset.Updates]: {
-		name: i18n(I18nKey.updates),
-		url: "/updates/",
+	[LinkPreset.Rec]: {
+		name: i18n(I18nKey.rec),
+		url: "/rec/",
 	},
 };

@@ -45,7 +45,7 @@ const description: string = album.data.description || "相册";
 // 读取原始 Markdown 文件内容
 function getRawMarkdownContent(slug: string): string | null {
 	const projectRoot = path.resolve(process.cwd());
-	const exhibitionDir = path.join(projectRoot, "src/content/exhibition");
+	const exhibitionDir = path.join(projectRoot, "src/content/pix");
 	const possibleExtensions = [".md", ".mdx"];
 	for (const ext of possibleExtensions) {
 		const filePath = path.join(exhibitionDir, slug + ext);
@@ -199,7 +199,7 @@ function getConfiguredImages(): ArtistGroup[] {
 // 获取本地图片（备用方案）
 function getLocalImagesByArtist(dir: string): ArtistGroup[] {
 	const exhibitionImages = import.meta.glob<{ default: ImageMetadata }>(
-		"../../content/exhibition/**/*.{jpg,jpeg,png,gif,webp}",
+		"../../content/pix/**/*.{jpg,jpeg,png,gif,webp}",
 		{ eager: true },
 	);
 
@@ -211,10 +211,10 @@ function getLocalImagesByArtist(dir: string): ArtistGroup[] {
 
 	for (const [path, module] of Object.entries(exhibitionImages)) {
 		const pathNormalized = path.replace(/\\/g, "/");
-		if (pathNormalized.includes(`/exhibition/${dirNormalized}/`)) {
+		if (pathNormalized.includes(`/pix/${dirNormalized}/`)) {
 			const img = module.default;
 			const segments = pathNormalized.split("/");
-			const exhibitionIdx = segments.findIndex((s) => s === "exhibition");
+			const exhibitionIdx = segments.findIndex((s) => s === "pix");
 			const artistName = segments[exhibitionIdx + 2] || "未知画师";
 
 			if (!artistMap.has(artistName)) {
@@ -258,7 +258,7 @@ const totalImages = artistGroups.reduce(
 		<div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden">
 			<div class="bg-orange-100/80 dark:bg-stone-700/70 backdrop-blur-3xl border-l-4 border-orange-700 p-4 flex items-center justify-between">
 				<h1 class="text-xl font-bold text-orange-700 dark:text-white">{title}</h1>
-				<a href="/pictures/" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/50 dark:bg-stone-600/50 hover:bg-white/80 dark:hover:bg-stone-500/50 transition-colors">
+				<a href="/pix/" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/50 dark:bg-stone-600/50 hover:bg-white/80 dark:hover:bg-stone-500/50 transition-colors">
 					<Icon name="material-symbols:arrow-back-rounded" class="text-xl text-orange-700 dark:text-white" />
 				</a>
 			</div>
@@ -323,7 +323,7 @@ const totalImages = artistGroups.reduce(
 				</div>
 				<div class="p-12 text-center">
 					<Icon name="material-symbols:image-rounded" class="text-5xl text-orange-300 dark:text-stone-600 mb-4" />
-					<p class="text-sm text-orange-600/70 dark:text-gray-400">请将图片放入 src/content/exhibition/{albumName}/ 目录</p>
+					<p class="text-sm text-orange-600/70 dark:text-gray-400">请将图片放入 src/content/pix/{albumName}/ 目录</p>
 				</div>
 			</div>
 		)}

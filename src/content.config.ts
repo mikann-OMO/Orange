@@ -29,7 +29,7 @@ const postsCollection = defineCollection({
 const exhibitionCollection = defineCollection({
 	loader: glob({
 		pattern: "**/*.{yaml,yml,json,md,mdx}",
-		base: "./src/content/exhibition",
+		base: "./src/content/pix",
 	}),
 	schema: z.object({
 		title: z.string(),
@@ -57,7 +57,7 @@ const exhibitionCollection = defineCollection({
 const notesCollection = defineCollection({
 	loader: glob({
 		pattern: "**/*.{md,mdx}",
-		base: "./src/content/notes",
+		base: "./src/content/bits",
 	}),
 	schema: z.object({
 		title: z.string().nullable().optional().default(null),
@@ -66,6 +66,9 @@ const notesCollection = defineCollection({
 		draft: z.boolean().optional().default(false),
 		lang: z.string().optional().default(""),
 		image: z.string().optional().default(""),
+		description: z.string().optional().default(""),
+		tags: z.array(z.string()).optional().default([]),
+		category: z.string().optional().default(""),
 	}),
 });
 

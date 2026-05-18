@@ -1,15 +1,14 @@
 ---
-
 import { getCollection, render } from "astro:content";
 import ImageWrapper from "@components/misc/ImageWrapper.astro";
 import Markdown from "@components/misc/Markdown.astro";
+import LikeButton from "@components/LikeButton.svelte";
 import { profileConfig, siteConfig } from "@/config";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { formatDate, formatDateToYYYYMMDD } from "@utils/date-utils";
 
-// 获取所有碎碎念并生成静态路径
 export async function getStaticPaths() {
 	const notes = await getCollection("notes");
 	const validNotes = notes.filter((note) => {
@@ -29,19 +28,16 @@ export async function getStaticPaths() {
 	}));
 }
 
-// 预渲染为静态HTML
 export const prerender = true;
 
-// 获取当前碎碎念数据
 const { note } = Astro.props;
 const { Content, headings } = await render(note);
 
-// 生成结构化数据
 const jsonLd = {
 	"@context": "https://schema.org",
-	"@type": "NoteDigitalDocument",
-	headline: note.data.title || "碎碎念",
-	description: "碎碎念内容",
+	"@type": "Article",
+	headline: note.data.title || "轻读",
+	description: note.data.description || "轻读内容",
 	author: {
 		"@type": "Person",
 		name: profileConfig.name,
@@ -54,49 +50,66 @@ const jsonLd = {
 };
 ---
 
-<MainGridLayout title={note.data.title || "碎碎念"} description="碎碎念内容" lang={note.data.lang} setOGTypeArticle={true} headings={headings}>
+<MainGridLayout title={note.data.title || "轻读"} description={note.data.description || "轻读内容"} lang={note.data.lang} setOGTypeArticle={true} headings={headings}>
     <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
-    
+
     <div class="bg-white/15 dark:bg-stone-800/15 backdrop-blur-3xl rounded-none shadow-xl overflow-hidden p-6">
         <div class="max-w-2xl mx-auto w-full">
-            <!-- 碎碎念图片 -->
             {note.data.image && (
-                <div class="note-image w-full mb-4 overflow-hidden rounded-md">
+                <div class="w-full mb-4 overflow-hidden rounded-md">
                     <ImageWrapper
                         src={note.data.image}
-                        alt="碎碎念图片"
+                        alt={note.data.title || "文章图片"}
                         class="w-full h-auto max-h-64 object-contain transition-transform duration-500 hover:scale-102"
                         loading="lazy"
                     />
                 </div>
             )}
-            
-            <!-- 碎碎念头部 -->
-            <div class="note-header mb-4">
-                <!-- 日期 -->
-                <div class="text-xs text-orange-950/60 dark:text-white/60 font-mono mb-4 border-b border-orange-200/30 dark:border-white/10 pb-2">
-                    {formatDate(note.data.published)}
+
+            <div class="mb-4">
+                <div class="flex items-center justify-between gap-3">
+                    <div class="flex-1 min-w-0">
+                        {note.data.title && (
+                            <h1 class="text-xl md:text-2xl font-medium text-[var(--text-primary)] font-['SimSun',serif]">
+                                {note.data.title}
+                            </h1>
+                        )}
+                    </div>
+                    <div class="flex-shrink-0">
+                        <LikeButton slug={note.id} client:visible />
+                    </div>
                 </div>
-                
-                <!-- 标题 -->
-                {note.data.title && (
-                    <h1 class="text-xl md:text-2xl font-medium text-orange-950 dark:text-white font-['SimSun',serif]">
-                        {note.data.title}
-                    </h1>
+
+                <div class="flex items-center gap-2 mt-2 text-xs text-[var(--text-secondary)]">
+                    <span>{formatDate(note.data.published)}</span>
+                    {note.data.category && (
+                        <>
+                            <span class="text-[var(--text-secondary)]/40">·</span>
+                            <span>{note.data.category}</span>
+                        </>
+                    )}
+                </div>
+
+                {note.data.tags && note.data.tags.length > 0 && (
+                    <div class="flex flex-wrap gap-1.5 mt-2">
+                        {note.data.tags.map((tag) => (
+                            <span class="text-xs px-2 py-0.5 rounded-full bg-[var(--primary)]/10 text-[var(--primary)]">
+                                #{tag}
+                            </span>
+                        ))}
+                    </div>
                 )}
             </div>
 
-            <!-- 碎碎念内容 -->
             <div class="note-content whitespace-pre-wrap">
                 <Markdown class="markdown-content prose dark:prose-invert max-w-none">
                     <Content />
                 </Markdown>
             </div>
 
-            <!-- 返回碎碎念列表 -->
             <div class="mt-6">
-                <a 
-                    href="/notes/"
+                <a
+                    href="/bits/"
                     class="inline-flex items-center gap-2 px-5 py-2 rounded-md font-medium transition-all duration-300 bg-[var(--btn-regular-bg)] hover:bg-[var(--btn-regular-bg-hover)] border border-orange-200/30 dark:border-white/30 text-white hover:shadow-md hover:-translate-y-1"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -109,42 +122,34 @@ const jsonLd = {
     </div>
 
     <style>
-        /* 碎碎念内容样式 */
         .note-content {
             overflow: auto;
             max-height: calc(100dvh - 400px);
             line-height: 1.8;
         }
-        
-        /* Markdown 内容美化 */
+
         .markdown-content {
             color: var(--text-primary);
         }
-        
-        .markdown-content p {
+
+        .markdown-content :global(p) {
             margin-bottom: 0.875rem;
         }
-        
-        /* 图片样式优化 */
-        .markdown-content img {
+
+        .markdown-content :global(img) {
             max-width: 100%;
             height: auto;
             border-radius: 6px;
             margin: 1rem 0;
         }
-        
-        /* 响应式设计 */
+
         @media (max-width: 768px) {
             .note-content {
                 max-height: calc(100dvh - 350px);
             }
         }
-        
+
         @media (max-width: 480px) {
-            .note-header h1 {
-                font-size: 1.5rem;
-            }
-            
             .note-content {
                 max-height: calc(100dvh - 300px);
             }

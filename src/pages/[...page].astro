@@ -16,7 +16,7 @@ import { PAGE_SIZE } from "@constants/constants";
 import announcement from "@/content/announcement.yaml";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { getSortedPosts } from "@utils/content-utils";
-import updatesData from "@/data/updates.json";
+import recData from "@/data/rec.json";
 
 export const getStaticPaths = (async ({ paginate }) => {
 	const allBlogPosts = await getSortedPosts();
@@ -44,26 +44,12 @@ const lastUpdateDateTime = lastUpdateDate
 		})
 	: "";
 
-const { updates } = updatesData;
-const sortedUpdates = [...updates].sort((a, b) => {
+const { latestPosts } = recData;
+const sortedPosts = [...latestPosts].sort((a, b) => {
 	return new Date(b.date).getTime() - new Date(a.date).getTime();
 });
 
-const typeIcons: Record<string, string> = {
-	article: "material-symbols:article-outline-rounded",
-	video: "material-symbols:play-circle-outline-rounded",
-	note: "material-symbols:sticky-note-2-outline-rounded",
-	project: "material-symbols:folder-open-rounded",
-	default: "material-symbols:link-rounded",
-};
 
-const typeLabels: Record<string, string> = {
-	article: "文章",
-	video: "视频",
-	note: "动态",
-	project: "项目",
-	default: "链接",
-};
 ---
 
 <MainGridLayout title={siteConfig.title} description={siteConfig.subtitle} fullWidth={false}>
@@ -188,34 +174,31 @@ const typeLabels: Record<string, string> = {
         
         <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-2xl rounded-none shadow-xl p-4">
             <div class="flex items-center gap-2 mb-4">
-                <Icon name="material-symbols:update-rounded" class="text-lg text-orange-700 dark:text-orange-300" />
-                <h3 class="text-lg font-bold text-orange-700 dark:text-white">最新动态</h3>
+                <Icon name="material-symbols:link-rounded" class="text-lg text-orange-700 dark:text-orange-300" />
+                <h3 class="text-lg font-bold text-orange-700 dark:text-white">最新内容</h3>
             </div>
-            {sortedUpdates.length > 0 ? (
+            {sortedPosts.length > 0 ? (
                 <div class="space-y-3">
-                    {sortedUpdates.slice(0, 3).map((update) => (
+                    {sortedPosts.slice(0, 3).map((post) => (
                         <a
-                            href={update.url}
+                            href={post.url}
                             target="_blank"
                             rel="noopener noreferrer"
                             class="group flex items-start gap-2 p-2 rounded-lg bg-orange-50/50 dark:bg-stone-700/30 hover:bg-orange-100/80 dark:hover:bg-stone-700/50 transition-all duration-200"
                         >
                             <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                <Icon name={typeIcons[update.type] || typeIcons.default} class="text-sm text-white" />
+                                <Icon name="material-symbols:article-outline-rounded" class="text-sm text-white" />
                             </div>
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center gap-1 mb-1">
                                     <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[0.625rem] font-medium bg-orange-200/50 dark:bg-orange-800/30 text-orange-700 dark:text-orange-300">
-                                        {update.platform}
-                                    </span>
-                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[0.625rem] font-medium bg-amber-200/50 dark:bg-amber-800/30 text-amber-700 dark:text-amber-300">
-                                        {typeLabels[update.type] || typeLabels.default}
+                                        {post.platform}
                                     </span>
                                 </div>
-                                <p class="font-bold text-orange-700 dark:text-white text-xs group-hover:text-orange-600 dark:group-hover:text-orange-300 transition-colors line-clamp-2">{update.title}</p>
+                                <p class="font-bold text-orange-700 dark:text-white text-xs group-hover:text-orange-600 dark:group-hover:text-orange-300 transition-colors line-clamp-2">{post.title}</p>
                                 <p class="text-[0.625rem] text-orange-950/40 dark:text-white/40 mt-0.5 flex items-center gap-1">
                                     <Icon name="material-symbols:calendar-today-outline-rounded" class="text-[0.7rem]" />
-                                    {new Date(update.date).toLocaleDateString('zh-CN', { year: 'numeric', month: 'short', day: 'numeric' })}
+                                    {new Date(post.date).toLocaleDateString('zh-CN', { year: 'numeric', month: 'short', day: 'numeric' })}
                                 </p>
                             </div>
                         </a>
@@ -224,11 +207,11 @@ const typeLabels: Record<string, string> = {
             ) : (
                 <div class="text-center py-4 text-orange-950/50 dark:text-white/50">
                     <Icon name="material-symbols:inbox-outline-rounded" class="text-2xl mb-1 opacity-50" />
-                    <p class="text-sm">暂无更新</p>
+                    <p class="text-sm">暂无内容</p>
                 </div>
             )}
-            <a href="/updates/" class="mt-3 inline-flex items-center gap-1 text-xs text-orange-700 dark:text-orange-300 hover:text-orange-600 dark:hover:text-orange-200 transition-colors">
-                查看更多更新
+            <a href="/rec/" class="mt-3 inline-flex items-center gap-1 text-xs text-orange-700 dark:text-orange-300 hover:text-orange-600 dark:hover:text-orange-200 transition-colors">
+                查看更多内容
                 <Icon name="fa6-solid:arrow-right" class="text-[0.625rem]" />
             </a>
         </div>

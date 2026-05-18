@@ -19,22 +19,36 @@
 			"description": "B站个人空间"
 		}
 	],
-	"updates": [
+	"latestPosts": [
 		{
-			"title": "示例更新 - 知乎文章",
+			"title": "示例文章 - 知乎专栏",
 			"platform": "知乎",
 			"url": "https://zhuanlan.zhihu.com/p/example",
 			"date": "2026-05-01",
-			"type": "article",
 			"description": "这是一篇在知乎发布的文章示例，你可以替换为真实的链接。"
 		},
 		{
-			"title": "示例更新 - B站视频",
+			"title": "示例视频 - B站",
 			"platform": "Bilibili",
 			"url": "https://www.bilibili.com/video/example",
 			"date": "2026-04-28",
-			"type": "video",
 			"description": "这是一条在B站发布的视频示例，你可以替换为真实的链接。"
+		}
+	],
+	"tools": [
+		{
+			"name": "Figma",
+			"icon": "fa6-brands:figma",
+			"url": "https://www.figma.com",
+			"description": "在线协作设计工具",
+			"category": "设计工具"
+		},
+		{
+			"name": "Unsplash",
+			"icon": "material-symbols:image-outline-rounded",
+			"url": "https://unsplash.com",
+			"description": "免费高质量图片资源",
+			"category": "资源网站"
 		}
 	]
 }
