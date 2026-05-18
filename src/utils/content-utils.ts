@@ -140,3 +140,179 @@ export async function getNoteCategoryList(): Promise<Category[]> {
 		.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
 		.map((key) => ({ name: key, count: count[key] }));
 }
+
+// ==================== 归档页工具函数 ====================
+
+/** 从原始 markdown body 粗略统计字数（中英文混合） */
+function countWords(body: string): number {
+	if (!body) return 0;
+	// 去除 markdown 语法标记（图片、链接、标题符号、代码块等）
+	const cleaned = body
+		.replace(/```[\s\S]*?```/g, "") // 代码块
+		.replace(/`[^`]+`/g, "") // 行内代码
+		.replace(/!\[.*?\]\(.*?\)/g, "") // 图片
+		.replace(/\[([^\]]*)\]\(.*?\)/g, "$1") // 链接保留文字
+		.replace(/^#{1,6}\s+/gm, "") // 标题标记
+		.replace(/^[-*_]{3,}\s*$/gm, "") // 分割线
+		.replace(/^>\s+/gm, "") // 引用标记
+		.replace(/[*_~]+/g, "") // 斜体粗体标记
+		.replace(/<[^>]+>/g, "") // HTML 标签
+		.replace(/---\ntitle[\s\S]*?---/g, ""); // frontmatter
+
+	// 中文字符数 + 英文单词数
+	const chineseChars = (cleaned.match(/[\u4e00-\u9fff\u3400-\u4dbf]/g) || []).length;
+	const englishWords = cleaned
+		.replace(/[\u4e00-\u9fff\u3400-\u4dbf]/g, " ")
+		.split(/\s+/)
+		.filter((w) => w.length > 0).length;
+
+	return chineseChars + englishWords;
+}
+
+export type ArchiveItem = {
+	id: string;
+	title: string;
+	published: Date;
+	tags: string[];
+	category: string;
+	url: string;
+	type: "post" | "note";
+	words: number;
+};
+
+export type ArchiveMonthGroup = {
+	month: number;
+	items: ArchiveItem[];
+};
+
+export type ArchiveYearGroup = {
+	year: number;
+	months: ArchiveMonthGroup[];
+	postCount: number;
+	noteCount: number;
+};
+
+export type ArchiveStats = {
+	totalWords: number;
+	postCount: number;
+	noteCount: number;
+	totalCount: number;
+	yearsSpan: string;
+	allTags: Tag[];
+	allCategories: Category[];
+};
+
+/** 获取合并后的归档数据（posts + notes），按时间倒序 */
+export async function getArchiveData(): Promise<{
+	groups: ArchiveYearGroup[];
+	stats: ArchiveStats;
+}> {
+	const [posts, notes] = await Promise.all([
+		getCollection("posts", ({ data }) => (import.meta.env.PROD ? data.draft !== true : true)),
+		getCollection("notes", ({ data }) => (import.meta.env.PROD ? data.draft !== true : true)),
+	]);
+
+	// 构建归档条目
+	const items: ArchiveItem[] = [];
+
+	for (const post of posts) {
+		const body = typeof post.body === "string" ? post.body : String(post.body || "");
+		items.push({
+			id: post.id,
+			title: post.data.title,
+			published: new Date(post.data.published),
+			tags: post.data.tags || [],
+			category: post.data.category || "",
+			url: `/posts/${post.id}/`,
+			type: "post",
+			words: countWords(body),
+		});
+	}
+
+	for (const note of notes) {
+		const body = typeof note.body === "string" ? note.body : String(note.body || "");
+		items.push({
+			id: note.id,
+			title: note.data.title || "无标题",
+			published: new Date(note.data.published),
+			tags: note.data.tags || [],
+			category: note.data.category || "",
+			url: `/bits/${note.id}/`,
+			type: "note",
+			words: countWords(body),
+		});
+	}
+
+	// 按时间倒序排序
+	items.sort((a, b) => b.published.getTime() - a.published.getTime());
+
+	// 按年 > 月分组
+	const yearMap = new Map<number, Map<number, ArchiveItem[]>>();
+	for (const item of items) {
+		const year = item.published.getFullYear();
+		const month = item.published.getMonth() + 1;
+		if (!yearMap.has(year)) yearMap.set(year, new Map());
+		const monthMap = yearMap.get(year)!;
+		if (!monthMap.has(month)) monthMap.set(month, []);
+		monthMap.get(month)!.push(item);
+	}
+
+	const groups: ArchiveYearGroup[] = [];
+	for (const [year, monthMap] of yearMap) {
+		const months: ArchiveMonthGroup[] = [];
+		let postCount = 0;
+		let noteCount = 0;
+		for (const [month, monthItems] of monthMap) {
+			months.push({ month, items: monthItems });
+			for (const it of monthItems) {
+				if (it.type === "post") postCount++;
+				else noteCount++;
+			}
+		}
+		months.sort((a, b) => b.month - a.month);
+		groups.push({ year, months, postCount, noteCount });
+	}
+	groups.sort((a, b) => b.year - a.year);
+
+	// 统计
+	const totalWords = items.reduce((sum, it) => sum + it.words, 0);
+	const postCount = items.filter((it) => it.type === "post").length;
+	const noteCount = items.filter((it) => it.type === "note").length;
+
+	const years = groups.map((g) => g.year);
+	const yearsSpan = years.length > 0 ? `${years[years.length - 1]} - ${years[0]}` : "-";
+
+	// 汇总所有标签和分类（posts + notes 合并）
+	const tagCountMap: { [key: string]: number } = {};
+	const catCountMap: { [key: string]: number } = {};
+	const uncategorizedKey = i18n(I18nKey.uncategorized);
+
+	for (const item of items) {
+		for (const tag of item.tags) {
+			tagCountMap[tag] = (tagCountMap[tag] || 0) + 1;
+		}
+		const catName = item.category || uncategorizedKey;
+		catCountMap[catName] = (catCountMap[catName] || 0) + 1;
+	}
+
+	const allTags: Tag[] = Object.keys(tagCountMap)
+		.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
+		.map((key) => ({ name: key, count: tagCountMap[key] }));
+
+	const allCategories: Category[] = Object.keys(catCountMap)
+		.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
+		.map((key) => ({ name: key, count: catCountMap[key] }));
+
+	return {
+		groups,
+		stats: {
+			totalWords,
+			postCount,
+			noteCount,
+			totalCount: postCount + noteCount,
+			yearsSpan,
+			allTags,
+			allCategories,
+		},
+	};
+}

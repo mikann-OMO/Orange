@@ -42,13 +42,6 @@
 			"url": "https://www.figma.com",
 			"description": "在线协作设计工具",
 			"category": "设计工具"
-		},
-		{
-			"name": "Unsplash",
-			"icon": "material-symbols:image-outline-rounded",
-			"url": "https://unsplash.com",
-			"description": "免费高质量图片资源",
-			"category": "资源网站"
 		}
 	]
 }

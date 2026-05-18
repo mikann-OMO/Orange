@@ -240,7 +240,7 @@ const contentColClass = fullWidth
 
 	#main-grid {
 		gap: 0;
-		padding: 0 0 0 0;
+		padding: 0;
 		padding-top: 4px;
 	}
 
@@ -263,21 +263,13 @@ const contentColClass = fullWidth
 	}
 
 	#navbar-wrapper {
-		background: linear-gradient(180deg,
-			#ffedd5 0%,
-			color-mix(in srgb, #ffedd5 95%, transparent) 100%
-		);
-		backdrop-filter: blur(12px);
-		-webkit-backdrop-filter: blur(12px);
-		border-bottom: 1px solid rgba(255, 152, 0, 0.1);
+		background: color-mix(in srgb, var(--card-bg) 92%, transparent);
+		box-shadow: 0 1px 8px var(--shadow-color), 0 0 0 1px var(--card-border);
 	}
 	
 	:global(.dark) #navbar-wrapper {
-		background: linear-gradient(180deg,
-			#292524 0%,
-			color-mix(in srgb, #292524 95%, transparent) 100%
-		);
-		border-bottom-color: rgba(255, 255, 255, 0.05);
+		background: color-mix(in srgb, var(--card-bg) 95%, transparent);
+		box-shadow: 0 1px 8px var(--shadow-color), 0 0 0 1px var(--card-border);
 	}
 }
 

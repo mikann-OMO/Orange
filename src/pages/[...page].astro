@@ -16,7 +16,7 @@ import { PAGE_SIZE } from "@constants/constants";
 import announcement from "@/content/announcement.yaml";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { getSortedPosts } from "@utils/content-utils";
-import recData from "@/data/rec.json";
+import { getFriendLatestPosts } from "@utils/friend-rss";
 
 export const getStaticPaths = (async ({ paginate }) => {
 	const allBlogPosts = await getSortedPosts();
@@ -44,10 +44,7 @@ const lastUpdateDateTime = lastUpdateDate
 		})
 	: "";
 
-const { latestPosts } = recData;
-const sortedPosts = [...latestPosts].sort((a, b) => {
-	return new Date(b.date).getTime() - new Date(a.date).getTime();
-});
+const friendPosts = await getFriendLatestPosts(3);
 
 
 ---
@@ -63,7 +60,7 @@ const sortedPosts = [...latestPosts].sort((a, b) => {
                     <h1 class="text-xl md:text-2xl font-bold mb-1 md:mb-2 text-[var(--accent-text)] dark:text-white">{profileConfig.name}</h1>
                     <p class="text-sm md:text-base text-orange-950/60 dark:text-white/60 mb-3 md:mb-4">{profileConfig.bio}</p>
                     <div class="flex flex-row gap-2 md:gap-4 justify-start">
-                        <a href="https://github.com/mikann-OMO" target="_blank" rel="noopener noreferrer" class="bg-white/30 dark:bg-stone-700/30 backdrop-blur-2xl rounded-none px-3 md:px-4 py-1.5 md:py-2 flex items-center gap-2 text-sm">
+                        <a href="https://github.com/mikann-OMO" target="_blank" rel="noopener noreferrer" class="bg-white/30 dark:bg-stone-700/30 backdrop-blur-2xl rounded-lg px-3 md:px-4 py-1.5 md:py-2 flex items-center gap-2 text-sm">
                             <Icon name="fa6-brands:github" class="text-orange-950/70 dark:text-white/70" />
                             <span class="text-orange-950/70 dark:text-white/70">GitHub</span>
                         </a>
@@ -115,8 +112,8 @@ const sortedPosts = [...latestPosts].sort((a, b) => {
             <FriendsList class="space-y-1" />
         </div>
         
-        <div class="md:hidden grid grid-cols-1 xs:grid-cols-2 gap-3">
-            <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-2xl rounded-none shadow-xl p-3">
+        <div class="md:hidden grid grid-cols-2 gap-3">
+            <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-2xl rounded-none shadow-xl p-3 col-span-2">
                 <div class="flex justify-around items-center">
                     <div class="text-center">
                         <div class="text-lg font-bold text-orange-700 dark:text-white">
@@ -142,7 +139,7 @@ const sortedPosts = [...latestPosts].sort((a, b) => {
                 <Tags class="flex flex-wrap gap-1.5" />
             </div>
             
-            <a href="/about/" class="col-span-1 xs:col-span-2 block w-full py-2.5 px-3 bg-orange-100/50 dark:bg-stone-700/50 hover:bg-orange-100/80 dark:hover:bg-stone-600/80 text-center font-bold text-orange-700 dark:text-white transition text-sm rounded-none">
+            <a href="/about/" class="col-span-2 block w-full py-2.5 px-3 bg-white/10 dark:bg-stone-800/10 backdrop-blur-2xl rounded-none shadow-xl text-center font-bold text-orange-700 dark:text-white transition text-sm">
                 查看个人详情 →
             </a>
         </div>
@@ -175,24 +172,27 @@ const sortedPosts = [...latestPosts].sort((a, b) => {
         <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-2xl rounded-none shadow-xl p-4">
             <div class="flex items-center gap-2 mb-4">
                 <Icon name="material-symbols:link-rounded" class="text-lg text-orange-700 dark:text-orange-300" />
-                <h3 class="text-lg font-bold text-orange-700 dark:text-white">最新内容</h3>
+                <h3 class="text-lg font-bold text-orange-700 dark:text-white">最新客文</h3>
             </div>
-            {sortedPosts.length > 0 ? (
+            {friendPosts.length > 0 ? (
                 <div class="space-y-3">
-                    {sortedPosts.slice(0, 3).map((post) => (
+                    {friendPosts.map((post) => (
                         <a
                             href={post.url}
                             target="_blank"
                             rel="noopener noreferrer"
                             class="group flex items-start gap-2 p-2 rounded-lg bg-orange-50/50 dark:bg-stone-700/30 hover:bg-orange-100/80 dark:hover:bg-stone-700/50 transition-all duration-200"
                         >
-                            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                <Icon name="material-symbols:article-outline-rounded" class="text-sm text-white" />
-                            </div>
+                            <img
+                                src={post.friendlyAvatar}
+                                alt={post.friendlyName}
+                                class="w-8 h-8 rounded-lg object-cover flex-shrink-0 mt-0.5"
+                                loading="lazy"
+                            />
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center gap-1 mb-1">
                                     <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[0.625rem] font-medium bg-orange-200/50 dark:bg-orange-800/30 text-orange-700 dark:text-orange-300">
-                                        {post.platform}
+                                        {post.friendlyName}
                                     </span>
                                 </div>
                                 <p class="font-bold text-orange-700 dark:text-white text-xs group-hover:text-orange-600 dark:group-hover:text-orange-300 transition-colors line-clamp-2">{post.title}</p>
@@ -210,8 +210,8 @@ const sortedPosts = [...latestPosts].sort((a, b) => {
                     <p class="text-sm">暂无内容</p>
                 </div>
             )}
-            <a href="/rec/" class="mt-3 inline-flex items-center gap-1 text-xs text-orange-700 dark:text-orange-300 hover:text-orange-600 dark:hover:text-orange-200 transition-colors">
-                查看更多内容
+            <a href="/friends/" class="mt-3 inline-flex items-center gap-1 text-xs text-orange-700 dark:text-orange-300 hover:text-orange-600 dark:hover:text-orange-200 transition-colors">
+                查看更多客文
                 <Icon name="fa6-solid:arrow-right" class="text-[0.625rem]" />
             </a>
         </div>
@@ -240,92 +240,9 @@ const sortedPosts = [...latestPosts].sort((a, b) => {
     .space-y-4 {
         gap: 12px;
     }
-    
-    .bg-white\/10,
-    .bg-orange-100\/60 {
-        border-radius: 12px;
-        margin: 0;
-        box-shadow: 0 2px 12px color-mix(in srgb, var(--secondary) 8%, transparent);
-        border: 1px solid color-mix(in srgb, var(--primary) 12%, transparent);
-    }
-    
-    :global(.dark) .bg-white\/10,
-    :global(.dark) .bg-orange-100\/60,
-    :global(.dark) .bg-stone-800\/40,
-    :global(.dark) .bg-stone-800\/10 {
-        border-radius: 12px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-    
-    .p-4 {
-        padding: 16px;
-    }
-    
-    .p-3 {
-        padding: 12px;
-    }
-    
-    .grid-cols-1.xs\:grid-cols-2 {
-        gap: 10px;
-    }
-    
-    .text-xl {
-        font-size: 1.125rem;
-    }
-    
-    .text-base {
-        font-size: 0.9375rem;
-    }
-    
-    .text-sm {
-        font-size: 0.8125rem;
-    }
-    
-    .text-xs {
-        font-size: 0.75rem;
-    }
-    
-    .mb-1 {
-        margin-bottom: 4px;
-    }
-    
-    .mb-2 {
-        margin-bottom: 8px;
-    }
-    
-    .mb-3 {
-        margin-bottom: 12px;
-    }
-    
-    .gap-2 {
-        gap: 8px;
-    }
-    
-    .gap-3 {
-        gap: 10px;
-    }
-    
-    .gap-4 {
+
+    .grid-cols-2 {
         gap: 12px;
-    }
-    
-    .border-l-4 {
-        border-left-width: 3px;
-    }
-    
-    .py-2\.5 {
-        padding-top: 10px;
-        padding-bottom: 10px;
-    }
-    
-    .flex-col {
-        gap: 12px;
-    }
-    
-    .flex-col.sm\:flex-row {
-        flex-direction: column;
-        gap: 8px;
     }
 }
 </style>

@@ -179,26 +179,43 @@ const { remarkPluginFrontmatter } = await render(entry);
 @media (max-width: 768px) {
 	.post-card {
 		min-height: auto;
+		border-radius: 0.75rem;
+		border: 1px solid var(--card-border);
+		background: var(--card-bg);
 	}
 
 	.card-overlay {
 		background: linear-gradient(
 			to top,
-			color-mix(in srgb, var(--card-bg) 92%, transparent) 0%,
-			color-mix(in srgb, var(--card-bg) 88%, transparent) 40%,
-			color-mix(in srgb, var(--card-bg) 40%, transparent) 65%,
+			color-mix(in srgb, var(--card-bg) 95%, transparent) 0%,
+			color-mix(in srgb, var(--card-bg) 90%, transparent) 40%,
+			color-mix(in srgb, var(--card-bg) 50%, transparent) 65%,
 			transparent 100%
 		);
 	}
 
 	.card-text {
 		max-width: 100%;
-		padding: 14px 16px;
+		padding: 12px 14px;
 	}
 
 	.title {
-		font-size: 1rem;
-		-webkit-line-clamp: 1;
+		font-size: 0.9375rem;
+		-webkit-line-clamp: 2;
+	}
+
+	.excerpt {
+		font-size: 0.8125rem;
+		line-height: 1.5;
+	}
+
+	.more {
+		font-size: 0.6875rem;
+	}
+
+	.arrow-icon {
+		width: 14px;
+		height: 14px;
 	}
 }
 </style>

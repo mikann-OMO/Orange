@@ -89,18 +89,17 @@ function handleReplySuccess(e) {
 	<div class="card-base !overflow-visible p-3 sm:p-4 border-0 shadow-sm transition-all hover:shadow-md group/msg" style="border-left: 3px solid color-mix(in srgb, var(--primary) 30%, transparent);">
 		<div class="flex gap-3 sm:gap-4">
 			<div class="relative flex-shrink-0 mt-0.5">
-				{#if message.website}
-					<a href={message.website} target="_blank" rel="noopener noreferrer" class="block">
-						<div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl overflow-hidden transition-all duration-300" style="box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 30%, transparent), 0 0 0 3px var(--card-bg);">
-							<img src={message.avatar} alt={message.nickname} class="w-full h-full object-cover transition-transform duration-300 group-hover/msg:scale-105" />
-						</div>
-					</a>
-				{:else}
+			{#if message.website}
+				<a href={message.website} target="_blank" rel="noopener noreferrer" class="block">
 					<div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl overflow-hidden transition-all duration-300" style="box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 30%, transparent), 0 0 0 3px var(--card-bg);">
-						<img src={message.avatar} alt={message.nickname} class="w-full h-full object-cover" />
+						<img src={message.avatar} alt={message.nickname} class="w-full h-full object-cover transition-transform duration-300 group-hover/msg:scale-105" />
 					</div>
-				{/if}
-				<div class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2" style="background: var(--success); border-color: var(--card-bg);"></div>
+				</a>
+			{:else}
+				<div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl overflow-hidden transition-all duration-300" style="box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 30%, transparent), 0 0 0 3px var(--card-bg);">
+					<img src={message.avatar} alt={message.nickname} class="w-full h-full object-cover" />
+				</div>
+			{/if}
 			</div>
 			<div class="flex-1 min-w-0">
 				<div class="flex items-center justify-between gap-2 mb-1 flex-wrap">

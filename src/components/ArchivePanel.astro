@@ -1,62 +1,7 @@
 ---
-import { UNCATEGORIZED } from "@constants/constants";
-import I18nKey from "../i18n/i18nKey";
-import { i18n } from "../i18n/translation";
-import { getSortedPosts } from "../utils/content-utils";
-import { getPostUrlBySlug } from "../utils/url-utils";
+import { getArchiveData } from "../utils/content-utils";
 
-interface Props {
-	keyword?: string;
-	tags?: string[];
-	categories?: string[];
-}
-const { tags, categories } = Astro.props;
-
-let posts = await getSortedPosts();
-
-if (Array.isArray(tags) && tags.length > 0) {
-	posts = posts.filter(
-		(post) =>
-			Array.isArray(post.data.tags) &&
-			post.data.tags.some((tag: string) => tags.includes(tag)),
-	);
-}
-
-if (Array.isArray(categories) && categories.length > 0) {
-	posts = posts.filter(
-		(post) =>
-			(post.data.category && categories.includes(post.data.category)) ||
-			(!post.data.category && categories.includes(UNCATEGORIZED)),
-	);
-}
-
-const groups: { year: number; posts: typeof posts }[] = (() => {
-	const groupedPosts = posts.reduce(
-		(grouped: { [year: number]: typeof posts }, post) => {
-			const year = post.data.published.getFullYear();
-			if (!grouped[year]) {
-				grouped[year] = [];
-			}
-			grouped[year].push(post);
-			return grouped;
-		},
-		{},
-	);
-
-	const groupedPostsArray = Object.keys(groupedPosts).map((key) => ({
-		year: Number.parseInt(key),
-		posts: groupedPosts[Number.parseInt(key)],
-	}));
-
-	groupedPostsArray.sort((a, b) => b.year - a.year);
-	return groupedPostsArray;
-})();
-
-const totalPosts = posts.length;
-const yearsSpan =
-	groups.length > 0
-		? `${groups[groups.length - 1].year} - ${groups[0].year}`
-		: "-";
+const { groups, stats } = await getArchiveData();
 
 function formatDate(date: Date) {
 	const month = (date.getMonth() + 1).toString().padStart(2, "0");
@@ -64,99 +9,359 @@ function formatDate(date: Date) {
 	return `${month}-${day}`;
 }
 
-function formatTag(tag: string[]) {
-	return tag.map((t) => `#${t}`).join(" ");
+function formatWords(words: number): string {
+	if (words >= 10000) {
+		return `${(words / 10000).toFixed(1)}万`;
+	}
+	if (words >= 1000) {
+		return `${(words / 1000).toFixed(1)}k`;
+	}
+	return `${words}`;
 }
+
+const monthNames = ["", "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"];
 ---
 
 <div class="archive-container post-content-animate w-full flex flex-col items-center px-4 md:px-8">
-	<div class="stats-bar flex flex-wrap gap-3 md:gap-6 mb-4 md:mb-6 p-3 md:p-4 rounded-lg bg-orange-50/80 dark:bg-stone-800/50 border border-orange-200/50 dark:border-stone-700/50 w-full max-w-3xl">
-		<div class="stat-item flex items-center gap-2 md:gap-3">
-			<div class="w-8 h-8 md:w-9 md:h-9 rounded-full bg-orange-100/80 dark:bg-stone-600/80 flex items-center justify-center">
-				<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 md:w-4 md:h-4 text-orange-700 dark:text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-					<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
-					<polyline points="14 2 14 8 20 8"/>
-					<line x1="16" y1="13" x2="8" y2="13"/>
-					<line x1="16" y1="17" x2="8" y2="17"/>
-					<line x1="10" y1="9" x2="8" y2="9"/>
-				</svg>
+
+	<!-- 统计卡片栏 -->
+	<div class="stats-bar grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8 w-full max-w-3xl">
+		<!-- 全站字数 -->
+		<div class="stat-card group p-3 md:p-4 rounded-xl bg-gradient-to-br from-amber-50/90 to-orange-50/60 dark:from-stone-800/80 dark:to-stone-700/50 border border-amber-200/60 dark:border-stone-600/50 hover:border-amber-300 dark:hover:border-stone-500 transition-all duration-300 hover:shadow-lg">
+			<div class="flex items-center gap-2.5 mb-2">
+				<div class="w-8 h-8 md:w-9 md:h-9 rounded-lg bg-gradient-to-br from-amber-500 to-orange-400 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300">
+					<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 md:w-4.5 md:h-4.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+						<path d="m15 5 4 4"/>
+					</svg>
+				</div>
+				<span class="text-xs font-medium text-amber-700/80 dark:text-white/60">全站字数</span>
 			</div>
-			<div>
-				<div class="text-lg md:text-xl font-semibold text-orange-950 dark:text-white">{totalPosts}</div>
-				<div class="text-xs text-orange-950/60 dark:text-white/60">篇文章</div>
-			</div>
+			<div class="text-xl md:text-2xl font-bold text-amber-900 dark:text-white tabular-nums">{formatWords(stats.totalWords)}</div>
+			<div class="text-[0.65rem] text-amber-600/50 dark:text-white/40 mt-0.5">约 {stats.totalWords.toLocaleString()} 字</div>
 		</div>
-		<div class="stat-item flex items-center gap-2 md:gap-3">
-			<div class="w-8 h-8 md:w-9 md:h-9 rounded-full bg-orange-100/80 dark:bg-stone-600/80 flex items-center justify-center">
-				<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 md:w-4 md:h-4 text-orange-700 dark:text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-					<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-					<line x1="16" y1="2" x2="16" y2="6"/>
-					<line x1="8" y1="2" x2="8" y2="6"/>
-					<line x1="3" y1="10" x2="21" y2="10"/>
-				</svg>
+
+		<!-- 文章数 -->
+		<div class="stat-card group p-3 md:p-4 rounded-xl bg-gradient-to-br from-orange-50/90 to-rose-50/60 dark:from-stone-800/80 dark:to-stone-700/50 border border-orange-200/60 dark:border-stone-600/50 hover:border-orange-300 dark:hover:border-stone-500 transition-all duration-300 hover:shadow-lg">
+			<div class="flex items-center gap-2.5 mb-2">
+				<div class="w-8 h-8 md:w-9 md:h-9 rounded-lg bg-gradient-to-br from-orange-500 to-rose-400 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300">
+					<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 md:w-4.5 md:h-4.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+						<polyline points="14 2 14 8 20 8"/>
+						<line x1="16" y1="13" x2="8" y2="13"/>
+						<line x1="16" y1="17" x2="8" y2="17"/>
+						<line x1="10" y1="9" x2="8" y2="9"/>
+					</svg>
+				</div>
+				<span class="text-xs font-medium text-orange-700/80 dark:text-white/60">文章</span>
 			</div>
-			<div>
-				<div class="text-lg md:text-xl font-semibold text-orange-950 dark:text-white">{yearsSpan}</div>
-				<div class="text-xs text-orange-950/60 dark:text-white/60">时间跨度</div>
+			<div class="text-xl md:text-2xl font-bold text-orange-900 dark:text-white tabular-nums">{stats.postCount}</div>
+			<div class="text-[0.65rem] text-orange-600/50 dark:text-white/40 mt-0.5">篇</div>
+		</div>
+
+		<!-- 轻读数 -->
+		<div class="stat-card group p-3 md:p-4 rounded-xl bg-gradient-to-br from-amber-50/90 to-yellow-50/60 dark:from-stone-800/80 dark:to-stone-700/50 border border-amber-200/60 dark:border-stone-600/50 hover:border-amber-300 dark:hover:border-stone-500 transition-all duration-300 hover:shadow-lg">
+			<div class="flex items-center gap-2.5 mb-2">
+				<div class="w-8 h-8 md:w-9 md:h-9 rounded-lg bg-gradient-to-br from-amber-500 to-yellow-400 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300">
+					<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 md:w-4.5 md:h-4.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+						<path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+					</svg>
+				</div>
+				<span class="text-xs font-medium text-amber-700/80 dark:text-white/60">轻读</span>
 			</div>
+			<div class="text-xl md:text-2xl font-bold text-amber-900 dark:text-white tabular-nums">{stats.noteCount}</div>
+			<div class="text-[0.65rem] text-amber-600/50 dark:text-white/40 mt-0.5">篇</div>
+		</div>
+
+		<!-- 总计 -->
+		<div class="stat-card group p-3 md:p-4 rounded-xl bg-gradient-to-br from-orange-50/90 to-amber-50/60 dark:from-stone-800/80 dark:to-stone-700/50 border border-orange-200/60 dark:border-stone-600/50 hover:border-orange-300 dark:hover:border-stone-500 transition-all duration-300 hover:shadow-lg">
+			<div class="flex items-center gap-2.5 mb-2">
+				<div class="w-8 h-8 md:w-9 md:h-9 rounded-lg bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300">
+					<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 md:w-4.5 md:h-4.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+						<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+						<line x1="16" y1="2" x2="16" y2="6"/>
+						<line x1="8" y1="2" x2="8" y2="6"/>
+						<line x1="3" y1="10" x2="21" y2="10"/>
+					</svg>
+				</div>
+				<span class="text-xs font-medium text-orange-700/80 dark:text-white/60">总计</span>
+			</div>
+			<div class="text-xl md:text-2xl font-bold text-orange-900 dark:text-white tabular-nums">{stats.totalCount}</div>
+			<div class="text-[0.65rem] text-orange-600/50 dark:text-white/40 mt-0.5">篇 · {stats.yearsSpan}</div>
 		</div>
 	</div>
 
+	<!-- 年份导航 -->
 	{groups.length > 1 && (
-		<div class="year-nav flex flex-wrap gap-1.5 md:gap-2 mb-4 md:mb-6 w-full max-w-3xl">
+		<div class="year-nav flex flex-wrap gap-2 mb-6 md:mb-8 w-full max-w-3xl">
 			{groups.map((group) => (
-				<a href={`#year-${group.year}`} class="year-nav-btn px-2.5 md:px-3 py-1 rounded-full text-xs md:text-sm transition-all duration-200 bg-orange-100/80 dark:bg-stone-700/60 text-orange-800 dark:text-white hover:bg-orange-200 dark:hover:bg-stone-600 hover:text-orange-950 dark:hover:text-white">
-				{group.year}
-			</a>
+				<a href={`#year-${group.year}`} class="year-nav-btn px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 bg-orange-100/80 dark:bg-stone-700/60 text-orange-800 dark:text-white/80 hover:bg-orange-200 dark:hover:bg-stone-600 hover:text-orange-950 dark:hover:text-white hover:shadow-md">
+					{group.year}
+					<span class="ml-1 text-xs opacity-60">{group.postCount + group.noteCount}</span>
+				</a>
 			))}
 		</div>
 	)}
 
-	<div class="timeline-container card-base px-3 md:px-5 py-3 md:py-5 bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden rounded-lg w-full max-w-3xl">
+	<!-- 筛选栏 -->
+	<div class="filter-bar flex items-center gap-2 mb-4 md:mb-6 w-full max-w-3xl">
+		<span class="text-xs text-orange-600/60 dark:text-white/40 font-medium mr-1">筛选</span>
+		<button type="button" data-filter="all" class="filter-btn px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 bg-orange-600 text-white shadow-md">
+			全部 <span class="ml-0.5 opacity-80">{stats.totalCount}</span>
+		</button>
+		<button type="button" data-filter="post" class="filter-btn px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 bg-orange-50/80 dark:bg-stone-700/40 text-orange-700 dark:text-white/70 border border-orange-200/50 dark:border-stone-600/40 hover:bg-orange-100 dark:hover:bg-stone-600">
+			文章 <span class="ml-0.5 opacity-60">{stats.postCount}</span>
+		</button>
+		<button type="button" data-filter="note" class="filter-btn px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 bg-orange-50/80 dark:bg-stone-700/40 text-orange-700 dark:text-white/70 border border-orange-200/50 dark:border-stone-600/40 hover:bg-orange-100 dark:hover:bg-stone-600">
+			轻读 <span class="ml-0.5 opacity-60">{stats.noteCount}</span>
+		</button>
+	</div>
+
+	<!-- 时间线内容 -->
+	<div class="timeline-container card-base px-4 md:px-6 py-4 md:py-6 bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden rounded-xl w-full max-w-3xl">
 		{groups.map((group) => (
-			<div id={`year-${group.year}`} class="year-group scroll-mt-20 md:scroll-mt-24 card-enter">
-				<div class="year-header flex items-center gap-2 md:gap-3 mb-2 md:mb-3 pb-1.5 md:pb-2 border-b border-orange-200/70 dark:border-stone-600/50">
-					<span class="text-lg md:text-xl font-semibold text-orange-950 dark:text-white">{group.year}</span>
-					<span class="text-xs md:text-sm text-orange-950/60 dark:text-white/60">{group.posts.length} {i18n(I18nKey.postsCount)}</span>
+			<div id={`year-${group.year}`} class="year-group scroll-mt-20 md:scroll-mt-24 card-enter mb-8 last:mb-0">
+				<!-- 年份标题 -->
+				<div class="year-header flex items-center gap-3 mb-4 pb-3 border-b border-orange-200/70 dark:border-stone-600/50">
+					<span class="text-2xl md:text-3xl font-bold text-orange-900 dark:text-white">{group.year}</span>
+					<div class="flex items-center gap-2 text-xs">
+						{group.postCount > 0 && (
+							<span class="px-2 py-0.5 rounded-full bg-orange-100/80 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300 font-medium">
+								{group.postCount} 文章
+							</span>
+						)}
+						{group.noteCount > 0 && (
+							<span class="px-2 py-0.5 rounded-full bg-amber-100/80 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 font-medium">
+								{group.noteCount} 轻读
+							</span>
+						)}
+					</div>
 				</div>
-				
-				<div class="posts-list relative pl-4 md:pl-5 border-l border-orange-200 dark:border-stone-600">
-					{group.posts.map((post) => (
-						<a href={getPostUrlBySlug(post.id)} aria-label={post.data.title} class="post-item group flex items-start gap-2 md:gap-3 py-2 md:py-2.5 relative">
-							<div class="timeline-dot absolute left-[-1.1rem] md:left-[-1.35rem] w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-orange-400 dark:bg-stone-400 group-hover:bg-[var(--primary)] transition-colors duration-200"></div>
-							
-							<div class="post-date flex-shrink-0 w-10 md:w-12 text-xs md:text-sm text-orange-950/60 dark:text-white/60 group-hover:text-[var(--accent-text)] dark:group-hover:text-[var(--primary)] transition-colors">
-								{formatDate(post.data.published)}
-							</div>
-							
-							<div class="post-content flex-1 min-w-0">
-								<div class="post-title text-sm md:text-base text-orange-950 dark:text-white group-hover:text-[var(--accent-text)] dark:group-hover:text-[var(--primary)] transition-colors truncate">
-									{post.data.title}
-								</div>
-								{post.data.tags && post.data.tags.length > 0 && (
-									<div class="post-tags mt-0.5 text-xs text-orange-950/50 dark:text-white/50 truncate hidden md:block">
-										{formatTag(post.data.tags)}
+
+				<!-- 按月分组 -->
+				{group.months.map((monthGroup) => (
+					<div class="month-group mb-5 last:mb-0">
+						<!-- 月份标题 -->
+						<div class="month-header flex items-center gap-2 mb-2.5">
+							<div class="w-1 h-4 rounded-full bg-orange-400 dark:bg-orange-300"></div>
+							<span class="text-sm font-semibold text-orange-700 dark:text-white/80">{monthNames[monthGroup.month]}</span>
+							<span class="text-xs text-orange-500/60 dark:text-white/40">({monthGroup.items.length})</span>
+						</div>
+
+						<!-- 内容列表 -->
+						<div class="items-list relative pl-4 md:pl-5 border-l border-orange-200/80 dark:border-stone-600/60">
+							{monthGroup.items.map((item) => (
+								<a href={item.url} aria-label={item.title} data-type={item.type} class="item-entry group flex items-start gap-3 py-2.5 relative hover:bg-orange-50/40 dark:hover:bg-stone-700/20 rounded-lg -ml-4 md:-ml-5 pl-4 md:pl-5 transition-all duration-200">
+								<!-- 时间线圆点 -->
+								<div class:list={[
+									"timeline-dot absolute left-[-0.55rem] md:left-[-0.65rem] top-3.5 w-2.5 h-2.5 rounded-full border-2 border-white dark:border-stone-800 transition-colors duration-200",
+									item.type === "post"
+										? "bg-orange-400 dark:bg-orange-400 group-hover:bg-orange-500 dark:group-hover:bg-orange-300"
+										: "bg-amber-400 dark:bg-amber-400 group-hover:bg-amber-500 dark:group-hover:bg-amber-300",
+								]}></div>
+
+									<!-- 日期 -->
+									<div class="flex-shrink-0 w-11 text-xs text-orange-500/70 dark:text-white/50 group-hover:text-orange-700 dark:group-hover:text-white/80 transition-colors tabular-nums">
+										{formatDate(item.published)}
 									</div>
-								)}
-							</div>
-						</a>
-					))}
-				</div>
+
+									<!-- 内容 -->
+									<div class="flex-1 min-w-0">
+										<div class="flex items-center gap-2">
+											<div class="text-sm md:text-base text-orange-900 dark:text-white/90 group-hover:text-orange-700 dark:group-hover:text-white transition-colors truncate font-medium">
+												{item.title}
+											</div>
+										<!-- 类型标签 -->
+										<span class:list={[
+											"flex-shrink-0 text-[0.6rem] px-1.5 py-0.5 rounded-full font-medium border",
+											item.type === "post"
+												? "bg-orange-50 dark:bg-orange-900/30 text-orange-600 dark:text-orange-300 border-orange-200/60 dark:border-orange-700/40"
+												: "bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-300 border-amber-200/60 dark:border-amber-700/40",
+										]}>
+												{item.type === "post" ? "文章" : "轻读"}
+											</span>
+										</div>
+										{item.tags && item.tags.length > 0 && (
+											<div class="mt-1 text-xs text-orange-500/50 dark:text-white/40 truncate hidden md:block">
+												{item.tags.slice(0, 3).map((t) => `#${t}`).join(" ")}
+											</div>
+										)}
+									</div>
+
+									<!-- 字数 -->
+									{item.words > 0 && (
+										<div class="flex-shrink-0 text-xs text-orange-400/60 dark:text-white/30 tabular-nums hidden sm:block">
+											{formatWords(item.words)}字
+										</div>
+									)}
+								</a>
+							))}
+						</div>
+					</div>
+				))}
 			</div>
 		))}
+
+		{groups.length === 0 && (
+			<div class="text-center py-16 text-orange-950/50 dark:text-white/50">
+				<div class="text-4xl mb-3 opacity-30">📚</div>
+				<div class="text-lg font-medium">暂无内容</div>
+			</div>
+		)}
 	</div>
+
+	<!-- 分类和标签区域 -->
+	{(stats.allCategories.length > 0 || stats.allTags.length > 0) && (
+		<div class="tags-section w-full max-w-3xl mt-6 md:mt-8 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+			<!-- 分类 -->
+			{stats.allCategories.length > 0 && (
+				<div class="card-base p-4 md:p-5 bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl rounded-xl">
+					<div class="flex items-center gap-2 mb-3 pb-2 border-b border-orange-200/70 dark:border-stone-600/50">
+						<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-600 dark:text-orange-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/>
+							<path d="M7 7h.01"/>
+						</svg>
+						<span class="text-sm font-bold text-orange-800 dark:text-white">分类</span>
+						<span class="text-xs text-orange-500/60 dark:text-white/40">({stats.allCategories.length})</span>
+					</div>
+					<div class="flex flex-wrap gap-2">
+						{stats.allCategories.map((cat) => (
+							<a
+								href={`/archive/category/${encodeURIComponent(cat.name)}`}
+								class="px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 bg-orange-50/80 dark:bg-stone-700/40 text-orange-700 dark:text-white/70 border border-orange-200/50 dark:border-stone-600/40 hover:bg-orange-100 dark:hover:bg-stone-600 hover:border-orange-300 dark:hover:border-stone-500 hover:shadow-sm"
+							>
+								{cat.name}
+								<span class="ml-1 opacity-50">{cat.count}</span>
+							</a>
+						))}
+					</div>
+				</div>
+			)}
+
+			<!-- 标签 -->
+			{stats.allTags.length > 0 && (
+				<div class="card-base p-4 md:p-5 bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl rounded-xl">
+					<div class="flex items-center gap-2 mb-3 pb-2 border-b border-orange-200/70 dark:border-stone-600/50">
+						<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-600 dark:text-orange-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/>
+							<path d="M7 7h.01"/>
+						</svg>
+						<span class="text-sm font-bold text-orange-800 dark:text-white">标签</span>
+						<span class="text-xs text-orange-500/60 dark:text-white/40">({stats.allTags.length})</span>
+					</div>
+					<div class="flex flex-wrap gap-2">
+						{stats.allTags.map((tag) => (
+							<a
+								href={`/archive/tag/${tag.name}`}
+								class="px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 bg-orange-50/80 dark:bg-stone-700/40 text-orange-700 dark:text-white/70 border border-orange-200/50 dark:border-stone-600/40 hover:bg-orange-100 dark:hover:bg-stone-600 hover:border-orange-300 dark:hover:border-stone-500 hover:shadow-sm"
+							>
+								#{tag.name}
+								<span class="ml-1 opacity-50">{tag.count}</span>
+							</a>
+						))}
+					</div>
+				</div>
+			)}
+		</div>
+	)}
 </div>
+
+<script>
+	function initArchiveFilter() {
+		const filterBtns = document.querySelectorAll('.filter-btn');
+		const entries = document.querySelectorAll('.item-entry');
+		const monthGroups = document.querySelectorAll('.month-group');
+		const yearGroups = document.querySelectorAll('.year-group');
+
+		if (!filterBtns.length) return;
+
+		function setActive(btn: Element) {
+			filterBtns.forEach((b) => {
+				b.classList.remove('bg-orange-600', 'text-white', 'shadow-md', 'border-transparent');
+				b.classList.add('bg-orange-50/80', 'dark:bg-stone-700/40', 'text-orange-700', 'dark:text-white/70', 'border-orange-200/50', 'dark:border-stone-600/40');
+			});
+			btn.classList.remove('bg-orange-50/80', 'dark:bg-stone-700/40', 'text-orange-700', 'dark:text-white/70', 'border-orange-200/50', 'dark:border-stone-600/40');
+			btn.classList.add('bg-orange-600', 'text-white', 'shadow-md', 'border-transparent');
+		}
+
+		function applyFilter(type: string) {
+			entries.forEach((entry) => {
+				const el = entry as HTMLElement;
+				if (type === 'all' || el.dataset.type === type) {
+					el.style.display = '';
+				} else {
+					el.style.display = 'none';
+				}
+			});
+
+			monthGroups.forEach((mg) => {
+				const visibleItems = mg.querySelectorAll('.item-entry:not([style*="display: none"])');
+				(mg as HTMLElement).style.display = visibleItems.length > 0 ? '' : 'none';
+			});
+
+			yearGroups.forEach((yg) => {
+				const visibleMonths = yg.querySelectorAll('.month-group:not([style*="display: none"])');
+				(yg as HTMLElement).style.display = visibleMonths.length > 0 ? '' : 'none';
+			});
+		}
+
+		filterBtns.forEach((btn) => {
+			btn.addEventListener('click', () => {
+				const filterType = (btn as HTMLElement).dataset.filter || 'all';
+				setActive(btn);
+				applyFilter(filterType);
+			});
+		});
+	}
+
+	document.addEventListener('astro:page-load', initArchiveFilter);
+	initArchiveFilter();
+</script>
 
 <style>
 	.year-nav-btn {
 		scroll-behavior: smooth;
 	}
-	
+
+	.stat-card {
+		position: relative;
+		overflow: hidden;
+	}
+
+	.stat-card::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		right: 0;
+		width: 60px;
+		height: 60px;
+		border-radius: 50%;
+		opacity: 0.08;
+		transform: translate(20px, -20px);
+		transition: opacity 0.3s;
+	}
+
+	.stat-card:nth-child(1)::before { background: linear-gradient(135deg, #f59e0b, #f97316); }
+	.stat-card:nth-child(2)::before { background: linear-gradient(135deg, #f97316, #e11d48); }
+	.stat-card:nth-child(3)::before { background: linear-gradient(135deg, #f59e0b, #eab308); }
+	.stat-card:nth-child(4)::before { background: linear-gradient(135deg, #f97316, #f59e0b); }
+
+	.stat-card:hover::before {
+		opacity: 0.15;
+	}
+
 	@media (prefers-reduced-motion: reduce) {
 		.year-nav-btn,
-		.post-item,
-		.timeline-dot {
+		.item-entry,
+		.timeline-dot,
+		.stat-card,
+		.stat-card::before {
 			transition: none;
+		}
+
+		.group-hover\:scale-110 {
+			transform: none;
 		}
 	}
 </style>

@@ -298,12 +298,12 @@ img[src]:not([src=""]) {
 	--btn-regular-bg: rgba(255, 152, 0, 0.8);
 	--btn-regular-bg-hover: rgba(255, 152, 0, 1);
 	--card-border: rgba(0, 0, 0, 0.06);
-	--card-bg: #ffffff;
+	--card-bg: #fefcf9;
 	--surface: #fff8f0;
 	--surface-hover: rgba(255, 152, 0, 0.05);
 	--surface-active: rgba(255, 152, 0, 0.10);
 	--divider: rgba(0, 0, 0, 0.06);
-	--icon-bg: rgba(255, 255, 255, 0.6);
+	--icon-bg: rgba(254, 252, 249, 0.6);
 	--icon-text: #1a1816;
 	--shadow-color: rgba(0, 0, 0, 0.04);
 	--success: #16a34a;
@@ -380,7 +380,7 @@ img[src]:not([src=""]) {
 	box-shadow: 0 4px 20px var(--shadow-color);
 }
 
-/* 移动端禁用 backdrop-filter 以提升性能 */
+/* 移动端：禁用 backdrop-filter，用暖色实底 + 阴影重建 PC 端的层次感 */
 @media (max-width: 768px) {
 	.backdrop-blur,
 	.backdrop-blur-sm,
@@ -392,15 +392,22 @@ img[src]:not([src=""]) {
 		backdrop-filter: none !important;
 		-webkit-backdrop-filter: none !important;
 	}
-	
-	/* 为需要 backdrop-filter 的元素添加背景色替代 */
+
+	/* 所有带 backdrop-blur 的容器：用实底暖色 + 阴影 + 圆角 + 边框替代玻璃态 */
 	[class*="backdrop-blur"] {
-		background-color: color-mix(in srgb, var(--card-bg) 95%, transparent) !important;
+		background-color: var(--surface) !important;
+		border-radius: 1rem !important;
+		box-shadow: 0 2px 12px var(--shadow-color), 0 0 0 1px var(--card-border) !important;
 	}
-	
+
 	/* 移动端禁用 background-attachment: fixed 以提升性能 */
 	[style*="background-attachment: fixed"] {
 		background-attachment: scroll !important;
+	}
+
+	/* 移动端全局卡片样式：所有可交互元素统一圆角 + 微阴影 */
+	a, button {
+		-webkit-tap-highlight-color: transparent;
 	}
 }
 

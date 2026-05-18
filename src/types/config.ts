@@ -73,7 +73,7 @@ export enum LinkPreset {
 	Friends = 3, // 友链页
 	Notes = 4, // 笔记页
 	Works = 5, // 作品页
-	Rec = 6, // 轻连页
+	Rec = 6, // 传送页
 }
 
 /**
