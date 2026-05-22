@@ -19,22 +19,7 @@
 			"description": "B站个人空间"
 		}
 	],
-	"latestPosts": [
-		{
-			"title": "示例文章 - 知乎专栏",
-			"platform": "知乎",
-			"url": "https://zhuanlan.zhihu.com/p/example",
-			"date": "2026-05-01",
-			"description": "这是一篇在知乎发布的文章示例，你可以替换为真实的链接。"
-		},
-		{
-			"title": "示例视频 - B站",
-			"platform": "Bilibili",
-			"url": "https://www.bilibili.com/video/example",
-			"date": "2026-04-28",
-			"description": "这是一条在B站发布的视频示例，你可以替换为真实的链接。"
-		}
-	],
+	"latestPosts": [],
 	"tools": [
 		{
 			"name": "Figma",

@@ -28,38 +28,6 @@ export function getPostUrlBySlug(slug: string): string {
 }
 
 /**
- * Generate URL for a note by its slug
- */
-export function getNoteUrlBySlug(slug: string): string {
-	return url(`/bits/${slug}/`);
-}
-
-/**
- * Generate URL for a note tag archive page
- */
-export function getNoteTagUrl(tag: string): string {
-	if (!tag) return url("/bits/tag/");
-
-	const encodedTag = encodePathSegment(tag);
-	return url(`/bits/tag/${encodedTag}/`);
-}
-
-/**
- * Generate URL for a note category archive page
- */
-export function getNoteCategoryUrl(category: string): string {
-	if (!category) return url("/bits/category/");
-
-	const trimmedCategory = category.trim();
-	if (trimmedCategory === i18n(i18nKey.uncategorized)) {
-		return url("/bits/category/uncategorized/");
-	}
-
-	const encodedCategory = encodePathSegment(trimmedCategory);
-	return url(`/bits/category/${encodedCategory}/`);
-}
-
-/**
  * Generate URL for a tag archive page
  */
 export function getTagUrl(tag: string): string {

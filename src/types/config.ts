@@ -160,33 +160,3 @@ export type LIGHT_DARK_MODE =
 	| typeof LIGHT_MODE // 亮色模式
 	| typeof DARK_MODE // 暗色模式
 	| typeof AUTO_MODE; // 自动模式
-
-/**
- * 博客文章数据类型
- */
-export type BlogPostData = {
-	// 文章内容
-	body: string;
-	// 文章标题
-	title: string;
-	// 发布日期
-	published: Date;
-	// 文章描述
-	description: string;
-	// 标签数组
-	tags: string[];
-	// 是否为草稿
-	draft?: boolean;
-	// 文章封面图
-	image?: string;
-	// 文章分类
-	category?: string;
-	// 上一篇文章标题
-	prevTitle?: string;
-	// 上一篇文章 slug
-	prevSlug?: string;
-	// 下一篇文章标题
-	nextTitle?: string;
-	// 下一篇文章 slug
-	nextSlug?: string;
-};
