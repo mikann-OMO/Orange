@@ -35,7 +35,6 @@
 			);
 		}
 
-		// 移动端跳过卡片入场动画，减少开销
 		if (window.innerWidth <= 768) return;
 
 		const cards = document.querySelectorAll(
@@ -67,7 +66,6 @@
 			{ threshold: 0.05, rootMargin: "50px" },
 		);
 
-		// 只观察前 10 个卡片
 		const limit = Math.min(cards.length, 10);
 		for (let i = 0; i < limit; i++) {
 			cardObserver.observe(cards[i]);

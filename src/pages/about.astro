@@ -21,9 +21,7 @@ if (!aboutPost) {
 const { Content } = await render(aboutPost);
 ---
 <MainGridLayout title={i18n(I18nKey.about)} description={i18n(I18nKey.about)}>
-    <!-- 移动端布局 -->
     <div class="md:hidden space-y-3 post-content-animate">
-        <!-- 用户身份卡片 -->
         <div class="mobile-profile-card">
             <div class="flex items-center gap-3">
                 <div class="avatar-wrapper">
@@ -50,7 +48,6 @@ const { Content } = await render(aboutPost);
         </div>
     </div>
     
-    <!-- 桌面端布局 -->
     <div class="hidden md:block desktop-profile-card mb-4 md:mb-6 card-enter backdrop-blur-2xl shadow-xl">
         <div class="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-6">
             <div class="flex-shrink-0">
@@ -71,7 +68,6 @@ const { Content } = await render(aboutPost);
         </div>
     </div>
     
-    <!-- 关于我内容 -->
     <div class="about-content-card card-enter">
         <div class="content-header">
             <h2 class="header-title">关于我</h2>
@@ -83,15 +79,12 @@ const { Content } = await render(aboutPost);
         </div>
     </div>
     
-    <!-- 友链卡片 - 移动端 -->
     <div class="mobile-friends-card md:hidden">
         <h3 class="card-title">友链</h3>
         <FriendsList class="friends-list" />
     </div>
     
-    <!-- 右侧边栏 - 桌面端 -->
     <div slot="sidebar" class="hidden md:block space-y-6">
-        <!-- 友链信息卡 -->
         <div class="desktop-friend-info-card">
             <h3 class="sidebar-title">我的友链</h3>
             <div class="friend-info-content">
@@ -191,7 +184,6 @@ const { Content } = await render(aboutPost);
     flex-shrink: 0;
 }
 
-/* 移动端样式 */
 .mobile-profile-card {
     background: rgba(255, 248, 240, 0.95);
     border-radius: 0;
@@ -349,7 +341,6 @@ const { Content } = await render(aboutPost);
     padding: 16px;
 }
 
-/* 桌面端样式 */
 .desktop-profile-card {
     background: rgba(255, 248, 240, 0.1);
     backdrop-filter: blur(16px);
@@ -437,7 +428,6 @@ const { Content } = await render(aboutPost);
 }
 
 .truncate {
-    /* 移除省略号效果，确保完整显示 */
     overflow: visible;
     text-overflow: clip;
     white-space: normal;
@@ -498,7 +488,6 @@ const { Content } = await render(aboutPost);
     border-bottom-color: rgba(255, 255, 255, 0.1);
 }
 
-/* 移动端友链列表样式 */
 @media (max-width: 768px) {
     .mobile-friends-card :global(.friends-list) {
         display: flex;

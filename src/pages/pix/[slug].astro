@@ -8,7 +8,6 @@ import { Icon } from "astro-icon/components";
 import ImageWrapper from "@components/misc/ImageWrapper.astro";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 
-// 图册页面专用公告配置
 import picturesAnnouncement from "@/content/exhibition-announcement.yaml";
 
 interface AnnouncementConfig {
@@ -31,7 +30,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
 		}));
 };
 
-// 预渲染为静态HTML
 export const prerender = true;
 
 interface Props {
@@ -42,7 +40,6 @@ const albumName: string = album.data.dir;
 const title: string = album.data.title || album.id;
 const description: string = album.data.description || "相册";
 
-// 读取原始 Markdown 文件内容
 function getRawMarkdownContent(slug: string): string | null {
 	const projectRoot = path.resolve(process.cwd());
 	const exhibitionDir = path.join(projectRoot, "src/content/pix");
@@ -67,15 +64,12 @@ interface ArtistGroup {
 	images: { src: string; alt: string; width?: number; height?: number }[];
 }
 
-// 声明艺术家分组变量
 let artistGroups: ArtistGroup[] = [];
 
-// 从 Markdown 内容中按 ## 标题分组提取图片
 function extractImagesByArtistFromMarkdown(): ArtistGroup[] {
 	const groups: ArtistGroup[] = [];
 	if (!rawMarkdown) return groups;
 
-	// 移除 frontmatter 部分
 	let content = rawMarkdown;
 	const frontmatterMatch = rawMarkdown.match(/^---[\s\S]*?---/);
 	if (frontmatterMatch) {
@@ -84,17 +78,13 @@ function extractImagesByArtistFromMarkdown(): ArtistGroup[] {
 
 	const lines = content.split("\n");
 
-	// 正则匹配 http/https 开头的图片 URL
 	const urlRegex = /^(https?:\/\/[^\s]+\.(jpg|jpeg|png|gif|webp|avif))$/i;
 
-	// 正则匹配 Markdown 图片语法 ![alt](url)
 	const markdownImageRegex =
 		/!\[.*?\]\((https?:\/\/[^\s]+\.(jpg|jpeg|png|gif|webp|avif))\)/gi;
 
-	// 正则匹配二级标题 ## 作为画师名称
 	const headingRegex = /^##\s+(.+)$/;
 
-	// 初始画师名称从 tags 中获取（tags[1] 是画师）
 	let initialArtistName = "未知画师";
 	if (album.data.tags && album.data.tags.length >= 2) {
 		initialArtistName = album.data.tags[1];
@@ -102,25 +92,20 @@ function extractImagesByArtistFromMarkdown(): ArtistGroup[] {
 	let currentArtistName = initialArtistName;
 	let currentImages: ArtistGroup["images"] = [];
 
-	// 检查每行
 	for (const line of lines) {
 		const trimmedLine = line.trim();
 		if (!trimmedLine) continue;
 
-		// 检查是否是二级标题
 		const headingMatch = trimmedLine.match(headingRegex);
 		if (headingMatch) {
-			// 如果已有图片，保存当前画师组
 			if (currentImages.length > 0) {
 				groups.push({ name: currentArtistName, images: currentImages });
 			}
-			// 开始新的画师组
 			currentArtistName = headingMatch[1];
 			currentImages = [];
 			continue;
 		}
 
-		// 尝试匹配完整的 URL 行
 		const urlMatch = trimmedLine.match(urlRegex);
 		if (urlMatch) {
 			currentImages.push({
@@ -130,7 +115,6 @@ function extractImagesByArtistFromMarkdown(): ArtistGroup[] {
 			continue;
 		}
 
-		// 尝试匹配 Markdown 图片语法
 		let match: RegExpExecArray | null = markdownImageRegex.exec(trimmedLine);
 		while (match !== null) {
 			currentImages.push({
@@ -141,14 +125,11 @@ function extractImagesByArtistFromMarkdown(): ArtistGroup[] {
 		}
 	}
 
-	// 保存最后一个画师组
 	if (currentImages.length > 0) {
 		groups.push({ name: currentArtistName, images: currentImages });
 	}
 
-	// 如果没有找到任何画师标题，返回一个默认组
 	if (groups.length === 0) {
-		// 简单提取所有图片
 		const allUrls: string[] = [];
 		for (const line of lines) {
 			const trimmedLine = line.trim();
@@ -175,14 +156,11 @@ function extractImagesByArtistFromMarkdown(): ArtistGroup[] {
 	return groups;
 }
 
-// 获取 Markdown 中的图片
 function getImagesFromMarkdown(): ArtistGroup[] {
 	return extractImagesByArtistFromMarkdown();
 }
 
-// 获取配置的图片（优先使用YAML配置的远程图片）
 function getConfiguredImages(): ArtistGroup[] {
-	// 从 tags 中获取画师名称（tags[1] 是画师）
 	let artistName = "酸素海豹";
 	if (album.data.tags && album.data.tags.length >= 2) {
 		artistName = album.data.tags[1];
@@ -196,7 +174,6 @@ function getConfiguredImages(): ArtistGroup[] {
 	return [{ name: artistName, images }];
 }
 
-// 获取本地图片（备用方案）
 function getLocalImagesByArtist(dir: string): ArtistGroup[] {
 	const exhibitionImages = import.meta.glob<{ default: ImageMetadata }>(
 		"../../content/pix/**/*.{jpg,jpeg,png,gif,webp}",
@@ -254,7 +231,6 @@ const totalImages = artistGroups.reduce(
 
 <MainGridLayout title={title} description={description} showAnnouncement={typedPicturesAnnouncement.enabled} announcementConfig={typedPicturesAnnouncement}>
 	<div class="space-y-6 post-content-animate">
-		<!-- 顶部标题栏 - 简洁版本 -->
 		<div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden">
 			<div class="bg-orange-100/80 dark:bg-stone-700/70 backdrop-blur-3xl border-l-4 border-orange-700 p-4 flex items-center justify-between">
 				<h1 class="text-xl font-bold text-orange-700 dark:text-white">{title}</h1>
@@ -264,10 +240,8 @@ const totalImages = artistGroups.reduce(
 			</div>
 		</div>
 
-		<!-- 画师作品区 -->
 		{artistGroups.map((artist: ArtistGroup, index: number) => (
 			<div id={`artist-${index}`} class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden scroll-mt-24 card-enter">
-				<!-- 画师标题栏 -->
 				<div class="bg-orange-100/80 dark:bg-stone-700/70 backdrop-blur-3xl border-l-4 border-orange-700 p-4">
 					<div class="flex items-center gap-3">
 						<div class="w-8 h-8 rounded-full bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center text-white font-bold text-sm">
@@ -277,7 +251,6 @@ const totalImages = artistGroups.reduce(
 					</div>
 				</div>
 				
-				<!-- 图片瀑布流 -->
 				<div class="p-4 md:p-6">
 					<div class="gallery gallery-waterfall columns-2 md:columns-3">
 						{artist.images.map(
@@ -315,7 +288,6 @@ const totalImages = artistGroups.reduce(
 				</div>
 			))}
 
-		<!-- 空状态 -->
 		{artistGroups.length === 0 && (
 			<div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden">
 				<div class="bg-orange-100/80 dark:bg-stone-700/70 backdrop-blur-3xl border-l-4 border-orange-700 p-4">
@@ -329,9 +301,7 @@ const totalImages = artistGroups.reduce(
 		)}
 	</div>
 
-	<!-- 右侧边栏 -->
 	<div slot="sidebar" class="space-y-6">
-		<!-- 统计信息 -->
 		<div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden">
 			<div class="bg-orange-100/80 dark:bg-stone-700/70 backdrop-blur-3xl border-l-4 border-orange-700 p-4">
 				<h3 class="text-base font-bold text-orange-700 dark:text-white">统计</h3>
@@ -358,7 +328,6 @@ const totalImages = artistGroups.reduce(
 			</div>
 		</div>
 
-		<!-- 画师列表 -->
 		{artistGroups.length > 0 && (
 			<div class="bg-orange-100/60 dark:bg-stone-800/40 backdrop-blur-2xl shadow-xl overflow-hidden">
 				<div class="bg-orange-100/80 dark:bg-stone-700/70 backdrop-blur-3xl border-l-4 border-orange-700 p-4">

@@ -23,7 +23,6 @@ import PageProgress from "@components/control/PageProgress.astro";
 import SpeedInsights from "@vercel/speed-insights/astro";
 import Analytics from "@vercel/analytics/astro";
 
-// 自托管字体优化 - 仅加载实际使用的字重
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/700.css";
 import "@fontsource-variable/jetbrains-mono";
@@ -62,7 +61,6 @@ if (title) {
 const favicons: Favicon[] =
 	siteConfig.favicon.length > 0 ? siteConfig.favicon : defaultFavicons;
 
-// const siteLang = siteConfig.lang.replace('_', '-')
 if (!lang) {
 	lang = `${siteConfig.lang}`;
 }
@@ -137,9 +135,7 @@ const jsonLd = {
 ---
 
 <!DOCTYPE html>
-<!-- Set the theme before the page is rendered to avoid a flash -->
 <script is:inline define:vars={{DEFAULT_THEME, LIGHT_MODE, DARK_MODE, AUTO_MODE, BANNER_HEIGHT_EXTEND, PAGE_WIDTH, configHue}}>
-	// Load the theme from local storage
 	const theme = localStorage.getItem('theme') || DEFAULT_THEME;
 	switch (theme) {
 		case LIGHT_MODE:
@@ -157,7 +153,6 @@ const jsonLd = {
 			break;
 	}
 
-	// Load the hue from local storage
 	const hue = localStorage.getItem('hue') || configHue;
 	document.documentElement.style.setProperty('--hue', hue);
 
@@ -184,17 +179,12 @@ const jsonLd = {
 <html lang={siteLang} class="text-[14px] md:text-[16px]">
 	<head>
 		
-		<!-- 性能优化：尽早设置字符集 -->
 		<meta charset="UTF-8" />
 		<meta name="color-scheme" content="light dark" />
-		<!-- 预连接关键外部资源 -->
 		<link rel="dns-prefetch" href="//vercel.live">
-		<!-- 性能优化：优化视口设置，减少布局偏移 -->
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-		<!-- 性能优化：设置主题色 -->
 		<meta name="theme-color" content="#ff9800">
 
-		<!-- 性能优化：移动端优化 -->
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 		<meta name="mobile-web-app-capable" content="yes">
@@ -209,7 +199,6 @@ const jsonLd = {
 			<meta name="keywords" content={keywords.join(', ')}>
 		)}
 
-		<!-- Open Graph Meta Tags -->
 		<meta property="og:site_name" content={siteConfig.title}>
 		<meta property="og:url" content={ogUrl}>
 		<meta property="og:title" content={pageTitle}>
@@ -237,7 +226,6 @@ const jsonLd = {
 			<meta property="article:tag" content={tag}>
 		))}
 
-		<!-- Twitter Card Meta Tags -->
 		<meta name="twitter:card" content="summary_large_image">
 		<meta property="twitter:url" content={ogUrl}>
 		<meta name="twitter:title" content={pageTitle}>
@@ -247,10 +235,8 @@ const jsonLd = {
 		<meta name="twitter:site" content="@YueOrange12019">
 		<meta name="twitter:creator" content="@YueOrange12019">
 
-		<!-- Canonical URL -->
 		<link rel="canonical" href={canonicalHref}>
 
-		<!-- Structured Data (JSON-LD) -->
 		<script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
 
 		<meta name="generator" content={Astro.generator} />
@@ -267,26 +253,23 @@ const jsonLd = {
 			configHue,
 			'page-width': `${PAGE_WIDTH}rem`,
 			'primary': '#ff9800',
-		}}></style> <!-- defines global css variables -->
+		}}></style>
 
 		<ClientRouter />
 		<slot name="head"></slot>
 
 		<link rel="alternate" type="application/rss+xml" title={profileConfig.name} href={`${Astro.site}rss.xml`}/>
 		
-		<!-- 防止页面闪烁：设置初始背景色和过渡背景 -->
 		<style is:inline>
 			html.loaded { 
 				visibility: visible; 
 			}
-			/* View Transitions 过渡期间保持背景色 */
 			::view-transition-old(root),
 			::view-transition-new(root) {
 				background-color: var(--page-bg);
 			}
 		</style>
 	</head>
-	<!-- 性能优化：减少不必要的触摸事件延迟 -->
 	<body class:list={["min-h-screen min-h-full", {"lg:is-home": isHomePage, "enable-banner": enableBanner}]}
 		  style="-webkit-tap-highlight-color: transparent; overflow-y: auto;"
 	>
@@ -296,13 +279,11 @@ const jsonLd = {
 		<BackToTop />
 		<SpeedInsights />
 		<Analytics />
-		<!-- 页面加载完成后显示内容 -->
 		<script is:inline>
 			requestAnimationFrame(() => {
 				document.documentElement.classList.add('loaded');
 			});
 		</script>
-		<!-- View Transitions 主题和动画处理 -->
 		<script src="../scripts/view-transitions.ts"></script>
 	</body>
 </html>
@@ -333,7 +314,6 @@ const jsonLd = {
 	.navbar-hidden {
 		@apply hidden
 	}
-	/* 移动端背景 */
 	@media (max-width: 768px) {
 		body {
 			background-color: var(--page-bg);
@@ -343,7 +323,6 @@ const jsonLd = {
 
 
 
-/* 减少点击延迟 - 仅应用于交互元素 */
 button, a, [role="button"], [role="link"] {
 	touch-action: manipulation;
 	-webkit-tap-highlight-color: transparent;

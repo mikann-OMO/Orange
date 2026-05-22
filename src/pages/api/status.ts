@@ -21,7 +21,6 @@ async function checkKv(): Promise<CheckResult> {
 			url: process.env.KV_REST_API_URL,
 			token: process.env.KV_REST_API_TOKEN,
 		});
-		// A lightweight read to validate credentials/connectivity.
 		await kv.get("healthcheck");
 		return { ok: true };
 	} catch (e) {
@@ -45,9 +44,7 @@ async function checkRedis(): Promise<CheckResult> {
 	} finally {
 		try {
 			redis.disconnect();
-		} catch {
-			// ignore
-		}
+		} catch {}
 	}
 }
 
@@ -57,7 +54,6 @@ export const GET: APIRoute = async () => {
 	);
 	const redisEnvPresent = !!process.env.REDIS_URL;
 
-	// Mirror your storage selection precedence: KV > Redis > local file
 	const chosenStorage = kvEnvPresent
 		? "kv"
 		: redisEnvPresent

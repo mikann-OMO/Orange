@@ -23,13 +23,11 @@ export const getStaticPaths = (async ({ paginate }) => {
 	return paginate(allBlogPosts, { pageSize: PAGE_SIZE });
 }) satisfies GetStaticPaths;
 
-// 预渲染为静态HTML
 export const prerender = true;
 
 const { page } = Astro.props;
 const latestPost = page.data[0];
 
-// 以最新文章的 published（北京时间0点）作为上次更新时间
 const publishedDate = latestPost ? new Date(latestPost.data.published) : null;
 const lastUpdateDate = publishedDate
 	? new Date(Date.UTC(publishedDate.getUTCFullYear(), publishedDate.getUTCMonth(), publishedDate.getUTCDate(), -8, 0, 0))

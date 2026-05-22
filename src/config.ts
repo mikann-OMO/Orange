@@ -1,8 +1,3 @@
-/**
- * 网站配置文件
- * 包含网站的基本信息、导航栏、个人资料和许可证配置
- */
-
 import type {
 	LicenseConfig,
 	NavBarConfig,

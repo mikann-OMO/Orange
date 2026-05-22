@@ -78,7 +78,6 @@ const copyFriendData = JSON.stringify(
 	</div>
 
 	<div class="friends-grid">
-		<!-- 个人友链卡片 -->
 		<div class="friend-card-wrapper">
 			<div class="apply-friend-card" data-rarity="legendary" style="--rarity-color: var(--primary)">
 				<div class="card-inner">
@@ -156,9 +155,8 @@ const copyFriendData = JSON.stringify(
 				}).catch(() => {
 					button.classList.remove('copying');
 				});
-			} else {
-				// Fallback: legacy execCommand
-				const textarea = document.createElement('textarea');
+		} else {
+			const textarea = document.createElement('textarea');
 				textarea.value = text;
 				textarea.style.position = 'fixed';
 				textarea.style.opacity = '0';
@@ -399,7 +397,6 @@ const copyFriendData = JSON.stringify(
     }
 }
 
-/* ===== 申请友链卡片样式 ===== */
 .apply-friend-card {
     width: 130px;
     height: 480px;
@@ -665,7 +662,6 @@ const copyFriendData = JSON.stringify(
     opacity: 1;
 }
 
-/* ===== 移动端适配 ===== */
 @media (max-width: 768px) {
     .apply-friend-card {
         width: 100%;
@@ -806,7 +802,6 @@ const copyFriendData = JSON.stringify(
     }
 }
 
-/* ===== 超小屏幕优化 ===== */
 @media (max-width: 480px) {
     .apply-friend-card .card-inner {
         padding: 10px;

@@ -55,11 +55,9 @@ $effect(() => {
 
 	async function init() {
 		try {
-			// 首先显示 localStorage 中的缓存值
 			count = getLocalCount(getPageKey());
 			loading = false;
 
-			// 只在需要追踪时才调用 API（5分钟一次）
 			if (shouldTrack()) {
 				const result = await incrementPageVisitorCount(slug);
 				if (result.success) {
@@ -67,12 +65,10 @@ $effect(() => {
 					localStorage.setItem(getPageKey(), count.toString());
 					markTracked();
 				} else {
-					// API 失败，使用本地计数
 					count = incrementLocalCount(getPageKey());
 					markTracked();
 				}
 			}
-			// 如果不需要追踪，直接使用 localStorage 缓存值，不调用 API
 		} catch (e) {
 			console.error("Page view count error:", e);
 			if (count === 0) {

@@ -56,13 +56,11 @@ const nextUrl = nextNote ? buildUrl({ category: categoryFilter || "", tag: tagFi
 ---
 
 <MainGridLayout title={i18n(I18nKey.notes)} description={i18n(I18nKey.notes)} showAnnouncement={false} fullWidth={false} centerContent={true}>
-    {/* 侧边箭头容器 - 由JS挂到body */}
     <div id="side-nav-placeholder" data-prev={prevUrl || ""} data-next={nextUrl || ""} hidden></div>
 
     <div class="w-full flex justify-center">
     <div class="max-w-2xl w-full relative">
 
-        {/* 顶部标题 */}
         <div class="text-center mb-6 md:mb-8">
             <h1 class="text-2xl md:text-3xl font-bold text-orange-950 dark:text-white font-['SimSun',serif]">{i18n(I18nKey.notes)}</h1>
             <div class="flex items-center justify-center gap-3 mt-2 text-xs text-orange-950/40 dark:text-white/40">
@@ -85,7 +83,6 @@ const nextUrl = nextNote ? buildUrl({ category: categoryFilter || "", tag: tagFi
             </div>
         </div>
 
-        {/* 筛选标签 */}
         {(allCategories.length > 0 || allTags.length > 0) && (
             <div class="flex flex-wrap items-center justify-center gap-1.5 mb-8 md:mb-10">
                 <button
@@ -134,7 +131,6 @@ const nextUrl = nextNote ? buildUrl({ category: categoryFilter || "", tag: tagFi
             </div>
         )}
 
-        {/* 文章区域 */}
         {filteredNotes.length === 0 ? (
             <div class="text-center py-20 text-orange-950/30 dark:text-white/30">
                 <div class="text-5xl mb-4 opacity-40">📖</div>
@@ -142,9 +138,7 @@ const nextUrl = nextNote ? buildUrl({ category: categoryFilter || "", tag: tagFi
             </div>
         ) : activeNote ? (
             <div id="article-wrapper">
-                {/* 透明背景文章卡片 */}
                 <div class="article-card px-6 md:px-10 py-8 md:py-10" id="article-card">
-                    {/* 分页指示点 */}
                     {totalFiltered > 1 && (
                         <div class="flex items-center justify-center gap-1.5 mb-6">
                             {filteredNotes.map((_, i) => (
@@ -158,7 +152,6 @@ const nextUrl = nextNote ? buildUrl({ category: categoryFilter || "", tag: tagFi
                         </div>
                     )}
 
-                    {/* 文章标题区 */}
                     <div class="mb-6 md:mb-8">
                         {activeNote.data.title && (
                             <h2 class="text-2xl md:text-3xl font-bold text-orange-950 dark:text-white font-['SimSun',serif] leading-tight">
@@ -173,7 +166,6 @@ const nextUrl = nextNote ? buildUrl({ category: categoryFilter || "", tag: tagFi
                             <span class="w-1 h-1 rounded-full bg-orange-400/40 dark:bg-orange-300/40"></span>
                             <LikeButton slug={activeNote.id} client:visible />
                         </div>
-                        {/* 仅显示本篇文章的标签 */}
                         {activeNote.data.tags && activeNote.data.tags.length > 0 && (
                             <div class="flex flex-wrap gap-1.5 mt-3">
                                 {activeNote.data.tags.map((tag) => (
@@ -189,7 +181,6 @@ const nextUrl = nextNote ? buildUrl({ category: categoryFilter || "", tag: tagFi
                         )}
                     </div>
 
-                    {/* 文章封面 */}
                     {activeNote.data.image && activeNote.data.image.trim() !== "" && (
                         <div class="mb-8 md:mb-10 overflow-hidden">
                             <img
@@ -201,14 +192,12 @@ const nextUrl = nextNote ? buildUrl({ category: categoryFilter || "", tag: tagFi
                         </div>
                     )}
 
-                    {/* 文章正文 */}
                     <div class="reader-content">
                         <Markdown class="markdown-content prose dark:prose-invert max-w-none">
                             <Content />
                         </Markdown>
                     </div>
 
-                    {/* 底部：非本篇的分类和标签 */}
                     <div class="mt-10 pt-6 border-t border-orange-950/8 dark:border-white/8">
                         <div class="flex flex-wrap items-center gap-2 text-xs text-orange-950/35 dark:text-white/35">
                             {activeNote.data.category && (
@@ -227,7 +216,6 @@ const nextUrl = nextNote ? buildUrl({ category: categoryFilter || "", tag: tagFi
                     </div>
                 </div>
 
-                {/* 底部翻页按钮 */}
                 <div class="flex items-center justify-between mt-4 px-1">
                     {prevUrl ? (
                         <a
@@ -259,7 +247,6 @@ const nextUrl = nextNote ? buildUrl({ category: categoryFilter || "", tag: tagFi
     prevUrl: prevUrl || '',
     nextUrl: nextUrl || ''
 }}>
-    // 侧边导航按钮
     function createSideBtn(id, href, label, svgPath, side) {
         var existing = document.getElementById(id);
         if (existing) existing.remove();
@@ -321,7 +308,6 @@ const nextUrl = nextNote ? buildUrl({ category: categoryFilter || "", tag: tagFi
         }, { passive: true });
     }
 
-    // 离开轻读页时移除按钮
     function removeSideNav() {
         var p = document.getElementById('side-nav-prev');
         var n = document.getElementById('side-nav-next');

@@ -7,7 +7,6 @@ import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 
-// 图册页面专用公告配置
 import picturesAnnouncement from "@/content/exhibition-announcement.yaml";
 
 const pictures = await getCollection("exhibition");
@@ -30,7 +29,6 @@ const exhibitionImageModules = import.meta.glob<{ default: ImageMetadata }>(
 	{ eager: true },
 );
 
-// 从 Markdown 内容中提取图片 URL
 function extractImagesFromMarkdown(content: string): string[] {
 	const urls: string[] = [];
 	const lines = content.split("\n");

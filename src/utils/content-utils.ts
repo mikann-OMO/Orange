@@ -9,18 +9,15 @@ export async function getSortedPosts(): Promise<
 		return import.meta.env.PROD ? data.draft !== true : true;
 	});
 
-	// 优化排序逻辑，提前计算日期以避免重复调用 new Date()
 	const sorted = allBlogPosts.sort((a, b) => {
 		const timeA = new Date(a.data.published).getTime();
 		const timeB = new Date(b.data.published).getTime();
 		if (timeA !== timeB) {
-			return timeB - timeA; // 降序排列
+			return timeB - timeA;
 		}
-		// 如果日期相同，根据标题排序以确保顺序一致
 		return a.data.title.localeCompare(b.data.title);
 	});
 
-	// 合并循环，减少遍历次数
 	for (let i = 0; i < sorted.length; i++) {
 		if (i < sorted.length - 1) {
 			sorted[i].data.prevSlug = sorted[i + 1].id;
@@ -46,14 +43,12 @@ export async function getTagList(): Promise<Tag[]> {
 	});
 
 	const countMap: { [key: string]: number } = {};
-	// 使用 for...of 循环替代 forEach 以提高性能
 	for (const post of allBlogPosts) {
 		for (const tag of post.data.tags) {
 			countMap[tag] = (countMap[tag] || 0) + 1;
 		}
 	}
 
-	// 直接返回排序后的结果，避免中间变量
 	return Object.keys(countMap)
 		.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
 		.map((key) => ({ name: key, count: countMap[key] }));
@@ -72,7 +67,6 @@ export async function getCategoryList(): Promise<Category[]> {
 	const count: { [key: string]: number } = {};
 	const uncategorizedKey = i18n(I18nKey.uncategorized);
 
-	// 使用 for...of 循环替代 forEach 以提高性能
 	for (const post of allBlogPosts) {
 		let categoryName: string;
 
@@ -88,7 +82,6 @@ export async function getCategoryList(): Promise<Category[]> {
 		count[categoryName] = (count[categoryName] || 0) + 1;
 	}
 
-	// 直接返回排序后的结果，避免中间变量和循环
 	return Object.keys(count)
 		.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
 		.map((key) => ({ name: key, count: count[key] }));
@@ -141,25 +134,20 @@ export async function getNoteCategoryList(): Promise<Category[]> {
 		.map((key) => ({ name: key, count: count[key] }));
 }
 
-// ==================== 归档页工具函数 ====================
-
-/** 从原始 markdown body 粗略统计字数（中英文混合） */
 function countWords(body: string): number {
 	if (!body) return 0;
-	// 去除 markdown 语法标记（图片、链接、标题符号、代码块等）
 	const cleaned = body
-		.replace(/```[\s\S]*?```/g, "") // 代码块
-		.replace(/`[^`]+`/g, "") // 行内代码
-		.replace(/!\[.*?\]\(.*?\)/g, "") // 图片
-		.replace(/\[([^\]]*)\]\(.*?\)/g, "$1") // 链接保留文字
-		.replace(/^#{1,6}\s+/gm, "") // 标题标记
-		.replace(/^[-*_]{3,}\s*$/gm, "") // 分割线
-		.replace(/^>\s+/gm, "") // 引用标记
-		.replace(/[*_~]+/g, "") // 斜体粗体标记
-		.replace(/<[^>]+>/g, "") // HTML 标签
-		.replace(/---\ntitle[\s\S]*?---/g, ""); // frontmatter
+		.replace(/```[\s\S]*?```/g, "")
+		.replace(/`[^`]+`/g, "")
+		.replace(/!\[.*?\]\(.*?\)/g, "")
+		.replace(/\[([^\]]*)\]\(.*?\)/g, "$1")
+		.replace(/^#{1,6}\s+/gm, "")
+		.replace(/^[-*_]{3,}\s*$/gm, "")
+		.replace(/^>\s+/gm, "")
+		.replace(/[*_~]+/g, "")
+		.replace(/<[^>]+>/g, "")
+		.replace(/---\ntitle[\s\S]*?---/g, "");
 
-	// 中文字符数 + 英文单词数
 	const chineseChars = (cleaned.match(/[\u4e00-\u9fff\u3400-\u4dbf]/g) || []).length;
 	const englishWords = cleaned
 		.replace(/[\u4e00-\u9fff\u3400-\u4dbf]/g, " ")
@@ -202,7 +190,6 @@ export type ArchiveStats = {
 	allCategories: Category[];
 };
 
-/** 获取合并后的归档数据（posts + notes），按时间倒序 */
 export async function getArchiveData(): Promise<{
 	groups: ArchiveYearGroup[];
 	stats: ArchiveStats;
@@ -212,7 +199,6 @@ export async function getArchiveData(): Promise<{
 		getCollection("notes", ({ data }) => (import.meta.env.PROD ? data.draft !== true : true)),
 	]);
 
-	// 构建归档条目
 	const items: ArchiveItem[] = [];
 
 	for (const post of posts) {
@@ -243,10 +229,8 @@ export async function getArchiveData(): Promise<{
 		});
 	}
 
-	// 按时间倒序排序
 	items.sort((a, b) => b.published.getTime() - a.published.getTime());
 
-	// 按年 > 月分组
 	const yearMap = new Map<number, Map<number, ArchiveItem[]>>();
 	for (const item of items) {
 		const year = item.published.getFullYear();
@@ -274,7 +258,6 @@ export async function getArchiveData(): Promise<{
 	}
 	groups.sort((a, b) => b.year - a.year);
 
-	// 统计
 	const totalWords = items.reduce((sum, it) => sum + it.words, 0);
 	const postCount = items.filter((it) => it.type === "post").length;
 	const noteCount = items.filter((it) => it.type === "note").length;
@@ -282,7 +265,6 @@ export async function getArchiveData(): Promise<{
 	const years = groups.map((g) => g.year);
 	const yearsSpan = years.length > 0 ? `${years[years.length - 1]} - ${years[0]}` : "-";
 
-	// 汇总所有标签和分类（posts + notes 合并）
 	const tagCountMap: { [key: string]: number } = {};
 	const catCountMap: { [key: string]: number } = {};
 	const uncategorizedKey = i18n(I18nKey.uncategorized);

@@ -28,7 +28,7 @@ export async function getStaticPaths(): Promise<GetStaticPathsResult> {
 		)
 		.map((category) => ({
 			params: {
-				category: category.name.trim(), // Do not encode CJK characters
+				category: category.name.trim(),
 			},
 			props: {
 				decodedCategory: category.name.trim(),
@@ -38,7 +38,6 @@ export async function getStaticPaths(): Promise<GetStaticPathsResult> {
 	return [...standardPaths, ...nonEncodedCJKPaths];
 }
 
-// 预渲染为静态HTML
 export const prerender = true;
 
 const { decodedCategory } = Astro.props;

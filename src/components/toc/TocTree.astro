@@ -475,7 +475,6 @@ function depthHoverColor(depth: number): string {
 
     headingEls.forEach(el => observer.observe(el));
 
-    // Initial scan for headings already in view
     headingEls.forEach(el => {
       const rect = el.getBoundingClientRect();
       if (rect.top >= -80 && rect.top <= window.innerHeight * 0.4) {

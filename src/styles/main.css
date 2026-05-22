@@ -344,7 +344,6 @@ img[src]:not([src=""]) {
 	--line-divider: rgba(255, 255, 255, 0.08);
 }
 
-/* 暗色模式下所有竖线统一使用 #ffb74d 颜色 */
 .dark .border-orange-700 {
 	border-left-color: #ffb74d !important;
 }
@@ -380,7 +379,6 @@ img[src]:not([src=""]) {
 	box-shadow: 0 4px 20px var(--shadow-color);
 }
 
-/* 移动端：禁用 backdrop-filter，用暖色实底 + 阴影重建 PC 端的层次感 */
 @media (max-width: 768px) {
 	.backdrop-blur,
 	.backdrop-blur-sm,
@@ -393,25 +391,21 @@ img[src]:not([src=""]) {
 		-webkit-backdrop-filter: none !important;
 	}
 
-	/* 所有带 backdrop-blur 的容器：用实底暖色 + 阴影 + 圆角 + 边框替代玻璃态 */
 	[class*="backdrop-blur"] {
 		background-color: var(--surface) !important;
 		border-radius: 1rem !important;
 		box-shadow: 0 2px 12px var(--shadow-color), 0 0 0 1px var(--card-border) !important;
 	}
 
-	/* 移动端禁用 background-attachment: fixed 以提升性能 */
 	[style*="background-attachment: fixed"] {
 		background-attachment: scroll !important;
 	}
 
-	/* 移动端全局卡片样式：所有可交互元素统一圆角 + 微阴影 */
 	a, button {
 		-webkit-tap-highlight-color: transparent;
 	}
 }
 
-/* 性能优化: 跳过屏幕外内容的渲染 */
 .post-card-animate,
 .friend-card-animate,
 .note-card-animate {
@@ -419,20 +413,17 @@ img[src]:not([src=""]) {
 	contain-intrinsic-size: auto 120px;
 }
 
-/* 性能优化: 隔离独立区块，减少回流范围 */
 .card-base,
 #content-container {
 	contain: layout style paint;
 }
 
-/* 性能优化: 减少非交互元素的绘制开销 */
 img,
 video {
 	content-visibility: auto;
 	contain-intrinsic-size: auto 300px;
 }
 
-/* 字体加载优化: 确保文本在字体加载期间可见 */
 @font-face {
 	font-display: swap;
 }

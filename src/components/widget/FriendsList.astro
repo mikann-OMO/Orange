@@ -2,10 +2,8 @@
 import { getCollection } from "astro:content";
 import ImageWrapper from "../misc/ImageWrapper.astro";
 
-// 获取所有友链数据
 const friends = await getCollection("friends");
 
-// 将集合数据转换为组件所需格式
 const items = friends.map((friend) => ({
 	name: friend.data.title,
 	avatar: friend.data.image,

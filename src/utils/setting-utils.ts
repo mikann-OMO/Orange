@@ -34,7 +34,6 @@ export function applyThemeToDocument(theme: LIGHT_DARK_MODE): void {
 }
 
 export function setTheme(theme: LIGHT_DARK_MODE): void {
-	// 先存储主题，再应用
 	localStorage.setItem("theme", theme);
 	applyThemeToDocument(theme);
 }
