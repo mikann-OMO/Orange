@@ -12,6 +12,7 @@ export type FriendPost = {
 const parser = new XMLParser({
 	ignoreAttributes: false,
 	attributeNamePrefix: "@_",
+	processEntities: false,
 });
 
 const FEED_PATHS = ["/feed.xml", "/rss.xml", "/atom.xml", "/feed", "/rss", "/feed/", "/atom/", "/index.xml"];
@@ -29,6 +30,12 @@ function extractText(value: unknown): string {
 	return "";
 }
 
+function normalizeItems(value: unknown): Record<string, unknown>[] {
+	if (Array.isArray(value)) return value as Record<string, unknown>[];
+	if (value && typeof value === "object") return [value as Record<string, unknown>];
+	return [];
+}
+
 function extractDate(item: Record<string, unknown>): string {
 	const raw =
 		extractText(item.pubDate) ||
@@ -36,15 +43,16 @@ function extractDate(item: Record<string, unknown>): string {
 		extractText(item.updated) ||
 		extractText(item["dc:date"]) ||
 		"";
-	return raw ? new Date(raw).toISOString() : "";
+	const timestamp = raw ? new Date(raw).getTime() : Number.NaN;
+	return Number.isNaN(timestamp) ? "" : new Date(timestamp).toISOString();
 }
 
 function parseRSS(xml: string, friendName: string, avatar: string): FriendPost[] {
 	const parsed = parser.parse(xml);
 
-	const rssItems = parsed?.rss?.channel?.item;
-	if (Array.isArray(rssItems)) {
-		return rssItems.slice(0, 3).map((item: Record<string, unknown>) => ({
+	const rssItems = normalizeItems(parsed?.rss?.channel?.item);
+	if (rssItems.length > 0) {
+		return rssItems.slice(0, 3).map((item) => ({
 			title: extractText(item.title),
 			url: extractText(item.link),
 			date: extractDate(item),
@@ -53,9 +61,9 @@ function parseRSS(xml: string, friendName: string, avatar: string): FriendPost[]
 		}));
 	}
 
-	const atomEntries = parsed?.feed?.entry;
-	if (Array.isArray(atomEntries)) {
-		return atomEntries.slice(0, 3).map((entry: Record<string, unknown>) => ({
+	const atomEntries = normalizeItems(parsed?.feed?.entry);
+	if (atomEntries.length > 0) {
+		return atomEntries.slice(0, 3).map((entry) => ({
 			title: extractText(entry.title),
 			url: extractText(entry.link),
 			date: extractDate(entry),
