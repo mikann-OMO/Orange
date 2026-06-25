@@ -86,7 +86,7 @@ function handleReplySuccess(e) {
 </script>
 
 <div class="flex flex-col gap-3">
-	<div class="card-base !overflow-visible p-3 sm:p-4 border-0 shadow-sm transition-all hover:shadow-md group/msg" style="border-left: 3px solid color-mix(in srgb, var(--primary) 30%, transparent);">
+	<div class="message-card card-base !overflow-visible p-3 sm:p-4 border-0 shadow-sm transition-all hover:shadow-md group/msg" style="border-left: 3px solid color-mix(in srgb, var(--primary) 30%, transparent);">
 		<div class="flex gap-3 sm:gap-4">
 			<div class="relative flex-shrink-0 mt-0.5">
 			{#if message.website}
@@ -183,6 +183,10 @@ function handleReplySuccess(e) {
 </div>
 
 <style>
+	.message-card {
+		border-radius: var(--radius-large);
+		background-color: var(--card-bg);
+	}
 	.animate-fade-in {
 		animation: fade-in 0.3s ease-out;
 	}

@@ -74,7 +74,7 @@ $effect(() => {
 		</div>
 	{/if}
 
-	<div class="card-base !overflow-visible p-5 sm:p-6 border-0 shadow-sm" style="background: linear-gradient(135deg, var(--card-bg) 0%, color-mix(in srgb, var(--surface) 60%, var(--card-bg)) 100%);">
+	<div class="message-form-card card-base !overflow-visible p-5 sm:p-6 border-0 shadow-sm" style="background: linear-gradient(135deg, var(--card-bg) 0%, color-mix(in srgb, var(--surface) 60%, var(--card-bg)) 100%);">
 		<div class="flex items-center gap-3 mb-5">
 			<div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, var(--primary), var(--secondary));">
 				<Icon icon="fa6-solid:pen-to-square" class="text-white text-base" />
@@ -107,6 +107,9 @@ $effect(() => {
 </div>
 
 <style>
+	.message-form-card {
+		border-radius: var(--radius-large);
+	}
 	@keyframes bounce-in {
 		0% { transform: translateY(-20px); opacity: 0; }
 		50% { transform: translateY(5px); }
