@@ -89,9 +89,7 @@
 		font-family:
 			"JetBrains Mono Variable", "JetBrains Mono", "Fira Code", Consolas, Monaco, "Andale Mono",
 			"Ubuntu Mono", monospace;
-		&:before {
-			content: none;
-		}
+		&:before,
 		&:after {
 			content: none;
 		}

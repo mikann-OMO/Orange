@@ -44,6 +44,8 @@ $effect(() => {
 });
 
 $effect(() => {
+	if (typeof localStorage === "undefined") return;
+
 	nickname = localStorage.getItem("message_nickname") || "";
 	qq = localStorage.getItem("message_qq") || "";
 	email = localStorage.getItem("message_email") || "";
@@ -124,40 +126,28 @@ async function handleEmojiSelect(event) {
 					type="text" 
 					bind:value={nickname}
 					placeholder="昵称 *"
-					class="w-full px-3.5 py-2.5 rounded-lg border-0 outline-none transition-all text-sm text-90"
-					style="background: color-mix(in srgb, var(--text-primary) 3%, transparent); box-shadow: 0 0 0 1px color-mix(in srgb, var(--text-primary) 6%, transparent);"
-					on:focus={(e) => { e.target.style.boxShadow = '0 0 0 2px var(--primary)'; e.target.style.background = 'var(--card-bg)'; }}
-					on:blur={(e) => { e.target.style.boxShadow = '0 0 0 1px color-mix(in srgb, var(--text-primary) 6%, transparent)'; e.target.style.background = 'color-mix(in srgb, var(--text-primary) 3%, transparent)'; }}
+					class="message-input w-full px-3.5 py-2.5 rounded-lg border-0 outline-none transition-all text-sm text-90"
 					maxlength="20"
 				/>
 				<input 
 					type="text" 
 					bind:value={qq}
 					placeholder="QQ号"
-					class="w-full px-3.5 py-2.5 rounded-lg border-0 outline-none transition-all text-sm text-90"
-					style="background: color-mix(in srgb, var(--text-primary) 3%, transparent); box-shadow: 0 0 0 1px color-mix(in srgb, var(--text-primary) 6%, transparent);"
-					on:focus={(e) => { e.target.style.boxShadow = '0 0 0 2px var(--primary)'; e.target.style.background = 'var(--card-bg)'; }}
-					on:blur={(e) => { e.target.style.boxShadow = '0 0 0 1px color-mix(in srgb, var(--text-primary) 6%, transparent)'; e.target.style.background = 'color-mix(in srgb, var(--text-primary) 3%, transparent)'; }}
+					class="message-input w-full px-3.5 py-2.5 rounded-lg border-0 outline-none transition-all text-sm text-90"
 					maxlength="11"
 				/>
 				<input 
 					type="text" 
 					bind:value={email}
 					placeholder="邮箱"
-					class="w-full px-3.5 py-2.5 rounded-lg border-0 outline-none transition-all text-sm text-90"
-					style="background: color-mix(in srgb, var(--text-primary) 3%, transparent); box-shadow: 0 0 0 1px color-mix(in srgb, var(--text-primary) 6%, transparent);"
-					on:focus={(e) => { e.target.style.boxShadow = '0 0 0 2px var(--primary)'; e.target.style.background = 'var(--card-bg)'; }}
-					on:blur={(e) => { e.target.style.boxShadow = '0 0 0 1px color-mix(in srgb, var(--text-primary) 6%, transparent)'; e.target.style.background = 'color-mix(in srgb, var(--text-primary) 3%, transparent)'; }}
+					class="message-input w-full px-3.5 py-2.5 rounded-lg border-0 outline-none transition-all text-sm text-90"
 					maxlength="100"
 				/>
 				<input 
 					type="text" 
 					bind:value={website}
 					placeholder="个人网站"
-					class="w-full px-3.5 py-2.5 rounded-lg border-0 outline-none transition-all text-sm text-90"
-					style="background: color-mix(in srgb, var(--text-primary) 3%, transparent); box-shadow: 0 0 0 1px color-mix(in srgb, var(--text-primary) 6%, transparent);"
-					on:focus={(e) => { e.target.style.boxShadow = '0 0 0 2px var(--primary)'; e.target.style.background = 'var(--card-bg)'; }}
-					on:blur={(e) => { e.target.style.boxShadow = '0 0 0 1px color-mix(in srgb, var(--text-primary) 6%, transparent)'; e.target.style.background = 'color-mix(in srgb, var(--text-primary) 3%, transparent)'; }}
+					class="message-input w-full px-3.5 py-2.5 rounded-lg border-0 outline-none transition-all text-sm text-90"
 					maxlength="100"
 				/>
 			</div>
@@ -166,10 +156,7 @@ async function handleEmojiSelect(event) {
 				bind:value={content}
 				placeholder={placeholder}
 				rows="3"
-				class="w-full px-3.5 py-2.5 rounded-lg border-0 outline-none transition-all resize-none text-sm text-90 leading-relaxed"
-				style="background: color-mix(in srgb, var(--text-primary) 3%, transparent); box-shadow: 0 0 0 1px color-mix(in srgb, var(--text-primary) 6%, transparent);"
-				on:focus={(e) => { e.target.style.boxShadow = '0 0 0 2px var(--primary)'; e.target.style.background = 'var(--card-bg)'; }}
-				on:blur={(e) => { e.target.style.boxShadow = '0 0 0 1px color-mix(in srgb, var(--text-primary) 6%, transparent)'; e.target.style.background = 'color-mix(in srgb, var(--text-primary) 3%, transparent)'; }}
+				class="message-input w-full px-3.5 py-2.5 rounded-lg border-0 outline-none transition-all resize-none text-sm text-90 leading-relaxed"
 				maxlength={MAX_CONTENT_LENGTH}
 			></textarea>
 		</div>
@@ -200,6 +187,14 @@ async function handleEmojiSelect(event) {
 </div>
 
 <style>
+	.message-input {
+		background: color-mix(in srgb, var(--text-primary) 3%, transparent);
+		box-shadow: 0 0 0 1px color-mix(in srgb, var(--text-primary) 6%, transparent);
+	}
+	.message-input:focus {
+		background: var(--card-bg);
+		box-shadow: 0 0 0 2px var(--primary);
+	}
 	input::placeholder, textarea::placeholder {
 		color: color-mix(in srgb, var(--text-primary) 25%, transparent);
 		transition: color 0.2s;

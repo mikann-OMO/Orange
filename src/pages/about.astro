@@ -184,7 +184,8 @@ const { Content } = await render(aboutPost);
     flex-shrink: 0;
 }
 
-.mobile-profile-card {
+.mobile-profile-card,
+.mobile-friends-card {
     background: rgba(255, 248, 240, 0.95);
     border-radius: 0;
     padding: 16px;
@@ -192,9 +193,13 @@ const { Content } = await render(aboutPost);
     border: 1px solid rgba(255, 152, 0, 0.15);
 }
 
-:global(.dark) .mobile-profile-card {
+:global(.dark) .mobile-profile-card,
+:global(.dark) .mobile-friends-card {
     background: rgba(28, 24, 20, 0.95);
     border-color: rgba(255, 152, 0, 0.1);
+}
+
+:global(.dark) .mobile-profile-card {
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
 }
 
@@ -277,19 +282,6 @@ const { Content } = await render(aboutPost);
     background: rgba(255, 255, 255, 0.15);
 }
 
-.mobile-friends-card {
-    background: rgba(255, 248, 240, 0.95);
-    border-radius: 0;
-    padding: 16px;
-    box-shadow: 0 2px 12px rgba(230, 74, 25, 0.08);
-    border: 1px solid rgba(255, 152, 0, 0.15);
-}
-
-:global(.dark) .mobile-friends-card {
-    background: rgba(28, 24, 20, 0.95);
-    border-color: rgba(255, 152, 0, 0.1);
-}
-
 .card-title {
     font-size: 1rem;
     font-weight: 700;
@@ -341,16 +333,25 @@ const { Content } = await render(aboutPost);
     padding: 16px;
 }
 
-.desktop-profile-card {
+.desktop-profile-card,
+.desktop-friend-info-card,
+.desktop-friends-card {
     background: rgba(255, 248, 240, 0.1);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
     border-radius: 0;
     padding: 16px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
-:global(.dark) .desktop-profile-card {
+.desktop-profile-card {
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+:global(.dark) .desktop-profile-card,
+:global(.dark) .desktop-friend-info-card,
+:global(.dark) .desktop-friends-card {
     background: rgba(28, 24, 20, 0.1);
 }
 
@@ -379,19 +380,6 @@ const { Content } = await render(aboutPost);
 
 :global(.dark) .desktop-social-btn:hover {
     background: rgba(255, 183, 77, 0.2);
-}
-
-.desktop-friend-info-card {
-    background: rgba(255, 248, 240, 0.1);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border-radius: 0;
-    padding: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-}
-
-:global(.dark) .desktop-friend-info-card {
-    background: rgba(28, 24, 20, 0.1);
 }
 
 .friend-info-content {
@@ -459,19 +447,6 @@ const { Content } = await render(aboutPost);
     transform: translateY(0);
     background: rgba(255, 248, 220, 0.9);
     box-shadow: 0 1px 2px rgba(255, 152, 0, 0.1);
-}
-
-.desktop-friends-card {
-    background: rgba(255, 248, 240, 0.1);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border-radius: 0;
-    padding: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-}
-
-:global(.dark) .desktop-friends-card {
-    background: rgba(28, 24, 20, 0.1);
 }
 
 .sidebar-title {

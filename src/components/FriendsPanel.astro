@@ -411,8 +411,7 @@ const copyFriendData = JSON.stringify(
     background: color-mix(in srgb, var(--page-bg) 40%, transparent);
     border: none;
     border-radius: 0;
-    padding: 1rem;
-    padding-top: 140px;
+    padding: 140px 1rem 1rem;
     cursor: pointer;
     overflow: hidden;
     height: 100%;
@@ -665,9 +664,7 @@ const copyFriendData = JSON.stringify(
 @media (max-width: 768px) {
     .apply-friend-card {
         width: 100%;
-        max-width: 100%;
         height: auto;
-        min-height: auto;
         perspective: none;
         min-width: 0;
     }
@@ -678,7 +675,6 @@ const copyFriendData = JSON.stringify(
         padding: 12px;
         gap: 12px;
         height: auto;
-        min-height: auto;
         border-radius: 10px;
         background: color-mix(in srgb, var(--page-bg) 95%, transparent);
         border: 1px solid color-mix(in srgb, var(--primary) 15%, transparent);
@@ -688,12 +684,7 @@ const copyFriendData = JSON.stringify(
 
     .apply-friend-card .card-background {
         position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        height: 100%;
-        width: 100%;
+        inset: 0;
         border-radius: 10px;
     }
 

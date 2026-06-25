@@ -183,10 +183,6 @@ function handleReplySuccess(e) {
 </div>
 
 <style>
-	.card-base {
-		border-radius: var(--radius-large);
-		background-color: var(--card-bg);
-	}
 	.animate-fade-in {
 		animation: fade-in 0.3s ease-out;
 	}

@@ -107,10 +107,6 @@ $effect(() => {
 </div>
 
 <style>
-	.card-base {
-		border-radius: var(--radius-large);
-		background-color: var(--card-bg);
-	}
 	@keyframes bounce-in {
 		0% { transform: translateY(-20px); opacity: 0; }
 		50% { transform: translateY(5px); }

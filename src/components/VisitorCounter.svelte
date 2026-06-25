@@ -1,11 +1,8 @@
 <script lang="ts">
 import {
-	isVisitorTrackingEnabled,
-} from "@utils/visitor-utils";
-import {
 	formatCount,
-	getSiteVisitorCount,
 	incrementSiteVisitorCount,
+	isVisitorTrackingEnabled,
 	getLocalCount,
 	incrementLocalCount,
 } from "@utils/visitor-utils";

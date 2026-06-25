@@ -207,6 +207,17 @@
 
 html {
 	scroll-behavior: smooth;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-rendering: optimizeLegibility;
+	background-color: var(--page-bg);
+	overflow-x: hidden !important;
+	overflow-y: auto !important;
+	width: 100%;
+	height: auto !important;
+	min-height: 100vh;
+	min-height: 100dvh;
+	position: static !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -246,20 +257,6 @@ html {
 	::-webkit-scrollbar-horizontal {
 		display: none;
 	}
-}
-
-html {
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	text-rendering: optimizeLegibility;
-	background-color: var(--page-bg);
-	overflow-x: hidden !important;
-	overflow-y: auto !important;
-	width: 100%;
-	height: auto !important;
-	min-height: 100vh;
-	min-height: 100dvh;
-	position: static !important;
 }
 
 body {

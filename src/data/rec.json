@@ -17,6 +17,12 @@
 			"icon": "fa6-brands:bilibili",
 			"url": "https://space.bilibili.com/3690987452893185?spm_id_from=333.1387.0.0",
 			"description": "B站个人空间"
+		},
+		{
+			"name": "小红书",
+			"icon": "fa6-solid:users",
+			"url": "https://www.xiaohongshu.com/user/profile/6667f50a0000000003032ab1?xsec_token=YBe5ry2-JQjNPsk4l9XQFFHRAJ4PtCFOiy8J6-ou7Zt7c%3D&xsec_source=app_share&xhsshare=&shareRedId=ODhHQzM1ODw2NzUyOTgwNjdIOThJPjpM&apptime=1782370797&share_id=14c2d2e96f284b889519ed5db30b4543&share_channel=qq",
+			"description": "小红书个人主页"
 		}
 	],
 	"latestPosts": [],
