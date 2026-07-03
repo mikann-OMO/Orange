@@ -36,6 +36,14 @@ function normalizeItems(value: unknown): Record<string, unknown>[] {
 	return [];
 }
 
+function extractLink(value: unknown): string {
+	if (Array.isArray(value)) {
+		const alternate = value.find((item) => item?.["@_rel"] === "alternate") ?? value[0];
+		return extractText(alternate);
+	}
+	return extractText(value);
+}
+
 function extractDate(item: Record<string, unknown>): string {
 	const raw =
 		extractText(item.pubDate) ||
@@ -54,7 +62,7 @@ function parseRSS(xml: string, friendName: string, avatar: string): FriendPost[]
 	if (rssItems.length > 0) {
 		return rssItems.slice(0, 3).map((item) => ({
 			title: extractText(item.title),
-			url: extractText(item.link),
+			url: extractLink(item.link) || extractText(item.guid),
 			date: extractDate(item),
 			friendlyName: friendName,
 			friendlyAvatar: avatar,
@@ -65,7 +73,7 @@ function parseRSS(xml: string, friendName: string, avatar: string): FriendPost[]
 	if (atomEntries.length > 0) {
 		return atomEntries.slice(0, 3).map((entry) => ({
 			title: extractText(entry.title),
-			url: extractText(entry.link),
+			url: extractLink(entry.link) || extractText(entry.id),
 			date: extractDate(entry),
 			friendlyName: friendName,
 			friendlyAvatar: avatar,
@@ -118,5 +126,5 @@ export async function getFriendLatestPosts(limit = 3): Promise<FriendPost[]> {
 	}
 
 	allPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-	return allPosts.slice(0, limit);
+	return allPosts.filter((post) => post.title && post.url).slice(0, limit);
 }

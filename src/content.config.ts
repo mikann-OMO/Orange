@@ -25,34 +25,6 @@ const postsCollection = defineCollection({
 	}),
 });
 
-const exhibitionCollection = defineCollection({
-	loader: glob({
-		pattern: "**/*.{yaml,yml,json,md,mdx}",
-		base: "./src/content/pix",
-	}),
-	schema: z.object({
-		title: z.string(),
-		date: z.date(),
-		dir: z.string(),
-		description: z.string().optional().default(""),
-		cover: z.string().optional().default(""),
-		tags: z.array(z.string()).optional().default([]),
-		location: z.string().optional().default(""),
-		featured: z.boolean().optional().default(false),
-		order: z.number().optional().default(0),
-		images: z
-			.array(
-				z.object({
-					file: z.string(),
-					title: z.string().optional().default(""),
-					desc: z.string().optional().default(""),
-				}),
-			)
-			.optional()
-			.default([]),
-	}),
-});
-
 const notesCollection = defineCollection({
 	loader: glob({
 		pattern: "**/*.{md,mdx}",
@@ -99,13 +71,11 @@ const friendsCollection = defineCollection({
 
 export const collections: {
 	posts: typeof postsCollection;
-	exhibition: typeof exhibitionCollection;
 	notes: typeof notesCollection;
 	about: typeof aboutCollection;
 	friends: typeof friendsCollection;
 } = {
 	posts: postsCollection,
-	exhibition: exhibitionCollection,
 	notes: notesCollection,
 	about: aboutCollection,
 	friends: friendsCollection,

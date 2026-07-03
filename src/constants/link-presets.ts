@@ -20,18 +20,8 @@ export const LinkPresets: { [key in LinkPreset]: NavBarLink } = {
 		url: "/friends/",
 	},
 
-	[LinkPreset.Works]: {
-		name: i18n(I18nKey.works),
-		url: "/pix/",
-	},
-
 	[LinkPreset.Notes]: {
 		name: i18n(I18nKey.notes),
 		url: "/bits/",
-	},
-
-	[LinkPreset.Rec]: {
-		name: i18n(I18nKey.rec),
-		url: "/rec/",
 	},
 };
