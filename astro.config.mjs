@@ -89,7 +89,7 @@ export default defineConfig({
 		icon({
 			// 包含的图标集 - 仅包含实际使用的图标以减小构建体积
 			include: {
-				"fa6-brands": ["github", "creative-commons", "zhihu", "bilibili", "twitter", "x-twitter", "figma", "codepen"],
+				"fa6-brands": ["github", "creative-commons", "zhihu", "bilibili", "twitter", "x-twitter", "figma", "codepen", "pixiv"],
 				"fa6-regular": ["clock", "address-card"],
 				"fa6-solid": ["arrow-up-right-from-square", "users", "arrow-right"],
 			},
