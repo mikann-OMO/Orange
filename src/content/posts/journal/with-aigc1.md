@@ -5,7 +5,7 @@ description: "关于aigc的阶段性总结，发表我对ai生图的看法，以
 image: "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/md/aigc1.jpg"
 tags:
     - 工具与学习
-    - ai 生图
+    - AI 生图
 category: 成为人类日志
 draft: false
 
