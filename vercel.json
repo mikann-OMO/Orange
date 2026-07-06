@@ -1,6 +1,6 @@
 {
 	"buildCommand": "pnpm run build",
-	"installCommand": "pnpm install --frozen-lockfile",
+	"installCommand": "pnpm install --frozen-lockfile --ignore-scripts && node -e \"const fs=require('fs'),p=require('path');const f=x=>{try{if(fs.existsSync(x))fs.chmodSync(x,0o755)}catch{}};f('node_modules/esbuild/bin/esbuild');try{fs.readdirSync('node_modules/@esbuild').forEach(d=>f(p.join('node_modules/@esbuild',d,'bin','esbuild')))}catch{}\"",
 	"headers": [
 		{
 			"source": "/_astro/(.*)",
