@@ -17,7 +17,7 @@
 		"check": "astro check && tsc --noEmit",
 		"clean": "node -e \"const fs=require('node:fs'); for (const p of ['.astro','dist','node_modules']) { try { fs.rmSync(p,{recursive:true,force:true}); } catch {} }\"",
 		"preinstall": "npx only-allow pnpm",
-		"postinstall": "node -e \"const fs=require('fs'); const p='node_modules/.bin/esbuild'; fs.existsSync(p) && fs.chmodSync(p, 0o755);\"",
+		"prebuild": "node -e \"const fs=require('fs'),p=require('path');const f=x=>{try{if(fs.existsSync(x))fs.chmodSync(x,0o755)}catch{}};f('node_modules/esbuild/bin/esbuild');try{fs.readdirSync('node_modules/@esbuild').forEach(d=>f(p.join('node_modules/@esbuild',d,'bin','esbuild')))}catch{}\"",
 		"test": "vitest run",
 		"test:watch": "vitest",
 		"upgrade": "npx @astrojs/upgrade"
@@ -86,7 +86,6 @@
 		"onlyBuiltDependencies": [
 			"@biomejs/biome",
 			"core-js",
-			"esbuild",
 			"sharp"
 		]
 	}
