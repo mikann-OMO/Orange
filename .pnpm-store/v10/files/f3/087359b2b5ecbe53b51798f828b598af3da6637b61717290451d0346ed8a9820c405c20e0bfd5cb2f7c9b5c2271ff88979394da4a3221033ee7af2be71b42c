@@ -1,0 +1,181 @@
+import { LocalImageProps, Picture as Picture$1, RemoteImageProps } from "astro:assets";
+import { GetPlaiceholderReturn } from "plaiceholder";
+import { ImageMetadata } from "astro";
+import { ComponentProps, HTMLAttributes } from "astro/types";
+
+//#region src/types/lqip.type.d.ts
+type LqipType = 'color' | 'css' | 'base64' | 'svg' | false;
+//#endregion
+//#region src/types/style.type.d.ts
+type StylePrimitive = string | number | undefined;
+type StyleMap<TExtra = never> = Record<string, StylePrimitive | TExtra>;
+type StyleInput<TExtra = never> = StyleMap<TExtra> | string;
+//#endregion
+//#region src/types/components-options.type.d.ts
+type ComponentsOptions = {
+  src: string | object;
+  lqip: LqipType;
+  lqipSize: number;
+  styleProps: StyleMap;
+  forbiddenVars: string[];
+  isDevelopment: boolean | undefined;
+};
+//#endregion
+//#region src/types/image-path.type.d.ts
+type ImagePath = string | {
+  src: string;
+} | Promise<{
+  default: {
+    src: string;
+  };
+}>;
+type ResolvedImage = {
+  src: string;
+  width?: number;
+  height?: number;
+  [k: string]: unknown;
+};
+type ImportModule = Record<string, unknown> & {
+  default?: unknown;
+};
+type GlobMap = Record<string, () => Promise<ImportModule>>;
+//#endregion
+//#region src/types/image-transform.type.d.ts
+type ValidOutputFormats = ['avif', 'png', 'webp', 'jpeg', 'jpg', 'svg'];
+type ImageQualityPreset = 'low' | 'mid' | 'high' | 'max' | (string & {});
+type ImageQuality = ImageQualityPreset | number;
+type ImageOutputFormat = ValidOutputFormats[number] | (string & {});
+type ImageFit = 'fill' | 'contain' | 'cover' | 'none' | 'scale-down' | (string & {});
+interface ImageTransform {
+  /**
+   * Source image used to generate the background asset.
+   * @remarks
+   * Accepts a relative path, absolute path, alias, or Astro `ImageMetadata`.
+   */
+  src: string | ImageMetadata;
+  /**
+   * CSS custom property that receives the generated background value.
+   * @defaultValue '--background'
+   */
+  cssVariable?: string;
+  /**
+   * Placeholder strategy used while the final background asset is loading.
+   * @remarks
+   * Only `'base64'` and `'color'` are supported because they can be represented
+   * as CSS-friendly values for background rendering.
+   * @defaultValue 'base64'
+   */
+  lqip?: 'base64' | 'color' | false;
+  /**
+   * Output format or ordered list of formats for generated assets.
+   * @remarks
+   * When an array is provided, the first entry is treated as the preferred
+   * fallback format.
+   * @defaultValue 'webp'
+   */
+  format?: ImageOutputFormat | ImageOutputFormat[] | undefined;
+  /**
+   * Explicit widths used to generate responsive variants.
+   */
+  widths?: number[] | undefined;
+  /**
+   * Target width for generated assets.
+   * @remarks
+   * Omitted when `widths` is provided.
+   */
+  width?: number | undefined;
+  /**
+   * Target height for generated assets.
+   * @remarks
+   * Omitted when `widths` is provided, as height is determined by the aspect ratio of the source image.
+   */
+  height?: number | undefined;
+  /**
+   * Compression quality applied to generated assets.
+   * @remarks
+   * Accepts either a named quality preset or a numeric percentage.
+   */
+  quality?: ImageQuality | undefined;
+  /**
+   * Object-fit behavior applied during image resizing.
+   */
+  fit?: ImageFit | undefined;
+}
+//#endregion
+//#region src/types/plaiceholder.type.d.ts
+type GetSVGReturn = GetPlaiceholderReturn['svg'];
+//#endregion
+//#region src/types/props.type.d.ts
+type Props = {
+  /**
+   * Placeholder strategy used to generate the low-quality image preview.
+   * @remarks
+   * Supported values are `'color'`, `'css'`, `'svg'`, `'base64'`, or `false`.
+   * @defaultValue 'base64'
+   */
+  lqip?: LqipType;
+  /**
+   * Pixel size used to generate the low-quality image preview.
+   * @remarks
+   * Expected to be between `4` and `64`.
+   * @defaultValue 4
+   */
+  lqipSize?: number;
+};
+//#endregion
+//#region src/types/svg-node.type.d.ts
+type StyleAttrs = StyleInput<GetSVGReturn>;
+type SVGNodeAttrs = {
+  style?: StyleAttrs;
+} & Record<string, string | number>;
+type SVGNode = [string, SVGNodeAttrs, SVGNode[]];
+//#endregion
+//#region src/components/Background.d.ts
+interface BackgroundProps extends ImageTransform {}
+//#endregion
+//#region src/components/Image.d.ts
+type ImageProps = (LocalImageProps | RemoteImageProps) & Props & {
+  /**
+   * HTML attributes applied to the wrapper div rendered around the image
+   * when LQIP is enabled.
+   */
+  parentAttributes?: HTMLAttributes<'div'>;
+};
+//#endregion
+//#region src/components/Picture.d.ts
+type AstroPictureProps = ComponentProps<typeof Picture$1>;
+type PictureProps = AstroPictureProps & Props;
+//#endregion
+//#region src/index.d.ts
+type AstroTypedComponent<Props> = ((props: Props) => unknown) & {
+  isAstroComponentFactory?: boolean;
+  moduleId?: string;
+};
+/**
+ * Astro component that renders a wrapper element with an optimized background image.
+ *
+ * @remarks
+ * The component resolves the configured source, generates LQIP styles, and applies
+ * them inline as a CSS background. Child content is rendered via the default slot.
+ */
+declare const Background: AstroTypedComponent<BackgroundProps>;
+/**
+ * Astro component that extends astro:assets Image with LQIP behavior.
+ *
+ * @remarks
+ * When lqip is enabled, the component renders a wrapper with placeholder
+ * styles and fades the placeholder out on image load.
+ * When lqip is false, it delegates to Astro Image rendering directly.
+ */
+declare const Image: AstroTypedComponent<ImageProps>;
+/**
+ * Astro component that extends `astro:assets` Picture with LQIP behavior.
+ *
+ * @remarks
+ * When `lqip` is enabled, this component applies placeholder styles to
+ * `pictureAttributes` and fades them out once the image loads.
+ * When `lqip` is `false`, it delegates to Astro's Picture renderer.
+ */
+declare const Picture: AstroTypedComponent<PictureProps>;
+//#endregion
+export { Background, ComponentsOptions, GetSVGReturn, GlobMap, Image, ImagePath, ImageTransform, ImportModule, LqipType, Picture, Props, ResolvedImage, SVGNode, StyleAttrs, StyleInput, StyleMap };
