@@ -1,7 +1,21 @@
 ---
 import { getArchiveData } from "../utils/content-utils";
 
-const { groups, stats } = await getArchiveData();
+interface Props {
+	categories?: string[];
+	tags?: string[];
+}
+
+const { categories, tags } = Astro.props as Props;
+
+const filterOptions = {
+	...(categories && categories.length > 0 ? { categories } : {}),
+	...(tags && tags.length > 0 ? { tags } : {}),
+};
+
+const { groups, stats } = await getArchiveData(
+	Object.keys(filterOptions).length > 0 ? filterOptions : undefined,
+);
 
 function formatDate(date: Date) {
 	const month = (date.getMonth() + 1).toString().padStart(2, "0");

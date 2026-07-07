@@ -46,15 +46,13 @@ const category = String(
 );
 ---
 
-<MainGridLayout title={i18n(I18nKey.archive)} description={i18n(I18nKey.archive)}>
-    <div class="max-w-[50rem] mx-auto w-full">
-        <Breadcrumb 
-            items={[
-                { label: "首页", url: "/" },
-                { label: "归档", url: "/archive" },
-                { label: category, isActive: true }
-            ]} 
-        />
-        <ArchivePanel categories={[category]}></ArchivePanel>
-    </div>
+<MainGridLayout title={i18n(I18nKey.archive)} description={i18n(I18nKey.archive)} showAnnouncement={false} fullWidth={false} centerContent={true}>
+    <Breadcrumb 
+        items={[
+            { label: "首页", url: "/" },
+            { label: "归档", url: "/archive" },
+            { label: category, isActive: true }
+        ]} 
+    />
+    <ArchivePanel categories={[category]}></ArchivePanel>
 </MainGridLayout>

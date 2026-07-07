@@ -190,7 +190,12 @@ export type ArchiveStats = {
 	allCategories: Category[];
 };
 
-export async function getArchiveData(): Promise<{
+export async function getArchiveData(
+	filterOptions?: {
+		categories?: string[];
+		tags?: string[];
+	},
+): Promise<{
 	groups: ArchiveYearGroup[];
 	stats: ArchiveStats;
 }> {
@@ -231,8 +236,23 @@ export async function getArchiveData(): Promise<{
 
 	items.sort((a, b) => b.published.getTime() - a.published.getTime());
 
+	let filteredItems = items;
+	if (filterOptions) {
+		const { categories, tags } = filterOptions;
+		filteredItems = items.filter((item) => {
+			if (categories && categories.length > 0) {
+				const itemCategory = item.category || i18n(I18nKey.uncategorized);
+				if (!categories.includes(itemCategory)) return false;
+			}
+			if (tags && tags.length > 0) {
+				if (!item.tags || !tags.some((t) => item.tags!.includes(t))) return false;
+			}
+			return true;
+		});
+	}
+
 	const yearMap = new Map<number, Map<number, ArchiveItem[]>>();
-	for (const item of items) {
+	for (const item of filteredItems) {
 		const year = item.published.getFullYear();
 		const month = item.published.getMonth() + 1;
 		if (!yearMap.has(year)) yearMap.set(year, new Map());
@@ -258,9 +278,9 @@ export async function getArchiveData(): Promise<{
 	}
 	groups.sort((a, b) => b.year - a.year);
 
-	const totalWords = items.reduce((sum, it) => sum + it.words, 0);
-	const postCount = items.filter((it) => it.type === "post").length;
-	const noteCount = items.filter((it) => it.type === "note").length;
+	const totalWords = filteredItems.reduce((sum, it) => sum + it.words, 0);
+	const postCount = filteredItems.filter((it) => it.type === "post").length;
+	const noteCount = filteredItems.filter((it) => it.type === "note").length;
 
 	const years = groups.map((g) => g.year);
 	const yearsSpan = years.length > 0 ? `${years[years.length - 1]} - ${years[0]}` : "-";
@@ -269,7 +289,7 @@ export async function getArchiveData(): Promise<{
 	const catCountMap: { [key: string]: number } = {};
 	const uncategorizedKey = i18n(I18nKey.uncategorized);
 
-	for (const item of items) {
+	for (const item of filteredItems) {
 		for (const tag of item.tags) {
 			tagCountMap[tag] = (tagCountMap[tag] || 0) + 1;
 		}
