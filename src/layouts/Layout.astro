@@ -136,44 +136,36 @@ const jsonLd = {
 
 <!DOCTYPE html>
 <script is:inline define:vars={{DEFAULT_THEME, LIGHT_MODE, DARK_MODE, AUTO_MODE, BANNER_HEIGHT_EXTEND, PAGE_WIDTH, configHue}}>
-	const theme = localStorage.getItem('theme') || DEFAULT_THEME;
-	switch (theme) {
-		case LIGHT_MODE:
-			document.documentElement.classList.remove('dark');
-			break;
-		case DARK_MODE:
-			document.documentElement.classList.add('dark');
-			break;
-		case AUTO_MODE:
-			if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-				document.documentElement.classList.add('dark');
-			} else {
-				document.documentElement.classList.remove('dark');
-			}
-			break;
+	function applyTheme() {
+		const theme = localStorage.getItem('theme') || DEFAULT_THEME;
+		const html = document.documentElement;
+		var isDark = theme === DARK_MODE ||
+			(theme === AUTO_MODE && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+		html.classList.toggle('dark', isDark);
+		html.style.setProperty('--page-bg', isDark ? '#1c1917' : '#faf8f5');
+		html.style.backgroundColor = isDark ? '#1c1917' : '#faf8f5';
+		html.style.setProperty('--hue', localStorage.getItem('hue') || configHue);
+
+		var offset = Math.floor(window.innerHeight * (BANNER_HEIGHT_EXTEND / 100));
+		offset = offset - offset % 4;
+		html.style.setProperty('--banner-height-extend', offset + 'px');
+
+		window.dispatchEvent(new CustomEvent('themeChange', { detail: { theme: theme } }));
 	}
 
-	const hue = localStorage.getItem('hue') || configHue;
-	document.documentElement.style.setProperty('--hue', hue);
+	applyTheme();
 
-	const isDark = document.documentElement.classList.contains('dark');
-	document.documentElement.style.setProperty('--page-bg', isDark ? '#1c1917' : '#faf8f5');
-	document.documentElement.style.backgroundColor = isDark ? '#1c1917' : '#faf8f5';
+	if (!window.__themePersistInstalled) {
+		window.__themePersistInstalled = true;
 
-	const calculateBannerHeight = () => {
-		let offset = Math.floor(window.innerHeight * (BANNER_HEIGHT_EXTEND / 100));
-		offset = offset - offset % 4;
-		document.documentElement.style.setProperty('--banner-height-extend', `${offset}px`);
-	};
-	calculateBannerHeight();
-
-	if (theme === AUTO_MODE) {
-		window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
-			document.documentElement.classList.toggle('dark', e.matches);
-			document.documentElement.style.setProperty('--page-bg', e.matches ? '#1c1917' : '#faf8f5');
-				document.documentElement.style.backgroundColor = e.matches ? '#1c1917' : '#faf8f5';
-			window.dispatchEvent(new CustomEvent('themeChange', { detail: { theme: AUTO_MODE } }));
+		window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+			var theme = localStorage.getItem('theme') || DEFAULT_THEME;
+			if (theme === AUTO_MODE) applyTheme();
 		});
+
+		document.addEventListener('astro:after-swap', applyTheme);
+		document.addEventListener('astro:page-load', applyTheme);
 	}
 </script>
 <html lang={siteLang} class="text-[14px] md:text-[16px]">
@@ -286,7 +278,9 @@ const jsonLd = {
 				document.documentElement.classList.add('loaded');
 			});
 		</script>
-		<script defer src="../scripts/view-transitions.ts"></script>
+		<script>
+			import '../scripts/view-transitions.ts';
+		</script>
 	</body>
 </html>
 
@@ -331,8 +325,12 @@ button, a, [role="button"], [role="link"] {
 }
 </style>
 
-<script defer src="../scripts/runtime.ts"></script>
+<script>
+	import '../scripts/runtime.ts';
+</script>
 
-<script defer src="../scripts/photoswipe-init.ts"></script>
+<script>
+	import '../scripts/photoswipe-init.ts';
+</script>
 
 

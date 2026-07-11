@@ -3,25 +3,6 @@
 	if (w.__vtHooksInstalled) return;
 	w.__vtHooksInstalled = true;
 
-	const DEFAULT_THEME = "auto";
-
-	function applyTheme() {
-		const theme = localStorage.getItem("theme") || DEFAULT_THEME;
-		const html = document.documentElement;
-		const isDark =
-			theme === "dark" ||
-			(theme === "auto" &&
-				window.matchMedia("(prefers-color-scheme: dark)").matches);
-
-		html.classList.toggle("dark", isDark);
-		html.style.setProperty("--page-bg", isDark ? "#1c1917" : "#faf8f5");
-		html.style.backgroundColor = isDark ? "#1c1917" : "#faf8f5";
-		html.style.setProperty("--hue", localStorage.getItem("hue") || "0");
-		window.dispatchEvent(
-			new CustomEvent("themeChange", { detail: { theme } }),
-		);
-	}
-
 	function triggerEnterAnimations() {
 		const mainContent = document.querySelector(".main-panel");
 		if (mainContent) {
@@ -97,7 +78,6 @@
 	}
 
 	document.addEventListener("astro:page-load", () => {
-		applyTheme();
 		requestAnimationFrame(triggerEnterAnimations);
 		requestAnimationFrame(() => {
 			document.body.style.overflow = "auto";
@@ -106,6 +86,4 @@
 			document.documentElement.style.position = "static";
 		});
 	});
-
-	document.addEventListener("astro:after-swap", applyTheme);
 })();
