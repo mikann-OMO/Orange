@@ -47,4 +47,8 @@ export const en: Translation = {
 	[Key.copyButton]: "Copy Link",
 	[Key.copySuccess]: "Copied",
 	[Key.copyFailed]: "Failed",
+
+	[Key.backHome]: "Back to Home",
+	[Key.pageNotFound]: "Page Not Found",
+	[Key.notFound]: "Not Found",
 };

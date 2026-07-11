@@ -6,6 +6,8 @@ import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { getTagList } from "@utils/content-utils";
 import { getTagUrl } from "@utils/url-utils";
 
+export const prerender = true;
+
 const tags = await getTagList();
 ---
 

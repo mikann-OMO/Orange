@@ -52,6 +52,7 @@ const displayUrl = friendUrl.replace(/^https?:\/\//, "").replace(/\/$/, "");
 				class="avatar"
 				loading="lazy"
 				decoding="async"
+				onerror="this.style.display='none'"
 			/>
 		</div>
 		<div class="info-section">

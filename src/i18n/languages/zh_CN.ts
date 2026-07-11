@@ -45,4 +45,8 @@ export const zh_CN: Translation = {
 	[Key.copyButton]: "复制友链",
 	[Key.copySuccess]: "复制成功",
 	[Key.copyFailed]: "复制失败",
+
+	[Key.backHome]: "返回首页",
+	[Key.pageNotFound]: "页面未找到",
+	[Key.notFound]: "未找到",
 };

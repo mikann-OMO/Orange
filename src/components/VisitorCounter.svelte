@@ -38,31 +38,25 @@ $effect(() => {
 		return;
 	}
 
-	async function init() {
-		try {
-			count = getLocalCount(SITE_VISITOR_KEY);
-			loading = false;
+	count = getLocalCount(SITE_VISITOR_KEY);
+	loading = false;
 
-			if (shouldTrack()) {
+	if (shouldTrack()) {
+		setTimeout(async () => {
+			try {
 				const result = await incrementSiteVisitorCount();
 				if (result.success) {
 					count = result.count;
 					localStorage.setItem(SITE_VISITOR_KEY, count.toString());
-					markTracked();
 				} else {
 					count = incrementLocalCount(SITE_VISITOR_KEY);
-					markTracked();
 				}
+				markTracked();
+			} catch (e) {
+				console.error("Visitor count error:", e);
 			}
-		} catch (e) {
-			console.error("Visitor count error:", e);
-			if (count === 0) {
-				count = getLocalCount(SITE_VISITOR_KEY);
-			}
-			loading = false;
-		}
+		}, 1000);
 	}
-	init();
 });
 </script>
 

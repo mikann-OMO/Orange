@@ -182,6 +182,8 @@ const jsonLd = {
 		<meta charset="UTF-8" />
 		<meta name="color-scheme" content="light dark" />
 		<link rel="dns-prefetch" href="//vercel.live">
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 		<meta name="theme-color" content="#ff9800">
 
@@ -284,7 +286,7 @@ const jsonLd = {
 				document.documentElement.classList.add('loaded');
 			});
 		</script>
-		<script src="../scripts/view-transitions.ts"></script>
+		<script defer src="../scripts/view-transitions.ts"></script>
 	</body>
 </html>
 
@@ -292,8 +294,7 @@ const jsonLd = {
 	bannerOffset,
 	'banner-height-home': `${BANNER_HEIGHT_HOME}vh`,
 	'banner-height': `${BANNER_HEIGHT}vh`,
-}}>
-@tailwind components;
+}}>@tailwind components;
 @layer components {
 	.enable-banner.is-home #banner-wrapper,
 	.enable-banner #banner-wrapper {
@@ -323,14 +324,15 @@ const jsonLd = {
 
 
 
+
 button, a, [role="button"], [role="link"] {
 	touch-action: manipulation;
 	-webkit-tap-highlight-color: transparent;
 }
 </style>
 
-<script src="../scripts/runtime.ts"></script>
+<script defer src="../scripts/runtime.ts"></script>
 
-<script src="../scripts/photoswipe-init.ts"></script>
+<script defer src="../scripts/photoswipe-init.ts"></script>
 
 

@@ -59,23 +59,16 @@ export default defineConfig({
 		defaultStrategy: "hover",
 	},
 
-	// 构建配置
 	build: {
-		// 输出目录
 		outDir: "dist",
-		// 静态资源目录
 		assetsDir: "_astro",
-		// 启用构建缓存
 		cache: true,
-		// 代码压缩工具
 		minify: "esbuild",
-		// 是否生成 sourcemap
 		sourcemap: false,
-		// 清理输出目录
 		clean: true,
+		target: "es2020",
 	},
 
-	// 集成配置
 	integrations: [
 		// Tailwind CSS 集成
 		tailwind({

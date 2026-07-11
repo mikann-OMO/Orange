@@ -12,6 +12,8 @@ import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 
+export const prerender = true;
+
 const aboutPost = await getEntry("about", "about");
 
 if (!aboutPost) {

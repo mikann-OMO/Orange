@@ -82,6 +82,7 @@ const fetchpriority = loading === "eager" ? "high" : "low";
 			height={height}
 			decoding="async"
 			fetchpriority={fetchpriority}
+			onerror="this.style.display='none'; this.parentElement?.style.display='none'"
 		/>
 	) : (
 		<Image

@@ -43,6 +43,10 @@ enum I18nKey {
 	copyButton = "copyButton",
 	copySuccess = "copySuccess",
 	copyFailed = "copyFailed",
+
+	backHome = "backHome",
+	pageNotFound = "pageNotFound",
+	notFound = "notFound",
 }
 
 export default I18nKey;

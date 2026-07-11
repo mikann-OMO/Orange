@@ -9,6 +9,8 @@ import { i18n } from "@i18n/translation";
 import { formatDate } from "@utils/date-utils";
 import { getNoteTagList, getNoteCategoryList } from "@utils/content-utils";
 
+export const prerender = true;
+
 const allNotes = await getCollection("notes", ({ data }) => !data.draft);
 const sortedNotes = allNotes.sort(
 	(a, b) => new Date(b.data.published).getTime() - new Date(a.data.published).getTime(),
