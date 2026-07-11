@@ -16,7 +16,7 @@ import { PAGE_SIZE } from "@constants/constants";
 import announcement from "@/content/announcement.yaml";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { getSortedPosts } from "@utils/content-utils";
-import { getFriendLatestPosts } from "@utils/friend-rss";
+import FriendLatestPosts from "@components/FriendLatestPosts.svelte";
 
 export const getStaticPaths = (async ({ paginate }) => {
 	const allBlogPosts = await getSortedPosts();
@@ -41,8 +41,6 @@ const lastUpdateDateTime = lastUpdateDate
 			minute: "2-digit",
 		})
 	: "";
-
-const friendPosts = await getFriendLatestPosts(3);
 
 const platformLinks = [
 	{
@@ -212,47 +210,11 @@ const platformLinks = [
         <div class="bg-white/10 dark:bg-stone-800/10 backdrop-blur-2xl rounded-none shadow-xl p-4">
             <div class="flex items-center gap-2 mb-4">
                 <Icon name="material-symbols:link-rounded" class="text-lg text-orange-700 dark:text-orange-300" />
-                <h3 class="text-lg font-bold text-orange-700 dark:text-white">最新客文</h3>
+                <h3 class="text-lg font-bold text-orange-700 dark:text-white">友链更新</h3>
             </div>
-            {friendPosts.length > 0 ? (
-                <div class="space-y-3">
-                    {friendPosts.map((post) => (
-                        <a
-                            href={post.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="group flex items-start gap-2 p-2 rounded-lg bg-orange-50/50 dark:bg-stone-700/30 hover:bg-orange-100/80 dark:hover:bg-stone-700/50 transition-all duration-200"
-                        >
-                            <img
-                                src={post.friendlyAvatar}
-                                alt={post.friendlyName}
-                                class="w-8 h-8 rounded-lg object-cover flex-shrink-0 mt-0.5"
-                                loading="lazy"
-                                onerror="this.style.display='none'"
-                            />
-                            <div class="flex-1 min-w-0">
-                                <div class="flex items-center gap-1 mb-1">
-                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[0.625rem] font-medium bg-orange-200/50 dark:bg-orange-800/30 text-orange-700 dark:text-orange-300">
-                                        {post.friendlyName}
-                                    </span>
-                                </div>
-                                <p class="font-bold text-orange-700 dark:text-white text-xs group-hover:text-orange-600 dark:group-hover:text-orange-300 transition-colors line-clamp-2">{post.title}</p>
-                                <p class="text-[0.625rem] text-orange-950/40 dark:text-white/40 mt-0.5 flex items-center gap-1">
-                                    <Icon name="material-symbols:calendar-today-outline-rounded" class="text-[0.7rem]" />
-                                    {new Date(post.date).toLocaleDateString('zh-CN', { year: 'numeric', month: 'short', day: 'numeric' })}
-                                </p>
-                            </div>
-                        </a>
-                    ))}
-                </div>
-            ) : (
-                <div class="text-center py-4 text-orange-950/50 dark:text-white/50">
-                    <Icon name="material-symbols:inbox-outline-rounded" class="text-2xl mb-1 opacity-50" />
-                    <p class="text-sm">暂无内容</p>
-                </div>
-            )}
+            <FriendLatestPosts client:visible limit={3} />
             <a href="/friends/" class="mt-3 inline-flex items-center gap-1 text-xs text-orange-700 dark:text-orange-300 hover:text-orange-600 dark:hover:text-orange-200 transition-colors">
-                查看更多客文
+                查看友链文章
                 <Icon name="fa6-solid:arrow-right" class="text-[0.625rem]" />
             </a>
         </div>
