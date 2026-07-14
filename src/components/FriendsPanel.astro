@@ -25,16 +25,7 @@ const friendLinks: FriendLink[] = friendsCollection.map((friend) => ({
 	rarity: "common",
 }));
 
-function shuffleArray<T>(arr: T[]): T[] {
-	const a = arr.slice();
-	for (let i = a.length - 1; i > 0; i--) {
-		const j = Math.floor(Math.random() * (i + 1));
-		[a[i], a[j]] = [a[j], a[i]];
-	}
-	return a;
-}
-
-const items: FriendLink[] = shuffleArray(friendLinks);
+const items: FriendLink[] = friendLinks;
 
 const personalCard = {
 	name: "mikann_OMO",
@@ -152,6 +143,25 @@ const copyFriendData = JSON.stringify(
 		))}
 	</div>
 
+	<script is:inline>
+		function shuffleFriendCards() {
+			const grid = document.querySelector('.friends-grid');
+			if (!grid) return;
+			const first = grid.querySelector('.friend-card-wrapper:first-child');
+			const wrappers = Array.from(grid.querySelectorAll('.friend-card-wrapper:not(:first-child)'));
+			// Fisher-Yates shuffle on DOM elements
+			for (let i = wrappers.length - 1; i > 0; i--) {
+				const j = Math.floor(Math.random() * (i + 1));
+				[wrappers[i], wrappers[j]] = [wrappers[j], wrappers[i]];
+			}
+			// Re-append in shuffled order after the first (personal) card
+			const fragment = document.createDocumentFragment();
+			wrappers.forEach(w => fragment.appendChild(w));
+			first.after(fragment);
+		}
+		document.addEventListener('astro:page-load', shuffleFriendCards);
+		if (document.readyState !== 'loading') shuffleFriendCards();
+	</script>
 	<script is:inline define:vars={{ copyFriendData }}>
 		function handleCopyClick(e) {
 			const button = e.currentTarget.closest('.copy-button');
