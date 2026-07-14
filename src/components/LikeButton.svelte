@@ -98,19 +98,22 @@ $effect(() => {
 	.like-btn {
 		display: inline-flex;
 		align-items: center;
-		gap: 0.5rem;
-		padding: 0.3125rem 0.625rem;
+		gap: 0.75rem;
+		padding: 0.75rem 1.75rem;
 		border-radius: 999px;
-		border: 1px solid color-mix(in srgb, var(--primary) 20%, var(--card-border));
+		border: 2px solid color-mix(in srgb, var(--primary) 25%, var(--card-border));
 		background: color-mix(in srgb, var(--primary) 5%, var(--card-bg));
 		color: inherit;
-		transition: all 0.2s ease;
+		transition: all 0.25s ease;
 		user-select: none;
 		cursor: pointer;
+		box-shadow: 0 2px 8px color-mix(in srgb, var(--primary) 8%, transparent);
 	}
 	.like-btn:hover {
-		background: color-mix(in srgb, var(--primary) 10%, var(--card-bg));
-		border-color: color-mix(in srgb, var(--primary) 35%, var(--card-border));
+		background: color-mix(in srgb, var(--primary) 12%, var(--card-bg));
+		border-color: var(--primary);
+		box-shadow: 0 4px 16px color-mix(in srgb, var(--primary) 18%, transparent);
+		transform: translateY(-2px);
 	}
 	.like-btn:active {
 		transform: scale(0.96);
@@ -121,7 +124,7 @@ $effect(() => {
 	}
 
 	.heart {
-		font-size: 0.95rem;
+		font-size: 1.5rem;
 		line-height: 1;
 		transform: translateY(-0.5px);
 		transition: transform 0.2s ease, color 0.2s ease, opacity 0.2s ease;
@@ -142,15 +145,15 @@ $effect(() => {
 		color: color-mix(in srgb, var(--primary) 45%, var(--text-secondary));
 	}
 	.count {
-		font-size: 0.8125rem;
+		font-size: 1.0625rem;
 		font-weight: 600;
 		color: var(--text-primary);
-		min-width: 1.25rem;
+		min-width: 1.5rem;
 		text-align: center;
 	}
 	.like-error {
 		margin-left: 0.5rem;
-		font-size: 0.6875rem;
+		font-size: 0.75rem;
 		color: var(--error);
 		opacity: 0.8;
 	}

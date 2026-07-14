@@ -1,5 +1,4 @@
 ---
-
 interface Props {
 	friendName: string;
 	friendAvatar: string;
@@ -29,6 +28,20 @@ const starCount = { common: 2, rare: 3, epic: 4, legendary: 5 };
 const activeStars = starCount[rarity as keyof typeof starCount] || 2;
 
 const displayUrl = friendUrl.replace(/^https?:\/\//, "").replace(/\/$/, "");
+
+function getVisualWidth(str: string): number {
+	let w = 0;
+	for (const ch of str) {
+		w += /[\u4e00-\u9fff\u3000-\u303f\uff00-\uffef\u3040-\u309f\u30a0-\u30ff\uac00-\ud7af]/.test(ch) ? 2 : 1;
+	}
+	return w;
+}
+const BASE_FONT_SIZE = 1.1;
+const MAX_VISUAL_WIDTH = 11;
+const visualWidth = getVisualWidth(friendName);
+const nameFontSize = visualWidth > MAX_VISUAL_WIDTH
+	? Math.max(0.55, BASE_FONT_SIZE * MAX_VISUAL_WIDTH / visualWidth)
+	: BASE_FONT_SIZE;
 ---
 
 <a
@@ -56,7 +69,7 @@ const displayUrl = friendUrl.replace(/^https?:\/\//, "").replace(/\/$/, "");
 			/>
 		</div>
 		<div class="info-section">
-			<h3 class="friend-name font-['SimSun',serif]">{friendName}</h3>
+			<h3 class="friend-name font-['SimSun',serif]" style={`font-size: ${nameFontSize}rem`}>{friendName}</h3>
 			<p class="friend-url">{displayUrl}</p>
 			<p class="friend-desc">{friendDescr}</p>
 		</div>
@@ -181,7 +194,6 @@ const displayUrl = friendUrl.replace(/^https?:\/\//, "").replace(/\/$/, "");
 }
 
 .friend-name {
-    font-size: 1.1rem;
     font-weight: 700;
     margin: 0 0 0.3rem 0;
     color: var(--text-primary);
@@ -322,11 +334,9 @@ const displayUrl = friendUrl.replace(/^https?:\/\//, "").replace(/\/$/, "");
     }
 
     .friend-name {
-        font-size: 0.9375rem;
+        font-size: 0.9375rem !important;
         margin-bottom: 4px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        overflow-wrap: break-word;
         text-shadow: none;
     }
 
@@ -341,6 +351,7 @@ const displayUrl = friendUrl.replace(/^https?:\/\//, "").replace(/\/$/, "");
     .friend-url {
         font-size: 0.625rem;
         margin-bottom: 2px;
+        overflow-wrap: break-word;
     }
 
     .stars-section {

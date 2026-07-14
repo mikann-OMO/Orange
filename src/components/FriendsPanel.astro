@@ -43,6 +43,20 @@ const personalCard = {
 	url: "https://www.mikann.fun",
 };
 
+function getVisualWidth(str: string): number {
+	let w = 0;
+	for (const ch of str) {
+		w += /[\u4e00-\u9fff\u3000-\u303f\uff00-\uffef\u3040-\u309f\u30a0-\u30ff\uac00-\ud7af]/.test(ch) ? 2 : 1;
+	}
+	return w;
+}
+const BASE_FONT_SIZE = 1.1;
+const MAX_VISUAL_WIDTH = 11;
+const personalVisualWidth = getVisualWidth(personalCard.name);
+const personalNameFontSize = personalVisualWidth > MAX_VISUAL_WIDTH
+	? Math.max(0.55, BASE_FONT_SIZE * MAX_VISUAL_WIDTH / personalVisualWidth)
+	: BASE_FONT_SIZE;
+
 const copyFriendData = JSON.stringify(
 	[
 		{
@@ -95,7 +109,7 @@ const copyFriendData = JSON.stringify(
 						/>
 					</div>
 					<div class="info-section">
-						<h3 class="friend-name font-['SimSun',serif]">{personalCard.name}</h3>
+						<h3 class="friend-name font-['SimSun',serif]" style={`font-size: ${personalNameFontSize}rem`}>{personalCard.name}</h3>
 						<p class="friend-desc">{personalCard.desc}</p>
 					</div>
 					<div class="stars-section">
@@ -285,7 +299,7 @@ const copyFriendData = JSON.stringify(
 
 .friends-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 20px;
 }
 
@@ -303,18 +317,6 @@ const copyFriendData = JSON.stringify(
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
-    }
-}
-
-@media (max-width: 1200px) {
-    .friends-grid {
-        grid-template-columns: repeat(4, 1fr);
-    }
-}
-
-@media (max-width: 900px) {
-    .friends-grid {
-        grid-template-columns: repeat(3, 1fr);
     }
 }
 
@@ -353,7 +355,6 @@ const copyFriendData = JSON.stringify(
     }
 
     .friends-grid {
-        grid-template-columns: repeat(2, 1fr);
         gap: 12px;
     }
 
@@ -504,7 +505,6 @@ const copyFriendData = JSON.stringify(
 }
 
 .apply-friend-card .friend-name {
-    font-size: 1.1rem;
     font-weight: 700;
     margin: 0 0 0.3rem 0;
     color: var(--text-primary);
@@ -716,11 +716,9 @@ const copyFriendData = JSON.stringify(
     }
 
     .apply-friend-card .friend-name {
-        font-size: 0.9375rem;
+        font-size: 0.9375rem !important;
         margin-bottom: 4px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        overflow-wrap: break-word;
         text-shadow: none;
     }
 

@@ -5,65 +5,27 @@ import { url } from "../utils/url-utils";
 const currentYear = new Date().getFullYear();
 ---
 
-<div class="footer-divider"></div>
-<div class="footer-container">
-    <div class="footer-text">
-        &copy; <span id="copyright-year">{currentYear}</span> {profileConfig.name}. All Rights Reserved. /
-        <a class="footer-link" target="_blank" href={url('rss.xml')}>RSS</a> /
-        <a class="footer-link" target="_blank" href={url('sitemap-index.xml')}>Sitemap</a><br>
-        Powered by
-        <a class="footer-link" target="_blank" href="https://astro.build">Astro</a>
-    </div>
+<div class="footer-text">
+    &copy; <span id="copyright-year">{currentYear}</span> {profileConfig.name}. All Rights Reserved. /
+    <a class="footer-link" target="_blank" href={url('rss.xml')}>RSS</a> /
+    <a class="footer-link" target="_blank" href={url('sitemap-index.xml')}>Sitemap</a><br>
+    Powered by
+    <a class="footer-link" target="_blank" href="https://astro.build">Astro</a>
 </div>
 
 <style>
-    .footer-divider {
-        border-top: 1px dashed var(--line-divider);
-        margin: 1.5rem 1rem;
-    }
-
-    @media (min-width: 768px) {
-        .footer-divider {
-            margin: 1.5rem 8rem;
-        }
-    }
-
-    .footer-container {
-        border: 1px dashed var(--line-divider);
-        border-radius: 1rem;
-        margin-bottom: 2rem;
-        margin-left: 0.75rem;
-        margin-right: 0.75rem;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 1rem 1.25rem;
-        background: var(--card-bg);
-    }
-
-    @media (min-width: 768px) {
-        .footer-container {
-            margin-bottom: 3rem;
-            margin-left: auto;
-            margin-right: auto;
-            padding: 1rem 1.5rem;
-            background: color-mix(in srgb, var(--card-bg) 50%, transparent);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-        }
-    }
-
     .footer-text {
         color: color-mix(in srgb, var(--text-primary) 40%, transparent);
         font-size: 0.75rem;
         text-align: center;
         line-height: 1.8;
+        padding: 1.5rem 1rem 2rem;
     }
 
     @media (min-width: 768px) {
         .footer-text {
             font-size: 0.875rem;
+            padding: 1.5rem 1.5rem 3rem;
         }
     }
 

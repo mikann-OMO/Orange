@@ -235,15 +235,11 @@ const breadcrumbJsonLd = {
         )}
     </div>
 
-    <div class="flex md:hidden justify-center mb-4">
+    <div class="flex justify-center mb-6">
         <LikeButton slug={entry.id} client:visible />
     </div>
 
     <Comment slug={entry.id} />
-
-    <div slot="like" class="hidden md:block">
-        <LikeButton slug={entry.id} client:load />
-    </div>
 </MainGridLayout>
 
 <script is:inline>
