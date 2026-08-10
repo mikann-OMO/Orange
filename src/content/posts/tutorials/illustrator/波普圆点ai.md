@@ -65,7 +65,7 @@ draft: false
 ## 第一步：画一条曲线
 
 - 用钢笔工具随意拉一条弧线，描边加粗  
-（填充分明要关掉，不然会挡住效果）
+（填充要关掉，不然会挡住效果）
 
 <img src="https://mikann-1359996823.cos.ap-beijing.myqcloud.com/md/教程/ai/a1 (1).jpg" alt="a1 (1).jpg"/>
 
@@ -85,7 +85,7 @@ draft: false
 选择“指定步数”，数值先设个 30 左右（后面可以随时改）。
 
 - 最后按 Ctrl+Alt+B  
-（或点菜单 对象 → 混合 → 建立），圆点就会从粗到细平滑渐变，波普感瞬间拉满。
+（或点菜单 对象 → 混合 → 建立），圆点就会从粗到细平滑渐变
 
 <img src="https://mikann-1359996823.cos.ap-beijing.myqcloud.com/md/教程/ai/a1 (2).jpg" alt="a1 (2).jpg"/>
 
