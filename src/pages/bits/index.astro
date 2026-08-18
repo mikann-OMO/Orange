@@ -9,8 +9,6 @@ import { i18n } from "@i18n/translation";
 import { formatDate } from "@utils/date-utils";
 import { getNoteTagList, getNoteCategoryList } from "@utils/content-utils";
 
-export const prerender = true;
-
 const allNotes = await getCollection("notes", ({ data }) => !data.draft);
 const sortedNotes = allNotes.sort(
 	(a, b) => new Date(b.data.published).getTime() - new Date(a.data.published).getTime(),
@@ -58,7 +56,7 @@ const nextUrl = nextNote ? buildUrl({ category: categoryFilter || "", tag: tagFi
 ---
 
 <MainGridLayout title={i18n(I18nKey.notes)} description={i18n(I18nKey.notes)} showAnnouncement={false} fullWidth={false} centerContent={true}>
-    <div id="side-nav-placeholder" data-prev={prevUrl || ""} data-next={nextUrl || ""} hidden></div>
+    <div id="side-nav-placeholder" data-prev={prevUrl || ""} data-next={nextUrl || ""} data-notes={JSON.stringify(filteredNotes.map(n => n.id))} hidden></div>
 
     <div class="w-full flex justify-center">
     <div class="max-w-2xl w-full relative">
@@ -71,7 +69,13 @@ const nextUrl = nextNote ? buildUrl({ category: categoryFilter || "", tag: tagFi
                 <button
                     type="button"
                     id="random-note-btn"
-                    class="inline-flex items-center gap-1 rounded-full px-2 py-1 -my-1 hover:text-orange-700 hover:bg-orange-950/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 dark:hover:text-white/80 dark:hover:bg-white/5 transition-colors duration-200"
+                    class:list={[
+                        "inline-flex items-center gap-1 rounded-full px-2 py-1 -my-1 transition-colors duration-200",
+                        totalFiltered > 1
+                            ? "hover:text-orange-700 hover:bg-orange-950/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 dark:hover:text-white/80 dark:hover:bg-white/5"
+                            : "opacity-40 cursor-not-allowed pointer-events-none"
+                    ]}
+                    aria-disabled={totalFiltered <= 1 ? "true" : "false"}
                     aria-label="随机打开一篇轻读"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -251,11 +255,21 @@ const nextUrl = nextNote ? buildUrl({ category: categoryFilter || "", tag: tagFi
     </div>
 </MainGridLayout>
 
-<script is:inline define:vars={{ 
-    noteIds: filteredNotes.map(n => n.id),
-    prevUrl: prevUrl || '',
-    nextUrl: nextUrl || ''
-}}>
+<script is:inline>
+    // 从 #side-nav-placeholder 读取最新的 prevUrl/nextUrl/noteIds
+    // 这样在 View Transitions 切换文章后，inline script 不重新执行也能拿到最新值
+    function getBitsData() {
+        var ph = document.getElementById('side-nav-placeholder');
+        if (!ph) return { prevUrl: '', nextUrl: '', noteIds: [] };
+        var ids;
+        try { ids = JSON.parse(ph.dataset.notes || '[]'); } catch (e) { ids = []; }
+        return {
+            prevUrl: ph.dataset.prev || '',
+            nextUrl: ph.dataset.next || '',
+            noteIds: ids
+        };
+    }
+
     function createSideBtn(id, href, label, svgPath, side) {
         var existing = document.getElementById(id);
         if (existing) existing.remove();
@@ -271,8 +285,9 @@ const nextUrl = nextNote ? buildUrl({ category: categoryFilter || "", tag: tagFi
 
     function initSideNav() {
         if (window.matchMedia('(max-width: 767px)').matches) return;
-        if (prevUrl) createSideBtn('side-nav-prev', prevUrl, '上一篇', 'm15 18-6-6 6-6', 'left');
-        if (nextUrl) createSideBtn('side-nav-next', nextUrl, '下一篇', 'm9 18 6-6-6-6', 'right');
+        var data = getBitsData();
+        if (data.prevUrl) createSideBtn('side-nav-prev', data.prevUrl, '上一篇', 'm15 18-6-6 6-6', 'left');
+        if (data.nextUrl) createSideBtn('side-nav-next', data.nextUrl, '下一篇', 'm9 18 6-6-6-6', 'right');
     }
 
     function initRandomNote() {
@@ -280,10 +295,13 @@ const nextUrl = nextNote ? buildUrl({ category: categoryFilter || "", tag: tagFi
         if (!btn || btn.dataset.bound === 'true') return;
         btn.dataset.bound = 'true';
         btn.addEventListener('click', function() {
-            if (noteIds.length <= 1) { window.location.href = '/bits/'; return; }
+            var data = getBitsData();
+            // 筛选下不足 2 篇时直接返回，保留用户当前的筛选条件，不清空
+            if (data.noteIds.length <= 1) return;
             var sp = new URLSearchParams(window.location.search);
             var currentId = sp.get('p');
-            var availableIds = noteIds.filter(function(id) { return id !== currentId; });
+            var availableIds = data.noteIds.filter(function(id) { return id !== currentId; });
+            if (availableIds.length === 0) return;
             var randomId = availableIds[Math.floor(Math.random() * availableIds.length)];
             sp.set('p', randomId);
             window.location.href = '/bits/?' + sp.toString();
@@ -310,10 +328,11 @@ const nextUrl = nextNote ? buildUrl({ category: categoryFilter || "", tag: tagFi
             var diffY = endY - startY;
 
             if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > threshold) {
-                if (diffX > 0 && prevUrl) {
-                    window.location.href = prevUrl;
-                } else if (diffX < 0 && nextUrl) {
-                    window.location.href = nextUrl;
+                var data = getBitsData();
+                if (diffX > 0 && data.prevUrl) {
+                    window.location.href = data.prevUrl;
+                } else if (diffX < 0 && data.nextUrl) {
+                    window.location.href = data.nextUrl;
                 }
             }
         }, { passive: true });
