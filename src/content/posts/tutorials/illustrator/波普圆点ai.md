@@ -5,7 +5,6 @@ description: "干货分享，用的到的adobe illustrator波普网点制作方�
 image: "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/md/教程/ai/a (5).jpg"
 tags:
   - illustrator技巧
-  - 含复制操作
 category: 软件教程
 draft: false
 
@@ -24,7 +23,7 @@ draft: false
 
 ## 第一步：准备黑白渐变图形
 
-- 拿圆形举例（按住 Shift 可绘制正圆）
+- 拿圆形举例（按住 `Shift` 可绘制正圆）
 
 颜色必须纯黑和纯白，因为彩色半调的四个通道对应 [CMYK](https://baike.baidu.com/item/%E5%8D%B0%E5%88%B7%E5%9B%9B%E5%88%86%E8%89%B2%E6%A8%A1%E5%BC%8F/4302001) 模式。
 
@@ -34,11 +33,11 @@ draft: false
 
 ## 第二步：应用彩色半调
 
-- **选中图形，点击菜单：效果 → 像素化 → 彩色半调**
+- **选中图形，点击菜单：`效果` → `像素化` → `彩色半调`**
 
 四个通道的数值保持默认（0 就行），不用管它。
 
-唯一要调的是 **最大半径** ——它控制小圆点的大小。
+唯一要调的是 **`最大半径`** ——它控制小圆点的大小。
 
 <img src="https://mikann-1359996823.cos.ap-beijing.myqcloud.com/md/教程/ai/a (3).jpg" alt="a (3).jpg"/>
 
@@ -48,15 +47,15 @@ draft: false
 
 ## 第三步：栅格化 + 描摹扩展
 
-- **对象 → 栅格化**  
+- **`对象` → `栅格化`**  
 （弹窗保持默认，背景选白色或透明都行）
 
 <img src="https://mikann-1359996823.cos.ap-beijing.myqcloud.com/md/教程/ai/a (4).jpg" alt="a (4).jpg"/>
 
-- **图像描摹→扩展**  
+- **`图像描摹`→`扩展`**  
 （在控制栏或属性面板里）
 
-描摹预设选 默认 或 剪影 都可以——  
+描摹预设选 `默认` 或 `剪影` 都可以——  
 选默认，后面需要手动删掉白色部分；选剪影，一步到位，白色自动去除，更省事。
 
 <img src="https://mikann-1359996823.cos.ap-beijing.myqcloud.com/md/教程/ai/a (5).jpg" alt="a (5).jpg"/>
@@ -81,18 +80,18 @@ draft: false
 - 打开描边面板，端点改成“圆头”，再勾选“虚线”  
 ——第一个数值填 0，第二个数值调大，直到虚线变成一串分离的小圆点（间距看着顺眼就行）。
 
-- 按住 Alt 拖出第二条线，  
-同时按住 Shift 可以垂直对齐。然后把这条新线的描边粗细改小，让它比第一条细。
+- 按住 `Alt` 拖出第二条线，  
+同时按住 `Shift` 可以垂直对齐。然后把这条新线的描边粗细改小，让它比第一条细。
 
 <img src="https://mikann-1359996823.cos.ap-beijing.myqcloud.com/md/教程/ai/a1 (3).jpg" alt="a1 (3).jpg"/>
 
 ## 第三步：混合出过渡
 
 - 同时选中两条线，双击混合工具，  
-选择“指定步数”，数值先设个 30 左右（后面可以随时改）。
+选择 `指定步数`，数值先设个 30 左右（后面可以随时改）。
 
-- 最后按 Ctrl+Alt+B  
-（或点菜单 对象 → 混合 → 建立），圆点就会从粗到细平滑渐变
+- 最后按 `Ctrl+Alt+B`  
+（或点菜单 `对象` → `混合` → `建立`），圆点就会从粗到细平滑渐变
 
 <img src="https://mikann-1359996823.cos.ap-beijing.myqcloud.com/md/教程/ai/a1 (2).jpg" alt="a1 (2).jpg"/>
 
