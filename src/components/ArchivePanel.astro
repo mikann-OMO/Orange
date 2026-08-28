@@ -1,5 +1,6 @@
 ---
 import { getArchiveData } from "../utils/content-utils";
+import { getCategoryUrl, getTagUrl } from "../utils/url-utils";
 
 interface Props {
 	categories?: string[];
@@ -223,7 +224,7 @@ const monthNames = ["", "一月", "二月", "三月", "四月", "五月", "六�
 					<div class="flex flex-wrap gap-2">
 						{stats.allCategories.map((cat) => (
 							<a
-								href={`/archive/category/${encodeURIComponent(cat.name)}`}
+								href={getCategoryUrl(cat.name)}
 								class="px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 bg-orange-50/80 dark:bg-stone-700/40 text-orange-700 dark:text-white/70 border border-orange-200/50 dark:border-stone-600/40 hover:bg-orange-100 dark:hover:bg-stone-600 hover:border-orange-300 dark:hover:border-stone-500 hover:shadow-sm"
 							>
 								{cat.name}
@@ -247,7 +248,7 @@ const monthNames = ["", "一月", "二月", "三月", "四月", "五月", "六�
 					<div class="flex flex-wrap gap-2">
 						{stats.allTags.map((tag) => (
 							<a
-								href={`/archive/tag/${tag.name}`}
+								href={getTagUrl(tag.name)}
 								class="px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 bg-orange-50/80 dark:bg-stone-700/40 text-orange-700 dark:text-white/70 border border-orange-200/50 dark:border-stone-600/40 hover:bg-orange-100 dark:hover:bg-stone-600 hover:border-orange-300 dark:hover:border-stone-500 hover:shadow-sm"
 							>
 								#{tag.name}

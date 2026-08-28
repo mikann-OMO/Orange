@@ -11,10 +11,6 @@ export const siteConfig: SiteConfig = {
 	title: "mikann-OMO Blog",
 	subtitle: "blog",
 	lang: "zh_CN",
-	themeColor: {
-		hue: 30,
-		fixed: false,
-	},
 	banner: {
 		enable: true,
 		src: "assets/images/banner-light.webp",
@@ -53,11 +49,6 @@ export const licenseConfig: LicenseConfig = {
 export const visitorConfig: VisitorConfig = {
 	enable: true,
 	provider: "server",
-	leancloud: {
-		appId: import.meta.env.VITE_APP_ID || "",
-		appKey: import.meta.env.VITE_APP_KEY || "",
-		serverUrl: import.meta.env.VITE_LEANCLOUD_SERVER_URL || "",
-	},
 };
 
 

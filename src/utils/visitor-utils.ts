@@ -10,7 +10,7 @@ function getConfig() {
 	const carrier = document.getElementById("config-carrier");
 	if (carrier) {
 		const enabled = carrier.getAttribute("data-visitor-enable") === "1";
-		const provider = (carrier.getAttribute("data-visitor-provider") || "local") as "leancloud" | "server" | "local";
+		const provider = (carrier.getAttribute("data-visitor-provider") || "local") as "server" | "local";
 		return { enabled, provider };
 	}
 	return { enabled: visitorConfig.enable, provider: visitorConfig.provider };

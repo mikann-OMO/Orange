@@ -5,7 +5,6 @@ description: "在接触计算机之后，我开始重新理解设计、工具与
 image: ""
 tags:
   - 工具与学习
-  - 设计思维
 category: 成为人类日志
 draft: false
 

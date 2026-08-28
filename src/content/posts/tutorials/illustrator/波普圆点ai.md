@@ -1,18 +1,12 @@
 ---
-title: 波普圆点怎么做？半调素材的制作方式？Illustrator矢量图形
+title: 波普圆点怎么做？半调素材的制作方式？Illustrator技巧
 published: 2026-08-10
-description: "干货分享，用的到的adobe illustrator波普网点制作方式。含部分解释，适合新手。"
-image: "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/md/教程/ai/a (5).jpg"
+description: "Adobe Illustrator波普网点、半调素材的制作方式。"
+image: "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/md/教程/ai/0ai.png"
 tags:
-  - illustrator技巧
+  - Illustrator技巧
 category: 软件教程
 draft: false
-
----
-
-**波普风格（Pop Art）** 是上世纪50年代兴起的一种艺术潮流，它把广告、漫画、超市商品这些日常符号直接搬进画面，用鲜艳的色彩和重复的图案制造强烈的视觉冲击。我们常说的“波普圆点”就是它最标志性的语言——那些大小不一的网点，既能表现光影，又自带一种机械复制的酷感。
-
-**半调（Halftone）** 正是实现这种效果的核心技术。简单说，它通过点、线的疏密或大小变化，来模拟图像的明暗与渐变：暗部点大且密，亮部点小且疏。远看是一幅完整的画面，凑近却发现全由规则排列的小点或线条组成。这种手法原本用于印刷工艺（比如报纸图片），后来被波普艺术家大量采用，成为经典风格。下面两种方法，就是用 Illustrator 快速制作这种半调圆点素材的实用技巧。
 
 ---
 

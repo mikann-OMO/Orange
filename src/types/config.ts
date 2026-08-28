@@ -1,13 +1,7 @@
-import type { AUTO_MODE, DARK_MODE, LIGHT_MODE } from "@constants/constants";
-
 export type SiteConfig = {
 	title: string;
 	subtitle: string;
 	lang: string;
-	themeColor: {
-		hue: number;
-		fixed: boolean;
-	};
 	banner: {
 		enable: boolean;
 		src: string;
@@ -64,15 +58,5 @@ export type LicenseConfig = {
 
 export type VisitorConfig = {
 	enable: boolean;
-	provider: "leancloud" | "local" | "server";
-	leancloud?: {
-		appId: string;
-		appKey: string;
-		serverUrl?: string;
-	};
+	provider: "local" | "server";
 };
-
-export type LIGHT_DARK_MODE =
-	| typeof LIGHT_MODE
-	| typeof DARK_MODE
-	| typeof AUTO_MODE;

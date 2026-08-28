@@ -1,7 +1,7 @@
 ---
 title: 如何处理图片边缘？ Photoshop处理素材边缘技巧
 published: 2026-08-22
-description: "去锯齿？去毛边？加描边？干货分享，处理图像边缘的多种方式，用的到的adobe photoshop各种处理素材图的技巧。含部分解释，适合新手。"
+description: "Adobe photoshop去锯齿、去毛边、加描边，处理图像边缘的多种方式。"
 image: "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/md/教程/ps/0ps.png"
 tags:
   - Photoshop技巧
@@ -9,8 +9,6 @@ category: 软件教程
 draft: false
 
 ---
-
-*`Ctrl+Shift+I`反向选区，`Ctrl+D`取消选区*
 
 # 如何让边缘更加平滑干净？锯齿、毛边怎么去除？
 
@@ -23,7 +21,7 @@ draft: false
 
 ## 4.用选择并遮住功能
 
-### 第一步： 
+- **第一步：**  
 
 按住ctrl键，点击图层缩略图（进行创建选区的操作）
 
@@ -31,7 +29,7 @@ draft: false
 
 <img src="https://mikann-1359996823.cos.ap-beijing.myqcloud.com/md/教程/ps/A (1).jpg" alt="A (1).jpg"/>
 
-### 第二步： 
+- **第二步：**  
 
 按照个人需求调整数值，
 
@@ -61,14 +59,21 @@ draft: false
 
 *还可以通过收缩选区创建路径，达到不同描边的效果，如缝纫虚线效果*
 
-- 先创建选区，再点击`套索工具`，对着画布右键`建立工作路径`
+<figure style="float: right; width: clamp(220px, 32%, 340px); margin: 0 0 0.5rem 1rem;">
+  <img src="https://mikann-1359996823.cos.ap-beijing.myqcloud.com/md/教程/ps/A（3）.jpg" alt="A（3）.jpg"/>
+</figure>
 
-- 再点击`形状工具`，看向顶部菜单栏，将形状改为路径  
+- **第一步：**  
+先创建选区，再点击`套索工具`，对着画布右键`建立工作路径`
+
+- **第二步：**  
+再点击`形状工具`，看向顶部菜单栏，将形状改为路径  
 （若画面路径莫名其妙消失，点击`路径选择工具`就恢复了）
 
-- 点击`形状`创建形状，将`填充`关闭后，即可更换不同描边
+- **第三步：**  
+点击`形状`创建形状，将`填充`关闭后，即可更换不同描边
 
-<img src="https://mikann-1359996823.cos.ap-beijing.myqcloud.com/md/教程/ps/A（3）.jpg" alt="A（3）.jpg"/>
+<div style="clear: both;"></div>
 
 ---
 

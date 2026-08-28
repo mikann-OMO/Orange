@@ -273,7 +273,6 @@ export default defineConfig({
 					},
 					// 优化输出
 					minifyInternalExports: true,
-					generatedCode: "es2015",
 					// 启用长期缓存
 					chunkFileNames: "chunks/[name].[hash].js",
 					entryFileNames: "[name].[hash].js",
