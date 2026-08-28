@@ -7,20 +7,134 @@ const categories = await getCategoryList();
 interface Props {
 	class?: string;
 	style?: string;
+	collapsible?: boolean;
 }
-const className = Astro.props.class;
-const style = Astro.props.style;
+const { class: className, style, collapsible = false } = Astro.props;
 ---
 
 <div class={className} style={style}>
-    {categories.map((c) => (
-        <a 
-            href={getCategoryUrl(c.name.trim())} 
-            class="flex justify-between items-center p-1.5 md:p-2 hover:bg-tint-20/50 dark:hover:bg-stone-700/50 rounded-lg transition-colors"
-            aria-label={`View all posts in the ${c.name.trim()} category`}
-        >
-            <span class="text-orange-950/80 dark:text-white/80 text-sm truncate">{c.name.trim()}</span>
-            <span class="bg-[var(--card-bg)] dark:bg-stone-700 text-orange-800 dark:text-white px-1.5 md:px-2 py-0.5 md:py-1 rounded-full text-xs font-medium flex-shrink-0">{c.count}</span>
-        </a>
-    ))}
+    {collapsible ? (
+        <div class="categories-collapse">
+            <button type="button" class="categories-toggle" aria-expanded="false">
+                <span class="toggle-arrow">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 18l6-6-6-6"/>
+                    </svg>
+                </span>
+                <span class="toggle-label">展开分类</span>
+            </button>
+            <div class="categories-list">
+                {categories.map((c) => (
+                    <a 
+                        href={getCategoryUrl(c.name.trim())} 
+                        class="flex justify-between items-center p-1.5 md:p-2 hover:bg-tint-20/50 dark:hover:bg-stone-700/50 rounded-lg transition-colors"
+                        aria-label={`View all posts in the ${c.name.trim()} category`}
+                    >
+                        <span class="text-orange-950/80 dark:text-white/80 text-sm truncate">{c.name.trim()}</span>
+                        <span class="bg-[var(--card-bg)] dark:bg-stone-700 text-orange-800 dark:text-white px-1.5 md:px-2 py-0.5 md:py-1 rounded-full text-xs font-medium flex-shrink-0">{c.count}</span>
+                    </a>
+                ))}
+            </div>
+        </div>
+    ) : (
+        categories.map((c) => (
+            <a 
+                href={getCategoryUrl(c.name.trim())} 
+                class="flex justify-between items-center p-1.5 md:p-2 hover:bg-tint-20/50 dark:hover:bg-stone-700/50 rounded-lg transition-colors"
+                aria-label={`View all posts in the ${c.name.trim()} category`}
+            >
+                <span class="text-orange-950/80 dark:text-white/80 text-sm truncate">{c.name.trim()}</span>
+                <span class="bg-[var(--card-bg)] dark:bg-stone-700 text-orange-800 dark:text-white px-1.5 md:px-2 py-0.5 md:py-1 rounded-full text-xs font-medium flex-shrink-0">{c.count}</span>
+            </a>
+        ))
+    )}
 </div>
+
+<style>
+.categories-collapse {
+    width: 100%;
+}
+
+.categories-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    padding: 4px 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+}
+
+.toggle-arrow {
+    display: flex;
+    align-items: center;
+    transition: transform 0.3s ease;
+    color: var(--text-muted, rgb(120 113 108));
+}
+
+.categories-collapse.collapsed .toggle-arrow {
+    transform: rotate(0deg);
+}
+
+.categories-collapse:not(.collapsed) .toggle-arrow {
+    transform: rotate(90deg);
+}
+
+.toggle-label {
+    font-size: 0.8rem;
+    color: var(--text-muted, rgb(120 113 108));
+}
+
+.categories-list {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.3s ease, opacity 0.3s ease, margin-top 0.3s ease;
+}
+
+.categories-collapse:not(.collapsed) .categories-list {
+    max-height: 1000px;
+    opacity: 1;
+}
+
+.categories-collapse.collapsed .categories-list {
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+}
+</style>
+
+<script is:inline>
+    function initCategoriesCollapse() {
+        document.querySelectorAll('.categories-collapse').forEach((container) => {
+            if (container.dataset.init === 'true') return;
+            container.dataset.init = 'true';
+
+            // 默认折叠
+            container.classList.add('collapsed');
+            const toggle = container.querySelector('.categories-toggle');
+            const label = container.querySelector('.toggle-label');
+
+            if (toggle) {
+                toggle.addEventListener('click', () => {
+                    const isCollapsed = container.classList.toggle('collapsed');
+                    toggle.setAttribute('aria-expanded', String(!isCollapsed));
+                    if (label) {
+                        label.textContent = isCollapsed ? '展开分类' : '收起分类';
+                    }
+                });
+            }
+        });
+    }
+
+    document.addEventListener('astro:page-load', initCategoriesCollapse);
+    if (document.readyState !== 'loading') initCategoriesCollapse();
+</script>
