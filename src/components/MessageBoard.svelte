@@ -173,21 +173,21 @@ $effect(() => {
 		padding: 0;
 	}
 	:global(.markdown-content .spoiler) {
-		background-color: #000;
-		color: #000;
+		background-color: var(--text-primary);
+		color: var(--text-primary);
 		padding: 0 4px;
 		border-radius: 4px;
 		cursor: pointer;
 		transition: color 0.3s;
 	}
 	:global(.dark .markdown-content .spoiler) {
-		background-color: #fff;
-		color: #fff;
+		background-color: var(--text-primary);
+		color: var(--text-primary);
 	}
 	:global(.markdown-content .spoiler:hover) {
-		color: #fff;
+		color: var(--card-bg);
 	}
 	:global(.dark .markdown-content .spoiler:hover) {
-		color: #000;
+		color: var(--page-bg);
 	}
 </style>

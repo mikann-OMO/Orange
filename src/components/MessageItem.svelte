@@ -1,7 +1,7 @@
 <script context="module">
 import MarkdownIt from "markdown-it";
 import sanitizeHtml from "sanitize-html";
-import { installEmojiPackRule } from "../utils/emoji-packs";
+import { installEmojiPackRule, loadEmojiPacks } from "../utils/emoji-packs";
 
 const md = new MarkdownIt({
 	html: true,
@@ -9,6 +9,9 @@ const md = new MarkdownIt({
 	linkify: true,
 });
 installEmojiPackRule(md);
+
+// 预加载 emoji 数据（不阻塞渲染，加载完成后下次 renderContent 即可解析表情）
+export const emojiPacksPromise = loadEmojiPacks();
 
 const sanitizeOptions = {
 	allowedTags: sanitizeHtml.defaults.allowedTags.concat([
@@ -67,6 +70,12 @@ let {
 
 const dispatch = createEventDispatcher();
 let showReply = $state(false);
+let emojiReady = $state(false);
+
+// emoji 数据加载完成后触发重渲染，使表情正确显示
+emojiPacksPromise.then(() => {
+	emojiReady = true;
+});
 
 function timeAgo(timestamp) {
     const seconds = Math.floor((Date.now() - timestamp) / 1000);

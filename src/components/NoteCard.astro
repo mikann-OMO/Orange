@@ -40,7 +40,7 @@ const noteUrl = `/bits/${entry.id}/`;
 ---
 
 {!isValidNote ? (
-	<div class="note-card p-6 border border-[var(--primary)]/30 shadow-md bg-orange-50/60 text-orange-950/80 max-w-2xl mx-auto mb-4 dark:bg-stone-800/60 dark:text-white/80 dark:border-white/20">Invalid note</div>
+	<div class="note-card p-6 border border-[var(--primary)]/30 shadow-md bg-tint-10 text-orange-950/80 max-w-2xl mx-auto mb-4 dark:bg-stone-800/60 dark:text-white/80 dark:border-tint-20">Invalid note</div>
 ) : (
 	<a href={noteUrl} class:list={["note-card group block transition-all duration-300", { "active": active }]} style={style}>
 		<div class="note-card-inner p-5 rounded-xl border bg-[var(--card-bg)] border-[var(--card-border)] hover:shadow-lg hover:border-[var(--primary)]/30 transition-all duration-300">

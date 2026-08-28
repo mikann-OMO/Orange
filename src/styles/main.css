@@ -211,8 +211,8 @@ html {
 	-moz-osx-font-smoothing: grayscale;
 	text-rendering: optimizeLegibility;
 	background-color: var(--page-bg);
-	overflow-x: hidden !important;
-	overflow-y: auto !important;
+	overflow-x: clip !important;
+	overflow-y: visible !important;
 	width: 100%;
 	height: auto !important;
 	min-height: 100vh;
@@ -233,7 +233,7 @@ html {
 
 @media (min-width: 769px) {
 	body {
-		overflow-y: auto;
+		overflow-y: visible;
 	}
 }
 
@@ -247,7 +247,7 @@ html {
 		background-color: var(--page-bg) !important;
 		min-height: 100vh;
 		min-height: 100dvh;
-		overflow-x: hidden;
+		overflow-x: clip;
 		-webkit-overflow-scrolling: touch;
 		-webkit-tap-highlight-color: transparent;
 		scrollbar-width: none;
@@ -260,8 +260,8 @@ html {
 }
 
 body {
-	overflow-x: hidden !important;
-	overflow-y: auto !important;
+	overflow-x: clip !important;
+	overflow-y: visible !important;
 	width: 100%;
 	min-height: 100vh;
 	min-height: 100dvh;
@@ -282,7 +282,7 @@ img[src]:not([src=""]) {
 }
 
 :root {
-	--page-bg: #faf8f5;
+	--page-bg: #faf5ec;
 	--primary: #ff9800;
 	--secondary: #e64a19;
 	--accent-text: #c2410c;
@@ -295,12 +295,12 @@ img[src]:not([src=""]) {
 	--btn-regular-bg: rgba(255, 152, 0, 0.8);
 	--btn-regular-bg-hover: rgba(255, 152, 0, 1);
 	--card-border: rgba(0, 0, 0, 0.06);
-	--card-bg: #fefcf9;
-	--surface: #fff8f0;
+	--card-bg: #fdf6e9;
+	--surface: var(--card-bg);
 	--surface-hover: rgba(255, 152, 0, 0.05);
 	--surface-active: rgba(255, 152, 0, 0.10);
 	--divider: rgba(0, 0, 0, 0.06);
-	--icon-bg: rgba(254, 252, 249, 0.6);
+	--icon-bg: color-mix(in srgb, var(--card-bg) 60%, transparent);
 	--icon-text: #1a1816;
 	--shadow-color: rgba(0, 0, 0, 0.04);
 	--success: #16a34a;
@@ -311,6 +311,13 @@ img[src]:not([src=""]) {
 	--elevation-2: rgba(0, 0, 0, 0.08);
 	--elevation-3: rgba(0, 0, 0, 0.12);
 	--line-divider: rgba(0, 0, 0, 0.06);
+
+	/* 覆盖色：亮色模式下为米黄（源自 --card-bg），替代纯白覆盖层 */
+	--tint-5: color-mix(in srgb, var(--card-bg) 5%, transparent);
+	--tint-10: color-mix(in srgb, var(--card-bg) 10%, transparent);
+	--tint-15: color-mix(in srgb, var(--card-bg) 15%, transparent);
+	--tint-20: color-mix(in srgb, var(--card-bg) 20%, transparent);
+	--tint-30: color-mix(in srgb, var(--card-bg) 30%, transparent);
 }
 
 .dark {
@@ -339,16 +346,42 @@ img[src]:not([src=""]) {
 	--elevation-2: rgba(255, 255, 255, 0.08);
 	--elevation-3: rgba(255, 255, 255, 0.12);
 	--line-divider: rgba(255, 255, 255, 0.08);
+
+	/* 覆盖色：暗色模式下为白色高光 */
+	--tint-5: rgba(255, 255, 255, 0.05);
+	--tint-10: rgba(255, 255, 255, 0.10);
+	--tint-15: rgba(255, 255, 255, 0.15);
+	--tint-20: rgba(255, 255, 255, 0.20);
+	--tint-30: rgba(255, 255, 255, 0.30);
 }
 
 .dark .border-orange-700 {
 	border-left-color: #ffb74d !important;
 }
 
-.backdrop-blur-3xl,
-.backdrop-blur-2xl {
-	transform: translateZ(0);
-	will-change: backdrop-filter;
+/* 毛玻璃替代方案：大面区用高不透明半透明背景，避免昂贵的 backdrop-blur 计算 */
+.glass-surface {
+	background: color-mix(in srgb, var(--page-bg) 88%, transparent);
+	border: 1px solid color-mix(in srgb, var(--card-border) 60%, transparent);
+}
+
+.glass-surface-post {
+	background: color-mix(in srgb, var(--card-bg) 82%, transparent);
+	border: 1px solid color-mix(in srgb, var(--card-border) 50%, transparent);
+}
+
+/* 小元素保留轻量毛玻璃：blur 半径降到 8px 以内，计算量降低 64 倍 */
+.glass-light {
+	backdrop-filter: blur(8px) saturate(1.6);
+	-webkit-backdrop-filter: blur(8px) saturate(1.6);
+}
+
+@media (max-width: 768px) {
+	.glass-surface,
+	.glass-surface-post {
+		background: var(--page-bg);
+		border: none;
+	}
 }
 
 @media (min-width: 769px) {
@@ -419,12 +452,6 @@ img[src]:not([src=""]) {
 .card-base,
 #content-container {
 	contain: layout style paint;
-}
-
-img,
-video {
-	content-visibility: auto;
-	contain-intrinsic-size: auto 300px;
 }
 
 @font-face {

@@ -1,11 +1,11 @@
 import sharp from 'sharp';
-import { readdir, stat } from 'fs/promises';
+import { readdir, stat, copyFile, unlink, rename } from 'fs/promises';
 import { join } from 'path';
 
 const INPUT_DIR = 'src/assets/images';
 const OUTPUT_DIR = 'src/assets/images';
-const MAX_WIDTH = 1920;
-const QUALITY = 75;
+const MAX_WIDTH = 1600;
+const QUALITY = 60;
 
 async function compressImage(inputPath, outputPath) {
     const inputStat = await stat(inputPath);
@@ -13,6 +13,7 @@ async function compressImage(inputPath, outputPath) {
     
     console.log(`Compressing: ${inputPath} (${inputSizeKB.toFixed(0)} KB)`);
     
+    const tmpPath = outputPath + '.new';
     await sharp(inputPath)
         .resize(MAX_WIDTH, null, { 
             withoutEnlargement: true,
@@ -22,17 +23,22 @@ async function compressImage(inputPath, outputPath) {
             quality: QUALITY,
             effort: 6
         })
-        .toFile(outputPath + '.tmp');
+        .toFile(tmpPath);
     
-    const outputStat = await stat(outputPath + '.tmp');
+    try {
+        await copyFile(tmpPath, outputPath);
+    } catch {
+        // 原文件被锁定时，先删除再用临时文件重命名
+        await unlink(outputPath);
+        await rename(tmpPath, outputPath);
+    }
+    await unlink(tmpPath).catch(() => {});
+    
+    const outputStat = await stat(outputPath);
     const outputSizeKB = outputStat.size / 1024;
     const savings = ((1 - outputSizeKB / inputSizeKB) * 100).toFixed(1);
     
     console.log(`  -> ${outputSizeKB.toFixed(0)} KB (saved ${savings}%)`);
-    
-    // Replace original
-    const fs = await import('fs');
-    fs.renameSync(outputPath + '.tmp', outputPath);
 }
 
 async function main() {

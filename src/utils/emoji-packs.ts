@@ -1,5 +1,4 @@
 import type MarkdownIt from "markdown-it";
-import emojiPacksJson from "../data/emoji-packs.json";
 
 interface BaseEmojiPack {
 	name: string;
@@ -21,7 +20,21 @@ export type EmojiPacks = Record<string, EmojiPack>;
 
 export const DEFAULT_EMOJI_SIZE = 28;
 export const EMOJI_PAGE_SIZE = 72;
-export const emojiPacks = emojiPacksJson as unknown as EmojiPacks;
+
+// 懒加载 emoji-packs.json（约 122KB），避免阻塞首屏
+export let emojiPacks: EmojiPacks | null = null;
+let emojiPacksPromise: Promise<EmojiPacks> | null = null;
+
+export function loadEmojiPacks(): Promise<EmojiPacks> {
+	if (emojiPacks) return Promise.resolve(emojiPacks);
+	if (!emojiPacksPromise) {
+		emojiPacksPromise = import("../data/emoji-packs.json").then((mod) => {
+			emojiPacks = mod.default as unknown as EmojiPacks;
+			return emojiPacks;
+		});
+	}
+	return emojiPacksPromise;
+}
 
 export function getEmojiPackSize(pack: EmojiPack): number {
 	if (pack.type !== "image") return 0;
@@ -44,6 +57,7 @@ export function getGridColumns(pack: EmojiPack): number {
 }
 
 export function getEmojiInsertText(packId: string, emojiName: string): string {
+	if (!emojiPacks) return "";
 	const pack = emojiPacks[packId];
 	if (!pack) return "";
 	if (pack.type === "text") return pack.items[emojiName] ?? "";
@@ -88,6 +102,7 @@ export function installEmojiPackRule(md: MarkdownIt): void {
 		if (!match) return false;
 
 		const [, packId, emojiName] = match;
+		if (!emojiPacks) return false;
 		const pack = emojiPacks[packId];
 		const emojiData = pack?.items[emojiName];
 		if (!pack || !emojiData) return false;

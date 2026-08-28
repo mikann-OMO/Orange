@@ -16,7 +16,7 @@ const style = Astro.props.style;
     {tags.map((t) => (
         <a 
             href={getTagUrl(t.name.trim())} 
-            class="inline-block bg-orange-50/75 dark:bg-stone-700/75 hover:bg-orange-100 dark:hover:bg-stone-600 text-orange-700 dark:text-white hover:text-orange-600 dark:hover:text-white px-2 md:px-3 py-0.5 md:py-1 rounded-full text-xs md:text-sm transition-colors"
+            class="inline-block bg-tint-15 dark:bg-stone-700/75 hover:bg-tint-20 dark:hover:bg-stone-600 text-orange-700 dark:text-white hover:text-orange-600 dark:hover:text-white px-2 md:px-3 py-0.5 md:py-1 rounded-full text-xs md:text-sm transition-colors"
             aria-label={`View all posts with the ${t.name.trim()} tag`}
         >
             {t.name.trim()}

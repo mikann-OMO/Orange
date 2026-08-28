@@ -98,7 +98,7 @@ const nameFontSize = visualWidth > MAX_VISUAL_WIDTH
 
 .card-inner {
     position: relative;
-    background: color-mix(in srgb, var(--page-bg) 40%, transparent);
+    background: color-mix(in srgb, var(--card-bg) 50%, transparent);
     border: none;
     border-radius: 0;
     padding: 140px 1rem 1rem;
@@ -295,9 +295,9 @@ const nameFontSize = visualWidth > MAX_VISUAL_WIDTH
         gap: 12px;
         height: auto;
         border-radius: 10px;
-        background: color-mix(in srgb, var(--page-bg) 95%, transparent);
-        border: 1px solid color-mix(in srgb, var(--primary) 15%, transparent);
-        box-shadow: 0 2px 8px color-mix(in srgb, var(--secondary) 8%, transparent);
+        background: color-mix(in srgb, var(--card-bg) 65%, transparent);
+        border: none;
+        box-shadow: 0 2px 8px var(--shadow-color);
     }
 
     .card-background {

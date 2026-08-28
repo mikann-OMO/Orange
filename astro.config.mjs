@@ -38,8 +38,8 @@ export default defineConfig({
 	site: "https://mikann.fun",
 	// 网站基础路径，默认为根路径
 	base: "/",
-	// 输出模式，使用服务端模式以支持 API 路由
-	output: "server",
+	// 输出模式：static（Astro 7 默认），页面默认静态走 CDN，API 路由通过 prerender=false 按需服务端渲染
+	output: "static",
 	// 部署适配器（Vercel）
 	adapter: vercel(),
 	// 内容安全策略（CSP）- Astro 6 新功能

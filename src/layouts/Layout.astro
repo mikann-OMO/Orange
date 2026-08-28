@@ -17,7 +17,6 @@ import { url, pathsEqual } from "@utils/url-utils";
 import "../styles/transition.css";
 import "../styles/main.css";
 import "../styles/markdown.css";
-import { ClientRouter } from "astro:transitions";
 import BackToTop from "@components/control/BackToTop.astro";
 import PageProgress from "@components/control/PageProgress.astro";
 import SpeedInsights from "@vercel/speed-insights/astro";
@@ -142,11 +141,11 @@ const jsonLd = {
 			(theme === AUTO_MODE && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
 		html.classList.toggle('dark', isDark);
-		html.style.setProperty('--page-bg', isDark ? '#1c1917' : '#faf8f5');
-		html.style.backgroundColor = isDark ? '#1c1917' : '#faf8f5';
+		html.style.setProperty('--page-bg', isDark ? '#1c1917' : '#faf5ec');
+		html.style.backgroundColor = isDark ? '#1c1917' : '#faf5ec';
 
 		var metaThemeColor = document.querySelector('meta[name="theme-color"]');
-		if (metaThemeColor) metaThemeColor.setAttribute('content', isDark ? '#1c1917' : '#faf8f5');
+		if (metaThemeColor) metaThemeColor.setAttribute('content', isDark ? '#1c1917' : '#faf5ec');
 
 		var offset = Math.floor(window.innerHeight * (BANNER_HEIGHT_EXTEND / 100));
 		offset = offset - offset % 4;
@@ -165,9 +164,6 @@ const jsonLd = {
 			var theme = localStorage.getItem('theme') || DEFAULT_THEME;
 			if (theme === AUTO_MODE) applyTheme();
 		});
-
-		document.addEventListener('astro:after-swap', applyTheme);
-		document.addEventListener('astro:page-load', applyTheme);
 	}
 </script>
 <html lang={siteLang} class="text-[14px] md:text-[16px]">
@@ -179,7 +175,7 @@ const jsonLd = {
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-		<meta name="theme-color" content="#faf8f5">
+		<meta name="theme-color" content="#faf5ec">
 
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -250,20 +246,12 @@ const jsonLd = {
 			'primary': '#ff9800',
 		}}></style>
 
-		<ClientRouter />
 		<slot name="head"></slot>
 
 		<link rel="alternate" type="application/rss+xml" title={profileConfig.name} href={`${Astro.site}rss.xml`}/>
-		
-		<style is:inline>
-			::view-transition-old(root),
-			::view-transition-new(root) {
-				background-color: var(--page-bg);
-			}
-		</style>
 	</head>
 	<body class:list={["min-h-screen min-h-full", {"lg:is-home": isHomePage, "enable-banner": enableBanner}]}
-		  style="-webkit-tap-highlight-color: transparent; overflow-y: auto;"
+		  style="-webkit-tap-highlight-color: transparent;"
 	>
 		<ConfigCarrier></ConfigCarrier>
 		<PageProgress />

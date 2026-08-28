@@ -4,20 +4,21 @@ import { createEventDispatcher } from "svelte";
 import { fade, fly } from "svelte/transition";
 import {
 	EMOJI_PAGE_SIZE,
-	emojiPacks,
+	loadEmojiPacks,
 	getEmojiInsertText,
 	getEmojiPreviewSize,
 	getGridColumns,
 } from "../utils/emoji-packs";
 
 const dispatch = createEventDispatcher();
-const packIds = Object.keys(emojiPacks);
 
+let packs = $state(null);
 let isOpen = $state(false);
-let activePackId = $state(packIds[0] ?? "");
+let activePackId = $state("");
 let visibleCount = $state(EMOJI_PAGE_SIZE);
 
-let activePack = $derived(emojiPacks[activePackId]);
+let packIds = $derived(packs ? Object.keys(packs) : []);
+let activePack = $derived(packs ? packs[activePackId] : null);
 let entries = $derived(Object.entries(activePack?.items ?? {}));
 let visibleEntries = $derived(entries.slice(0, visibleCount));
 let hasMore = $derived(visibleCount < entries.length);
@@ -36,6 +37,18 @@ function handleEmojiClick(emojiName) {
 	dispatch("select", text);
 	isOpen = false;
 }
+
+function openPicker() {
+	isOpen = true;
+	if (!packs) {
+		loadEmojiPacks().then((loaded) => {
+			packs = loaded;
+			if (!activePackId && packIds.length > 0) {
+				activePackId = packIds[0];
+			}
+		});
+	}
+}
 </script>
 
 <div class="relative">
@@ -47,7 +60,7 @@ function handleEmojiClick(emojiName) {
 		on:mouseleave={(e) => { e.target.style.background = 'color-mix(in srgb, var(--text-primary) 5%, transparent)'; e.target.style.color = 'color-mix(in srgb, var(--text-primary) 55%, transparent)'; }}
 		aria-label="选择表情"
 		aria-expanded={isOpen}
-		on:click={() => (isOpen = !isOpen)}
+		on:click={() => (isOpen ? (isOpen = false) : openPicker())}
 	>
 		<Icon icon="fa6-regular:face-smile" class="text-base" />
 		<span class="text-xs font-medium">表情</span>
@@ -120,7 +133,7 @@ function handleEmojiClick(emojiName) {
 				{/if}
 			</div>
 
-			<div class="border-t border-black/5 p-1 dark:border-white/5 bg-black/[0.02] dark:bg-white/[0.02]">
+			<div class="border-t border-black/5 p-1 dark:border-tint-5 bg-black/[0.02] dark:bg-white/[0.02]">
 				<div class="flex gap-1 overflow-x-auto custom-scrollbar pb-1">
 					{#each packIds as packId}
 						<button
@@ -132,7 +145,7 @@ function handleEmojiClick(emojiName) {
 							}`}
 							on:click={() => selectPack(packId)}
 						>
-							{emojiPacks[packId].name}
+							{packs[packId].name}
 						</button>
 					{/each}
 				</div>

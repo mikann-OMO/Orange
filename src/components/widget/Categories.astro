@@ -16,11 +16,11 @@ const style = Astro.props.style;
     {categories.map((c) => (
         <a 
             href={getCategoryUrl(c.name.trim())} 
-            class="flex justify-between items-center p-1.5 md:p-2 hover:bg-orange-100/50 dark:hover:bg-stone-700/50 rounded-lg transition-colors"
+            class="flex justify-between items-center p-1.5 md:p-2 hover:bg-tint-20/50 dark:hover:bg-stone-700/50 rounded-lg transition-colors"
             aria-label={`View all posts in the ${c.name.trim()} category`}
         >
             <span class="text-orange-950/80 dark:text-white/80 text-sm truncate">{c.name.trim()}</span>
-            <span class="bg-orange-100 dark:bg-stone-700 text-orange-800 dark:text-white px-1.5 md:px-2 py-0.5 md:py-1 rounded-full text-xs font-medium flex-shrink-0">{c.count}</span>
+            <span class="bg-[var(--card-bg)] dark:bg-stone-700 text-orange-800 dark:text-white px-1.5 md:px-2 py-0.5 md:py-1 rounded-full text-xs font-medium flex-shrink-0">{c.count}</span>
         </a>
     ))}
 </div>

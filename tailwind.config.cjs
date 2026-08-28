@@ -43,6 +43,13 @@ module.exports = {
 				"text-main": "var(--text-primary)",
 				"text-muted": "var(--text-secondary)",
 				"accent-text": "var(--accent-text)",
+				tint: {
+					5: "var(--tint-5)",
+					10: "var(--tint-10)",
+					15: "var(--tint-15)",
+					20: "var(--tint-20)",
+					30: "var(--tint-30)",
+				},
 			},
 
 			animation: {

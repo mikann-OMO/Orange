@@ -9,7 +9,7 @@ const { class: className } = Astro.props;
 ---
 <div class:list={[className]}>
     <a aria-label="Go to About Page" href={url('/about/')}
-       class="profile-avatar-link group block relative w-[120px] h-[120px] md:w-[175px] md:h-[175px] overflow-hidden rounded-none active:scale-95 border-4 border-yellow-100/60 dark:border-stone-700/60 shadow-xl backdrop-blur-3xl">
+       class="profile-avatar-link group block relative w-[120px] h-[120px] md:w-[175px] md:h-[175px] overflow-hidden rounded-none active:scale-95 border-4 border-[var(--card-border)] dark:border-stone-700/60 shadow-xl">
         <div class="absolute transition pointer-events-none group-hover:bg-orange-950/30 group-active:bg-orange-950/50
         w-full h-full z-50 flex items-center justify-center rounded-none">
             <Icon name="fa6-regular:address-card"

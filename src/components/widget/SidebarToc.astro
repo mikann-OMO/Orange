@@ -21,9 +21,9 @@ const { headings = [], title = "文章目录" } = Astro.props;
 
 <style>
   .sidebar-toc-card {
-    background: color-mix(in srgb, var(--card-bg) 60%, transparent);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: color-mix(in srgb, var(--card-bg) 80%, transparent);
+    backdrop-filter: blur(8px) saturate(1.5);
+    -webkit-backdrop-filter: blur(8px) saturate(1.5);
     border-radius: 1rem;
     padding: 1rem;
     border: 1px solid var(--card-border);
@@ -60,74 +60,3 @@ const { headings = [], title = "文章目录" } = Astro.props;
     border-bottom: 1px dashed var(--line-divider);
   }
 </style>
-
-<script>
-  function initTocSticky() {
-    const wrapper = document.getElementById('sidebar-toc-wrapper');
-    const container = document.getElementById('toc-scroll-container');
-    if (!wrapper || !container) return;
-
-    const navbar = document.getElementById('navbar-wrapper');
-    const navbarHeight = navbar ? navbar.offsetHeight : 72;
-    const topOffset = navbarHeight + 20;
-
-    const announcementCard = document.querySelector('[data-announcement-card]');
-
-    let isFixed = false;
-    let originalWidth = 0;
-    let staticTop = 0;
-
-    function isAnnouncementVisible() {
-      if (!announcementCard) return false;
-      const rect = announcementCard.getBoundingClientRect();
-      return rect.bottom > 0;
-    }
-
-    function setFixed() {
-      if (isFixed) return;
-      staticTop = wrapper!.getBoundingClientRect().top + window.scrollY;
-      originalWidth = wrapper!.offsetWidth;
-      wrapper!.style.position = 'fixed';
-      wrapper!.style.top = topOffset + 'px';
-      wrapper!.style.width = originalWidth + 'px';
-      wrapper!.style.zIndex = '40';
-      wrapper!.style.maxHeight = 'none';
-      container!.style.maxHeight = 'none';
-      isFixed = true;
-    }
-
-    function setStatic() {
-      if (!isFixed) return;
-      wrapper!.style.position = '';
-      wrapper!.style.top = '';
-      wrapper!.style.width = '';
-      wrapper!.style.zIndex = '';
-      wrapper!.style.maxHeight = '';
-      container!.style.maxHeight = '';
-      isFixed = false;
-    }
-
-    function onScroll() {
-      const announcementVisible = isAnnouncementVisible();
-
-      if (!isFixed && !announcementVisible) {
-        const wrapperRect = wrapper!.getBoundingClientRect();
-        if (wrapperRect.top < 0) {
-          setFixed();
-        }
-      } else if (isFixed) {
-        if (announcementVisible) {
-          setStatic();
-        } else if (window.scrollY + topOffset < staticTop) {
-          setStatic();
-        }
-      }
-    }
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-  }
-
-  document.addEventListener('astro:page-load', initTocSticky);
-  if (document.readyState !== 'loading') initTocSticky();
-</script>
