@@ -25,7 +25,8 @@ const friendLinks: FriendLink[] = friendsCollection.map((friend) => ({
 	rarity: "common",
 }));
 
-// Fisher-Yates 洗牌，服务端随机排序
+// 注：构建期洗牌仅作为无 JS 时的兜底顺序，
+// 真正的随机显示由下方客户端脚本在每次加载时完成。
 for (let i = friendLinks.length - 1; i > 0; i--) {
 	const j = Math.floor(Math.random() * (i + 1));
 	[friendLinks[i], friendLinks[j]] = [friendLinks[j], friendLinks[i]];
@@ -130,6 +131,23 @@ const personalNameFontSize = personalVisualWidth > MAX_VISUAL_WIDTH
 		))}
 	</div>
 </div>
+
+<script>
+	// 客户端 Fisher-Yates 洗牌：每次加载随机排列友链卡片，
+	// 跳过第一个"个人推荐"卡片，保持它始终在最前。
+	function shuffleFriendCards() {
+		const grid = document.querySelector<HTMLElement>(".friends-grid");
+		if (!grid) return;
+		const cards = Array.from(grid.children).slice(1);
+		for (let i = cards.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[cards[i], cards[j]] = [cards[j], cards[i]];
+		}
+		cards.forEach((card) => grid.appendChild(card));
+	}
+	shuffleFriendCards();
+	document.addEventListener("astro:page-load", shuffleFriendCards);
+</script>
 
 <style>
 .friends-panel {

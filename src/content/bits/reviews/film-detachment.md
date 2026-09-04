@@ -4,7 +4,6 @@ published: 2026-05-18
 image: ''
 tags:
   - 电影
-  - 《超脱（Detachment）》
 category: 影评
 draft: false
 
