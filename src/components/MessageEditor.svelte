@@ -172,8 +172,7 @@ async function handleEmojiSelect(event) {
 		<button 
 			on:click={handleSubmit}
 			disabled={submitting || !nickname || !content}
-			class="shrink-0 px-5 py-2.5 rounded-lg flex items-center gap-2 text-sm font-medium transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed text-white shadow-md hover:shadow-lg"
-			style="background: linear-gradient(135deg, var(--primary), var(--secondary));"
+			class="btn-solid shrink-0 px-5 py-2.5 rounded-lg text-sm font-medium"
 		>
 			{#if submitting}
 				<Icon icon="eos-icons:loading" class="text-base" />

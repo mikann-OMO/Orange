@@ -54,10 +54,7 @@ function openPicker() {
 <div class="relative">
 	<button
 		type="button"
-		class="gap-1.5 rounded-lg px-3 py-1.5 text-sm transition-all active:scale-95 flex items-center"
-		style="background: color-mix(in srgb, var(--text-primary) 5%, transparent); color: color-mix(in srgb, var(--text-primary) 55%, transparent);"
-		on:mouseenter={(e) => { e.target.style.background = 'color-mix(in srgb, var(--primary) 12%, transparent)'; e.target.style.color = 'var(--primary)'; }}
-		on:mouseleave={(e) => { e.target.style.background = 'color-mix(in srgb, var(--text-primary) 5%, transparent)'; e.target.style.color = 'color-mix(in srgb, var(--text-primary) 55%, transparent)'; }}
+		class="btn-plain gap-1.5 rounded-lg px-3 py-1.5 text-sm"
 		aria-label="选择表情"
 		aria-expanded={isOpen}
 		on:click={() => (isOpen ? (isOpen = false) : openPicker())}
@@ -138,11 +135,7 @@ function openPicker() {
 					{#each packIds as packId}
 						<button
 							type="button"
-							class={`shrink-0 rounded-md px-3 py-1.5 text-xs font-medium transition-all ${
-								activePackId === packId
-									? "bg-[var(--primary)] text-white shadow-sm"
-									: "text-50 hover:bg-[var(--btn-plain-bg-hover)] active:bg-[var(--btn-plain-bg-active)]"
-							}`}
+							class={`btn-chip shrink-0 px-3 py-1.5 text-xs font-medium ${activePackId === packId ? "is-active" : ""}`}
 							on:click={() => selectPack(packId)}
 						>
 							{packs[packId].name}

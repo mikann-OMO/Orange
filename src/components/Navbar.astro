@@ -110,12 +110,34 @@ const currentPath = Astro.url.pathname;
 <style>
     .nav-home-btn {
         background: transparent;
+        transition: background 0.2s ease;
+    }
+    
+    .nav-home-btn:hover {
+        background: var(--surface-hover);
+    }
+    
+    .nav-home-btn:active {
+        background: var(--surface-active);
     }
     
     .nav-link {
         position: relative;
         overflow: visible;
         background: transparent;
+        transition: background 0.2s ease;
+    }
+    
+    .nav-link:hover {
+        background: var(--surface-hover);
+    }
+    
+    .nav-link:active {
+        background: var(--surface-active);
+    }
+    
+    .nav-link:hover .nav-underline {
+        width: 60%;
     }
     
     .nav-underline {
@@ -127,6 +149,7 @@ const currentPath = Astro.url.pathname;
         background: linear-gradient(90deg, var(--primary), var(--accent-text));
         border-radius: 2px;
         transform: translateX(-50%);
+        transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1);
         box-shadow: 0 1px 4px color-mix(in srgb, var(--primary) 40%, transparent);
     }
     
@@ -146,6 +169,16 @@ const currentPath = Astro.url.pathname;
     
     .mobile-menu-btn {
         background: transparent;
+        transition: background 0.2s ease, transform 0.15s ease;
+    }
+    
+    .mobile-menu-btn:hover {
+        background: var(--surface-hover);
+    }
+    
+    .mobile-menu-btn:active {
+        background: var(--surface-active);
+        transform: scale(0.92);
     }
     
     :global(.dark) .nav-underline {
@@ -310,6 +343,17 @@ const currentPath = Astro.url.pathname;
         }
     }
     
+    function updateActiveNav() {
+        const currentPath = window.location.pathname;
+        document.querySelectorAll('.nav-link').forEach((link) => {
+            const href = link.getAttribute('href');
+            if (!href || link.getAttribute('target') === '_blank') return;
+            const isActive = currentPath === href || (href !== '/' && currentPath.startsWith(href));
+            link.classList.toggle('nav-link-active', isActive);
+            link.setAttribute('aria-current', isActive ? 'page' : 'false');
+        });
+    }
+
     function setupMobileMenu() {
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
@@ -333,7 +377,10 @@ const currentPath = Astro.url.pathname;
         state.installed = true;
         document.addEventListener('click', handleClickOutside);
         document.addEventListener('keydown', handleKeydown);
-        document.addEventListener('astro:page-load', setupMobileMenu);
+        document.addEventListener('astro:page-load', function() {
+            setupMobileMenu();
+            updateActiveNav();
+        });
         document.addEventListener('astro:before-preparation', function() {
             if (state.menuOpen) {
                 closeMenu();

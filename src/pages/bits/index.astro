@@ -64,17 +64,17 @@ const nextUrl = nextNote ? buildUrl({ category: categoryFilter || "", tag: tagFi
     <div class="max-w-2xl w-full relative">
 
         <div class="text-center mb-6 md:mb-8">
-            <h1 class="text-2xl md:text-3xl font-bold text-orange-950 dark:text-white font-['SimSun',serif]">{i18n(I18nKey.notes)}</h1>
-            <div class="flex items-center justify-center gap-3 mt-2 text-xs text-orange-950/40 dark:text-white/40">
+            <h1 class="text-2xl md:text-3xl font-bold text-accent font-['SimSun',serif]">{i18n(I18nKey.notes)}</h1>
+            <div class="flex items-center justify-center gap-3 mt-2 text-xs text-muted">
                 <span>共 {totalFiltered} 篇</span>
-                <span class="w-1 h-1 rounded-full bg-orange-400/50 dark:bg-orange-300/50"></span>
+                <span class="w-1 h-1 rounded-full bg-accent-soft"></span>
                 <button
                     type="button"
                     id="random-note-btn"
                     class:list={[
                         "inline-flex items-center gap-1 rounded-full px-2 py-1 -my-1 transition-colors duration-200",
                         totalFiltered > 1
-                            ? "hover:text-orange-700 hover:bg-orange-950/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 dark:hover:text-white/80 dark:hover:bg-white/5"
+                            ? "hover:text-accent hover:bg-tint-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary)] dark:hover:text-white/80 dark:hover:bg-white/5"
                             : "opacity-40 cursor-not-allowed pointer-events-none"
                     ]}
                     aria-disabled={totalFiltered <= 1 ? "true" : "false"}
@@ -98,10 +98,8 @@ const nextUrl = nextNote ? buildUrl({ category: categoryFilter || "", tag: tagFi
                     type="button"
                     onclick={`window.location.href='/bits/'`}
                     class:list={[
-                        "px-3 py-1 text-xs rounded-full transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500",
-                        !categoryFilter && !tagFilter
-                            ? "bg-orange-700 text-white shadow-sm"
-                            : "text-orange-950/50 hover:text-orange-700 hover:bg-orange-950/5 dark:text-white/50 dark:hover:text-white/80 dark:hover:bg-white/5",
+                        "btn-chip px-3 py-1 text-xs",
+                        !categoryFilter && !tagFilter ? "is-active" : "",
                     ]}
                     aria-pressed={!categoryFilter && !tagFilter}
                 >
@@ -112,10 +110,8 @@ const nextUrl = nextNote ? buildUrl({ category: categoryFilter || "", tag: tagFi
                         type="button"
                         onclick={`window.location.href='${buildUrl({ category: cat.name, tag: tagFilter || "", p: "" })}'`}
                         class:list={[
-                            "px-3 py-1 text-xs rounded-full transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500",
-                            categoryFilter === cat.name
-                                ? "bg-orange-700 text-white shadow-sm"
-                                : "text-orange-950/50 hover:text-orange-700 hover:bg-orange-950/5 dark:text-white/50 dark:hover:text-white/80 dark:hover:bg-white/5",
+                            "btn-chip px-3 py-1 text-xs",
+                            categoryFilter === cat.name ? "is-active" : "",
                         ]}
                         aria-pressed={categoryFilter === cat.name}
                     >
@@ -123,17 +119,15 @@ const nextUrl = nextNote ? buildUrl({ category: categoryFilter || "", tag: tagFi
                     </button>
                 ))}
                 {allTags.length > 0 && (
-                    <span class="w-px h-3 bg-orange-950/15 dark:bg-tint-15 mx-1"></span>
+                    <span class="w-px h-3 bg-tint-15 dark:bg-tint-15 mx-1"></span>
                 )}
                 {allTags.map((tag) => (
                     <button
                         type="button"
                         onclick={`window.location.href='${buildUrl({ category: categoryFilter || "", tag: tag.name, p: "" })}'`}
                         class:list={[
-                            "px-3 py-1 text-xs rounded-full transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500",
-                            tagFilter === tag.name
-                                ? "bg-orange-700 text-white shadow-sm"
-                                : "text-orange-950/50 hover:text-orange-700 hover:bg-orange-950/5 dark:text-white/50 dark:hover:text-white/80 dark:hover:bg-white/5",
+                            "btn-chip px-3 py-1 text-xs",
+                            tagFilter === tag.name ? "is-active" : "",
                         ]}
                         aria-pressed={tagFilter === tag.name}
                     >
@@ -144,7 +138,7 @@ const nextUrl = nextNote ? buildUrl({ category: categoryFilter || "", tag: tagFi
         )}
 
         {filteredNotes.length === 0 ? (
-            <div class="text-center py-20 text-orange-950/30 dark:text-white/30">
+            <div class="text-center py-20 text-faint">
                 <div class="text-5xl mb-4 opacity-40">📖</div>
                 <div class="text-base">{i18n(I18nKey.no_notes_yet)}</div>
             </div>
@@ -157,8 +151,8 @@ const nextUrl = nextNote ? buildUrl({ category: categoryFilter || "", tag: tagFi
                                 <span class:list={[
                                     "w-1.5 h-1.5 rounded-full transition-all duration-300",
                                     i === activeIndex
-                                        ? "bg-orange-600 dark:bg-orange-400 w-4"
-                                        : "bg-orange-950/15 dark:bg-tint-15",
+                                        ? "bg-[var(--primary)] w-4"
+                                        : "bg-tint-15 dark:bg-tint-15",
                                 ]}></span>
                             ))}
                         </div>
@@ -166,16 +160,16 @@ const nextUrl = nextNote ? buildUrl({ category: categoryFilter || "", tag: tagFi
 
                     <div class="mb-6 md:mb-8">
                         {activeNote.data.title && (
-                            <h2 class="text-2xl md:text-3xl font-bold text-orange-950 dark:text-white font-['SimSun',serif] leading-tight">
+                            <h2 class="text-2xl md:text-3xl font-bold text-accent font-['SimSun',serif] leading-tight">
                                 {activeNote.data.title}
                             </h2>
                         )}
-                        <div class="flex items-center gap-3 mt-3 text-xs text-orange-950/40 dark:text-white/40">
+                        <div class="flex items-center gap-3 mt-3 text-xs text-muted">
                             <span class="flex items-center gap-1">
                                 <Icon name="material-symbols:calendar-today-outline" class="w-3.5 h-3.5" />
                                 {formatDate(activeNote.data.published)}
                             </span>
-                            <span class="w-1 h-1 rounded-full bg-orange-400/40 dark:bg-orange-300/40"></span>
+                            <span class="w-1 h-1 rounded-full bg-accent-soft"></span>
                             <LikeButton slug={activeNote.id} client:visible />
                         </div>
                         {activeNote.data.tags && activeNote.data.tags.length > 0 && (
@@ -184,7 +178,7 @@ const nextUrl = nextNote ? buildUrl({ category: categoryFilter || "", tag: tagFi
                                     <button
                                         type="button"
                                         onclick={`window.location.href='${buildUrl({ category: categoryFilter || "", tag: tag, p: activeNote.id })}'`}
-                                        class="px-2 py-0.5 text-xs rounded-full text-orange-800/70 dark:text-white/60 bg-orange-950/5 dark:bg-tint-5 hover:bg-orange-950/10 dark:hover:bg-tint-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 transition-colors"
+                                        class="btn-chip px-2 py-0.5 text-xs"
                                         aria-label={`查看标签 ${tag}`}
                                     >
                                         #{tag}
@@ -211,8 +205,8 @@ const nextUrl = nextNote ? buildUrl({ category: categoryFilter || "", tag: tagFi
                         </Markdown>
                     </div>
 
-                    <div class="mt-10 pt-6 border-t border-orange-950/8 dark:border-white/8">
-                        <div class="flex flex-wrap items-center gap-2 text-xs text-orange-950/35 dark:text-white/35">
+                    <div class="mt-10 pt-6 border-t border-[color-mix(in_srgb,var(--text-primary)_8%,transparent)]">
+                        <div class="flex flex-wrap items-center gap-2 text-xs text-faint">
                             {activeNote.data.category && (
                                 <span class="flex items-center gap-1">
                                     <Icon name="material-symbols:book-outline" class="w-3 h-3" />
@@ -220,7 +214,7 @@ const nextUrl = nextNote ? buildUrl({ category: categoryFilter || "", tag: tagFi
                                 </span>
                             )}
                             {activeNote.data.category && activeNote.data.tags && activeNote.data.tags.length > 0 && (
-                                <span class="w-1 h-1 rounded-full bg-orange-400/30 dark:bg-orange-300/30"></span>
+                                <span class="w-1 h-1 rounded-full bg-accent-soft"></span>
                             )}
                             {activeNote.data.tags && activeNote.data.tags.length > 0 && (
                                 <span>{activeNote.data.tags.map((t) => `#${t}`).join("  ")}</span>
@@ -233,7 +227,7 @@ const nextUrl = nextNote ? buildUrl({ category: categoryFilter || "", tag: tagFi
                     {prevUrl ? (
                         <a
                             href={prevUrl}
-                            class="inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium text-orange-800 dark:text-white/80 bg-[var(--card-bg)] dark:bg-stone-700/80 hover:bg-tint-30 dark:hover:bg-stone-600 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 transition-all duration-200 border border-[var(--card-border)] dark:border-stone-600/40"
+                            class="btn-surface rounded-full px-4 py-2.5 text-sm font-medium"
                             aria-label="上一篇轻读"
                         >
                             <Icon name="material-symbols:chevron-left-rounded" class="w-4 h-4" />
@@ -243,7 +237,7 @@ const nextUrl = nextNote ? buildUrl({ category: categoryFilter || "", tag: tagFi
                     {nextUrl ? (
                         <a
                             href={nextUrl}
-                            class="inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium text-orange-800 dark:text-white/80 bg-[var(--card-bg)] dark:bg-stone-700/80 hover:bg-tint-30 dark:hover:bg-stone-600 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 transition-all duration-200 border border-[var(--card-border)] dark:border-stone-600/40"
+                            class="btn-surface rounded-full px-4 py-2.5 text-sm font-medium"
                             aria-label="下一篇轻读"
                         >
                             下一篇
@@ -367,16 +361,11 @@ const nextUrl = nextNote ? buildUrl({ category: categoryFilter || "", tag: tagFi
 
 <style>
     .article-card {
-        background: rgba(255, 243, 224, 0.6);
+        background: color-mix(in srgb, var(--card-bg) 60%, transparent);
         border-radius: 0;
         overflow: hidden;
         box-shadow: 0 2px 12px var(--shadow-color);
         border: 1px solid var(--card-border);
-    }
-
-    :global(.dark) .article-card {
-        background: rgba(38, 33, 28, 0.6);
-        border-color: var(--card-border);
     }
 
     .reader-content {

@@ -1,4 +1,6 @@
+@tailwind base;
 @tailwind components;
+@tailwind utilities;
 
 @layer components {
 	.card-base {
@@ -32,13 +34,20 @@
 		background: var(--card-bg);
 	}
 
+	/* ===== 统一按钮动效体系（同一套缓动 / 位移 / 缩放 / 阴影） ===== */
 	.btn-card {
-		@apply transition flex items-center justify-center;
+		@apply flex items-center justify-center cursor-pointer;
+		background: transparent;
+		color: var(--accent-text);
+		transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1),
+			background 0.2s ease, color 0.2s ease;
 		&:hover {
 			background: var(--surface-hover);
+			transform: translateY(-1px);
 		}
 		&:active {
 			background: var(--surface-active);
+			transform: translateY(0) scale(0.94);
 		}
 	}
 
@@ -48,28 +57,127 @@
 	}
 
 	.btn-plain {
-		@apply relative flex items-center justify-center bg-none;
+		@apply flex items-center justify-center bg-transparent cursor-pointer;
 		color: color-mix(in srgb, var(--text-primary) 75%, transparent);
-		&:not(.scale-animation) {
-			@apply bg-transparent
+		transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1),
+			background 0.2s ease, color 0.2s ease;
+		&:hover {
+			background: var(--btn-plain-bg-hover);
+			color: var(--accent-text);
 		}
-		&.scale-animation {
-			@apply bg-transparent;
-			&.current-theme-btn {
-				color: var(--accent-text);
-			}
+		&:active {
+			background: var(--btn-plain-bg-active);
+			color: var(--accent-text);
+			transform: scale(0.94);
+		}
+		&.current-theme-btn {
+			color: var(--accent-text);
 		}
 	}
 
 	.btn-regular {
-		@apply transition flex items-center justify-center backdrop-blur-sm;
+		@apply flex items-center justify-center backdrop-blur-sm cursor-pointer;
 		background: var(--icon-bg);
 		color: var(--icon-text);
+		transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1),
+			background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
 		&:hover {
 			background: color-mix(in srgb, var(--icon-bg) 85%, var(--icon-text));
+			transform: translateY(-1px);
 		}
 		&:active {
 			background: color-mix(in srgb, var(--icon-bg) 75%, var(--icon-text));
+			transform: translateY(0) scale(0.96);
+		}
+	}
+
+	.btn-surface {
+		@apply inline-flex items-center justify-center gap-2 cursor-pointer;
+		background: var(--card-bg);
+		color: var(--accent-text);
+		border: 1px solid var(--card-border);
+		transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1),
+			background 0.2s ease, color 0.2s ease, border-color 0.2s ease,
+			box-shadow 0.2s ease;
+		&:hover {
+			background: var(--btn-plain-bg-hover);
+			border-color: color-mix(in srgb, var(--primary) 35%, transparent);
+			transform: translateY(-1px);
+			box-shadow: 0 4px 16px var(--shadow-color);
+		}
+		&:active {
+			background: var(--btn-plain-bg-active);
+			transform: translateY(0) scale(0.96);
+		}
+	}
+
+	.btn-icon {
+		@apply inline-flex items-center justify-center cursor-pointer;
+		background: var(--tint-15);
+		color: color-mix(in srgb, var(--text-primary) 60%, transparent);
+		border: 1px solid var(--card-border);
+		transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1),
+			background 0.2s ease, color 0.2s ease, border-color 0.2s ease,
+			box-shadow 0.2s ease;
+		&:hover {
+			background: var(--btn-plain-bg-hover);
+			color: var(--accent-text);
+			border-color: color-mix(in srgb, var(--primary) 35%, transparent);
+			transform: translateY(-1px);
+		}
+		&:active {
+			background: var(--btn-plain-bg-active);
+			transform: translateY(0) scale(0.9);
+		}
+	}
+
+	.btn-chip {
+		@apply inline-flex items-center justify-center cursor-pointer;
+		background: var(--tint-15);
+		color: var(--accent-text);
+		border: 1px solid var(--card-border);
+		border-radius: 999px;
+		transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1),
+			background 0.2s ease, color 0.2s ease, border-color 0.2s ease,
+			box-shadow 0.2s ease;
+		&:hover {
+			background: var(--tint-30);
+			border-color: color-mix(in srgb, var(--primary) 35%, transparent);
+			transform: translateY(-1px);
+			box-shadow: 0 2px 8px var(--shadow-color);
+		}
+		&:active {
+			transform: translateY(0) scale(0.94);
+		}
+		&.is-active {
+			background: var(--primary);
+			color: #fff;
+			border-color: transparent;
+			box-shadow: 0 2px 10px color-mix(in srgb, var(--primary) 30%, transparent);
+		}
+	}
+
+	.btn-solid {
+		@apply inline-flex items-center justify-center gap-2 cursor-pointer;
+		background: linear-gradient(135deg, var(--primary), var(--secondary));
+		color: #fff;
+		border: none;
+		box-shadow: 0 2px 10px color-mix(in srgb, var(--primary) 25%, transparent);
+		transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1),
+			box-shadow 0.2s ease, opacity 0.2s ease;
+		&:hover {
+			box-shadow: 0 6px 18px color-mix(in srgb, var(--primary) 40%, transparent);
+			transform: translateY(-1px);
+		}
+		&:active {
+			transform: translateY(0) scale(0.96);
+			box-shadow: 0 2px 8px color-mix(in srgb, var(--primary) 25%, transparent);
+		}
+		&:disabled {
+			opacity: 0.5;
+			cursor: not-allowed;
+			transform: none;
+			box-shadow: none;
 		}
 	}
 
@@ -138,13 +246,17 @@
 	}
 
 	.btn-regular-dark {
-		@apply flex items-center justify-center;
+		@apply flex items-center justify-center cursor-pointer;
 		background: color-mix(in srgb, var(--text-primary) 20%, transparent);
+		transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1),
+			background 0.2s ease;
 		&:hover {
 			background: color-mix(in srgb, var(--text-primary) 30%, transparent);
+			transform: translateY(-1px);
 		}
 		&:active {
 			background: color-mix(in srgb, var(--text-primary) 40%, transparent);
+			transform: translateY(0) scale(0.92);
 		}
 	}
 
@@ -173,6 +285,17 @@
 	.copy-btn.success .success-icon {
 		@apply opacity-100
 	}
+}
+
+/* ===== 语义化主题色工具类（跟随主题色，明暗自动适配） ===== */
+@layer utilities {
+	.text-accent { color: var(--accent-text); }
+	.text-muted { color: color-mix(in srgb, var(--text-primary) 60%, transparent); }
+	.text-faint { color: color-mix(in srgb, var(--text-primary) 30%, transparent); }
+	.border-accent { border-color: var(--primary); }
+	.bg-accent-soft { background: color-mix(in srgb, var(--primary) 14%, transparent); }
+	.bg-accent-soft-2 { background: color-mix(in srgb, var(--primary) 22%, transparent); }
+	.gradient-accent { background-image: linear-gradient(135deg, var(--primary), var(--secondary)); }
 }
 
 .custom-md img,
@@ -205,12 +328,19 @@
 	border-radius: 4px;
 }
 
+button:not(:disabled),
+[role="button"] {
+	cursor: pointer;
+}
+
 html {
 	scroll-behavior: smooth;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	text-rendering: optimizeLegibility;
 	background-color: var(--page-bg);
+	background-image: var(--page-bg-gradient);
+	background-attachment: fixed;
 	overflow-x: clip !important;
 	overflow-y: visible !important;
 	width: 100%;
@@ -282,81 +412,126 @@ img[src]:not([src=""]) {
 }
 
 :root {
-	--page-bg: #faf5ec;
-	--primary: #ff9800;
-	--secondary: #e64a19;
-	--accent-text: #c2410c;
-	--text-primary: #1a1816;
-	--text-secondary: #78716c;
-	--btn-plain-bg-hover: rgba(255, 152, 0, 0.06);
-	--btn-plain-bg-active: rgba(255, 152, 0, 0.12);
-	--btn-content: #e64a19;
-	--deep-text: #ff9800;
-	--btn-regular-bg: rgba(255, 152, 0, 0.8);
-	--btn-regular-bg-hover: rgba(255, 152, 0, 1);
-	--card-border: rgba(0, 0, 0, 0.06);
-	--card-bg: #fdf6e9;
+	/* ============================================================
+	   主题设计 token
+	   · 同一套 token 分亮 / 暗两态：亮色为「柠檬黄渐变」，暗色为「冷蓝渐变」
+	   · 主题色相由 --hue 定义，分别在 :root（亮 = 55 柠檬黄）与 .dark（暗 = 214 冷蓝）覆盖
+	   · 基础色（背景/文本/主题色等）在 :root（亮）与 .dark（暗）分别定义为
+	     具体颜色值，避免 light-dark() 嵌套 color-mix() 导致的解析失效
+	   · hover / active / tint 等派生色用 color-mix(in srgb, ...) 从基色推导
+	   ============================================================ */
+	--hue: 55; /* 亮色主题色相（柠檬黄） */
+
+	color-scheme: light;
+
+	/* --- 背景 & 表面（亮色·柠檬黄）--- */
+	--page-bg: #fbf9ec;
+	--card-bg: #fffef7;
 	--surface: var(--card-bg);
-	--surface-hover: rgba(255, 152, 0, 0.05);
-	--surface-active: rgba(255, 152, 0, 0.10);
-	--divider: rgba(0, 0, 0, 0.06);
-	--icon-bg: color-mix(in srgb, var(--card-bg) 60%, transparent);
-	--icon-text: #1a1816;
-	--shadow-color: rgba(0, 0, 0, 0.04);
+	--page-bg-gradient: linear-gradient(180deg, #fffef7 0%, #f4efd3 100%);
+
+	/* --- 文本（亮色）--- */
+	--text-primary: #2b291d;
+	--text-secondary: #8a846f;
+
+	/* --- 主题色（亮色·柠檬黄渐变，HSL 派生）--- */
+	--primary: hsl(var(--hue), 90%, 56%);
+	--secondary: hsl(calc(var(--hue) - 14), 82%, 52%);
+	--accent-text: hsl(calc(var(--hue) - 13), 80%, 34%);
+
+	/* --- 边框 & 分隔（亮色）--- */
+	--card-border: rgba(150, 130, 40, 0.16);
+	--divider: var(--card-border);
+	--line-divider: var(--card-border);
+
+	/* --- 阴影 & 海拔（亮色）--- */
+	--shadow-color: rgba(150, 120, 30, 0.10);
+	--elevation-1: rgba(150, 120, 30, 0.06);
+	--elevation-2: rgba(150, 120, 30, 0.10);
+	--elevation-3: rgba(150, 120, 30, 0.18);
+
+	/* --- 状态色（亮色）--- */
 	--success: #16a34a;
 	--error: #dc2626;
-	--radius-large: 1rem;
-	--page-width: 68rem;
-	--elevation-1: rgba(0, 0, 0, 0.04);
-	--elevation-2: rgba(0, 0, 0, 0.08);
-	--elevation-3: rgba(0, 0, 0, 0.12);
-	--line-divider: rgba(0, 0, 0, 0.06);
 
-	/* 覆盖色：亮色模式下为米黄（源自 --card-bg），替代纯白覆盖层 */
+	/* --- 派生色（亮色，color-mix 从基色推导）--- */
+	--surface-hover: color-mix(in srgb, var(--primary) 7%, transparent);
+	--surface-active: color-mix(in srgb, var(--primary) 10%, transparent);
+	--btn-plain-bg-hover: color-mix(in srgb, var(--primary) 8%, transparent);
+	--btn-plain-bg-active: color-mix(in srgb, var(--primary) 16%, transparent);
+	--btn-content: var(--secondary);
+	--deep-text: var(--primary);
+	--btn-regular-bg: color-mix(in srgb, var(--primary) 82%, transparent);
+	--btn-regular-bg-hover: var(--primary);
+	--icon-bg: color-mix(in srgb, var(--card-bg) 60%, transparent);
+	--icon-text: var(--text-primary);
+
+	/* --- 覆盖色（亮色：柠檬黄叠加）--- */
 	--tint-5: color-mix(in srgb, var(--card-bg) 5%, transparent);
 	--tint-10: color-mix(in srgb, var(--card-bg) 10%, transparent);
 	--tint-15: color-mix(in srgb, var(--card-bg) 15%, transparent);
 	--tint-20: color-mix(in srgb, var(--card-bg) 20%, transparent);
 	--tint-30: color-mix(in srgb, var(--card-bg) 30%, transparent);
+
+	/* --- 尺寸 --- */
+	--radius-large: 1rem;
+	--page-width: 68rem;
 }
 
 .dark {
-	--page-bg: #1c1917;
-	--accent-text: #ffb74d;
-	--text-primary: #f5f5f4;
-	--text-secondary: #a8a29e;
-	--card-bg: #292524;
-	--card-border: rgba(255, 255, 255, 0.08);
-	--btn-plain-bg-hover: rgba(255, 152, 0, 0.1);
-	--btn-plain-bg-active: rgba(255, 152, 0, 0.18);
-	--btn-content: #ffb74d;
-	--deep-text: #ffb74d;
-	--btn-regular-bg: rgba(255, 152, 0, 0.7);
-	--btn-regular-bg-hover: rgba(255, 152, 0, 0.9);
-	--surface: #292524;
-	--surface-hover: rgba(255, 152, 0, 0.08);
-	--surface-active: rgba(255, 152, 0, 0.14);
-	--divider: rgba(255, 255, 255, 0.08);
-	--icon-bg: rgba(41, 37, 36, 0.8);
-	--icon-text: #f5f5f4;
-	--shadow-color: rgba(0, 0, 0, 0.2);
-	--success: #22c55e;
-	--error: #ef4444;
-	--elevation-1: rgba(255, 255, 255, 0.04);
-	--elevation-2: rgba(255, 255, 255, 0.08);
-	--elevation-3: rgba(255, 255, 255, 0.12);
-	--line-divider: rgba(255, 255, 255, 0.08);
+	color-scheme: dark;
 
-	/* 覆盖色：暗色模式下为白色高光 */
-	--tint-5: rgba(255, 255, 255, 0.05);
-	--tint-10: rgba(255, 255, 255, 0.10);
-	--tint-15: rgba(255, 255, 255, 0.15);
-	--tint-20: rgba(255, 255, 255, 0.20);
-	--tint-30: rgba(255, 255, 255, 0.30);
-}
+	/* --- 主题色相（暗色·冷蓝）--- */
+	--hue: 214;
 
-.dark .border-orange-700 {
-	border-left-color: #ffb74d !important;
+	/* --- 背景 & 表面（暗色·近黑深灰，微蓝调）--- */
+	--page-bg: #0f0f12;
+	--card-bg: #18191d;
+	--surface: #18191d;
+	--page-bg-gradient: linear-gradient(180deg, #0b0c0f 0%, #15161b 100%);
+
+	/* --- 文本（暗色）--- */
+	--text-primary: #e3e5ea;
+	--text-secondary: #8d9199;
+
+	/* --- 主题色（暗色·冷蓝渐变，低饱和偏灰）--- */
+	--primary: hsl(var(--hue), 42%, 56%);
+	--secondary: hsl(calc(var(--hue) - 15), 36%, 52%);
+	--accent-text: hsl(calc(var(--hue) - 6), 46%, 70%);
+
+	/* --- 边框 & 分隔（暗色）--- */
+	--card-border: rgba(165, 175, 190, 0.14);
+	--divider: var(--card-border);
+	--line-divider: var(--card-border);
+
+	/* --- 阴影 & 海拔（暗色）--- */
+	--shadow-color: rgba(0, 0, 0, 0.55);
+	--elevation-1: rgba(165, 175, 190, 0.05);
+	--elevation-2: rgba(165, 175, 190, 0.08);
+	--elevation-3: rgba(165, 175, 190, 0.13);
+
+	/* --- 状态色（暗色）--- */
+	--success: #34d399;
+	--error: #f87171;
+
+	/* --- 派生色（暗色，透明度更重）--- */
+	--surface-hover: color-mix(in srgb, var(--primary) 8%, transparent);
+	--surface-active: color-mix(in srgb, var(--primary) 14%, transparent);
+	--btn-plain-bg-hover: color-mix(in srgb, var(--primary) 10%, transparent);
+	--btn-plain-bg-active: color-mix(in srgb, var(--primary) 18%, transparent);
+	--btn-content: var(--accent-text);
+	--deep-text: var(--accent-text);
+	--btn-regular-bg: color-mix(in srgb, var(--primary) 75%, transparent);
+	--btn-regular-bg-hover: color-mix(in srgb, var(--primary) 92%, transparent);
+	--icon-bg: color-mix(in srgb, var(--card-bg) 80%, transparent);
+	--icon-text: #e3e5ea;
+
+	/* --- 覆盖色（暗色：中性灰高光）--- */
+	--tint-5: rgba(185, 195, 208, 0.06);
+	--tint-10: rgba(185, 195, 208, 0.10);
+	--tint-15: rgba(185, 195, 208, 0.16);
+	--tint-20: rgba(185, 195, 208, 0.20);
+	--tint-30: rgba(185, 195, 208, 0.30);
 }
 
 /* 毛玻璃替代方案：大面区用高不透明半透明背景，避免昂贵的 backdrop-blur 计算 */

@@ -38,26 +38,15 @@ export type Tag = {
 };
 
 export async function getTagList(): Promise<Tag[]> {
-	const [allBlogPosts, allNotes] = await Promise.all([
-		getCollection<"posts">("posts", ({ data }) => {
-			return import.meta.env.PROD ? data.draft !== true : true;
-		}),
-		getCollection<"notes">("notes", ({ data }) => {
-			return import.meta.env.PROD ? data.draft !== true : true;
-		}),
-	]);
+	// 主页只展示文章（posts）的标签，不含轻读（notes）
+	const allBlogPosts = await getCollection<"posts">("posts", ({ data }) => {
+		return import.meta.env.PROD ? data.draft !== true : true;
+	});
 
 	const countMap: { [key: string]: number } = {};
 	for (const post of allBlogPosts) {
 		for (const tag of post.data.tags) {
 			countMap[tag] = (countMap[tag] || 0) + 1;
-		}
-	}
-	for (const note of allNotes) {
-		if (note.data.tags) {
-			for (const tag of note.data.tags) {
-				countMap[tag] = (countMap[tag] || 0) + 1;
-			}
 		}
 	}
 
@@ -72,20 +61,15 @@ export type Category = {
 };
 
 export async function getCategoryList(): Promise<Category[]> {
-	const [allBlogPosts, allNotes] = await Promise.all([
-		getCollection<"posts">("posts", ({ data }) => {
-			return import.meta.env.PROD ? data.draft !== true : true;
-		}),
-		getCollection<"notes">("notes", ({ data }) => {
-			return import.meta.env.PROD ? data.draft !== true : true;
-		}),
-	]);
+	// 主页只展示文章（posts）的分类，不含轻读（notes）
+	const allBlogPosts = await getCollection<"posts">("posts", ({ data }) => {
+		return import.meta.env.PROD ? data.draft !== true : true;
+	});
 
 	const count: { [key: string]: number } = {};
 	const uncategorizedKey = i18n(I18nKey.uncategorized);
 
-	const allItems = [...allBlogPosts, ...allNotes];
-	for (const item of allItems) {
+	for (const item of allBlogPosts) {
 		let categoryName: string;
 
 		if (!item.data.category) {

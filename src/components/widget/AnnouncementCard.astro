@@ -16,12 +16,12 @@ const { title, content, avatar } = Astro.props;
 			<ImageWrapper
 				src={avatar}
 				alt="公告头像"
-				class="w-12 h-12 rounded-full object-cover border-2 border-orange-100 dark:border-stone-700"
+				class="w-12 h-12 rounded-full object-cover border-2 border-[color-mix(in_srgb,var(--primary)_25%,transparent)]"
 				loading="lazy"
 			/>
 		</div>
 		<div class="flex-1">
-			<p class="font-bold text-orange-700 dark:text-white">{title}：</p>
+			<p class="font-bold text-accent">{title}：</p>
 			<p class="text-gray-600 dark:text-gray-300">{content}</p>
 		</div>
 	</div>

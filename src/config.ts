@@ -13,7 +13,7 @@ export const siteConfig: SiteConfig = {
 	lang: "zh_CN",
 	banner: {
 		enable: true,
-		src: "assets/images/banner-light-opt.webp",
+		src: "/images/dog.jpg",
 		position: "center",
 		credit: {
 			enable: false,

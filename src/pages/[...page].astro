@@ -73,32 +73,32 @@ const platformLinks = [
 
 <MainGridLayout title={siteConfig.title} description={siteConfig.subtitle} fullWidth={false}>
     <div class="space-y-3 md:space-y-6">
-        <div class="bg-tint-10  rounded-2xl md:rounded-none shadow-xl p-4 md:p-6 border border-[var(--card-border)] dark:border-stone-700/30 md:border-0">
+        <div class="bg-tint-10  rounded-2xl md:rounded-none shadow-xl p-4 md:p-6 border border-[var(--card-border)] md:border-0">
             <div class="flex flex-row items-center md:items-start gap-4 md:gap-6">
                 <div class="flex-shrink-0">
                     <Profile class="max-w-md"></Profile>
                 </div>
                 <div class="flex-1 text-left">
                     <h1 class="text-xl md:text-2xl font-bold mb-1 md:mb-2 text-[var(--accent-text)] dark:text-white">{profileConfig.name}</h1>
-                    <p class="text-sm md:text-base text-orange-950/60 dark:text-white/60 mb-3 md:mb-4">{profileConfig.bio}</p>
+                    <p class="text-sm md:text-base text-muted mb-3 md:mb-4">{profileConfig.bio}</p>
                     <div class="flex flex-row flex-wrap gap-2 md:gap-3 justify-start">
-                        <a href="https://github.com/mikann-OMO" target="_blank" rel="noopener noreferrer" class="bg-tint-30  rounded-lg px-3 md:px-4 py-1.5 md:py-2 flex items-center gap-2 text-sm border border-tint-20" aria-label="GitHub">
-                            <Icon name="fa6-brands:github" class="text-orange-950/70 dark:text-white/70" />
-                            <span class="text-orange-950/70 dark:text-white/70">GitHub</span>
+                        <a href="https://github.com/mikann-OMO" target="_blank" rel="noopener noreferrer" class="btn-surface rounded-lg px-3 md:px-4 py-1.5 md:py-2 text-sm" aria-label="GitHub">
+                            <Icon name="fa6-brands:github" class="text-[1rem]" />
+                            <span>GitHub</span>
                         </a>
                         {platformLinks.map((platform) => (
                             <a
                                 href={platform.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                class="bg-tint-30  rounded-lg w-8 md:w-10 h-8 md:h-10 flex items-center justify-center text-sm border border-tint-20"
+                                class="btn-icon rounded-lg w-8 md:w-10 h-8 md:h-10 text-sm"
                                 aria-label={platform.name}
                                 title={platform.name}
                             >
                                 {platform.svg ? (
-                                    <svg viewBox="0 0 24 24" class="w-4 h-4 text-orange-950/70 dark:text-white/70" aria-hidden="true" set:html={platform.svg}></svg>
+                                    <svg viewBox="0 0 24 24" class="w-4 h-4" aria-hidden="true" set:html={platform.svg}></svg>
                                 ) : (
-                                    <Icon name={platform.icon} class="text-orange-950/70 dark:text-white/70" />
+                                    <Icon name={platform.icon} class="text-[1rem]" />
                                 )}
                             </a>
                         ))}
@@ -108,28 +108,28 @@ const platformLinks = [
         </div>
         
         {announcement.enabled && (
-            <div class="md:hidden bg-tint-10  rounded-2xl shadow-xl p-4 border border-[var(--card-border)] dark:border-stone-700/30">
+            <div class="md:hidden bg-tint-10  rounded-2xl shadow-xl p-4 border border-[var(--card-border)]">
                 <div class="flex items-start gap-4">
                     <div class="flex-shrink-0">
                         <ImageWrapper 
                             src={announcement.avatar as string} 
                             alt="公告头像" 
-                            class="w-12 h-12 rounded-full object-cover border-2 border-orange-100 dark:border-stone-700" 
+                            class="w-12 h-12 rounded-full object-cover border-2 border-[color-mix(in_srgb,var(--primary)_25%,transparent)]" 
                             loading="lazy"
                         />
                     </div>
                     <div class="flex-1">
-                        <p class="font-bold text-orange-700 dark:text-white">{announcement.title}：</p>
+                        <p class="font-bold text-accent">{announcement.title}：</p>
                         <p class="text-gray-600 dark:text-gray-300 text-sm">{announcement.content}</p>
                     </div>
                 </div>
             </div>
         )}
         
-        <div class="bg-[var(--card-bg)] dark:bg-stone-800/40  rounded-2xl md:rounded-none shadow-xl overflow-hidden border border-[var(--card-border)] dark:border-stone-700/30 md:border-0">
-            <div class="bg-[var(--card-bg)] dark:bg-stone-700/70  border-l-4 border-orange-700 p-3 md:p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                <h2 class="text-base md:text-lg font-bold text-orange-700 dark:text-white">最新文章</h2>
-                <div class="text-xs md:text-sm text-orange-950/60 dark:text-white/60 flex items-center gap-1">
+        <div class="bg-[var(--card-bg)]  rounded-2xl md:rounded-none shadow-xl overflow-hidden border border-[var(--card-border)] md:border-0">
+            <div class="bg-[var(--card-bg)]  border-l-4 border-accent p-3 md:p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                <h2 class="text-base md:text-lg font-bold text-accent">最新文章</h2>
+                <div class="text-xs md:text-sm text-muted flex items-center gap-1">
                     <Icon name="fa6-regular:clock" class="w-3 h-3" />
                     {lastUpdateDate ?
 						<span class="flex items-center gap-1">
@@ -146,53 +146,54 @@ const platformLinks = [
         </div>
         
         <div class="md:hidden space-y-3">
-            <div class="bg-tint-10  rounded-2xl shadow-xl p-4 border border-[var(--card-border)] dark:border-stone-700/30">
+            <div class="bg-tint-10  rounded-2xl shadow-xl p-4 border border-[var(--card-border)]">
                 <div class="flex items-center gap-2 mb-3">
-                    <Icon name="material-symbols:link-rounded" class="text-lg text-orange-700 dark:text-orange-300" />
-                    <h3 class="text-base font-bold text-orange-700 dark:text-white">友链更新</h3>
+                    <Icon name="material-symbols:link-rounded" class="text-lg text-accent" />
+                    <h3 class="text-base font-bold text-accent">友链更新</h3>
                 </div>
                 <FriendLatestPosts client:visible limit={3} />
-                <a href="/friends/" class="mt-3 inline-flex items-center gap-1 text-xs text-orange-700 dark:text-orange-300 hover:text-orange-600 dark:hover:text-orange-200 transition-colors">
+                <a href="/friends/" class="group mt-3 inline-flex items-center gap-1 text-xs font-medium text-muted hover:text-[var(--accent-text)] transition-colors">
                     查看友链文章
-                    <Icon name="fa6-solid:arrow-right" class="text-[0.625rem]" />
+                    <Icon name="fa6-solid:arrow-right" class="text-[0.625rem] transition-transform duration-200 group-hover:translate-x-0.5" />
                 </a>
             </div>
 
-            <div class="bg-tint-10  rounded-2xl shadow-xl p-4 border border-[var(--card-border)] dark:border-stone-700/30">
+            <div class="bg-tint-10  rounded-2xl shadow-xl p-4 border border-[var(--card-border)]">
                 <div class="flex justify-around items-center">
                     <div class="text-center">
-                        <div class="text-xl font-bold text-orange-700 dark:text-white">
+                        <div class="text-xl font-bold text-accent">
                             <VisitorCounter client:visible />
                         </div>
-                        <div class="text-xs text-orange-950/50 dark:text-white/50 mt-1">站点访问量</div>
+                        <div class="text-xs text-muted mt-1">站点访问量</div>
                     </div>
-                    <div class="w-px h-10 bg-tint-20 dark:bg-stone-600/50"></div>
+                    <div class="w-px h-10 bg-tint-20"></div>
                     <div class="text-center">
-                        <div class="text-xl font-bold text-orange-700 dark:text-white">{page.data.length}</div>
-                        <div class="text-xs text-orange-950/50 dark:text-white/50 mt-1">文章数</div>
+                        <div class="text-xl font-bold text-accent">{page.data.length}</div>
+                        <div class="text-xs text-muted mt-1">文章数</div>
                     </div>
                 </div>
             </div>
 
             <div class="grid grid-cols-2 gap-3">
-                <div class="bg-tint-10  rounded-2xl shadow-xl p-4 border border-[var(--card-border)] dark:border-stone-700/30">
-                    <h3 class="text-sm font-bold mb-3 text-orange-700 dark:text-white border-b border-[var(--card-border)] dark:border-stone-700/50 pb-2">分类</h3>
+                <div class="bg-tint-10  rounded-2xl shadow-xl p-4 border border-[var(--card-border)]">
+                    <h3 class="text-sm font-bold mb-3 text-accent border-b border-[var(--card-border)] pb-2">分类</h3>
                     <Categories class="space-y-1.5" collapsible={true} />
                 </div>
                 
-                <div class="bg-tint-10  rounded-2xl shadow-xl p-4 border border-[var(--card-border)] dark:border-stone-700/30">
-                    <h3 class="text-sm font-bold mb-3 text-orange-700 dark:text-white border-b border-[var(--card-border)] dark:border-stone-700/50 pb-2">标签</h3>
+                <div class="bg-tint-10  rounded-2xl shadow-xl p-4 border border-[var(--card-border)]">
+                    <h3 class="text-sm font-bold mb-3 text-accent border-b border-[var(--card-border)] pb-2">标签</h3>
                     <Tags class="flex flex-wrap gap-1.5" />
                 </div>
             </div>
 
-            <div class="bg-tint-10  rounded-2xl shadow-xl p-4 border border-[var(--card-border)] dark:border-stone-700/30">
-                <h3 class="text-sm font-bold mb-3 text-orange-700 dark:text-white border-b border-[var(--card-border)] dark:border-stone-700/50 pb-2">友链</h3>
+            <div class="bg-tint-10  rounded-2xl shadow-xl p-4 border border-[var(--card-border)]">
+                <h3 class="text-sm font-bold mb-3 text-accent border-b border-[var(--card-border)] pb-2">友链</h3>
                 <FriendsList class="space-y-2" />
             </div>
             
-            <a href="/about/" class="block w-full py-2.5 px-4 bg-[var(--card-bg)] dark:bg-stone-700 hover:bg-[var(--card-bg)] dark:hover:bg-stone-600 text-center font-bold text-orange-700 dark:text-white transition text-sm rounded-2xl border border-[var(--card-border)] dark:border-stone-700/30">
+            <a href="/about/" class="group btn-surface w-full py-2.5 px-4 font-bold text-sm rounded-2xl">
                 关于我꜀(˘꒳˘ ꜀)
+                <Icon name="material-symbols:arrow-forward-rounded" class="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" />
             </a>
         </div>
         
@@ -201,51 +202,52 @@ const platformLinks = [
     
     <div slot="sidebar" class="hidden md:block space-y-6">
         <div>
-            <a href="/about/" class="inline-block py-2 px-3 bg-[var(--card-bg)] dark:bg-stone-700 hover:bg-[var(--card-bg)] dark:hover:bg-stone-600 text-left font-bold text-orange-700 dark:text-white transition text-sm">
+            <a href="/about/" class="group btn-surface py-2 px-3 font-bold text-sm rounded-lg">
                 关于我꜀(˘꒳˘ ꜀)
+                <Icon name="material-symbols:arrow-forward-rounded" class="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" />
             </a>
         </div>
         
         <div class="bg-tint-10 rounded-none shadow-xl p-4">
             <div class="flex flex-col gap-4">
                 <div class="flex justify-between items-center">
-                    <span class="text-sm text-orange-950/50 dark:text-white/50">站点访问量</span>
-                    <span class="text-xl font-bold text-orange-700 dark:text-white">
+                    <span class="text-sm text-muted">站点访问量</span>
+                    <span class="text-xl font-bold text-accent">
                         <VisitorCounter client:visible />
                     </span>
                 </div>
                 <div class="flex justify-between items-center">
-                    <span class="text-sm text-orange-950/50 dark:text-white/50">文章数量</span>
-                    <span class="text-xl font-bold text-orange-700 dark:text-white">{page.data.length}</span>
+                    <span class="text-sm text-muted">文章数量</span>
+                    <span class="text-xl font-bold text-accent">{page.data.length}</span>
                 </div>
             </div>
         </div>
         
         <div class="bg-tint-10 rounded-none shadow-xl p-4">
             <div class="flex items-center gap-2 mb-4">
-                <Icon name="material-symbols:link-rounded" class="text-lg text-orange-700 dark:text-orange-300" />
-                <h3 class="text-lg font-bold text-orange-700 dark:text-white">友链更新</h3>
+                <Icon name="material-symbols:link-rounded" class="text-lg text-accent" />
+                <h3 class="text-lg font-bold text-accent">友链更新</h3>
             </div>
             <FriendLatestPosts client:visible limit={3} />
-            <a href="/friends/" class="mt-3 inline-flex items-center gap-1 text-xs text-orange-700 dark:text-orange-300 hover:text-orange-600 dark:hover:text-orange-200 transition-colors">
+            <a href="/friends/" class="group mt-3 inline-flex items-center gap-1 text-xs font-medium text-muted hover:text-[var(--accent-text)] transition-colors">
                 查看友链文章
-                <Icon name="fa6-solid:arrow-right" class="text-[0.625rem]" />
+                <Icon name="fa6-solid:arrow-right" class="text-[0.625rem] transition-transform duration-200 group-hover:translate-x-0.5" />
             </a>
         </div>
         
         <div class="bg-tint-10 rounded-none shadow-xl p-4">
             <div class="mb-6">
-                <h3 class="text-lg font-bold mb-4 text-orange-700 dark:text-white border-b border-[var(--card-border)] dark:border-stone-700/50 pb-2">分类</h3>
+                <h3 class="text-lg font-bold mb-4 text-accent border-b border-[var(--card-border)] pb-2">分类</h3>
                 <Categories class="space-y-2" collapsible={true} />
             </div>
             
             <div class="mb-6">
-                <h3 class="text-lg font-bold mb-4 text-orange-700 dark:text-white border-b border-[var(--card-border)] dark:border-stone-700/50 pb-2">标签</h3>
+                <h3 class="text-lg font-bold mb-4 text-accent border-b border-[var(--card-border)] pb-2">标签</h3>
                 <Tags class="flex flex-wrap gap-2" />
             </div>
             
             <div>
-                <h3 class="text-lg font-bold mb-4 text-orange-700 dark:text-white border-b border-[var(--card-border)] dark:border-stone-700/50 pb-2">友链</h3>
+                <h3 class="text-lg font-bold mb-4 text-accent border-b border-[var(--card-border)] pb-2">友链</h3>
                 <FriendsList class="space-y-2" />
             </div>
         </div>

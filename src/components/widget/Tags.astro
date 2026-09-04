@@ -12,14 +12,119 @@ const className = Astro.props.class;
 const style = Astro.props.style;
 ---
 
-<div class={className} style={style}>
-    {tags.map((t) => (
-        <a 
-            href={getTagUrl(t.name.trim())} 
-            class="inline-block bg-tint-15 dark:bg-stone-700/75 hover:bg-tint-20 dark:hover:bg-stone-600 text-orange-700 dark:text-white hover:text-orange-600 dark:hover:text-white px-2 md:px-3 py-0.5 md:py-1 rounded-full text-xs md:text-sm transition-colors"
-            aria-label={`View all posts with the ${t.name.trim()} tag`}
-        >
-            {t.name.trim()}
-        </a>
-    ))}
+<div class:list={["flex flex-col"]} style={style}>
+	<div class:list={[className]} data-tags-list>
+		{tags.map((t) => (
+			<a
+				href={getTagUrl(t.name.trim())}
+				class="inline-block bg-tint-15 hover:bg-tint-30 text-accent hover:text-[var(--secondary)] px-2 md:px-3 py-0.5 md:py-1 rounded-full text-xs md:text-sm transition-colors"
+				aria-label={`View all posts with the ${t.name.trim()} tag`}
+			>
+				{t.name.trim()}
+			</a>
+		))}
+	</div>
+
+	<button type="button" class="tags-toggle" data-tags-toggle hidden aria-expanded="false">
+		<span class="tags-toggle-label">展开全部</span>
+		<svg class="tags-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+			<path d="M6 9l6 6 6-6" />
+		</svg>
+	</button>
 </div>
+
+<style>
+	[data-tags-list] {
+		transition: max-height 0.3s ease;
+	}
+
+	.tags-toggle {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.25rem;
+		margin-top: 0.5rem;
+		padding: 0.375rem;
+		border: none;
+		border-radius: 0.5rem;
+		background: transparent;
+		cursor: pointer;
+		color: var(--text-secondary);
+		font-size: 0.8125rem;
+		transition: color 0.2s ease, background 0.2s ease;
+	}
+
+	.tags-toggle:hover {
+		color: var(--accent-text);
+		background: var(--tint-10);
+	}
+
+	.tags-toggle-icon {
+		width: 0.875rem;
+		height: 0.875rem;
+		transition: transform 0.25s ease;
+	}
+
+	.tags-toggle[aria-expanded="true"] .tags-toggle-icon {
+		transform: rotate(180deg);
+	}
+</style>
+
+<script is:inline>
+	function initTagsToggle() {
+		document.querySelectorAll("[data-tags-list]").forEach((list) => {
+			if (list.dataset.init === "true") return;
+			list.dataset.init = "true";
+
+			const wrap = list.parentElement;
+			const toggle = wrap ? wrap.querySelector(".tags-toggle") : null;
+			if (!toggle) return;
+
+			let fiveRowsHeight = 0;
+
+			const measure = () => {
+				// 恢复自然高度再测量
+				list.style.maxHeight = "none";
+				list.style.overflow = "visible";
+				const chips = list.children;
+				if (chips.length === 0) return;
+
+				const chipHeight = chips[0].getBoundingClientRect().height;
+				const gap = parseFloat(getComputedStyle(list).gap) || 8;
+				fiveRowsHeight = chipHeight * 5 + gap * 4;
+
+				if (list.scrollHeight > fiveRowsHeight + 2) {
+					list.style.maxHeight = fiveRowsHeight + "px";
+					list.style.overflow = "hidden";
+					list.dataset.collapsed = "true";
+					toggle.hidden = false;
+				} else {
+					toggle.hidden = true;
+				}
+			};
+
+			measure();
+
+			toggle.addEventListener("click", () => {
+				const collapsed = list.dataset.collapsed === "true";
+				list.dataset.collapsed = String(!collapsed);
+				toggle.setAttribute("aria-expanded", String(!collapsed));
+
+				if (collapsed) {
+					// 展开
+					list.style.maxHeight = list.scrollHeight + "px";
+					list.style.overflow = "hidden";
+				} else {
+					// 收起
+					list.style.maxHeight = fiveRowsHeight + "px";
+					list.style.overflow = "hidden";
+				}
+				const label = toggle.querySelector(".tags-toggle-label");
+				if (label) label.textContent = collapsed ? "收起" : "展开全部";
+			});
+		});
+	}
+
+	document.addEventListener("astro:page-load", initTagsToggle);
+	if (document.readyState !== "loading") initTagsToggle();
+</script>

@@ -143,22 +143,14 @@
 	blockquote {
 		@apply not-italic border-transparent relative;
 		font-weight: inherit;
-		background: color-mix(in srgb, var(--primary) 4%, transparent);
+		background: color-mix(in srgb, var(--primary) 5%, transparent);
 		padding: 0.75rem 1rem 0.75rem 1.25rem;
 		border-radius: 0 0.5rem 0.5rem 0;
 		margin: 1rem 0;
 
 		&:before {
 			@apply content-[''] absolute -left-1 block transition h-full w-1 rounded-full;
-			background: linear-gradient(to bottom, var(--primary), color-mix(in srgb, var(--primary) 30%, transparent));
-		}
-
-		:global(.dark) & {
-			background: color-mix(in srgb, var(--primary) 6%, transparent);
-
-			&:before {
-				background: linear-gradient(to bottom, #ffb74d, color-mix(in srgb, #ffb74d 30%, transparent));
-			}
+			background: linear-gradient(to bottom, var(--accent-text), color-mix(in srgb, var(--accent-text) 30%, transparent));
 		}
 
 		p:before,

@@ -54,15 +54,15 @@
 	{#if loading}
 		<div class="space-y-3">
 			{#each Array(limit) as _}
-				<div class="group flex items-start gap-2 p-2 rounded-lg bg-tint-10 dark:bg-stone-700/30">
-					<div class="w-8 h-8 rounded-lg bg-tint-20 dark:bg-stone-600/50 flex-shrink-0 mt-0.5 animate-pulse"></div>
+				<div class="group flex items-start gap-2 p-2 rounded-lg bg-tint-10">
+					<div class="w-8 h-8 rounded-lg bg-tint-20 flex-shrink-0 mt-0.5 animate-pulse"></div>
 					<div class="flex-1 min-w-0">
 						<div class="flex items-center gap-1 mb-1">
-							<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[0.625rem] font-medium bg-tint-20 dark:bg-orange-800/30 text-orange-700/50 dark:text-orange-300/50 animate-pulse"></span>
+							<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[0.625rem] font-medium bg-tint-20 text-muted animate-pulse"></span>
 						</div>
-						<p class="font-bold text-orange-700/30 dark:text-white/30 text-xs line-clamp-2 h-7 animate-pulse">...</p>
-						<p class="text-[0.625rem] text-orange-950/20 dark:text-white/20 mt-0.5 flex items-center gap-1">
-							<span class="w-3 h-3 bg-tint-20 dark:bg-stone-600/50 rounded animate-pulse"></span>
+						<p class="font-bold text-faint text-xs line-clamp-2 h-7 animate-pulse">...</p>
+						<p class="text-[0.625rem] text-faint mt-0.5 flex items-center gap-1">
+							<span class="w-3 h-3 bg-tint-20 rounded animate-pulse"></span>
 							<span class="animate-pulse">...</span>
 						</p>
 					</div>
@@ -76,7 +76,7 @@
 					href={post.link}
 					target="_blank"
 					rel="noopener noreferrer"
-					class="group flex items-start gap-2 p-2 rounded-lg bg-tint-10 dark:bg-stone-700/30 hover:bg-[var(--card-bg)] dark:hover:bg-stone-700/50 transition-all duration-200"
+					class="group flex items-start gap-2 p-2 rounded-lg bg-tint-10 hover:bg-[var(--card-bg)] transition-all duration-200"
 				>
 					<img
 						src={post.avatar}
@@ -87,12 +87,12 @@
 					/>
 					<div class="flex-1 min-w-0">
 						<div class="flex items-center gap-1 mb-1">
-							<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[0.625rem] font-medium bg-tint-20 dark:bg-orange-800/30 text-orange-700 dark:text-orange-300">
+							<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[0.625rem] font-medium bg-tint-20 text-accent">
 								{post.siteTitle}
 							</span>
 						</div>
-						<p class="font-bold text-orange-700 dark:text-white text-xs group-hover:text-orange-600 dark:group-hover:text-orange-300 transition-colors line-clamp-2">{post.title}</p>
-						<p class="text-[0.625rem] text-orange-950/40 dark:text-white/40 mt-0.5 flex items-center gap-1">
+						<p class="font-bold text-accent group-hover:text-accent transition-colors line-clamp-2">{post.title}</p>
+						<p class="text-[0.625rem] text-muted mt-0.5 flex items-center gap-1">
 							<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 								<rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
 								<line x1="16" y1="2" x2="16" y2="6"></line>
@@ -106,7 +106,7 @@
 			{/each}
 		</div>
 	{:else}
-		<div class="text-center py-4 text-orange-950/50 dark:text-white/50">
+		<div class="text-center py-4 text-muted">
 			<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mx-auto text-2xl mb-1 opacity-50">
 				<path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
 			</svg>

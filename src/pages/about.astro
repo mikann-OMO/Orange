@@ -50,32 +50,32 @@ const platformLinks = [
 ];
 ---
 <MainGridLayout title={i18n(I18nKey.about)} description={i18n(I18nKey.about)}>
-    <div class="bg-tint-10 rounded-2xl md:rounded-none shadow-xl p-4 md:p-6 border border-[var(--card-border)] dark:border-stone-700/30 md:border-0 card-enter">
+    <div class="bg-tint-10 rounded-2xl md:rounded-none shadow-xl p-4 md:p-6 border border-[var(--card-border)] md:border-0 card-enter">
         <div class="flex flex-row items-center md:items-start gap-4 md:gap-6">
             <div class="flex-shrink-0">
                 <Profile class="max-w-md"></Profile>
             </div>
             <div class="flex-1 text-left">
                 <h1 class="text-xl md:text-2xl font-bold mb-1 md:mb-2 text-[var(--accent-text)] dark:text-white">{profileConfig.name}</h1>
-                <p class="text-sm md:text-base text-orange-950/60 dark:text-white/60 mb-3 md:mb-4">{profileConfig.bio}</p>
+                <p class="text-sm md:text-base text-muted mb-3 md:mb-4">{profileConfig.bio}</p>
                 <div class="flex flex-row flex-wrap gap-2 md:gap-3 justify-start">
-                    <a href="https://github.com/mikann-OMO" target="_blank" rel="noopener noreferrer" class="bg-tint-30 rounded-lg px-3 md:px-4 py-1.5 md:py-2 flex items-center gap-2 text-sm border border-tint-20" aria-label="GitHub">
-                        <Icon name="fa6-brands:github" class="text-orange-950/70 dark:text-white/70" />
-                        <span class="text-orange-950/70 dark:text-white/70">GitHub</span>
+                    <a href="https://github.com/mikann-OMO" target="_blank" rel="noopener noreferrer" class="btn-surface rounded-lg px-3 md:px-4 py-1.5 md:py-2 text-sm" aria-label="GitHub">
+                        <Icon name="fa6-brands:github" class="text-[1rem]" />
+                        <span>GitHub</span>
                     </a>
                     {platformLinks.map((platform) => (
                         <a
                             href={platform.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            class="bg-tint-30 rounded-lg w-8 md:w-10 h-8 md:h-10 flex items-center justify-center text-sm border border-tint-20"
+                            class="btn-icon rounded-lg w-8 md:w-10 h-8 md:h-10 text-sm"
                             aria-label={platform.name}
                             title={platform.name}
                         >
                             {platform.svg ? (
-                                <svg viewBox="0 0 24 24" class="w-4 h-4 text-orange-950/70 dark:text-white/70" aria-hidden="true" set:html={platform.svg}></svg>
+                                <svg viewBox="0 0 24 24" class="w-4 h-4" aria-hidden="true" set:html={platform.svg}></svg>
                             ) : (
-                                <Icon name={platform.icon} class="text-orange-950/70 dark:text-white/70" />
+                                <Icon name={platform.icon} class="text-[1rem]" />
                             )}
                         </a>
                     ))}
@@ -96,29 +96,29 @@ const platformLinks = [
     </div>
     
     <div class="mobile-friends-card md:hidden">
-        <h3 class="card-title text-orange-700 dark:text-white">友链</h3>
+        <h3 class="card-title text-accent">友链</h3>
         <FriendsList class="friends-list" />
     </div>
     
     <div slot="sidebar" class="hidden md:block space-y-6">
         <div class="desktop-friend-info-card">
-            <h3 class="sidebar-title text-orange-700 dark:text-white">我的友链</h3>
+            <h3 class="sidebar-title text-accent">我的友链</h3>
             <div class="friend-info-content">
                 <div class="friend-info-item">
-                    <span class="info-label text-orange-950/50 dark:text-white/50">站点名称：</span>
-                    <span class="info-value text-orange-700 dark:text-white">mikann_OMO</span>
+                    <span class="info-label text-muted">站点名称：</span>
+                    <span class="info-value text-accent">mikann_OMO</span>
                 </div>
                 <div class="friend-info-item">
-                    <span class="info-label text-orange-950/50 dark:text-white/50">站点地址：</span>
-                    <span class="info-value text-orange-700 dark:text-white">https://www.mikann.fun</span>
+                    <span class="info-label text-muted">站点地址：</span>
+                    <span class="info-value text-accent">https://www.mikann.fun</span>
                 </div>
                 <div class="friend-info-item">
-                    <span class="info-label text-orange-950/50 dark:text-white/50">站点头像：</span>
-                    <span class="info-value truncate text-orange-700 dark:text-white">https://mikann.fun/avatar.webp</span>
+                    <span class="info-label text-muted">站点头像：</span>
+                    <span class="info-value truncate text-accent">https://mikann.fun/avatar.webp</span>
                 </div>
                 <div class="friend-info-item">
-                    <span class="info-label text-orange-950/50 dark:text-white/50">站点描述：</span>
-                    <span class="info-value text-orange-700 dark:text-white">是一位超级无敌可爱美少女</span>
+                    <span class="info-label text-muted">站点描述：</span>
+                    <span class="info-value text-accent">是一位超级无敌可爱美少女</span>
                 </div>
                 <button class="copy-friend-btn" type="button">
                     一键复制
@@ -127,7 +127,7 @@ const platformLinks = [
         </div>
         
         <div class="desktop-friends-card">
-            <h3 class="sidebar-title text-orange-700 dark:text-white">友链</h3>
+            <h3 class="sidebar-title text-accent">友链</h3>
             <FriendsList class="space-y-2" />
         </div>
     </div>
@@ -151,7 +151,7 @@ const platformLinks = [
 
         async function copyFriendLink(button: HTMLButtonElement) {
             const originalText = button.textContent || "一键复制";
-            setButtonState(button, "复制中...", "#ffb74d");
+            setButtonState(button, "复制中...", "var(--primary)");
             try {
                 if (navigator.clipboard && window.isSecureContext) {
                     try {
