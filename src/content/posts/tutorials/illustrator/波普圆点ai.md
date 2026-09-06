@@ -2,7 +2,7 @@
 title: 波普圆点怎么做？半调素材的制作方式？Illustrator技巧
 published: 2026-08-10
 description: "Adobe Illustrator波普网点、半调素材的制作方式。"
-image: "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/md/教程/ai/0ai.png"
+image: "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/md/教程/ai/1ai.jpg"
 tags:
   - Illustrator
 category: 软件教程
