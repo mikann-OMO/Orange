@@ -2,7 +2,7 @@
 title: 如何处理图片边缘？ Photoshop处理素材边缘技巧
 published: 2026-08-22
 description: "Adobe photoshop去锯齿、去毛边、加描边，处理图像边缘的多种方式。"
-image: "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/md/教程/ps/0ps.png"
+image: "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/md/教程/ps/1ps.jpg"
 tags:
   - Photoshop
 category: 软件教程
