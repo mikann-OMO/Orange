@@ -4,7 +4,7 @@ published: 2026-08-22
 description: "Adobe photoshop去锯齿、去毛边、加描边，处理图像边缘的多种方式。"
 image: "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/md/教程/ps/0ps.png"
 tags:
-  - Photoshop技巧
+  - Photoshop
 category: 软件教程
 draft: false
 
@@ -77,7 +77,7 @@ draft: false
 
 ---
 
-后续会断断续续更新设计用的到的软件应用技巧，分享给大家。也写给自己，忘记的时候可以翻翻⌯ᵔᗜᵔ⌯
+教程基于Photoshop 2025版本编写，后续会断断续续更新设计用的到的软件应用技巧，分享给大家。也写给自己，忘记的时候可以翻翻⌯ᵔᗜᵔ⌯
 
 ---
 # 完

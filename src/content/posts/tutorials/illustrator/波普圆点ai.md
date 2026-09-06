@@ -4,7 +4,7 @@ published: 2026-08-10
 description: "Adobe Illustrator波普网点、半调素材的制作方式。"
 image: "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/md/教程/ai/0ai.png"
 tags:
-  - Illustrator技巧
+  - Illustrator
 category: 软件教程
 draft: false
 
@@ -96,7 +96,7 @@ draft: false
 
 ---
 
-后续会断断续续更新设计用的到的软件应用技巧，分享给大家。也写给自己，忘记的时候可以翻翻⌯ᵔᗜᵔ⌯
+教程基于Illustrator 2025版本编写，后续会断断续续更新设计用的到的软件应用技巧，分享给大家。也写给自己，忘记的时候可以翻翻⌯ᵔᗜᵔ⌯
 
 ---
 # 完
