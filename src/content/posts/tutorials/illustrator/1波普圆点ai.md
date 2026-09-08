@@ -1,7 +1,7 @@
 ---
 title: Illustrator 彩色半调制作波普圆点图案教程
 published: 2026-08-10
-description: "本教程教你用 Illustrator 的「彩色半调」将黑白渐变图形快速转化为波普圆点图案，适用于海报、插画背景等设计。"
+description: "本教程教你用 Illustrator 的「彩色半调」将黑白渐变图形快速转化为波普圆点图案。"
 image: "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/md/教程/ai/ai1.png"
 tags:
   - Illustrator
@@ -52,7 +52,7 @@ draft: false
 
 以下效果是 1000px 的画布，直径 1000px 的圆，彩色半调最大半径设置为 100px 的效果，作为参考：
 
-> ![ai波普圆点.png](https://mikann-1359996823.cos.ap-beijing.myqcloud.com/md/教程/ai/ai波普圆点.png)
+> ![ai波普圆点.png](https://mikann-1359996823.cos.ap-beijing.myqcloud.com/md/教程/ai/波普圆点.png)
 
 ---
 
