@@ -2,7 +2,7 @@
 title: 从0到1，聊聊如何打造一辆属于自己的痛车
 published: 2026-07-07
 description: "第一次痛车需要准备什么？从设计方案、打印贴膜、施工到备案流程，带你完整了解一辆痛车是如何诞生的，并聊聊痛车文化背后的故事。"
-image: "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/md/itasha.png"
+image: "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/md/car4.jpg"
 tags:
     - 痛车
     - 亚文化
