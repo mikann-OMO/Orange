@@ -1,4 +1,4 @@
-<script context="module">
+<script module>
 import MarkdownIt from "markdown-it";
 import sanitizeHtml from "sanitize-html";
 import { installEmojiPackRule, loadEmojiPacks } from "../utils/emoji-packs";
@@ -58,18 +58,18 @@ function renderContent(text) {
 
 <script>
 import Icon from "@iconify/svelte";
-import { createEventDispatcher } from "svelte";
 import MessageEditor from "./MessageEditor.svelte";
+import MessageItem from "./MessageItem.svelte";
 import { formatDateOrToday } from "../utils/date-utils";
 
-/** @type {{ message: import("../types/message").Message, depth?: number, slug?: string }} */
+/** @type {{ message: import("../types/message").Message, depth?: number, slug?: string, onreplySuccess?: (data: unknown) => void }} */
 let {
 	message,
 	depth = 0,
 	slug = "message-board",
+	onreplySuccess,
 } = $props();
 
-const dispatch = createEventDispatcher();
 let showReply = $state(false);
 let emojiReady = $state(false);
 
@@ -82,9 +82,9 @@ function formatMessageTime(timestamp) {
     return formatDateOrToday(new Date(timestamp));
 }
 
-function handleReplySuccess(e) {
+function handleReplySuccess(data) {
     showReply = false;
-    dispatch("replySuccess", e.detail);
+    onreplySuccess?.(data);
 }
 </script>
 
@@ -124,7 +124,7 @@ function handleReplySuccess(e) {
 						<button 
 							class="text-[11px] font-medium transition-colors flex items-center gap-1 px-2 py-0.5 rounded-md hover:bg-[var(--surface-hover)]"
 							style="color: color-mix(in srgb, var(--primary) 70%, transparent);"
-							on:click={() => showReply = !showReply}
+							onclick={() => showReply = !showReply}
 						>
 							<Icon icon={showReply ? "fa6-solid:xmark" : "fa6-solid:reply"} class="text-[10px]" />
 							{showReply ? '取消' : '回复'}
@@ -167,7 +167,7 @@ function handleReplySuccess(e) {
 							parentId={message.id} 
 							placeholder={`回复 @${message.nickname}...`}
 							autofocus={true}
-							on:success={handleReplySuccess}
+							onsuccess={handleReplySuccess}
 							{slug}
 						/>
 					</div>
@@ -179,7 +179,7 @@ function handleReplySuccess(e) {
 	{#if message.replies && message.replies.length > 0}
 		<div class="flex flex-col gap-3 pl-6 sm:pl-10 ml-3 sm:ml-5" style="border-left: 2px solid color-mix(in srgb, var(--primary) 15%, transparent);">
 			{#each message.replies as reply (reply.id)}
-				<svelte:self message={reply} depth={depth + 1} on:replySuccess {slug} />
+				<MessageItem message={reply} depth={depth + 1} onreplySuccess={onreplySuccess} {slug} />
 			{/each}
 		</div>
 	{/if}

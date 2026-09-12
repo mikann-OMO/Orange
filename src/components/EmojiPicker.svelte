@@ -1,6 +1,5 @@
 <script>
 import Icon from "@iconify/svelte";
-import { createEventDispatcher } from "svelte";
 import { fade, fly } from "svelte/transition";
 import {
 	EMOJI_PAGE_SIZE,
@@ -10,7 +9,7 @@ import {
 	getGridColumns,
 } from "../utils/emoji-packs";
 
-const dispatch = createEventDispatcher();
+let { onselect } = $props();
 
 let packs = $state(null);
 let isOpen = $state(false);
@@ -34,7 +33,7 @@ function handleEmojiClick(emojiName) {
 	const text = getEmojiInsertText(activePackId, emojiName);
 	if (!text) return;
 
-	dispatch("select", text);
+	onselect?.(text);
 	isOpen = false;
 }
 
@@ -57,20 +56,20 @@ function openPicker() {
 		class="btn-plain gap-1.5 rounded-lg px-3 py-1.5 text-sm"
 		aria-label="选择表情"
 		aria-expanded={isOpen}
-		on:click={() => (isOpen ? (isOpen = false) : openPicker())}
+		onclick={() => (isOpen ? (isOpen = false) : openPicker())}
 	>
 		<Icon icon="fa6-regular:face-smile" class="text-base" />
 		<span class="text-xs font-medium">表情</span>
 	</button>
 
 	{#if isOpen && activePack}
-		<!-- svelte-ignore a11y-click-events-have-key-events -->
-		<!-- svelte-ignore a11y-no-static-element-interactions -->
-		<div
-			class="fixed inset-0 z-40 cursor-default"
-			on:click={() => (isOpen = false)}
+		<button
+			type="button"
+			aria-label="关闭表情选择器"
+			class="fixed inset-0 z-40 w-full h-full cursor-default border-0 bg-transparent p-0"
+			onclick={() => (isOpen = false)}
 			transition:fade={{ duration: 200 }}
-		></div>
+		></button>
 
 		<div
 			class="absolute bottom-full left-0 z-50 mb-3 w-[min(22.5rem,calc(100vw-2rem))] overflow-hidden rounded-[var(--radius-large)] shadow-2xl transition-all border-0"
@@ -85,7 +84,7 @@ function openPicker() {
 								type="button"
 								class="rounded-md px-2 py-1 text-sm text-75 transition hover:bg-[var(--btn-plain-bg-hover)] active:bg-[var(--btn-plain-bg-active)] whitespace-nowrap"
 								title={emojiName}
-								on:click={() => handleEmojiClick(emojiName)}
+								onclick={() => handleEmojiClick(emojiName)}
 							>
 								{data}
 							</button>
@@ -101,7 +100,7 @@ function openPicker() {
 								type="button"
 								class="flex aspect-square items-center justify-center rounded-md p-1 transition hover:bg-[var(--btn-plain-bg-hover)] active:bg-[var(--btn-plain-bg-active)]"
 								title={emojiName}
-								on:click={() => handleEmojiClick(emojiName)}
+								onclick={() => handleEmojiClick(emojiName)}
 							>
 								<img
 									src={data}
@@ -123,7 +122,7 @@ function openPicker() {
 					<button
 						type="button"
 						class="btn-regular mt-2 w-full rounded-md py-2 text-sm"
-						on:click={() => (visibleCount += EMOJI_PAGE_SIZE)}
+						onclick={() => (visibleCount += EMOJI_PAGE_SIZE)}
 					>
 						显示更多
 					</button>
@@ -136,7 +135,7 @@ function openPicker() {
 						<button
 							type="button"
 							class={`btn-chip shrink-0 px-3 py-1.5 text-xs font-medium ${activePackId === packId ? "is-active" : ""}`}
-							on:click={() => selectPack(packId)}
+							onclick={() => selectPack(packId)}
 						>
 							{packs[packId].name}
 						</button>

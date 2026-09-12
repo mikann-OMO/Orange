@@ -49,7 +49,7 @@ async function fetchMessages() {
 	}
 }
 
-function handleSuccess(e) {
+function handleSuccess() {
 	showSuccess = true;
 	setTimeout(() => {
 		showSuccess = false;
@@ -83,7 +83,7 @@ $effect(() => {
 			<div class="flex-1 h-px ml-2" style="background: linear-gradient(to right, var(--line-divider) 0%, transparent 100%);"></div>
 		</div>
 		
-		<MessageEditor on:success={handleSuccess} {slug} />
+		<MessageEditor onsuccess={handleSuccess} {slug} />
 	</div>
 
 	<div class="flex flex-col gap-3">
@@ -100,7 +100,7 @@ $effect(() => {
 			</div>
 		{:else}
 			{#each messages as msg (msg.id)}
-				<MessageItem message={msg} on:replySuccess={handleSuccess} {slug} />
+				<MessageItem message={msg} onreplySuccess={handleSuccess} {slug} />
 			{/each}
 		{/if}
 	</div>

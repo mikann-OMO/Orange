@@ -9,6 +9,7 @@ import vercel from "@astrojs/vercel";
 import yaml from "@rollup/plugin-yaml";
 import icon from "astro-icon";
 import { defineConfig } from "astro/config";
+import { unified } from "@astrojs/markdown-remark";
 
 // Markdown 处理插件
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
@@ -38,7 +39,7 @@ export default defineConfig({
 	site: "https://mikann.fun",
 	// 网站基础路径，默认为根路径
 	base: "/",
-	// 输出模式：static（Astro 7 默认），页面默认静态走 CDN，API 路由通过 prerender=false 按需服务端渲染
+	// 输出模式：static（Astro 7 默认，本身即支持 prerender=false 的按需 SSR 路由）
 	output: "static",
 	// 部署适配器（Vercel）
 	adapter: vercel(),
@@ -95,52 +96,55 @@ export default defineConfig({
 
 	// Markdown 配置
 	markdown: {
-		// Remark 插件（用于处理 Markdown 内容）
-		remarkPlugins: [
-			remarkReadingTime, // 阅读时间计算
-			remarkExcerpt, // 摘要提取
-			remarkGithubAdmonitionsToDirectives, // GitHub  admonitions 支持
-			remarkDirective, // 指令支持
-			remarkSectionize, // 章节划分
-			parseDirectiveNode, // 自定义指令解析
-			remarkReplaceImg, // 替换 img 标签为 ImageWrapper
-		],
-		// Rehype 插件（用于处理 HTML 输出）
-		rehypePlugins: [
-			rehypeSlug, // 自动添加锚点
-			[
-				rehypeComponents,
-				{
-					// 自定义组件
-					components: {
-						github: GithubCardComponent, // GitHub 卡片组件
-						note: (x, y) => AdmonitionComponent(x, y, "note"), // 注释 admonition
-						tip: (x, y) => AdmonitionComponent(x, y, "tip"), // 提示 admonition
-						important: (x, y) => AdmonitionComponent(x, y, "important"), // 重要 admonition
-						caution: (x, y) => AdmonitionComponent(x, y, "caution"), // 警告 admonition
-						warning: (x, y) => AdmonitionComponent(x, y, "warning"), // 危险 admonition
-					},
-				},
+		// 处理器：通过 unified 传入 remark/rehype 插件（Astro 7 推荐写法）
+		processor: unified({
+			// Remark 插件（用于处理 Markdown 内容）
+			remarkPlugins: [
+				remarkReadingTime, // 阅读时间计算
+				remarkExcerpt, // 摘要提取
+				remarkGithubAdmonitionsToDirectives, // GitHub  admonitions 支持
+				remarkDirective, // 指令支持
+				remarkSectionize, // 章节划分
+				parseDirectiveNode, // 自定义指令解析
+				remarkReplaceImg, // 替换 img 标签为 ImageWrapper
 			],
-			[
-				rehypeAutolinkHeadings,
-				{
-					// 锚点行为
-					behavior: "append",
-					// 锚点属性
-					properties: { className: ["anchor"] },
-					// 锚点内容
-					content: {
-						type: "element",
-						tagName: "span",
-						properties: {
-							className: ["anchor-icon"],
+			// Rehype 插件（用于处理 HTML 输出）
+			rehypePlugins: [
+				rehypeSlug, // 自动添加锚点
+				[
+					rehypeComponents,
+					{
+						// 自定义组件
+						components: {
+							github: GithubCardComponent, // GitHub 卡片组件
+							note: (x, y) => AdmonitionComponent(x, y, "note"), // 注释 admonition
+							tip: (x, y) => AdmonitionComponent(x, y, "tip"), // 提示 admonition
+							important: (x, y) => AdmonitionComponent(x, y, "important"), // 重要 admonition
+							caution: (x, y) => AdmonitionComponent(x, y, "caution"), // 警告 admonition
+							warning: (x, y) => AdmonitionComponent(x, y, "warning"), // 危险 admonition
 						},
-						children: [{ type: "text", value: "#" }],
 					},
-				},
+				],
+				[
+					rehypeAutolinkHeadings,
+					{
+						// 锚点行为
+						behavior: "append",
+						// 锚点属性
+						properties: { className: ["anchor"] },
+						// 锚点内容
+						content: {
+							type: "element",
+							tagName: "span",
+							properties: {
+								className: ["anchor-icon"],
+							},
+							children: [{ type: "text", value: "#" }],
+						},
+					},
+				],
 			],
-		],
+		}),
 		// 语法高亮
 		shikiConfig: {
 			theme: "github-dark",
@@ -150,24 +154,6 @@ export default defineConfig({
 
 	// 启用 HTML 压缩
 	compressHTML: true,
-
-	// 图片处理配置
-	image: {
-		quality: 80, // 图片质量（0-100）
-		formats: ["avif", "webp", "jpeg"], // 支持的图片格式
-		fallbackFormat: "jpeg", //  fallback 格式
-		loading: "lazy", // 懒加载
-		decoding: "async", // 异步解码
-		// 响应式图片配置
-		responsive: true,
-		// 自动生成多种尺寸的图片
-		sizes: {
-			sm: "320px",
-			md: "640px",
-			lg: "768px",
-			xl: "1024px",
-		},
-	},
 
 	// Vite 配置
 	vite: {
@@ -261,12 +247,9 @@ export default defineConfig({
 					manualChunks: (id) => {
 						if (id.includes("node_modules")) {
 							if (id.includes("photoswipe")) return "photoswipe";
-							if (id.includes("katex")) return "katex";
 							if (id.includes("markdown-it")) return "markdown";
 							if (id.includes("iconify")) return "iconify";
 							if (id.includes("svelte")) return "svelte";
-							if (id.includes("@astrojs")) return "astro";
-							if (id.includes("tailwind")) return "tailwind";
 							if (id.includes("@fontsource")) return "fonts";
 							return "vendor";
 						}
@@ -287,7 +270,7 @@ export default defineConfig({
 
 		// 依赖优化
 		optimizeDeps: {
-			exclude: ["photoswipe", "katex"], // 排除某些依赖的优化
+			exclude: ["photoswipe"], // 排除动态导入的依赖，避免预打包
 		},
 
 		// 开发服务器配置

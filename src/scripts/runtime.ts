@@ -3,7 +3,6 @@ type Runtime = {
 	bannerEnabled: boolean;
 	backToTopBtn: HTMLElement | null;
 	navbar: HTMLElement | null;
-	lastScrollY: number;
 	scrollScheduled: boolean;
 	onPageLoad: () => void;
 };
@@ -16,7 +15,6 @@ function createRuntime(): Runtime {
 		bannerEnabled: false,
 		backToTopBtn: null,
 		navbar: null,
-		lastScrollY: 0,
 		scrollScheduled: false,
 		onPageLoad: () => {},
 	};
@@ -46,7 +44,6 @@ function createRuntime(): Runtime {
 
 	const updateScroll = () => {
 		const y = window.scrollY;
-		rt.lastScrollY = y;
 
 		if (rt.backToTopBtn) {
 			if (y > 200) {

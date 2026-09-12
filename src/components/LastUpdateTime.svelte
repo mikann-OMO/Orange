@@ -3,7 +3,7 @@
 
 	const { iso } = $props<{ iso: string }>();
 
-	const date = new Date(iso);
+	const date = $derived(new Date(iso));
 	let display = $state("");
 
 	function update(): void {

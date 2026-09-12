@@ -1,10 +1,12 @@
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { createClient } from "@vercel/kv";
 import Redis from "ioredis";
 import type { Message } from "../types/message";
 
-const DB_PATH = path.join(process.cwd(), "data", "messages.json");
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const DB_PATH = path.join(__dirname, "../../data/messages.json");
 
 const USE_VERCEL_KV = !!(
 	process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN

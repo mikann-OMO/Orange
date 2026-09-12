@@ -1,17 +1,17 @@
 <script>
 import Icon from "@iconify/svelte";
-import { createEventDispatcher, tick } from "svelte";
+import { tick } from "svelte";
 import EmojiPicker from "./EmojiPicker.svelte";
 
-/** @type {{ parentId?: string, placeholder?: string, autofocus?: boolean, slug?: string }} */
+/** @type {{ parentId?: string, placeholder?: string, autofocus?: boolean, slug?: string, onsuccess?: (data: unknown) => void }} */
 let {
 	parentId = undefined,
 	placeholder = "说点什么吧... (支持 Markdown、表情和 ||隐藏内容||)",
 	autofocus = false,
 	slug = "message-board",
+	onsuccess,
 } = $props();
 
-const dispatch = createEventDispatcher();
 const MAX_CONTENT_LENGTH = 500;
 
 let nickname = $state("");
@@ -77,7 +77,7 @@ async function handleSubmit() {
 		const data = await res.json();
 		if (res.ok) {
 			content = "";
-			dispatch("success", data);
+			onsuccess?.(data);
 		} else {
 			alert(data.error || "发送失败，请重试");
 		}
@@ -89,8 +89,7 @@ async function handleSubmit() {
 	}
 }
 
-async function handleEmojiSelect(event) {
-	const emoji = event.detail;
+async function handleEmojiSelect(emoji) {
 	if (!emoji || !contentTextarea) return;
 
 	const start = contentTextarea.selectionStart ?? content.length;
@@ -164,13 +163,13 @@ async function handleEmojiSelect(event) {
 	
 	<div class="flex items-center justify-between gap-3">
 		<div class="flex items-center gap-2 min-w-0">
-			<EmojiPicker on:select={handleEmojiSelect} />
+			<EmojiPicker onselect={handleEmojiSelect} />
 			<span class="hidden truncate text-[11px] text-30 sm:inline">
 				支持 Markdown &middot; 表情 &middot; ||隐藏内容||
 			</span>
 		</div>
 		<button 
-			on:click={handleSubmit}
+			onclick={handleSubmit}
 			disabled={submitting || !nickname || !content}
 			class="btn-solid shrink-0 px-5 py-2.5 rounded-lg text-sm font-medium"
 		>
