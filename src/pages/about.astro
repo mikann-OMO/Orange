@@ -1,6 +1,8 @@
 ---
 import { getEntry } from "astro:content";
 import { render } from "astro:content";
+import Comment from "@components/Comment.astro";
+import LikeButton from "@components/LikeButton.svelte";
 import Markdown from "@components/misc/Markdown.astro";
 import FriendsList from "@components/widget/FriendsList.astro";
 import Profile from "@components/widget/Profile.astro";
@@ -58,6 +60,13 @@ const platformLinks = [
             <div class="flex-1 text-left">
                 <h1 class="text-xl md:text-2xl font-bold mb-1 md:mb-2 text-[var(--accent-text)] dark:text-white">{profileConfig.name}</h1>
                 <p class="text-sm md:text-base text-muted mb-3 md:mb-4">{profileConfig.bio}</p>
+                {profileConfig.tags?.length ? (
+                    <div class="flex flex-row flex-wrap gap-2 md:gap-3 justify-start mb-3 md:mb-4">
+                        {profileConfig.tags.map((tag) => (
+                            <span class="bg-tint-10 text-accent text-xs md:text-sm px-3 py-1 rounded-lg border border-[var(--card-border)]">{tag}</span>
+                        ))}
+                    </div>
+                ) : null}
                 <div class="flex flex-row flex-wrap gap-2 md:gap-3 justify-start">
                     <a href="https://github.com/mikann-OMO" target="_blank" rel="noopener noreferrer" class="btn-surface rounded-lg px-3 md:px-4 py-1.5 md:py-2 text-sm" aria-label="GitHub">
                         <Icon name="fa6-brands:github" class="text-[1rem]" />
@@ -94,6 +103,12 @@ const platformLinks = [
             </Markdown>
         </div>
     </div>
+
+    <div class="flex justify-center mt-4 md:mt-6 mb-6">
+        <LikeButton slug="/about" client:visible />
+    </div>
+
+    <Comment />
     
     <div class="mobile-friends-card md:hidden">
         <h3 class="card-title text-accent">友链</h3>
@@ -106,7 +121,7 @@ const platformLinks = [
             <div class="friend-info-content">
                 <div class="friend-info-item">
                     <span class="info-label text-muted">站点名称：</span>
-                    <span class="info-value text-accent">mikann_OMO</span>
+                    <span class="info-value text-accent">悠咸泡泡橘Yovii</span>
                 </div>
                 <div class="friend-info-item">
                     <span class="info-label text-muted">站点地址：</span>
@@ -135,7 +150,7 @@ const platformLinks = [
     <script>
         const friendLink = `const items = [ 
      { 
-         title: "mikann_OMO", 
+         title: "悠咸泡泡橘Yovii", 
          image: 
               "https://mikann.fun/avatar.webp", 
          desc: "是一位超级无敌可爱美少女", 

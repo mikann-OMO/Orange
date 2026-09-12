@@ -6,7 +6,6 @@ image: "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/md/car4.jpg"
 tags:
     - 痛车
     - 亚文化
-    - 二次元
     - 长期更新
 category: 项目
 draft: false

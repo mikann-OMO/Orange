@@ -4,7 +4,7 @@ published: 2026-05-12
 description: "个人向梳理，持续更新……"
 image: ""
 tags:
-  - AI 生图
+  - AIGC
   - 长期更新
 category: 分享
 draft: false

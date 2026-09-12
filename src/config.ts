@@ -8,7 +8,7 @@ import type {
 import { LinkPreset } from "./types/config";
 
 export const siteConfig: SiteConfig = {
-	title: "mikann-OMO Blog",
+	title: "悠咸泡泡橘Yovii Blog",
 	subtitle: "blog",
 	lang: "zh_CN",
 	banner: {
@@ -35,8 +35,9 @@ export const navBarConfig: NavBarConfig = {
 
 export const profileConfig: ProfileConfig = {
 	avatar: "/avatar.webp",
-	name: "mikann-OMO",
+	name: "悠咸泡泡橘Yovii",
 	bio: "这个人不是很精彩呢",
+	tags: ["设计师", "学生", "AIGC", "软件教学"],
 	links: [],
 };
 

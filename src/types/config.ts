@@ -43,6 +43,7 @@ export type ProfileConfig = {
 	avatar?: string;
 	name: string;
 	bio?: string;
+	tags?: string[];
 	links: {
 		name: string;
 		url: string;

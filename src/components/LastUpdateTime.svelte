@@ -1,31 +1,13 @@
 <script lang="ts">
-	const { iso, full } = $props<{ iso: string; full: string }>();
+	import { formatDateOrToday, formatDateToYYYYMMDD } from "../utils/date-utils";
 
-	let relative = $state("");
+	const { iso } = $props<{ iso: string }>();
+
 	const date = new Date(iso);
+	let display = $state("");
 
 	function update(): void {
-		const diffMs = Date.now() - date.getTime();
-		const diffSecs = Math.floor(diffMs / 1000);
-		const diffMins = Math.floor(diffSecs / 60);
-		const diffHours = Math.floor(diffMins / 60);
-		const diffDays = Math.floor(diffHours / 24);
-
-		if (diffSecs < 60) {
-			relative = "刚刚";
-		} else if (diffMins < 60) {
-			relative = `${diffMins}分钟前`;
-		} else if (diffHours < 24) {
-			relative = `${diffHours}小时前`;
-		} else if (diffDays < 7) {
-			relative = `${diffDays}天前`;
-		} else {
-			relative = date.toLocaleString("zh-CN", {
-				year: "numeric",
-				month: "2-digit",
-				day: "2-digit",
-			});
-		}
+		display = formatDateOrToday(date);
 	}
 
 	$effect(() => {
@@ -35,4 +17,4 @@
 	});
 </script>
 
-<span title={full}>{relative}</span>
+<span title={formatDateToYYYYMMDD(date)}>{display}</span>

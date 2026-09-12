@@ -60,6 +60,7 @@ function renderContent(text) {
 import Icon from "@iconify/svelte";
 import { createEventDispatcher } from "svelte";
 import MessageEditor from "./MessageEditor.svelte";
+import { formatDateOrToday } from "../utils/date-utils";
 
 /** @type {{ message: import("../types/message").Message, depth?: number, slug?: string }} */
 let {
@@ -77,15 +78,8 @@ emojiPacksPromise.then(() => {
 	emojiReady = true;
 });
 
-function timeAgo(timestamp) {
-    const seconds = Math.floor((Date.now() - timestamp) / 1000);
-    if (seconds < 60) return "刚刚";
-    const minutes = Math.floor(seconds / 60);
-    if (minutes < 60) return `${minutes}分钟前`;
-    const hours = Math.floor(minutes / 60);
-    if (hours < 24) return `${hours}小时前`;
-    const days = Math.floor(hours / 24);
-    return `${days}天前`;
+function formatMessageTime(timestamp) {
+    return formatDateOrToday(new Date(timestamp));
 }
 
 function handleReplySuccess(e) {
@@ -126,7 +120,7 @@ function handleReplySuccess(e) {
 						</span>
 					</div>
 					<div class="flex items-center gap-2 flex-shrink-0">
-						<time class="text-[11px] text-50">{timeAgo(message.createdAt)}</time>
+						<time class="text-[11px] text-50">{formatMessageTime(message.createdAt)}</time>
 						<button 
 							class="text-[11px] font-medium transition-colors flex items-center gap-1 px-2 py-0.5 rounded-md hover:bg-[var(--surface-hover)]"
 							style="color: color-mix(in srgb, var(--primary) 70%, transparent);"
