@@ -481,34 +481,34 @@ img[src]:not([src=""]) {
 .dark {
 	color-scheme: dark;
 
-	/* --- 主题色相（暗色·冷蓝）--- */
-	--hue: 214;
+	/* --- 主题色相（暗色·咖啡暖棕）--- */
+	--hue: 28;
 
-	/* --- 背景 & 表面（暗色·近黑深灰，微蓝调）--- */
-	--page-bg: #0f0f12;
-	--card-bg: #18191d;
-	--surface: #18191d;
-	--page-bg-gradient: linear-gradient(180deg, #0b0c0f 0%, #15161b 100%);
+	/* --- 背景 & 表面（暗色·深咖啡棕）--- */
+	--page-bg: #1f1410;
+	--card-bg: #2a1c15;
+	--surface: #2a1c15;
+	--page-bg-gradient: linear-gradient(180deg, #170e09 0%, #241a13 100%);
 
-	/* --- 文本（暗色）--- */
-	--text-primary: #e3e5ea;
-	--text-secondary: #8d9199;
+	/* --- 文本（暗色·暖米白）--- */
+	--text-primary: #e9decb;
+	--text-secondary: #a5937d;
 
-	/* --- 主题色（暗色·冷蓝渐变，低饱和偏灰）--- */
-	--primary: hsl(var(--hue), 42%, 56%);
-	--secondary: hsl(calc(var(--hue) - 15), 36%, 52%);
-	--accent-text: hsl(calc(var(--hue) - 6), 46%, 70%);
+	/* --- 主题色（暗色·咖啡橙棕，暖调）--- */
+	--primary: hsl(var(--hue), 45%, 58%);
+	--secondary: hsl(calc(var(--hue) - 10), 38%, 52%);
+	--accent-text: hsl(calc(var(--hue) - 4), 48%, 72%);
 
-	/* --- 边框 & 分隔（暗色）--- */
-	--card-border: rgba(165, 175, 190, 0.14);
+	/* --- 边框 & 分隔（暗色·暖棕）--- */
+	--card-border: rgba(196, 156, 116, 0.16);
 	--divider: var(--card-border);
 	--line-divider: var(--card-border);
 
-	/* --- 阴影 & 海拔（暗色）--- */
+	/* --- 阴影 & 海拔（暗色·暖棕）--- */
 	--shadow-color: rgba(0, 0, 0, 0.55);
-	--elevation-1: rgba(165, 175, 190, 0.05);
-	--elevation-2: rgba(165, 175, 190, 0.08);
-	--elevation-3: rgba(165, 175, 190, 0.13);
+	--elevation-1: rgba(196, 156, 116, 0.06);
+	--elevation-2: rgba(196, 156, 116, 0.09);
+	--elevation-3: rgba(196, 156, 116, 0.14);
 
 	/* --- 状态色（暗色）--- */
 	--success: #34d399;
@@ -524,14 +524,14 @@ img[src]:not([src=""]) {
 	--btn-regular-bg: color-mix(in srgb, var(--primary) 75%, transparent);
 	--btn-regular-bg-hover: color-mix(in srgb, var(--primary) 92%, transparent);
 	--icon-bg: color-mix(in srgb, var(--card-bg) 80%, transparent);
-	--icon-text: #e3e5ea;
+	--icon-text: #e9decb;
 
-	/* --- 覆盖色（暗色：中性灰高光）--- */
-	--tint-5: rgba(185, 195, 208, 0.06);
-	--tint-10: rgba(185, 195, 208, 0.10);
-	--tint-15: rgba(185, 195, 208, 0.16);
-	--tint-20: rgba(185, 195, 208, 0.20);
-	--tint-30: rgba(185, 195, 208, 0.30);
+	/* --- 覆盖色（暗色：暖棕高光）--- */
+	--tint-5: rgba(196, 156, 116, 0.07);
+	--tint-10: rgba(196, 156, 116, 0.11);
+	--tint-15: rgba(196, 156, 116, 0.17);
+	--tint-20: rgba(196, 156, 116, 0.21);
+	--tint-30: rgba(196, 156, 116, 0.32);
 }
 
 /* 毛玻璃替代方案：大面区用高不透明半透明背景，避免昂贵的 backdrop-blur 计算 */

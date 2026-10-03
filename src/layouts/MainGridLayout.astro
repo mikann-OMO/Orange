@@ -80,7 +80,7 @@ const contentColClass = fullWidth
 
 <slot slot="head" name="head"></slot>
 
-<div id="top-row" class="z-[999] pointer-events-none fixed top-0 left-0 right-0 w-full" transition:persist>
+<div id="top-row" class="z-[999] pointer-events-none fixed top-0 left-0 right-0 w-full md:relative md:h-[4.5rem]" transition:persist>
 	<div id="reading-progress" class="fixed top-0 left-0 right-0 h-[2px] bg-[var(--primary)] z-[1000] transform-origin-left scale-x-0 transition-transform duration-150"></div>
 	<div id="navbar-wrapper" class="pointer-events-auto fixed top-0 left-0 right-0 w-full shadow-md z-[999] bg-[color-mix(in_srgb,var(--card-bg)_92%,transparent)]">
 		<Navbar></Navbar>

@@ -12,7 +12,7 @@ export const siteConfig: SiteConfig = {
 	subtitle: "blog",
 	lang: "zh_CN",
 	banner: {
-		enable: true,
+		enable: false,
 		src: "/images/dog.jpg",
 		position: "center",
 		credit: {
