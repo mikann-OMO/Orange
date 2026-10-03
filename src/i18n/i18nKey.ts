@@ -4,6 +4,7 @@ enum I18nKey {
 	archive = "archive",
 	friends = "friends",
 	notes = "notes",
+	tools = "tools",
 
 	tags = "tags",
 	categories = "categories",
@@ -43,6 +44,9 @@ enum I18nKey {
 	copyButton = "copyButton",
 	copySuccess = "copySuccess",
 	copyFailed = "copyFailed",
+
+	toolsDesc = "toolsDesc",
+	toolUnitText = "toolUnitText",
 
 	backHome = "backHome",
 	pageNotFound = "pageNotFound",

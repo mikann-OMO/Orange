@@ -7,6 +7,7 @@ export const en: Translation = {
 	[Key.archive]: "Archive",
 	[Key.friends]: "Friends",
 	[Key.notes]: "Quick Reads",
+	[Key.tools]: "Toolkit",
 
 	[Key.tags]: "Tags",
 	[Key.categories]: "Categories",
@@ -47,6 +48,9 @@ export const en: Translation = {
 	[Key.copyButton]: "Copy Link",
 	[Key.copySuccess]: "Copied",
 	[Key.copyFailed]: "Failed",
+
+	[Key.toolsDesc]: "Useful online tools and websites",
+	[Key.toolUnitText]: "tools",
 
 	[Key.backHome]: "Back to Home",
 	[Key.pageNotFound]: "Page Not Found",

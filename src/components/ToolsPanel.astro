@@ -1,0 +1,232 @@
+---
+import { getCollection } from "astro:content";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import { Icon } from "astro-icon/components";
+import ToolCard from "./ToolCard.astro";
+
+interface ToolLink {
+	name: string;
+	avatar: string;
+	url: string;
+	description: string;
+	tags: string[];
+}
+
+const toolsCollection = await getCollection("tools");
+
+const items: ToolLink[] = toolsCollection.map((tool) => ({
+	name: tool.data.title,
+	avatar: tool.data.avatar,
+	url: tool.data.url,
+	description: tool.data.description ?? "",
+	tags: tool.data.tags ?? [],
+}));
+---
+
+<div class="tools-panel">
+	<div class="panel-header">
+		<div class="header-icon">
+			<Icon name="fa6-solid:toolbox" size={24} class="icon" />
+		</div>
+		<div class="header-content">
+			<h1 class="header-title">{i18n(I18nKey.tools)}</h1>
+			<p class="header-desc">
+				{i18n(I18nKey.toolsDesc)}
+			</p>
+		</div>
+		<div class="header-stats">
+			<div class="stat-item">
+				<span class="stat-number">{items.length}</span>
+				<span class="stat-label">{i18n(I18nKey.toolUnitText)}</span>
+			</div>
+		</div>
+	</div>
+
+	<div class="tools-grid">
+		{items.map((item) => (
+			<ToolCard
+				name={item.name}
+				avatar={item.avatar}
+				url={item.url}
+				description={item.description}
+				tags={item.tags}
+			/>
+		))}
+	</div>
+</div>
+
+<style>
+.tools-panel {
+    padding: 8px 16px 16px;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.panel-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    background: var(--card-bg);
+    border-radius: 10px;
+    border: 1px solid var(--card-border);
+    box-shadow: 0 4px 20px var(--shadow-color);
+    transition: all 0.3s ease;
+}
+
+.header-icon {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    border-radius: 10px;
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--primary) 30%, transparent);
+}
+
+.header-icon .icon {
+    font-size: 24px;
+    color: white;
+}
+
+.header-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.header-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 0 0 4px 0;
+    letter-spacing: 0.5px;
+}
+
+.header-desc {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.header-stats {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 6px 12px;
+    background: color-mix(in srgb, var(--primary) 10%, transparent);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.stat-number {
+    display: block;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1;
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.6875rem;
+    color: var(--text-secondary);
+    margin-top: 2px;
+}
+
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+}
+
+@media (max-width: 768px) {
+    .tools-panel {
+        padding: 12px;
+    }
+
+    .panel-header {
+        padding: 16px;
+        margin-bottom: 16px;
+        gap: 12px;
+    }
+
+    .header-icon {
+        width: 44px;
+        height: 44px;
+    }
+
+    .header-icon .icon {
+        font-size: 22px;
+    }
+
+    .header-title {
+        font-size: 1.125rem;
+    }
+
+    .header-desc {
+        font-size: 0.75rem;
+    }
+
+    .header-stats {
+        display: none;
+    }
+
+    .tools-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .tools-panel {
+        padding: 8px;
+    }
+
+    .panel-header {
+        padding: 12px;
+        margin-bottom: 12px;
+        gap: 10px;
+    }
+
+    .header-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .header-icon .icon {
+        font-size: 20px;
+    }
+
+    .header-title {
+        font-size: 1rem;
+    }
+
+    .header-desc {
+        font-size: 0.6875rem;
+    }
+
+    .tools-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+}
+</style>

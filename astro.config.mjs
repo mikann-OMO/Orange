@@ -85,7 +85,7 @@ export default defineConfig({
 			include: {
 				"fa6-brands": ["github", "creative-commons", "zhihu", "bilibili", "twitter", "x-twitter", "figma", "codepen", "pixiv"],
 				"fa6-regular": ["clock", "address-card"],
-				"fa6-solid": ["arrow-up-right-from-square", "users", "arrow-right"],
+				"fa6-solid": ["arrow-up-right-from-square", "users", "arrow-right", "toolbox"],
 			},
 		}),
 		// 站点地图集成

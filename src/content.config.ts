@@ -69,14 +69,30 @@ const friendsCollection = defineCollection({
 	}),
 });
 
+const toolsCollection = defineCollection({
+	loader: glob({
+		pattern: "**/*.{md,mdx}",
+		base: "./src/content/tools",
+	}),
+	schema: z.object({
+		title: z.string(),
+		url: z.string().regex(/https?:\/\/[^\s]+/),
+		description: z.string().optional().default(""),
+		avatar: z.union([z.string().regex(/https?:\/\/[^\s]+/), z.string().startsWith("/")]),
+		tags: z.array(z.string()).optional().default([]),
+	}),
+});
+
 export const collections: {
 	posts: typeof postsCollection;
 	notes: typeof notesCollection;
 	about: typeof aboutCollection;
 	friends: typeof friendsCollection;
+	tools: typeof toolsCollection;
 } = {
 	posts: postsCollection,
 	notes: notesCollection,
 	about: aboutCollection,
 	friends: friendsCollection,
+	tools: toolsCollection,
 };

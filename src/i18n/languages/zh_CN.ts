@@ -7,6 +7,7 @@ export const zh_CN: Translation = {
 	[Key.archive]: "归档",
 	[Key.friends]: "友链",
 	[Key.notes]: "轻读",
+	[Key.tools]: "工具包",
 
 	[Key.tags]: "标签",
 	[Key.categories]: "分类",
@@ -45,6 +46,9 @@ export const zh_CN: Translation = {
 	[Key.copyButton]: "复制友链",
 	[Key.copySuccess]: "复制成功",
 	[Key.copyFailed]: "复制失败",
+
+	[Key.toolsDesc]: "一些好用的工具",
+	[Key.toolUnitText]: "个工具",
 
 	[Key.backHome]: "返回首页",
 	[Key.pageNotFound]: "页面未找到",
