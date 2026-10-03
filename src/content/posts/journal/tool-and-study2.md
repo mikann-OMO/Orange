@@ -2,7 +2,7 @@
 title: 学习阶段复盘：AIGC 与平面设计
 published: 2026-10-02
 description: "这段时间我学的怎么样。"
-image: "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/md/tool1.jpg"
+image: "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/md/tool2.jpg"
 tags:
     - 工具与学习
 category: 成为人类日志

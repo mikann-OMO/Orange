@@ -2,7 +2,7 @@
 title: 针对开盒即用的ai生图工具，我目前的一些使用感受
 published: 2026-07-04
 description: "关于aigc的阶段性总结，发表我对ai生图的看法，以及我如何使用ai生图工具。"
-image: "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/md/aigc1.jpg"
+image: "https://mikann-1359996823.cos.ap-beijing.myqcloud.com/md/tool1.jpg"
 tags:
     - 工具与学习
 category: 成为人类日志
