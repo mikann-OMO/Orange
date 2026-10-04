@@ -117,6 +117,7 @@ export const POST: APIRoute = async ({ request }) => {
 			});
 		}
 
+		// TODO: likes counter atomicity —— read-modify-write 非原子，并发下会丢失点赞数，后续需改为 Redis INCR 等原子操作
 		const store = await getStore();
 		const current = store[slug] || 0;
 		const next = Math.max(0, current + delta);

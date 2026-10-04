@@ -124,6 +124,7 @@ export const POST: APIRoute = async ({ request }) => {
 			});
 		}
 
+		// TODO: visitor counter atomicity —— read-modify-write 非原子，并发下会丢失计数，后续需改为 Redis INCR 等原子操作
 		const store = await getStore();
 		const next = (store[key] || 0) + 1;
 		store[key] = next;
