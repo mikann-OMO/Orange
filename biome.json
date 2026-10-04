@@ -7,14 +7,7 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"includes": [
-			"src/**/*.(js|ts|jsx|tsx|svelte|vue|json|jsonc|md|mdx|html)",
-			"!!**/*.css",
-			"!!**/src/public",
-			"!!**/dist",
-			"!!**/node_modules",
-			"!!**/.astro"
-		]
+		"includes": ["src/**/*.{js,ts,jsx,tsx,svelte,vue,json,jsonc,md,mdx,html}"]
 	},
 	"formatter": {
 		"enabled": true,
