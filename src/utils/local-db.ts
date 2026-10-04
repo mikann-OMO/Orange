@@ -67,6 +67,7 @@ export async function getMessages(slug?: string): Promise<Message[]> {
 export async function addMessage(
 	message: Omit<Message, "id" | "createdAt">,
 ): Promise<Message> {
+	// TODO: guestbook read-modify-write concurrency —— 并发提交会互相覆盖导致留言丢失，后续需改为原子写入
 	const messages = await getMessages();
 	const newMessage: Message = {
 		...message,
