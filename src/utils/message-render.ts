@@ -45,10 +45,7 @@ const sanitizeOptions = {
 
 // 渲染留言内容：先 Markdown 转 HTML，再用 sanitize-html 清洗，防止 XSS
 export function renderMessageContent(text: string): string {
-	const withSpoilers = text.replace(
-		/\|\|(.*?)\|\|/g,
-		'<span class="spoiler">$1</span>',
-	);
+	const withSpoilers = text.replace(/\|\|(.*?)\|\|/g, '<span class="spoiler">$1</span>');
 
 	const rawHtml = md.render(withSpoilers);
 

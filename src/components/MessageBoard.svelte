@@ -18,27 +18,27 @@ async function fetchMessages() {
 			const rawMessages = await res.json();
 
 			const messageMap = new Map();
-			rawMessages.forEach((m) => {
+			for (const m of rawMessages) {
 				m.replies = [];
 				messageMap.set(m.id, m);
-			});
+			}
 
 			const rootMessages = [];
-			rawMessages.forEach((m) => {
+			for (const m of rawMessages) {
 				if (m.parentId && messageMap.has(m.parentId)) {
 					messageMap.get(m.parentId).replies.push(m);
 				} else {
 					rootMessages.push(m);
 				}
-			});
+			}
 
 			rootMessages.sort((a, b) => b.createdAt - a.createdAt);
 
-			rawMessages.forEach((m) => {
+			for (const m of rawMessages) {
 				if (m.replies) {
 					m.replies.sort((a, b) => a.createdAt - b.createdAt);
 				}
-			});
+			}
 
 			messages = rootMessages;
 		}

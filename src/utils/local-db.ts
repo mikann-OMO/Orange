@@ -8,9 +8,7 @@ import type { Message } from "../types/message";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DB_PATH = path.join(__dirname, "../../data/messages.json");
 
-const USE_VERCEL_KV = !!(
-	process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN
-);
+const USE_VERCEL_KV = !!(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
 const USE_REDIS_URL = !USE_VERCEL_KV && !!process.env.REDIS_URL;
 const IS_REMOTE = USE_VERCEL_KV || USE_REDIS_URL;
 
@@ -64,9 +62,7 @@ export async function getMessages(slug?: string): Promise<Message[]> {
 	}
 }
 
-export async function addMessage(
-	message: Omit<Message, "id" | "createdAt">,
-): Promise<Message> {
+export async function addMessage(message: Omit<Message, "id" | "createdAt">): Promise<Message> {
 	// TODO: guestbook read-modify-write concurrency —— 并发提交会互相覆盖导致留言丢失，后续需改为原子写入
 	const messages = await getMessages();
 	const newMessage: Message = {

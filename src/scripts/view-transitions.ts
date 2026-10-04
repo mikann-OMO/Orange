@@ -1,5 +1,5 @@
-(function () {
-	const w = window as any;
+(() => {
+	const w = window;
 	if (w.__enterAnimInstalled) return;
 	w.__enterAnimInstalled = true;
 
@@ -7,7 +7,7 @@
 		// 卡片级联入场（仅桌面端，移动端直接展示避免性能开销）
 		if (window.innerWidth > 768) {
 			const cards = document.querySelectorAll(
-				".post-card-animate, .friend-card-animate, .note-card-animate",
+				".post-card-animate, .friend-card-animate, .note-card-animate"
 			);
 			if (cards.length > 0) {
 				const cardObserver = new IntersectionObserver(
@@ -26,13 +26,13 @@
 										el.classList.remove("card-enter");
 										el.style.removeProperty("--card-delay");
 									},
-									{ once: true },
+									{ once: true }
 								);
 								cardObserver.unobserve(el);
 							});
 						});
 					},
-					{ threshold: 0.05, rootMargin: "50px" },
+					{ threshold: 0.05, rootMargin: "50px" }
 				);
 
 				const limit = Math.min(cards.length, 10);
@@ -49,7 +49,7 @@
 			(postContent as HTMLElement).addEventListener(
 				"animationend",
 				() => postContent.classList.remove("content-enter"),
-				{ once: true },
+				{ once: true }
 			);
 		}
 
@@ -59,7 +59,7 @@
 			(sidebar as HTMLElement).addEventListener(
 				"animationend",
 				() => sidebar.classList.remove("sidebar-enter"),
-				{ once: true },
+				{ once: true }
 			);
 		}
 	}

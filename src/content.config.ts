@@ -65,7 +65,10 @@ const friendsCollection = defineCollection({
 		siteurl: z.string().regex(/https?:\/\/[^\s]+/),
 		desc: z.string().optional().default(""),
 		image: z.union([z.string().regex(/https?:\/\/[^\s]+/), z.string().startsWith("/")]),
-		rss: z.string().regex(/https?:\/\/[^\s]+/).optional(),
+		rss: z
+			.string()
+			.regex(/https?:\/\/[^\s]+/)
+			.optional(),
 	}),
 });
 

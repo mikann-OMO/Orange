@@ -3,8 +3,7 @@ import { i18n } from "../i18n/translation";
 import { encodePathSegment } from "./encoding-utils";
 
 export function pathsEqual(path1: string, path2: string): boolean {
-	const normalizePath = (path: string) =>
-		path.replace(/^\/|\/$/g, "").toLowerCase();
+	const normalizePath = (path: string) => path.replace(/^\/|\/$/g, "").toLowerCase();
 	return normalizePath(path1) === normalizePath(path2);
 }
 

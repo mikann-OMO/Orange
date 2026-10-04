@@ -1,12 +1,11 @@
 <script lang="ts">
 import {
 	formatCount,
-	incrementSiteVisitorCount,
-	isVisitorTrackingEnabled,
 	getLocalCount,
 	incrementLocalCount,
+	incrementSiteVisitorCount,
+	isVisitorTrackingEnabled,
 } from "@utils/visitor-utils";
-
 
 let count = $state(0);
 let loading = $state(true);

@@ -14,6 +14,8 @@ declare global {
 		__pageProgressInstalled?: boolean;
 		__photoswipeInstalled?: boolean;
 		__mdCopyInstalled?: boolean;
+		__readingProgressInstalled?: boolean;
+		__enterAnimInstalled?: boolean;
 	}
 }
 

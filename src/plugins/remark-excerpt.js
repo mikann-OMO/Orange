@@ -1,4 +1,4 @@
-// biome-ignore lint/suspicious/noShadowRestrictedNames: <explanation>
+// biome-ignore lint/suspicious/noShadowRestrictedNames: toString is imported from mdast-util-to-string and intentionally shadows the global
 import { toString } from "mdast-util-to-string";
 
 export function remarkExcerpt() {

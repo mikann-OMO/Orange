@@ -52,5 +52,3 @@ export const visitorConfig: VisitorConfig = {
 	enable: true,
 	provider: "server",
 };
-
-

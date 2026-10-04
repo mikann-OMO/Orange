@@ -1,17 +1,15 @@
-import type PhotoSwipeLightbox from "photoswipe/lightbox";
 import type { PhotoSwipeOptions, SlideData } from "photoswipe";
+import type PhotoSwipeLightbox from "photoswipe/lightbox";
 
-(function () {
-	const w = window as any;
+(() => {
+	const w = window;
 	if (w.__photoswipeInstalled) return;
 	w.__photoswipeInstalled = true;
 
 	let lightbox: PhotoSwipeLightbox | null = null;
 
 	const hasGalleryItems = () =>
-		!!document.querySelector(
-			".gallery a, .custom-md img, #post-cover img, #post-cover-mobile img",
-		);
+		!!document.querySelector(".gallery a, .custom-md img, #post-cover img, #post-cover-mobile img");
 
 	async function initPhotoSwipe() {
 		if (!hasGalleryItems()) {
@@ -39,8 +37,7 @@ import type { PhotoSwipeOptions, SlideData } from "photoswipe";
 			const { default: PS } = await import("photoswipe");
 
 			const options: PhotoSwipeOptions = {
-				gallery:
-					".gallery a, .custom-md img, #post-cover img, #post-cover-mobile img",
+				gallery: ".gallery a, .custom-md img, #post-cover img, #post-cover-mobile img",
 				pswpModule: PS,
 				closeSVG:
 					'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#f5f5f4" stroke-width="2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"></line><line x1="18" y1="6" x2="6" y2="18"></line></svg>',
@@ -58,47 +55,36 @@ import type { PhotoSwipeOptions, SlideData } from "photoswipe";
 
 			lightbox = new PLB(options);
 
-			lightbox.addFilter(
-				"domItemData",
-				(itemData: SlideData, element: HTMLElement) => {
-					if (element.tagName === "A") {
-						const href = element.getAttribute("href") || "";
-						const pswpWidth = element.getAttribute("data-pswp-width");
-						const pswpHeight = element.getAttribute("data-pswp-height");
+			lightbox.addFilter("domItemData", (itemData: SlideData, element: HTMLElement) => {
+				if (element.tagName === "A") {
+					const href = element.getAttribute("href") || "";
+					const pswpWidth = element.getAttribute("data-pswp-width");
+					const pswpHeight = element.getAttribute("data-pswp-height");
 
-						itemData.src = href;
-						itemData.msrc = href;
+					itemData.src = href;
+					itemData.msrc = href;
 
-						if (pswpWidth && pswpHeight) {
-							itemData.w = Number.parseInt(pswpWidth, 10);
-							itemData.h = Number.parseInt(pswpHeight, 10);
+					if (pswpWidth && pswpHeight) {
+						itemData.w = Number.parseInt(pswpWidth, 10);
+						itemData.h = Number.parseInt(pswpHeight, 10);
+					} else {
+						const img = element.querySelector("img");
+						if (img) {
+							itemData.w = Number(img.naturalWidth || img.width || 800);
+							itemData.h = Number(img.naturalHeight || img.height || 600);
 						} else {
-							const img = element.querySelector("img");
-							if (img) {
-								itemData.w = Number(
-									img.naturalWidth || img.width || 800,
-								);
-								itemData.h = Number(
-									img.naturalHeight || img.height || 600,
-								);
-							} else {
-								itemData.w = 800;
-								itemData.h = 600;
-							}
+							itemData.w = 800;
+							itemData.h = 600;
 						}
-					} else if (element instanceof HTMLImageElement) {
-						itemData.src = element.src;
-						itemData.w = Number(
-							element.naturalWidth || element.width || 800,
-						);
-						itemData.h = Number(
-							element.naturalHeight || element.height || 600,
-						);
-						itemData.msrc = element.src;
 					}
-					return itemData;
-				},
-			);
+				} else if (element instanceof HTMLImageElement) {
+					itemData.src = element.src;
+					itemData.w = Number(element.naturalWidth || element.width || 800);
+					itemData.h = Number(element.naturalHeight || element.height || 600);
+					itemData.msrc = element.src;
+				}
+				return itemData;
+			});
 
 			lightbox.init();
 		} catch (_error) {
@@ -116,13 +102,11 @@ import type { PhotoSwipeOptions, SlideData } from "photoswipe";
 				}
 			}
 		},
-		{ rootMargin: "500px" },
+		{ rootMargin: "500px" }
 	);
 
 	const boot = () => {
-		const gallery = document.querySelector(
-			".gallery, .custom-md, #post-cover, #post-cover-mobile",
-		);
+		const gallery = document.querySelector(".gallery, .custom-md, #post-cover, #post-cover-mobile");
 		if (gallery) {
 			observer.observe(gallery);
 		} else {

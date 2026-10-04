@@ -43,8 +43,7 @@ export const en: Translation = {
 	[Key.friendsDesc]: "Like-minded friends",
 	[Key.friendUnitText]: "friends",
 	[Key.applyForFriendLink]: "Swap Friend Link",
-	[Key.applyForFriendLinkDesc]:
-		"Copy my link info — let's exchange friend links!",
+	[Key.applyForFriendLinkDesc]: "Copy my link info — let's exchange friend links!",
 	[Key.copyButton]: "Copy Link",
 	[Key.copySuccess]: "Copied",
 	[Key.copyFailed]: "Failed",

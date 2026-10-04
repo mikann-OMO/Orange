@@ -3,10 +3,10 @@ import Icon from "@iconify/svelte";
 import { fade, fly } from "svelte/transition";
 import {
 	EMOJI_PAGE_SIZE,
-	loadEmojiPacks,
 	getEmojiInsertText,
 	getEmojiPreviewSize,
 	getGridColumns,
+	loadEmojiPacks,
 } from "../utils/emoji-packs";
 
 let { onselect } = $props();

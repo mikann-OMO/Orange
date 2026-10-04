@@ -1,13 +1,12 @@
 <script lang="ts">
 import {
 	formatCount,
+	getLocalCount,
 	getPageVisitorCount,
+	incrementLocalCount,
 	incrementPageVisitorCount,
 	isVisitorTrackingEnabled,
-	getLocalCount,
-	incrementLocalCount,
 } from "@utils/visitor-utils";
-
 
 interface Props {
 	slug: string;

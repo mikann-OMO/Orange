@@ -11,9 +11,7 @@ export const prerender = false;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const USE_VERCEL_KV = !!(
-	process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN
-);
+const USE_VERCEL_KV = !!(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
 const USE_REDIS_URL = !USE_VERCEL_KV && !!process.env.REDIS_URL;
 
 const kvClient = USE_VERCEL_KV
@@ -24,9 +22,7 @@ const kvClient = USE_VERCEL_KV
 	: null;
 
 const redisClient =
-	USE_REDIS_URL && process.env.REDIS_URL
-		? new Redis(process.env.REDIS_URL)
-		: null;
+	USE_REDIS_URL && process.env.REDIS_URL ? new Redis(process.env.REDIS_URL) : null;
 
 const LOCAL_DB_PATH = path.join(__dirname, "../../../data/likes.json");
 

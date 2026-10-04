@@ -20,7 +20,16 @@ const parser = new XMLParser({
 	processEntities: false,
 });
 
-const FEED_PATHS = ["/feed.xml", "/rss.xml", "/atom.xml", "/feed", "/rss", "/feed/", "/atom/", "/index.xml"];
+const FEED_PATHS = [
+	"/feed.xml",
+	"/rss.xml",
+	"/atom.xml",
+	"/feed",
+	"/rss",
+	"/feed/",
+	"/atom/",
+	"/index.xml",
+];
 
 const CACHE_TTL = 30 * 60 * 1000;
 
@@ -74,7 +83,10 @@ function extractDescription(item: Record<string, unknown>): string {
 		extractText(item.content) ||
 		extractText(item["content:encoded"]) ||
 		"";
-	return raw.replace(/<[^>]*>/g, "").trim().slice(0, 150);
+	return raw
+		.replace(/<[^>]*>/g, "")
+		.trim()
+		.slice(0, 150);
 }
 
 function parseRSS(xml: string, friendName: string, avatar: string, siteurl: string): FriendPost[] {
@@ -122,9 +134,7 @@ async function findValidFeed(siteUrl: string): Promise<string | null> {
 					return feedUrl;
 				}
 			}
-		} catch {
-			continue;
-		}
+		} catch {}
 	}
 	return null;
 }
@@ -143,7 +153,7 @@ async function fetchFriendPosts(): Promise<FriendPost[]> {
 			if (!res.ok) return [];
 			const xml = await res.text();
 			return parseRSS(xml, friend.data.title, friend.data.image, friend.data.siteurl);
-		}),
+		})
 	);
 
 	const allPosts: FriendPost[] = [];
@@ -183,7 +193,7 @@ export const GET: APIRoute = async () => {
 				"Cache-Control": "public, max-age=0, must-revalidate",
 			},
 		});
-	} catch (e) {
+	} catch {
 		return new Response(
 			JSON.stringify({
 				generatedAt: new Date().toISOString(),
@@ -196,7 +206,7 @@ export const GET: APIRoute = async () => {
 					"Content-Type": "application/json",
 					"Cache-Control": "public, max-age=0, must-revalidate",
 				},
-			},
+			}
 		);
 	}
 };

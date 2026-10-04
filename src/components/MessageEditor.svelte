@@ -22,9 +22,11 @@ let content = $state("");
 let submitting = $state(false);
 let contentTextarea = $state(undefined);
 
-let avatarPreview = $derived(qq?.match(/^\d{5,11}$/)
-	? `https://q1.qlogo.cn/g?b=qq&nk=${qq}&s=100`
-	: `/assets/avatars/default-avatar-1.webp`);
+let avatarPreview = $derived(
+	qq?.match(/^\d{5,11}$/)
+		? `https://q1.qlogo.cn/g?b=qq&nk=${qq}&s=100`
+		: `/assets/avatars/default-avatar-1.webp`
+);
 
 $effect(() => {
 	if (typeof localStorage === "undefined") return;

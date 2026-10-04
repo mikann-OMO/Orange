@@ -49,16 +49,10 @@ async function checkRedis(): Promise<CheckResult> {
 }
 
 export const GET: APIRoute = async () => {
-	const kvEnvPresent = !!(
-		process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN
-	);
+	const kvEnvPresent = !!(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
 	const redisEnvPresent = !!process.env.REDIS_URL;
 
-	const chosenStorage = kvEnvPresent
-		? "kv"
-		: redisEnvPresent
-			? "redis"
-			: "local-file";
+	const chosenStorage = kvEnvPresent ? "kv" : redisEnvPresent ? "redis" : "local-file";
 
 	const [kv, redis] = await Promise.all([checkKv(), checkRedis()]);
 
@@ -80,11 +74,11 @@ export const GET: APIRoute = async () => {
 				],
 			},
 			null,
-			2,
+			2
 		),
 		{
 			status: 200,
 			headers: { "Content-Type": "application/json; charset=utf-8" },
-		},
+		}
 	);
 };

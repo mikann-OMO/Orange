@@ -7,7 +7,7 @@ type Runtime = {
 	onPageLoad: () => void;
 };
 
-const w = window as any;
+const w = window;
 
 function createRuntime(): Runtime {
 	const rt: Runtime = {
@@ -35,10 +35,7 @@ function createRuntime(): Runtime {
 		if (rt.navbar) {
 			const navbarHeight = rt.navbar.getBoundingClientRect().height;
 			const tocOffset = Math.max(72, Math.round(navbarHeight) + 12);
-			document.documentElement.style.setProperty(
-				"--toc-offset",
-				`${tocOffset}px`,
-			);
+			document.documentElement.style.setProperty("--toc-offset", `${tocOffset}px`);
 		}
 	};
 
@@ -108,7 +105,7 @@ function createRuntime(): Runtime {
 				e.stopPropagation();
 				navMenuPanel.classList.toggle("float-panel-closed");
 			},
-			{ passive: true },
+			{ passive: true }
 		);
 	};
 
@@ -158,4 +155,4 @@ function createRuntime(): Runtime {
 }
 
 w.__layoutRuntime = w.__layoutRuntime || createRuntime();
-w.__layoutRuntime.onPageLoad();
+w.__layoutRuntime?.onPageLoad();

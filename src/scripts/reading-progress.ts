@@ -1,5 +1,5 @@
-(function () {
-	const w = window as any;
+(() => {
+	const w = window;
 	if (w.__readingProgressInstalled) return;
 	w.__readingProgressInstalled = true;
 
@@ -8,8 +8,7 @@
 	let ticking = false;
 
 	const calcDocHeight = () => {
-		docHeight =
-			document.documentElement.scrollHeight - window.innerHeight;
+		docHeight = document.documentElement.scrollHeight - window.innerHeight;
 	};
 
 	const update = () => {
@@ -29,10 +28,14 @@
 	};
 
 	window.addEventListener("scroll", requestTick, { passive: true });
-	window.addEventListener("resize", () => {
-		calcDocHeight();
-		requestTick();
-	}, { passive: true });
+	window.addEventListener(
+		"resize",
+		() => {
+			calcDocHeight();
+			requestTick();
+		},
+		{ passive: true }
+	);
 
 	if (document.readyState === "loading") {
 		document.addEventListener("DOMContentLoaded", () => {

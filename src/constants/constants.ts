@@ -5,10 +5,7 @@ export const PAGE_SIZE = 10;
 export const LIGHT_MODE = "light",
 	DARK_MODE = "dark",
 	AUTO_MODE = "auto";
-export const DEFAULT_THEME:
-	| typeof LIGHT_MODE
-	| typeof DARK_MODE
-	| typeof AUTO_MODE = AUTO_MODE;
+export const DEFAULT_THEME: typeof LIGHT_MODE | typeof DARK_MODE | typeof AUTO_MODE = AUTO_MODE;
 
 export const BANNER_HEIGHT = 35;
 export const BANNER_HEIGHT_EXTEND = 30;

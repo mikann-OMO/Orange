@@ -13,15 +13,10 @@ export interface TocOptions {
 	numbered?: boolean;
 }
 
-export function buildTocTree(
-	headings: MarkdownHeading[],
-	options: TocOptions = {},
-): TocNode[] {
+export function buildTocTree(headings: MarkdownHeading[], options: TocOptions = {}): TocNode[] {
 	const { minDepth = 1, maxDepth = 6, numbered = true } = options;
 
-	const filtered = headings.filter(
-		(h) => h.depth >= minDepth && h.depth <= maxDepth,
-	);
+	const filtered = headings.filter((h) => h.depth >= minDepth && h.depth <= maxDepth);
 	const clean = (t: string) => t.replace(/\s*#\s*$/, "").trim();
 
 	let idx = 0;
@@ -47,8 +42,7 @@ export function buildTocTree(
 			l4 = null;
 			l5 = null;
 		} else if (h.depth === 2) {
-			const parent =
-				l1 ?? (level1.length > 0 ? level1[level1.length - 1] : null);
+			const parent = l1 ?? (level1.length > 0 ? level1[level1.length - 1] : null);
 			if (parent) {
 				parent.children.push(node);
 			}

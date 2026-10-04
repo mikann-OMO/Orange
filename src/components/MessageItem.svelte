@@ -1,17 +1,12 @@
 <script>
 import Icon from "@iconify/svelte";
-import MessageEditor from "./MessageEditor.svelte";
-import MessageItem from "./MessageItem.svelte";
 import { formatDateOrToday } from "../utils/date-utils";
 import { emojiPacksPromise, renderMessageContent } from "../utils/message-render";
+import MessageEditor from "./MessageEditor.svelte";
+import MessageItem from "./MessageItem.svelte";
 
 /** @type {{ message: import("../types/message").Message, depth?: number, slug?: string, onreplySuccess?: (data: unknown) => void }} */
-let {
-	message,
-	depth = 0,
-	slug = "message-board",
-	onreplySuccess,
-} = $props();
+let { message, depth = 0, slug = "message-board", onreplySuccess } = $props();
 
 let showReply = $state(false);
 let emojiReady = $state(false);
@@ -22,12 +17,12 @@ emojiPacksPromise.then(() => {
 });
 
 function formatMessageTime(timestamp) {
-    return formatDateOrToday(new Date(timestamp));
+	return formatDateOrToday(new Date(timestamp));
 }
 
 function handleReplySuccess(data) {
-    showReply = false;
-    onreplySuccess?.(data);
+	showReply = false;
+	onreplySuccess?.(data);
 }
 </script>
 

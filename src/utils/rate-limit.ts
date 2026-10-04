@@ -1,9 +1,7 @@
 import { createClient } from "@vercel/kv";
 import Redis from "ioredis";
 
-const USE_VERCEL_KV = !!(
-	process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN
-);
+const USE_VERCEL_KV = !!(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
 const USE_REDIS_URL = !USE_VERCEL_KV && !!process.env.REDIS_URL;
 
 let kvClient: ReturnType<typeof createClient> | null = null;
@@ -38,7 +36,7 @@ export function getClientIp(request: Request): string {
 export async function checkRateLimit(
 	bucket: string,
 	limit: number,
-	windowSeconds: number,
+	windowSeconds: number
 ): Promise<boolean> {
 	const windowStart = Math.floor(Date.now() / (windowSeconds * 1000));
 	const key = `rate:${bucket}:${windowStart}`;

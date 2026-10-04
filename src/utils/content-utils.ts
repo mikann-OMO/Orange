@@ -192,12 +192,10 @@ export type ArchiveStats = {
 	allCategories: Category[];
 };
 
-export async function getArchiveData(
-	filterOptions?: {
-		categories?: string[];
-		tags?: string[];
-	},
-): Promise<{
+export async function getArchiveData(filterOptions?: {
+	categories?: string[];
+	tags?: string[];
+}): Promise<{
 	groups: ArchiveYearGroup[];
 	stats: ArchiveStats;
 }> {

@@ -15,9 +15,7 @@ const MAIL_FROM = process.env.MAIL_FROM;
 const MAIL_NOTIFY_TO = process.env.MAIL_NOTIFY_TO;
 const BLOG_OWNER_EMAIL = process.env.BLOG_OWNER_EMAIL || MAIL_NOTIFY_TO;
 
-let mailTransporter: ReturnType<
-	typeof import("nodemailer").createTransport
-> | null = null;
+let mailTransporter: ReturnType<typeof import("nodemailer").createTransport> | null = null;
 
 async function getMailTransporter() {
 	if (!MAIL_HOST || !MAIL_USER || !MAIL_PASS || !MAIL_FROM) return null;
@@ -117,12 +115,8 @@ export const POST: APIRoute = async ({ request }) => {
 		const browserName = browser.name
 			? `${browser.name} ${browser.major || browser.version || ""}`.trim()
 			: undefined;
-		const osName = os.name
-			? `${os.name} ${os.version || ""}`.trim()
-			: undefined;
-		const deviceName = device.model
-			? `${device.vendor || ""} ${device.model}`.trim()
-			: undefined;
+		const osName = os.name ? `${os.name} ${os.version || ""}`.trim() : undefined;
+		const deviceName = device.model ? `${device.vendor || ""} ${device.model}`.trim() : undefined;
 
 		if (!nickname || !content) {
 			return new Response(JSON.stringify({ error: "昵称和内容不能为空" }), {

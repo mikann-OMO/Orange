@@ -72,10 +72,7 @@ function escapeHtmlAttribute(value: string): string {
 		.replaceAll(">", "&gt;");
 }
 
-function createEmojiImageHtml(
-	pack: ImageEmojiPack,
-	name: string,
-): string | null {
+function createEmojiImageHtml(pack: ImageEmojiPack, name: string): string | null {
 	const src = pack.items[name];
 	if (!src) return null;
 
@@ -88,10 +85,7 @@ function createEmojiImageHtml(
 }
 
 export function installEmojiPackRule(md: MarkdownIt): void {
-	const emojiRule: Parameters<MarkdownIt["inline"]["ruler"]["before"]>[2] = (
-		state,
-		silent,
-	) => {
+	const emojiRule: Parameters<MarkdownIt["inline"]["ruler"]["before"]>[2] = (state, silent) => {
 		if (state.src.charCodeAt(state.pos) !== 0x3a) return false;
 
 		const end = state.src.indexOf(":", state.pos + 1);

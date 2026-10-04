@@ -1,53 +1,53 @@
 <script lang="ts">
-	type FriendPost = {
-		title: string;
-		link: string;
-		published: string;
-		description: string;
-		siteTitle: string;
-		siteurl: string;
-		avatar: string;
-	};
+type FriendPost = {
+	title: string;
+	link: string;
+	published: string;
+	description: string;
+	siteTitle: string;
+	siteurl: string;
+	avatar: string;
+};
 
-	const { limit = 3 } = $props<{ limit?: number }>();
+const { limit = 3 } = $props<{ limit?: number }>();
 
-	let posts = $state<FriendPost[]>([]);
-	let loading = $state(true);
+let posts = $state<FriendPost[]>([]);
+let loading = $state(true);
 
-	async function fetchPosts(): Promise<void> {
-		try {
-			const res = await fetch(`/api/friend-circle?t=${Date.now()}`);
-			if (res.ok) {
-				const data = await res.json();
-				posts = (data.items || []).slice(0, limit);
-			}
-		} catch (e) {
-			console.error("Failed to fetch friend posts:", e);
-		} finally {
-			loading = false;
+async function fetchPosts(): Promise<void> {
+	try {
+		const res = await fetch(`/api/friend-circle?t=${Date.now()}`);
+		if (res.ok) {
+			const data = await res.json();
+			posts = (data.items || []).slice(0, limit);
 		}
+	} catch (e) {
+		console.error("Failed to fetch friend posts:", e);
+	} finally {
+		loading = false;
 	}
+}
 
-	function formatDate(dateStr: string): string {
-		const date = new Date(dateStr);
-		return date.toLocaleDateString("zh-CN", {
-			year: "numeric",
-			month: "short",
-			day: "numeric",
-		});
-	}
-
-	function handleImageError(e: Event): void {
-		const img = e.currentTarget as HTMLImageElement;
-		img.style.display = "none";
-	}
-
-	$effect(() => {
-		const timer = setTimeout(() => {
-			fetchPosts();
-		}, 1000);
-		return () => clearTimeout(timer);
+function formatDate(dateStr: string): string {
+	const date = new Date(dateStr);
+	return date.toLocaleDateString("zh-CN", {
+		year: "numeric",
+		month: "short",
+		day: "numeric",
 	});
+}
+
+function handleImageError(e: Event): void {
+	const img = e.currentTarget as HTMLImageElement;
+	img.style.display = "none";
+}
+
+$effect(() => {
+	const timer = setTimeout(() => {
+		fetchPosts();
+	}, 1000);
+	return () => clearTimeout(timer);
+});
 </script>
 
 <div>
