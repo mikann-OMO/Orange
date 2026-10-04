@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { createClient } from "@vercel/kv";
 import type { APIRoute } from "astro";
 import Redis from "ioredis";
+import { checkRateLimit, getClientIp } from "../../utils/rate-limit";
 
 export const prerender = false;
 
@@ -99,6 +100,16 @@ export const GET: APIRoute = async ({ request }) => {
 
 export const POST: APIRoute = async ({ request }) => {
 	try {
+		// 限流：每 IP 每分钟最多 30 次点赞
+		const ip = getClientIp(request);
+		const allowed = await checkRateLimit(`likes:${ip}`, 30, 60);
+		if (!allowed) {
+			return new Response(JSON.stringify({ error: "Too many requests" }), {
+				status: 429,
+				headers: { "Content-Type": "application/json" },
+			});
+		}
+
 		const body = (await request.json()) as unknown;
 		if (!body || typeof body !== "object") {
 			return new Response(JSON.stringify({ error: "Invalid body" }), {

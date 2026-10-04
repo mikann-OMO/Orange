@@ -2,6 +2,7 @@ import type { APIRoute } from "astro";
 import { UAParser } from "ua-parser-js";
 import type { Message } from "../../types/message";
 import { addMessage, getMessages } from "../../utils/local-db";
+import { checkRateLimit, getClientIp } from "../../utils/rate-limit";
 
 export const prerender = false;
 
@@ -93,6 +94,16 @@ export const GET: APIRoute = async ({ request }) => {
 
 export const POST: APIRoute = async ({ request }) => {
 	try {
+		// 限流：每 IP 每小时最多 10 条留言
+		const ip = getClientIp(request);
+		const allowed = await checkRateLimit(`messages:${ip}`, 10, 3600);
+		if (!allowed) {
+			return new Response(JSON.stringify({ error: "发送太频繁，请稍后再试" }), {
+				status: 429,
+				headers: { "Content-Type": "application/json" },
+			});
+		}
+
 		const body = await request.json();
 		const { nickname, qq, content, email, website, parentId, slug } = body;
 		const allMessages = await getMessages();

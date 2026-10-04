@@ -24,6 +24,12 @@ vi.mock("ioredis", () => ({
 		set(key: string, value: string) {
 			return h.redisSet(key, value);
 		}
+		incr() {
+			return 1;
+		}
+		expire() {
+			return 1;
+		}
 	},
 }));
 
