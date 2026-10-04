@@ -1,66 +1,9 @@
-<script module>
-import MarkdownIt from "markdown-it";
-import sanitizeHtml from "sanitize-html";
-import { installEmojiPackRule, loadEmojiPacks } from "../utils/emoji-packs";
-
-const md = new MarkdownIt({
-	html: true,
-	breaks: true,
-	linkify: true,
-});
-installEmojiPackRule(md);
-
-// 预加载 emoji 数据（不阻塞渲染，加载完成后下次 renderContent 即可解析表情）
-export const emojiPacksPromise = loadEmojiPacks();
-
-const sanitizeOptions = {
-	allowedTags: sanitizeHtml.defaults.allowedTags.concat([
-		"img",
-		"details",
-		"summary",
-		"span",
-		"h1",
-		"h2",
-	]),
-	allowedAttributes: {
-		...sanitizeHtml.defaults.allowedAttributes,
-		img: [
-			"src",
-			"alt",
-			"title",
-			"class",
-			"width",
-			"height",
-			"loading",
-			"decoding",
-			"referrerpolicy",
-		],
-		span: ["class"],
-	},
-	allowedClasses: {
-		img: ["emoji", "emoji-sticker"],
-		span: ["spoiler"],
-	},
-	allowedSchemes: ["http", "https", "mailto"],
-};
-
-function renderContent(text) {
-	const withSpoilers = text.replace(
-		/\|\|(.*?)\|\|/g,
-		'<span class="spoiler">$1</span>',
-	);
-
-	const rawHtml = md.render(withSpoilers);
-
-	return sanitizeHtml(rawHtml, sanitizeOptions);
-}
-</script>
-
 <script>
 import Icon from "@iconify/svelte";
 import MessageEditor from "./MessageEditor.svelte";
 import MessageItem from "./MessageItem.svelte";
 import { formatDateOrToday } from "../utils/date-utils";
+import { emojiPacksPromise, renderMessageContent } from "../utils/message-render";
 
 /** @type {{ message: import("../types/message").Message, depth?: number, slug?: string, onreplySuccess?: (data: unknown) => void }} */
 let {
@@ -158,7 +101,7 @@ function handleReplySuccess(data) {
 				{/if}
 
 				<div class="mt-1.5 text-75 text-sm leading-relaxed custom-md">
-					{@html renderContent(message.content)}
+					{@html renderMessageContent(message.content)}
 				</div>
 				
 				{#if showReply}
