@@ -4,7 +4,7 @@ published: 2025-10-01
 description: “南京苏州广州上海，所见所闻所感”
 image: 'https://mikann-1359996823.cos.ap-beijing.myqcloud.com/takamichika/ckorange.png'
 tags:
-- 学期轨迹
+- 生活记录
 category: 游记
 draft: false
 

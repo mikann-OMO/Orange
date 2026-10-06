@@ -4,7 +4,7 @@ published: 2026-10-01
 description: “就这样平平淡淡，日复一日”
 image: 'https://mikann-1359996823.cos.ap-beijing.myqcloud.com/takamichika/ckorange.png'
 tags:
-- 学期轨迹
+- 生活记录
 category: 游记
 draft: false
 
