@@ -10,7 +10,7 @@ draft: false
 
 ---
 
-b站专栏持续更新一些应用教程，有需要请移步 👉
+b站专栏持续更新一些应用教程，有需要请移步 👉 [Photoshop bilib站专栏](https://www.bilibili.com/read/readlist/rl1096665?spm_id_from=333.1387.0.0)
 
 ---
 
