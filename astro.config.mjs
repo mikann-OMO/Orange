@@ -22,7 +22,7 @@ import remarkSectionize from "remark-sectionize";
 // PWA 支持 - 暂时禁用
 // import { VitePWA } from "vite-plugin-pwa";
 
-import remarkReplaceImg from "./plugins/remark-replace-img.js";
+import remarkReplaceImg from "./src/plugins/remark-replace-img.js";
 // 自定义插件
 import { AdmonitionComponent } from "./src/plugins/rehype-component-admonition.mjs";
 import { GithubCardComponent } from "./src/plugins/rehype-component-github-card.mjs";

@@ -39,7 +39,9 @@ async function refreshCount(): Promise<void> {
 	count = typeof data.count === "number" ? data.count : 0;
 }
 
-async function toggleLike(): Promise<void> {
+async function toggleLike(e?: MouseEvent): Promise<void> {
+	e?.preventDefault();
+	e?.stopPropagation();
 	if (loading) return;
 	const nextLiked = !liked;
 	liked = nextLiked;

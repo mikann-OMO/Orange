@@ -179,6 +179,7 @@
             requestAnimationFrame(finishAnimation);
         }
 
+        document.addEventListener('astro:before-preparation', startProgress);
         document.addEventListener('astro:page-load', completeProgress);
     })();
 </script>

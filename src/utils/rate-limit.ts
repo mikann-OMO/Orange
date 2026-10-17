@@ -7,13 +7,13 @@ const USE_REDIS_URL = !USE_VERCEL_KV && !!process.env.REDIS_URL;
 let kvClient: ReturnType<typeof createClient> | null = null;
 let redisClient: Redis | null = null;
 
-if (USE_VERCEL_KV) {
+if (USE_VERCEL_KV && process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
 	kvClient = createClient({
-		url: process.env.KV_REST_API_URL!,
-		token: process.env.KV_REST_API_TOKEN!,
+		url: process.env.KV_REST_API_URL,
+		token: process.env.KV_REST_API_TOKEN,
 	});
-} else if (USE_REDIS_URL) {
-	redisClient = new Redis(process.env.REDIS_URL!);
+} else if (USE_REDIS_URL && process.env.REDIS_URL) {
+	redisClient = new Redis(process.env.REDIS_URL);
 	redisClient.on("error", (err) => {
 		console.error("Redis connection error:", err);
 	});

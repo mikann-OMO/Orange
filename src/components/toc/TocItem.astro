@@ -1,0 +1,176 @@
+---
+import type { TocNode } from "@utils/toc";
+import TocItem from "./TocItem.astro";
+
+interface Props {
+	node: TocNode;
+	depth?: number;
+	parentId?: string;
+}
+
+const { node, depth = 0, parentId } = Astro.props;
+
+function tocItemClass(d: number): string {
+	switch (d) {
+		case 0:
+			return "text-base font-semibold";
+		case 1:
+			return "text-[0.95rem] font-medium";
+		case 2:
+			return "text-[0.875rem]";
+		case 3:
+			return "text-[0.8rem]";
+		case 4:
+			return "text-[0.75rem]";
+		default:
+			return "text-[0.7rem]";
+	}
+}
+
+function indentClass(d: number): string {
+	switch (d) {
+		case 0:
+			return "";
+		case 1:
+			return "pl-4";
+		case 2:
+			return "pl-8";
+		case 3:
+			return "pl-12";
+		case 4:
+			return "pl-16";
+		default:
+			return "pl-20";
+	}
+}
+
+function depthColor(d: number): string {
+	switch (d) {
+		case 0:
+			return "text-[var(--text-primary)]";
+		case 1:
+			return "text-[color-mix(in_srgb,var(--text-primary)_75%,transparent)]";
+		case 2:
+			return "text-[color-mix(in_srgb,var(--text-primary)_60%,transparent)]";
+		case 3:
+			return "text-[color-mix(in_srgb,var(--text-primary)_50%,transparent)]";
+		case 4:
+			return "text-[color-mix(in_srgb,var(--text-primary)_40%,transparent)]";
+		default:
+			return "text-[color-mix(in_srgb,var(--text-primary)_35%,transparent)]";
+	}
+}
+
+function depthHoverColor(d: number): string {
+	switch (d) {
+		case 0:
+			return "group-hover:text-[color-mix(in_srgb,var(--text-primary)_90%,transparent)]";
+		case 1:
+			return "group-hover:text-[color-mix(in_srgb,var(--text-primary)_85%,transparent)]";
+		case 2:
+			return "group-hover:text-[color-mix(in_srgb,var(--text-primary)_75%,transparent)]";
+		case 3:
+			return "group-hover:text-[color-mix(in_srgb,var(--text-primary)_65%,transparent)]";
+		case 4:
+			return "group-hover:text-[color-mix(in_srgb,var(--text-primary)_55%,transparent)]";
+		default:
+			return "group-hover:text-[color-mix(in_srgb,var(--text-primary)_50%,transparent)]";
+	}
+}
+
+function activeBarHeight(d: number): string {
+	switch (d) {
+		case 0:
+			return "h-5";
+		case 1:
+			return "h-4";
+		case 2:
+			return "h-3.5";
+		case 3:
+			return "h-3";
+		case 4:
+			return "h-2.5";
+		default:
+			return "h-2";
+	}
+}
+
+function toggleBtnSize(d: number): string {
+	switch (d) {
+		case 0:
+			return "w-6 h-6";
+		case 1:
+			return "w-5 h-5";
+		case 2:
+			return "w-4 h-4";
+		default:
+			return "w-3.5 h-3.5";
+	}
+}
+
+function toggleIconSize(d: number): string {
+	switch (d) {
+		case 0:
+			return "w-3.5 h-3.5";
+		case 1:
+			return "w-3 h-3";
+		default:
+			return "w-2.5 h-2.5";
+	}
+}
+---
+
+<div class="toc-group" data-depth={depth}>
+	<div class="flex items-center relative">
+		<a
+			href={`#${node.id}`}
+			data-toc-id={node.id}
+			data-depth={depth}
+			data-parent-id={parentId}
+			class={`toc-item px-2 flex gap-2 relative transition w-full min-h-8 rounded-lg py-1.5 group
+				hover:bg-[color-mix(in_srgb,var(--primary)_6%,transparent)]
+				active:bg-[color-mix(in_srgb,var(--primary)_12%,transparent)]
+				mt-[2px] ${tocItemClass(depth)}`}
+		>
+			{depth === 0 && (
+				<div class="transition w-5 h-5 shrink-0 rounded-md text-xs flex items-center justify-center font-bold
+					bg-[color-mix(in_srgb,var(--primary)_8%,transparent)] text-[var(--primary)]">
+					{node.num ?? "•"}
+				</div>
+			)}
+			<div
+				class={`toc-text transition overflow-hidden text-ellipsis whitespace-nowrap ${depth === 0 ? "" : "text-[0.8rem]"} ${depthColor(depth)} ${depthHoverColor(depth)} group-active:text-[var(--primary)]`}
+				title={node.text}
+			>
+				{node.text}
+			</div>
+			<div class={`toc-active-bar absolute left-0 top-1/2 -translate-y-1/2 w-[3px] ${activeBarHeight(depth)} rounded-r bg-[var(--primary)] opacity-0 transition-all`}></div>
+		</a>
+		{node.children.length > 0 && (
+			<button
+				data-toggle-for={node.id}
+				class={`toc-toggle absolute right-2 top-1/2 -translate-y-1/2 ${toggleBtnSize(depth)} flex items-center justify-center
+					rounded-full hover:bg-[color-mix(in_srgb,var(--primary)_12%,transparent)] transition-colors`}
+			>
+				<svg class={`${toggleIconSize(depth)} text-[color-mix(in_srgb,var(--text-primary)_40%,transparent)] transition-transform duration-200 toc-toggle-icon`} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+					<path d="M6 9l6 6 6-6"/>
+				</svg>
+			</button>
+		)}
+	</div>
+
+	{node.children.length > 0 && (
+		<div
+			class={`toc-children overflow-hidden transition-all duration-300 ${indentClass(depth + 1)}`}
+			data-children-for={node.id}
+			data-collapsed="true"
+			style="max-height:0;opacity:0"
+		>
+			<div class="pl-2 border-l-2 border-[var(--line-divider)]">
+				{node.children.map((child) => (
+					<TocItem node={child} depth={depth + 1} parentId={node.id} />
+				))}
+			</div>
+		</div>
+	)}
+</div>

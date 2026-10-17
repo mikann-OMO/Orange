@@ -64,7 +64,7 @@ const noteUrl = `/bits/${entry.id}/`;
 							)}
 						</div>
 					</div>
-					<div class="flex-shrink-0" onclick="event.preventDefault(); event.stopPropagation();">
+					<div class="flex-shrink-0" onclick="arguments[0]?.preventDefault(); arguments[0]?.stopPropagation();">
 						<LikeButton slug={entry.id} client:visible />
 					</div>
 				</div>

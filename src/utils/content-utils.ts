@@ -37,22 +37,42 @@ export type Tag = {
 	count: number;
 };
 
-export async function getTagList(): Promise<Tag[]> {
-	// 主页只展示文章（posts）的标签，不含轻读（notes）
-	const allBlogPosts = await getCollection<"posts">("posts", ({ data }) => {
-		return import.meta.env.PROD ? data.draft !== true : true;
-	});
-
-	const countMap: { [key: string]: number } = {};
-	for (const post of allBlogPosts) {
-		for (const tag of post.data.tags) {
-			countMap[tag] = (countMap[tag] || 0) + 1;
+function extractTagList(entries: Array<{ data: { tags?: string[] } }>): Tag[] {
+	const countMap: Record<string, number> = {};
+	for (const entry of entries) {
+		if (entry.data.tags) {
+			for (const tag of entry.data.tags) {
+				countMap[tag] = (countMap[tag] || 0) + 1;
+			}
 		}
 	}
 
 	return Object.keys(countMap)
 		.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
 		.map((key) => ({ name: key, count: countMap[key] }));
+}
+
+function extractCategoryList(entries: Array<{ data: { category?: string } }>): Category[] {
+	const count: Record<string, number> = {};
+	const uncategorizedKey = i18n(I18nKey.uncategorized);
+
+	for (const item of entries) {
+		const rawCategory = item.data.category;
+		const categoryName = rawCategory ? String(rawCategory).trim() : uncategorizedKey;
+		count[categoryName] = (count[categoryName] || 0) + 1;
+	}
+
+	return Object.keys(count)
+		.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
+		.map((key) => ({ name: key, count: count[key] }));
+}
+
+export async function getTagList(): Promise<Tag[]> {
+	// 主页只展示文章（posts）的标签，不含轻读（notes）
+	const allBlogPosts = await getCollection<"posts">("posts", ({ data }) => {
+		return import.meta.env.PROD ? data.draft !== true : true;
+	});
+	return extractTagList(allBlogPosts);
 }
 
 export type Category = {
@@ -65,75 +85,21 @@ export async function getCategoryList(): Promise<Category[]> {
 	const allBlogPosts = await getCollection<"posts">("posts", ({ data }) => {
 		return import.meta.env.PROD ? data.draft !== true : true;
 	});
-
-	const count: { [key: string]: number } = {};
-	const uncategorizedKey = i18n(I18nKey.uncategorized);
-
-	for (const item of allBlogPosts) {
-		let categoryName: string;
-
-		if (!item.data.category) {
-			categoryName = uncategorizedKey;
-		} else {
-			categoryName =
-				typeof item.data.category === "string"
-					? item.data.category.trim()
-					: String(item.data.category).trim();
-		}
-
-		count[categoryName] = (count[categoryName] || 0) + 1;
-	}
-
-	return Object.keys(count)
-		.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
-		.map((key) => ({ name: key, count: count[key] }));
+	return extractCategoryList(allBlogPosts);
 }
 
 export async function getNoteTagList(): Promise<Tag[]> {
 	const allNotes = await getCollection<"notes">("notes", ({ data }) => {
 		return import.meta.env.PROD ? data.draft !== true : true;
 	});
-
-	const countMap: { [key: string]: number } = {};
-	for (const note of allNotes) {
-		if (note.data.tags) {
-			for (const tag of note.data.tags) {
-				countMap[tag] = (countMap[tag] || 0) + 1;
-			}
-		}
-	}
-
-	return Object.keys(countMap)
-		.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
-		.map((key) => ({ name: key, count: countMap[key] }));
+	return extractTagList(allNotes);
 }
 
 export async function getNoteCategoryList(): Promise<Category[]> {
 	const allNotes = await getCollection<"notes">("notes", ({ data }) => {
 		return import.meta.env.PROD ? data.draft !== true : true;
 	});
-
-	const count: { [key: string]: number } = {};
-	const uncategorizedKey = i18n(I18nKey.uncategorized);
-
-	for (const note of allNotes) {
-		let categoryName: string;
-
-		if (!note.data.category) {
-			categoryName = uncategorizedKey;
-		} else {
-			categoryName =
-				typeof note.data.category === "string"
-					? note.data.category.trim()
-					: String(note.data.category).trim();
-		}
-
-		count[categoryName] = (count[categoryName] || 0) + 1;
-	}
-
-	return Object.keys(count)
-		.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
-		.map((key) => ({ name: key, count: count[key] }));
+	return extractCategoryList(allNotes);
 }
 
 function countWords(body: string): number {
@@ -245,7 +211,7 @@ export async function getArchiveData(filterOptions?: {
 				if (!categories.includes(itemCategory)) return false;
 			}
 			if (tags && tags.length > 0) {
-				if (!item.tags || !tags.some((t) => item.tags!.includes(t))) return false;
+				if (!tags.some((t) => item.tags?.includes(t))) return false;
 			}
 			return true;
 		});
@@ -255,10 +221,17 @@ export async function getArchiveData(filterOptions?: {
 	for (const item of filteredItems) {
 		const year = item.published.getFullYear();
 		const month = item.published.getMonth() + 1;
-		if (!yearMap.has(year)) yearMap.set(year, new Map());
-		const monthMap = yearMap.get(year)!;
-		if (!monthMap.has(month)) monthMap.set(month, []);
-		monthMap.get(month)!.push(item);
+		let monthMap = yearMap.get(year);
+		if (!monthMap) {
+			monthMap = new Map();
+			yearMap.set(year, monthMap);
+		}
+		let monthItems = monthMap.get(month);
+		if (!monthItems) {
+			monthItems = [];
+			monthMap.set(month, monthItems);
+		}
+		monthItems.push(item);
 	}
 
 	const groups: ArchiveYearGroup[] = [];
