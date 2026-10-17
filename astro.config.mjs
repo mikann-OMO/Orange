@@ -36,7 +36,7 @@ import { remarkReadingTime } from "./src/plugins/remark-reading-time.mjs";
  */
 export default defineConfig({
 	// 网站域名配置 - 请替换为你的实际域名
-	site: "https://mikann.fun",
+	site: "https://www.mikann.fun",
 	// 网站基础路径，默认为根路径
 	base: "/",
 	// 输出模式：static（Astro 7 默认，本身即支持 prerender=false 的按需 SSR 路由）
